@@ -1,5 +1,5 @@
 /*
-    Copyright 2020 Empty Set Squad <emptysetsquad@protonmail.com>
+    Copyright 2020 Dynamic Dollar Devs, based on the works of the Empty Set Squad
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -33,15 +33,15 @@ contract PoolGetters is PoolState {
     }
 
     function dao() public view returns (IDAO) {
-        return IDAO(Constants.getDaoAddress());
+        return _state.provider.dao;
     }
 
     function dollar() public view returns (IDollar) {
-        return IDollar(Constants.getDollarAddress());
+        return _state.provider.dollar;
     }
 
     function univ2() public view returns (IERC20) {
-        return IERC20(Constants.getPairAddress());
+        return _state.provider.univ2;
     }
 
     function totalBonded() public view returns (uint256) {

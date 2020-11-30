@@ -1,5 +1,5 @@
 /*
-    Copyright 2020 Empty Set Squad <emptysetsquad@protonmail.com>
+    Copyright 2020 Dynamic Dollar Devs, based on the works of the Empty Set Squad
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -24,16 +24,15 @@ library Constants {
     uint256 private constant CHAIN_ID = 1; // Mainnet
 
     /* Bootstrapping */
-    uint256 private constant BOOTSTRAPPING_PERIOD = 90;
-    uint256 private constant BOOTSTRAPPING_PRICE = 11e17; // 1.10 USDC
-    uint256 private constant BOOTSTRAPPING_SPEEDUP_FACTOR = 3; // 30 days @ 8 hours
+    uint256 private constant BOOTSTRAPPING_PERIOD = 150; // 150 epochs
+    uint256 private constant BOOTSTRAPPING_PRICE = 154e16; // 1.54 USDC (targeting 4.5% inflation)
 
     /* Oracle */
     address private constant USDC = address(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48);
     uint256 private constant ORACLE_RESERVE_MINIMUM = 1e10; // 10,000 USDC
 
     /* Bonding */
-    uint256 private constant INITIAL_STAKE_MULTIPLE = 1e6; // 100 ESD -> 100M ESDS
+    uint256 private constant INITIAL_STAKE_MULTIPLE = 1e6; // 100 DSD -> 100M DSDS
 
     /* Epoch */
     struct EpochStrategy {
@@ -42,49 +41,35 @@ library Constants {
         uint256 period;
     }
 
-    uint256 private constant PREVIOUS_EPOCH_OFFSET = 91;
-    uint256 private constant PREVIOUS_EPOCH_START = 1600905600;
-    uint256 private constant PREVIOUS_EPOCH_PERIOD = 86400;
-
-    uint256 private constant CURRENT_EPOCH_OFFSET = 106;
-    uint256 private constant CURRENT_EPOCH_START = 1602201600;
-    uint256 private constant CURRENT_EPOCH_PERIOD = 28800;
+    uint256 private constant EPOCH_OFFSET = 0;
+    uint256 private constant EPOCH_START = 1606348800;
+    uint256 private constant EPOCH_PERIOD = 7200;
 
     /* Governance */
-    uint256 private constant GOVERNANCE_PERIOD = 9;
+    uint256 private constant GOVERNANCE_PERIOD = 36;
     uint256 private constant GOVERNANCE_QUORUM = 33e16; // 33%
     uint256 private constant GOVERNANCE_SUPER_MAJORITY = 66e16; // 66%
     uint256 private constant GOVERNANCE_EMERGENCY_DELAY = 6; // 6 epochs
 
     /* DAO */
-    uint256 private constant ADVANCE_INCENTIVE = 1e20; // 100 ESD
-    uint256 private constant DAO_EXIT_LOCKUP_EPOCHS = 15; // 15 epochs fluid
+    uint256 private constant ADVANCE_INCENTIVE = 1e20; // 100 DSD
+    uint256 private constant DAO_EXIT_LOCKUP_EPOCHS = 36; // 36 epochs fluid
 
     /* Pool */
-    uint256 private constant POOL_EXIT_LOCKUP_EPOCHS = 5; // 5 epochs fluid
+    uint256 private constant POOL_EXIT_LOCKUP_EPOCHS = 12; // 12 epochs fluid
 
     /* Market */
-    uint256 private constant COUPON_EXPIRATION = 90;
+    uint256 private constant COUPON_EXPIRATION = 360;
     uint256 private constant DEBT_RATIO_CAP = 35e16; // 35%
 
     /* Regulator */
-    uint256 private constant SUPPLY_CHANGE_LIMIT = 3e16; // 3%
-    uint256 private constant COUPON_SUPPLY_CHANGE_LIMIT = 6e16; // 6%
-    uint256 private constant ORACLE_POOL_RATIO = 20; // 20%
-
-    /* Deployed */
-    address private constant DAO_ADDRESS = address(0x443D2f2755DB5942601fa062Cc248aAA153313D3);
-    address private constant DOLLAR_ADDRESS = address(0x36F3FD68E7325a35EB768F1AedaAe9EA0689d723);
-    address private constant PAIR_ADDRESS = address(0x88ff79eB2Bc5850F27315415da8685282C7610F9);
-
-    /* Pool Migration */
-    address private constant LEGACY_POOL_ADDRESS = address(0xdF0Ae5504A48ab9f913F8490fBef1b9333A68e68);
-    uint256 private constant LEGACY_POOL_REWARD = 1e18; // 1 ESD
+    uint256 private constant SUPPLY_CHANGE_DIVISOR = 12e18; // 12
+    uint256 private constant SUPPLY_CHANGE_LIMIT = 10e16; // 10%
+    uint256 private constant ORACLE_POOL_RATIO = 40; // 40%
 
     /**
      * Getters
      */
-
     function getUsdcAddress() internal pure returns (address) {
         return USDC;
     }
@@ -93,19 +78,11 @@ library Constants {
         return ORACLE_RESERVE_MINIMUM;
     }
 
-    function getPreviousEpochStrategy() internal pure returns (EpochStrategy memory) {
+    function getEpochStrategy() internal pure returns (EpochStrategy memory) {
         return EpochStrategy({
-            offset: PREVIOUS_EPOCH_OFFSET,
-            start: PREVIOUS_EPOCH_START,
-            period: PREVIOUS_EPOCH_PERIOD
-        });
-    }
-
-    function getCurrentEpochStrategy() internal pure returns (EpochStrategy memory) {
-        return EpochStrategy({
-            offset: CURRENT_EPOCH_OFFSET,
-            start: CURRENT_EPOCH_START,
-            period: CURRENT_EPOCH_PERIOD
+            offset: EPOCH_OFFSET,
+            start: EPOCH_START,
+            period: EPOCH_PERIOD
         });
     }
 
@@ -119,10 +96,6 @@ library Constants {
 
     function getBootstrappingPrice() internal pure returns (Decimal.D256 memory) {
         return Decimal.D256({value: BOOTSTRAPPING_PRICE});
-    }
-
-    function getBootstrappingSpeedupFactor() internal pure returns (uint256) {
-        return BOOTSTRAPPING_SPEEDUP_FACTOR;
     }
 
     function getGovernancePeriod() internal pure returns (uint256) {
@@ -165,8 +138,8 @@ library Constants {
         return Decimal.D256({value: SUPPLY_CHANGE_LIMIT});
     }
 
-    function getCouponSupplyChangeLimit() internal pure returns (Decimal.D256 memory) {
-        return Decimal.D256({value: COUPON_SUPPLY_CHANGE_LIMIT});
+    function getSupplyChangeDivisor() internal pure returns (Decimal.D256 memory) {
+        return Decimal.D256({value: SUPPLY_CHANGE_DIVISOR});
     }
 
     function getOraclePoolRatio() internal pure returns (uint256) {
@@ -175,25 +148,5 @@ library Constants {
 
     function getChainId() internal pure returns (uint256) {
         return CHAIN_ID;
-    }
-
-    function getDaoAddress() internal pure returns (address) {
-        return DAO_ADDRESS;
-    }
-
-    function getDollarAddress() internal pure returns (address) {
-        return DOLLAR_ADDRESS;
-    }
-
-    function getPairAddress() internal pure returns (address) {
-        return PAIR_ADDRESS;
-    }
-
-    function getLegacyPoolAddress() internal pure returns (address) {
-        return LEGACY_POOL_ADDRESS;
-    }
-
-    function getLegacyPoolReward() internal pure returns (uint256) {
-        return LEGACY_POOL_REWARD;
     }
 }

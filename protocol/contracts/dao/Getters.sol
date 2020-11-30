@@ -1,5 +1,5 @@
 /*
-    Copyright 2020 Empty Set Squad <emptysetsquad@protonmail.com>
+    Copyright 2020 Dynamic Dollar Devs, based on the works of the Empty Set Squad
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -32,11 +32,11 @@ contract Getters is State {
      */
 
     function name() public view returns (string memory) {
-        return "Empty Set Dollar Stake";
+        return "Dynamic Set Dollar Stake";
     }
 
     function symbol() public view returns (string memory) {
-        return "ESDS";
+        return "DSDS";
     }
 
     function decimals() public view returns (uint8) {
@@ -139,12 +139,9 @@ contract Getters is State {
     }
 
     function epochTime() public view returns (uint256) {
-        Constants.EpochStrategy memory current = Constants.getCurrentEpochStrategy();
-        Constants.EpochStrategy memory previous = Constants.getPreviousEpochStrategy();
+        Constants.EpochStrategy memory current = Constants.getEpochStrategy();
 
-        return blockTimestamp() < current.start ?
-            epochTimeWithStrategy(previous) :
-            epochTimeWithStrategy(current);
+        return epochTimeWithStrategy(current);
     }
 
     function epochTimeWithStrategy(Constants.EpochStrategy memory strategy) private view returns (uint256) {

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020 Empty Set Squad <emptysetsquad@protonmail.com>
+    Copyright 2020 Dynamic Dollar Devs, based on the works of the Empty Set Squad
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -39,6 +39,12 @@ contract PoolAccount {
 }
 
 contract PoolStorage {
+    struct Provider {
+        IDAO dao;
+        IDollar dollar;
+        IERC20 univ2;
+    }
+    
     struct Balance {
         uint256 staged;
         uint256 claimable;
@@ -48,6 +54,8 @@ contract PoolStorage {
 
     struct State {
         Balance balance;
+        Provider provider;
+
         bool paused;
 
         mapping(address => PoolAccount.State) accounts;
