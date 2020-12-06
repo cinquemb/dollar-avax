@@ -70,7 +70,7 @@ contract Market is Comptroller, Curve {
         uint timeIntoEpoch = block.timestamp % Constants.getEpochStrategy().period;
         uint couponAge = epoch() - couponEpoch;
 
-        uint couponEpochDecay = Constants.getCouponRedemptionPenaltyDecay() /  Constants.getCouponExpiration() * (Constants.getCouponExpiration() - couponAge);
+        uint couponEpochDecay = Constants.getCouponRedemptionPenaltyDecay() * (Constants.getCouponExpiration() - couponAge) / Constants.getCouponExpiration();
 
         if(timeIntoEpoch > couponEpochDecay) {
             return 0;
@@ -115,7 +115,32 @@ contract Market is Comptroller, Curve {
         
         redeemToAccount(msg.sender, redeemAmount);
 
-        emit CouponBurn(msg.sender, couponEpoch, burnAmount);
+        if(burnAmount > 0){
+            emit CouponBurn(msg.sender, couponEpoch, burnAmount);
+        }
+
+        emit CouponRedemption(msg.sender, couponEpoch, redeemAmount);
+    }
+
+    function redeemCoupons(uint256 couponEpoch, uint256 couponAmount, uint256 minOutput) external {
+        require(epoch().sub(couponEpoch) >= 2, "Market: Too early to redeem");
+        decrementBalanceOfCoupons(msg.sender, couponEpoch, couponAmount, "Market: Insufficient coupon balance");
+        
+        uint burnAmount = couponRedemptionPenalty(couponEpoch, couponAmount);
+        uint256 redeemAmount = couponAmount - burnAmount;
+
+        Require.that(
+            redeemAmount >= minOutput,
+            FILE,
+            "Insufficient output amount"
+        );
+        
+        redeemToAccount(msg.sender, redeemAmount);
+
+        if(burnAmount > 0){
+            emit CouponBurn(msg.sender, couponEpoch, burnAmount);
+        }
+
         emit CouponRedemption(msg.sender, couponEpoch, redeemAmount);
     }
 
