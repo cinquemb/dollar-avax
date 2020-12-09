@@ -106,6 +106,10 @@ contract PoolGetters is PoolState {
         return 0;
     }
 
+    function fluidUntil(address account) public view returns (uint256) {
+        return _state.accounts[account].fluidUntil;
+    }
+
     function statusOf(address account) public view returns (PoolAccount.Status) {
         return epoch() >= _state.accounts[account].fluidUntil ?
             PoolAccount.Status.Frozen :
