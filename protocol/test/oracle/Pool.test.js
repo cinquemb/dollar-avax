@@ -26,7 +26,7 @@ describe('Pool', function () {
     this.dollar = await MockToken.new("Dynamic Set Dollar", "DSD", 18, {from: ownerAddress, gas: 8000000});
     this.usdc = await MockToken.new("USD//C", "USDC", 18, {from: ownerAddress, gas: 8000000});
     this.univ2 = await MockUniswapV2PairLiquidity.new({from: ownerAddress, gas: 8000000});
-    this.pool = await MockPool.new(this.usdc.address, {from: ownerAddress, gas: 8000000});
+    this.pool = await MockPool.new(this.dollar.address, this.usdc.address, this.univ2.address, {from: ownerAddress, gas: 8000000});
     await this.pool.set(this.dao.address, this.dollar.address, this.univ2.address);
   });
 
