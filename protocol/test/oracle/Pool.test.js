@@ -356,6 +356,10 @@ describe('Pool', function () {
             expect(await this.pool.statusOf(userAddress)).to.be.bignumber.equal(FLUID);
           });
 
+          it('is fluid until', async function() {
+            expect(await this.pool.fluidUntil(userAddress)).to.be.bignumber.equal(new BN(13));
+          });
+
           it('updates users balances', async function () {
             expect(await this.dollar.balanceOf(userAddress)).to.be.bignumber.equal(new BN(0));
             expect(await this.pool.balanceOfClaimable(userAddress)).to.be.bignumber.equal(new BN(0));
