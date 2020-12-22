@@ -48,7 +48,7 @@ contract Regulator is Comptroller {
     }
 
     function shrinkSupply(Decimal.D256 memory price) private {
-        Decimal.D256 memory delta = limit(Decimal.one().sub(price));
+        Decimal.D256 memory delta = limit(Decimal.one().sub(price).div(Constants.getSupplyChangeDivisor()));
         uint256 newDebt = delta.mul(totalNet()).asUint256();
         increaseDebt(newDebt);
 
