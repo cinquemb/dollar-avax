@@ -44,7 +44,7 @@ contract Bonding is Setters, Permission {
         incrementEpoch();
     }
 
-    function deposit(uint256 value) external onlyFrozenOrLocked(msg.sender) {
+    function deposit(uint256 value) external {
         dollar().transferFrom(msg.sender, address(this), value);
         incrementBalanceOfStaged(msg.sender, value);
 

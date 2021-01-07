@@ -47,7 +47,8 @@ library Constants {
 
     /* Governance */
     uint256 private constant GOVERNANCE_PERIOD = 36;
-    uint256 private constant GOVERNANCE_QUORUM = 33e16; // 33%
+    uint256 private constant GOVERNANCE_QUORUM = 20e16; // 20%
+    uint256 private constant GOVERNANCE_PROPOSAL_THRESHOLD = 5e15; // 0.5%
     uint256 private constant GOVERNANCE_SUPER_MAJORITY = 66e16; // 66%
     uint256 private constant GOVERNANCE_EMERGENCY_DELAY = 6; // 6 epochs
 
@@ -65,8 +66,11 @@ library Constants {
     uint256 private constant COUPON_REDEMPTION_PENALTY_DECAY = 3600; // 1 hour
 
     /* Regulator */
-    uint256 private constant SUPPLY_CHANGE_DIVISOR = 12e18; // 12
-    uint256 private constant SUPPLY_CHANGE_LIMIT = 10e16; // 10%
+    uint256 private constant SUPPLY_CHANGE_LIMIT = 2e16; // 2%
+    uint256 private constant SUPPLY_CHANGE_DIVISOR = 25e18; // 25 > Max expansion at 1.5
+    uint256 private constant COUPON_SUPPLY_CHANGE_LIMIT = 3e16; // 3%
+    uint256 private constant COUPON_SUPPLY_CHANGE_DIVISOR = 1666e16; // 16.66 > Max expansion at ~1.5
+    uint256 private constant NEGATIVE_SUPPLY_CHANGE_DIVISOR = 5e18; // 5 > Max negative expansion at 0.9
     uint256 private constant ORACLE_POOL_RATIO = 40; // 40%
 
     /**
@@ -106,6 +110,10 @@ library Constants {
 
     function getGovernanceQuorum() internal pure returns (Decimal.D256 memory) {
         return Decimal.D256({value: GOVERNANCE_QUORUM});
+    }
+
+    function getGovernanceProposalThreshold() internal pure returns (Decimal.D256 memory) {
+        return Decimal.D256({value: GOVERNANCE_PROPOSAL_THRESHOLD});
     }
 
     function getGovernanceSuperMajority() internal pure returns (Decimal.D256 memory) {
@@ -150,6 +158,18 @@ library Constants {
 
     function getSupplyChangeDivisor() internal pure returns (Decimal.D256 memory) {
         return Decimal.D256({value: SUPPLY_CHANGE_DIVISOR});
+    }
+
+    function getCouponSupplyChangeLimit() internal pure returns (Decimal.D256 memory) {
+        return Decimal.D256({value: COUPON_SUPPLY_CHANGE_LIMIT});
+    }
+
+    function getCouponSupplyChangeDivisor() internal pure returns (Decimal.D256 memory) {
+        return Decimal.D256({value: COUPON_SUPPLY_CHANGE_DIVISOR});
+    }
+
+    function getNegativeSupplyChangeDivisor() internal pure returns (Decimal.D256 memory) {
+        return Decimal.D256({value: NEGATIVE_SUPPLY_CHANGE_DIVISOR});
     }
 
     function getOraclePoolRatio() internal pure returns (uint256) {
