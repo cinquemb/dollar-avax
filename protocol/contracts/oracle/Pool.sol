@@ -105,7 +105,7 @@ contract Pool is PoolSetters, Liquidity {
         emit Unbond(msg.sender, epoch().add(1), value, newClaimable);
     }
 
-    function provide(uint256 value) external onlyFrozen(msg.sender) notPaused {
+    function provide(uint256 value) external notPaused {
         Require.that(
             totalBonded() > 0,
             FILE,
