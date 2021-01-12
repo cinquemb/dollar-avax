@@ -255,7 +255,7 @@ describe('Comptroller', function () {
       });
 
       it('updates total debt', async function () {
-        expect(await this.comptroller.totalDebt()).to.be.bignumber.equal(new BN(200));
+        expect(await this.comptroller.totalDebt()).to.be.bignumber.equal(new BN(350));
       });
     });
   });
