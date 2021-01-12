@@ -68,7 +68,7 @@ contract Curve {
         ).sub(Decimal.ratio(1, 3));
     }
 
-    // 1/((1-R)(1-R'))-1
+    // 1/(3(1-R)(1-R'))-1/3
     function curveMean(
         Decimal.D256 memory lower,
         Decimal.D256 memory upper
@@ -78,7 +78,7 @@ contract Curve {
         }
 
         return Decimal.one().div(
-            (Decimal.one().sub(upper)).mul(Decimal.one().sub(lower))
-        ).sub(Decimal.one());
+            Decimal.from(3).mul(Decimal.one().sub(upper)).mul(Decimal.one().sub(lower))
+        ).sub(Decimal.ratio(1, 3));
     }
 }
