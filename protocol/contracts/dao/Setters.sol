@@ -187,8 +187,9 @@ contract Setters is State, Getters {
         _state.epochs[epoch()].auction.couponBidderState[bidder].distance = distance;
     }
 
-    function setCouponBidderStateSelected(address bidder) internal {
+    function setCouponBidderStateSelected(address bidder, uint256 index) internal {
         _state.epochs[epoch()].auction.couponBidderState[bidder].selected = true;
+        _state.epochs[epoch()].auction.seletedCouponBidder[index] = bidder;
     }
 
     function setCouponBidderStateRejected(address bidder) internal {
@@ -263,6 +264,14 @@ contract Setters is State, Getters {
     
     function setTotalFilled(uint256 totalFilled) internal {
         _state.epochs[epoch()].auction.totalFilled = totalFilled;
+    }
+
+    function setTotalAuctioned(uint256 totalAuctioned) internal {
+        _state.epochs[epoch()].auction.totalAuctioned = totalAuctioned;
+    }
+
+    function setTotalBurned(uint256 totalBurned) internal {
+        _state.epochs[epoch()].auction.totalBurned = totalBurned;
     }
         
 

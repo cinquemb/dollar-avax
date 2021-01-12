@@ -271,7 +271,7 @@ describe('Regulator', function () {
             this.expectedReward = 3001;
             this.expectedRewardCoupons = 1801;
             this.expectedRewardDAO = 0;
-            this.expectedRewardLP = 10000;
+            this.expectedRewardLP = 1200;
 
             this.result = await this.regulator.stepE();
             this.txHash = this.result.tx;
@@ -430,7 +430,7 @@ describe('Regulator', function () {
         describe('on step', function () {
           beforeEach(async function () {
             await this.oracle.set(99, 100, true);
-            this.expectedDebt = 2000;
+            this.expectedDebt = 1800;
 
             this.result = await this.regulator.stepE();
             this.txHash = this.result.tx;
@@ -530,6 +530,8 @@ describe('Regulator', function () {
                 expect(await this.regulator.getAvgYieldFilled(7)).to.be.bignumber.equal(new BN(46));
                 expect(await this.regulator.getBidToCover(7)).to.be.bignumber.equal(new BN(100));
                 expect(await this.regulator.getTotalFilled(7)).to.be.bignumber.equal(new BN(4));
+                expect(await this.regulator.getTotalAuctioned(7)).to.be.bignumber.equal(new BN(4 * 50000));
+                expect(await this.regulator.getTotalBurned(7)).to.be.bignumber.equal(new BN(4800));
               });
             });
             
@@ -604,6 +606,8 @@ describe('Regulator', function () {
                 expect(await this.regulator.getAvgYieldFilled(7)).to.be.bignumber.equal(new BN(46));
                 expect(await this.regulator.getBidToCover(7)).to.be.bignumber.equal(new BN(100));
                 expect(await this.regulator.getTotalFilled(7)).to.be.bignumber.equal(new BN(4));
+                expect(await this.regulator.getTotalAuctioned(7)).to.be.bignumber.equal(new BN(4 * 50000));
+                expect(await this.regulator.getTotalBurned(7)).to.be.bignumber.equal(new BN(4800));
               });
             });
           });

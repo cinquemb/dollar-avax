@@ -248,32 +248,40 @@ contract Getters is State {
         return _state.epochs[epoch].auction.minExpiryFilled;
     }
     
-    function getMaxExpiryFilled(uint256 epoch) public view returns (uint256)  {
+    function getMaxExpiryFilled(uint256 epoch) public view returns (uint256) {
         return _state.epochs[epoch].auction.maxExpiryFilled;
     }
     
-    function getAvgExpiryFilled(uint256 epoch) public view returns (uint256)  {
+    function getAvgExpiryFilled(uint256 epoch) public view returns (uint256) {
         return _state.epochs[epoch].auction.avgExpiryFilled;
     }
     
-    function getMinYieldFilled(uint256 epoch) public view returns (uint256)  {
+    function getMinYieldFilled(uint256 epoch) public view returns (uint256) {
         return _state.epochs[epoch].auction.minYieldFilled;
     }
     
-    function getMaxYieldFilled(uint256 epoch) public view returns (uint256)  {
+    function getMaxYieldFilled(uint256 epoch) public view returns (uint256) {
         return _state.epochs[epoch].auction.maxYieldFilled;
     }
     
-    function getAvgYieldFilled(uint256 epoch) public view returns (uint256)  {
+    function getAvgYieldFilled(uint256 epoch) public view returns (uint256) {
         return _state.epochs[epoch].auction.avgYieldFilled;
     }
     
-    function getBidToCover(uint256 epoch) public view returns (uint256)  {
+    function getBidToCover(uint256 epoch) public view returns (uint256) {
         return _state.epochs[epoch].auction.bidToCover;
     }
     
-    function getTotalFilled(uint256 epoch) public view returns (uint256)  {
+    function getTotalFilled(uint256 epoch) public view returns (uint256) {
         return _state.epochs[epoch].auction.totalFilled;
+    }
+
+    function getTotalAuctioned(uint256 epoch) public view returns (uint256) {
+        return _state.epochs[epoch].auction.totalAuctioned;
+    }
+
+    function getTotalBurned(uint256 epoch) public view returns (uint256) {
+        return _state.epochs[epoch].auction.totalBurned;
     }
 
     /**

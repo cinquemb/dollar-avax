@@ -29,6 +29,8 @@ contract Regulator is Comptroller {
     bytes32 private constant FILE = "Regulator";
     Epoch.CouponBidderState[] private bids;
     uint256 private totalFilled = 0;
+    uint256 private totalBurned = 0;
+    uint256 private totalAuctioned = 0;
     uint256 private maxExpiryFilled = 0;
     uint256 private sumExpiryFilled = 0;
     uint256 private sumYieldFilled = 0;
@@ -229,12 +231,15 @@ contract Regulator is Comptroller {
                         
                         sumYieldFilled += yield.asUint256();
                         sumExpiryFilled += bids[i].couponExpiryEpoch;
+                        totalAuctioned += bids[i].couponAmount;
+                        totalBurned += bids[i].dollarAmount;
                         
                         uint256 epoch = epoch().add(bids[i].couponExpiryEpoch);
                         burnFromAccount(bids[i].bidder, bids[i].dollarAmount);
                         incrementBalanceOfCoupons(bids[i].bidder, epoch, bids[i].couponAmount);
-                        setCouponBidderStateSelected(bids[i].bidder);
+                        setCouponBidderStateSelected(bids[i].bidder, i);
                         totalFilled++;
+
                     }
                 } else {
                     /* setCouponBidderStateRejected(bids[i].bidder); or just break and close the auction */
@@ -267,11 +272,15 @@ contract Regulator is Comptroller {
                 setAvgYieldFilled(avgYieldFilled.asUint256());
                 setBidToCover(bidToCover.asUint256());
                 setTotalFilled(totalFilled);
+                setTotalAuctioned(totalAuctioned);
+                setTotalBurned(totalBurned);
             }
 
             //clear bids and reset vars
             delete bids;
             totalFilled = 0;
+            totalBurned = 0;
+            totalAuctioned = 0;
             maxExpiryFilled = 0;
             sumExpiryFilled = 0;
             sumYieldFilled = 0;
