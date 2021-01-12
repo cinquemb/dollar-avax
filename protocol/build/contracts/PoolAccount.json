@@ -1,0 +1,1384 @@
+{
+  "contractName": "PoolAccount",
+  "abi": [],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.17+commit.d19bba13\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/home/name/Desktop/Files/projects/dynamic/dollar/protocol/contracts/oracle/PoolState.sol\":\"PoolAccount\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/name/Desktop/Files/projects/dynamic/dollar/protocol/contracts/oracle/IDAO.sol\":{\"keccak256\":\"0x54f222247eee02dab0f5bc0a663db0d973b5ee75f45cc56c03af8cbe1b0488b4\",\"urls\":[\"bzz-raw://61c7cc14fa5d8fa19f498a486c3d35dbcf2a4c61c37b3f6b96c2d0468589172b\",\"dweb:/ipfs/QmYDn8tiVhsY7SiJVDWwRBY8DvEx32pPsMxYyBe13HXMqV\"]},\"/home/name/Desktop/Files/projects/dynamic/dollar/protocol/contracts/oracle/IUSDC.sol\":{\"keccak256\":\"0x8edf24603053c85f9d0686597545eac473990422f8ad771cd44d86fafec5c926\",\"urls\":[\"bzz-raw://574ffb31ef6fefa1cea0f5682daee7cac06af89a3995f5f771a663ffd88ae232\",\"dweb:/ipfs/QmUYsXBXyEWLTyNE7qTtzdhdrMrtvHeBb3s5gGKzPomGNX\"]},\"/home/name/Desktop/Files/projects/dynamic/dollar/protocol/contracts/oracle/PoolState.sol\":{\"keccak256\":\"0x4ab18ecdc06106c8b5f5966d6774f3be7feaeb3c52b8ee322f7324915aeb76db\",\"urls\":[\"bzz-raw://2ab2b2b46203219a351d47f33aa2af5efc217a2e55632d1f8f6e59190ffa1252\",\"dweb:/ipfs/QmfWpzdBnvrsqbVC1iosrKHnLQsZ8Tc3pNeWSg2aCmEGG1\"]},\"/home/name/Desktop/Files/projects/dynamic/dollar/protocol/contracts/token/IDollar.sol\":{\"keccak256\":\"0xecc042c5725b0527c0600d51b363c95c0ed3f550b84df58526eed7486b5d7389\",\"urls\":[\"bzz-raw://34341e2fcb5d0038105bf54b1beab508e063e4f47bab1f6dcb397200f2bf569b\",\"dweb:/ipfs/QmeT36ma9bZpRVx4CxYPvvU1aTgVXUUdcrhUzooqC3jY2S\"]},\"@openzeppelin/contracts/token/ERC20/IERC20.sol\":{\"keccak256\":\"0xe5bb0f57cff3e299f360052ba50f1ea0fff046df2be070b6943e0e3c3fdad8a9\",\"urls\":[\"bzz-raw://59fd025151435da35faa8093a5c7a17de02de9d08ad27275c5cdf05050820d91\",\"dweb:/ipfs/QmQMvwEcPhoRXzbXyrdoeRtvLoifUW9Qh7Luho7bmUPRkc\"]}},\"version\":1}",
+  "bytecode": "0x6080604052348015600f57600080fd5b50604c80601d6000396000f3fe6080604052600080fdfea365627a7a7231582057a863e5723cf0e0e3d84e7b819c94a974b0809dde03e236ea863f2bcb5e31336c6578706572696d656e74616cf564736f6c63430005110040",
+  "deployedBytecode": "0x6080604052600080fdfea365627a7a7231582057a863e5723cf0e0e3d84e7b819c94a974b0809dde03e236ea863f2bcb5e31336c6578706572696d656e74616cf564736f6c63430005110040",
+  "sourceMap": "838:248:49:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;838:248:49;;;;;;;",
+  "deployedSourceMap": "838:248:49:-;;;;;",
+  "source": "/*\n    Copyright 2020 Dynamic Dollar Devs, based on the works of the Empty Set Squad\n\n    Licensed under the Apache License, Version 2.0 (the \"License\");\n    you may not use this file except in compliance with the License.\n    You may obtain a copy of the License at\n\n    http://www.apache.org/licenses/LICENSE-2.0\n\n    Unless required by applicable law or agreed to in writing, software\n    distributed under the License is distributed on an \"AS IS\" BASIS,\n    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n    See the License for the specific language governing permissions and\n    limitations under the License.\n*/\n\npragma solidity ^0.5.17;\npragma experimental ABIEncoderV2;\n\nimport \"@openzeppelin/contracts/token/ERC20/IERC20.sol\";\nimport \"../token/IDollar.sol\";\nimport \"./IDAO.sol\";\nimport \"./IUSDC.sol\";\n\ncontract PoolAccount {\n    enum Status {\n        Frozen,\n        Fluid,\n        Locked\n    }\n\n    struct State {\n        uint256 staged;\n        uint256 claimable;\n        uint256 bonded;\n        uint256 phantom;\n        uint256 fluidUntil;\n    }\n}\n\ncontract PoolStorage {\n    struct Provider {\n        IDAO dao;\n        IDollar dollar;\n        IERC20 univ2;\n    }\n    \n    struct Balance {\n        uint256 staged;\n        uint256 claimable;\n        uint256 bonded;\n        uint256 phantom;\n    }\n\n    struct State {\n        Balance balance;\n        Provider provider;\n\n        bool paused;\n\n        mapping(address => PoolAccount.State) accounts;\n    }\n}\n\ncontract PoolState {\n    PoolStorage.State _state;\n}\n",
+  "sourcePath": "/home/name/Desktop/Files/projects/dynamic/dollar/protocol/contracts/oracle/PoolState.sol",
+  "ast": {
+    "absolutePath": "/home/name/Desktop/Files/projects/dynamic/dollar/protocol/contracts/oracle/PoolState.sol",
+    "exportedSymbols": {
+      "PoolAccount": [
+        10429
+      ],
+      "PoolState": [
+        10460
+      ],
+      "PoolStorage": [
+        10457
+      ]
+    },
+    "id": 10461,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 10408,
+        "literals": [
+          "solidity",
+          "^",
+          "0.5",
+          ".17"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "646:24:49"
+      },
+      {
+        "id": 10409,
+        "literals": [
+          "experimental",
+          "ABIEncoderV2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "671:33:49"
+      },
+      {
+        "absolutePath": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "file": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "id": 10410,
+        "nodeType": "ImportDirective",
+        "scope": 10461,
+        "sourceUnit": 11685,
+        "src": "706:56:49",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/name/Desktop/Files/projects/dynamic/dollar/protocol/contracts/token/IDollar.sol",
+        "file": "../token/IDollar.sol",
+        "id": 10411,
+        "nodeType": "ImportDirective",
+        "scope": 10461,
+        "sourceUnit": 10585,
+        "src": "763:30:49",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/name/Desktop/Files/projects/dynamic/dollar/protocol/contracts/oracle/IDAO.sol",
+        "file": "./IDAO.sol",
+        "id": 10412,
+        "nodeType": "ImportDirective",
+        "scope": 10461,
+        "sourceUnit": 8592,
+        "src": "794:20:49",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/name/Desktop/Files/projects/dynamic/dollar/protocol/contracts/oracle/IUSDC.sol",
+        "file": "./IUSDC.sol",
+        "id": 10413,
+        "nodeType": "ImportDirective",
+        "scope": 10461,
+        "sourceUnit": 8622,
+        "src": "815:21:49",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 10429,
+        "linearizedBaseContracts": [
+          10429
+        ],
+        "name": "PoolAccount",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "canonicalName": "PoolAccount.Status",
+            "id": 10417,
+            "members": [
+              {
+                "id": 10414,
+                "name": "Frozen",
+                "nodeType": "EnumValue",
+                "src": "887:6:49"
+              },
+              {
+                "id": 10415,
+                "name": "Fluid",
+                "nodeType": "EnumValue",
+                "src": "903:5:49"
+              },
+              {
+                "id": 10416,
+                "name": "Locked",
+                "nodeType": "EnumValue",
+                "src": "918:6:49"
+              }
+            ],
+            "name": "Status",
+            "nodeType": "EnumDefinition",
+            "src": "865:65:49"
+          },
+          {
+            "canonicalName": "PoolAccount.State",
+            "id": 10428,
+            "members": [
+              {
+                "constant": false,
+                "id": 10419,
+                "name": "staged",
+                "nodeType": "VariableDeclaration",
+                "scope": 10428,
+                "src": "959:14:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 10418,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "959:7:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10421,
+                "name": "claimable",
+                "nodeType": "VariableDeclaration",
+                "scope": 10428,
+                "src": "983:17:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 10420,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "983:7:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10423,
+                "name": "bonded",
+                "nodeType": "VariableDeclaration",
+                "scope": 10428,
+                "src": "1010:14:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 10422,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1010:7:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10425,
+                "name": "phantom",
+                "nodeType": "VariableDeclaration",
+                "scope": 10428,
+                "src": "1034:15:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 10424,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1034:7:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10427,
+                "name": "fluidUntil",
+                "nodeType": "VariableDeclaration",
+                "scope": 10428,
+                "src": "1059:18:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 10426,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1059:7:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "State",
+            "nodeType": "StructDefinition",
+            "scope": 10429,
+            "src": "936:148:49",
+            "visibility": "public"
+          }
+        ],
+        "scope": 10461,
+        "src": "838:248:49"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 10457,
+        "linearizedBaseContracts": [
+          10457
+        ],
+        "name": "PoolStorage",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "canonicalName": "PoolStorage.Provider",
+            "id": 10436,
+            "members": [
+              {
+                "constant": false,
+                "id": 10431,
+                "name": "dao",
+                "nodeType": "VariableDeclaration",
+                "scope": 10436,
+                "src": "1141:8:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_contract$_IDAO_$8591",
+                  "typeString": "contract IDAO"
+                },
+                "typeName": {
+                  "contractScope": null,
+                  "id": 10430,
+                  "name": "IDAO",
+                  "nodeType": "UserDefinedTypeName",
+                  "referencedDeclaration": 8591,
+                  "src": "1141:4:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_IDAO_$8591",
+                    "typeString": "contract IDAO"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10433,
+                "name": "dollar",
+                "nodeType": "VariableDeclaration",
+                "scope": 10436,
+                "src": "1159:14:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_contract$_IDollar_$10584",
+                  "typeString": "contract IDollar"
+                },
+                "typeName": {
+                  "contractScope": null,
+                  "id": 10432,
+                  "name": "IDollar",
+                  "nodeType": "UserDefinedTypeName",
+                  "referencedDeclaration": 10584,
+                  "src": "1159:7:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_IDollar_$10584",
+                    "typeString": "contract IDollar"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10435,
+                "name": "univ2",
+                "nodeType": "VariableDeclaration",
+                "scope": 10436,
+                "src": "1183:12:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_contract$_IERC20_$11684",
+                  "typeString": "contract IERC20"
+                },
+                "typeName": {
+                  "contractScope": null,
+                  "id": 10434,
+                  "name": "IERC20",
+                  "nodeType": "UserDefinedTypeName",
+                  "referencedDeclaration": 11684,
+                  "src": "1183:6:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_IERC20_$11684",
+                    "typeString": "contract IERC20"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "Provider",
+            "nodeType": "StructDefinition",
+            "scope": 10457,
+            "src": "1115:87:49",
+            "visibility": "public"
+          },
+          {
+            "canonicalName": "PoolStorage.Balance",
+            "id": 10445,
+            "members": [
+              {
+                "constant": false,
+                "id": 10438,
+                "name": "staged",
+                "nodeType": "VariableDeclaration",
+                "scope": 10445,
+                "src": "1237:14:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 10437,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1237:7:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10440,
+                "name": "claimable",
+                "nodeType": "VariableDeclaration",
+                "scope": 10445,
+                "src": "1261:17:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 10439,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1261:7:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10442,
+                "name": "bonded",
+                "nodeType": "VariableDeclaration",
+                "scope": 10445,
+                "src": "1288:14:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 10441,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1288:7:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10444,
+                "name": "phantom",
+                "nodeType": "VariableDeclaration",
+                "scope": 10445,
+                "src": "1312:15:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 10443,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1312:7:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "Balance",
+            "nodeType": "StructDefinition",
+            "scope": 10457,
+            "src": "1212:122:49",
+            "visibility": "public"
+          },
+          {
+            "canonicalName": "PoolStorage.State",
+            "id": 10456,
+            "members": [
+              {
+                "constant": false,
+                "id": 10447,
+                "name": "balance",
+                "nodeType": "VariableDeclaration",
+                "scope": 10456,
+                "src": "1363:15:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_struct$_Balance_$10445_storage_ptr",
+                  "typeString": "struct PoolStorage.Balance"
+                },
+                "typeName": {
+                  "contractScope": null,
+                  "id": 10446,
+                  "name": "Balance",
+                  "nodeType": "UserDefinedTypeName",
+                  "referencedDeclaration": 10445,
+                  "src": "1363:7:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_Balance_$10445_storage_ptr",
+                    "typeString": "struct PoolStorage.Balance"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10449,
+                "name": "provider",
+                "nodeType": "VariableDeclaration",
+                "scope": 10456,
+                "src": "1388:17:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_struct$_Provider_$10436_storage_ptr",
+                  "typeString": "struct PoolStorage.Provider"
+                },
+                "typeName": {
+                  "contractScope": null,
+                  "id": 10448,
+                  "name": "Provider",
+                  "nodeType": "UserDefinedTypeName",
+                  "referencedDeclaration": 10436,
+                  "src": "1388:8:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_Provider_$10436_storage_ptr",
+                    "typeString": "struct PoolStorage.Provider"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10451,
+                "name": "paused",
+                "nodeType": "VariableDeclaration",
+                "scope": 10456,
+                "src": "1416:11:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bool",
+                  "typeString": "bool"
+                },
+                "typeName": {
+                  "id": 10450,
+                  "name": "bool",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1416:4:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10455,
+                "name": "accounts",
+                "nodeType": "VariableDeclaration",
+                "scope": 10456,
+                "src": "1438:46:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_mapping$_t_address_$_t_struct$_State_$10428_storage_$",
+                  "typeString": "mapping(address => struct PoolAccount.State)"
+                },
+                "typeName": {
+                  "id": 10454,
+                  "keyType": {
+                    "id": 10452,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1446:7:49",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "nodeType": "Mapping",
+                  "src": "1438:37:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_mapping$_t_address_$_t_struct$_State_$10428_storage_$",
+                    "typeString": "mapping(address => struct PoolAccount.State)"
+                  },
+                  "valueType": {
+                    "contractScope": null,
+                    "id": 10453,
+                    "name": "PoolAccount.State",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 10428,
+                    "src": "1457:17:49",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_State_$10428_storage_ptr",
+                      "typeString": "struct PoolAccount.State"
+                    }
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "State",
+            "nodeType": "StructDefinition",
+            "scope": 10457,
+            "src": "1340:151:49",
+            "visibility": "public"
+          }
+        ],
+        "scope": 10461,
+        "src": "1088:405:49"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 10460,
+        "linearizedBaseContracts": [
+          10460
+        ],
+        "name": "PoolState",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": false,
+            "id": 10459,
+            "name": "_state",
+            "nodeType": "VariableDeclaration",
+            "scope": 10460,
+            "src": "1520:24:49",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_struct$_State_$10456_storage",
+              "typeString": "struct PoolStorage.State"
+            },
+            "typeName": {
+              "contractScope": null,
+              "id": 10458,
+              "name": "PoolStorage.State",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 10456,
+              "src": "1520:17:49",
+              "typeDescriptions": {
+                "typeIdentifier": "t_struct$_State_$10456_storage_ptr",
+                "typeString": "struct PoolStorage.State"
+              }
+            },
+            "value": null,
+            "visibility": "internal"
+          }
+        ],
+        "scope": 10461,
+        "src": "1495:52:49"
+      }
+    ],
+    "src": "646:902:49"
+  },
+  "legacyAST": {
+    "absolutePath": "/home/name/Desktop/Files/projects/dynamic/dollar/protocol/contracts/oracle/PoolState.sol",
+    "exportedSymbols": {
+      "PoolAccount": [
+        10429
+      ],
+      "PoolState": [
+        10460
+      ],
+      "PoolStorage": [
+        10457
+      ]
+    },
+    "id": 10461,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 10408,
+        "literals": [
+          "solidity",
+          "^",
+          "0.5",
+          ".17"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "646:24:49"
+      },
+      {
+        "id": 10409,
+        "literals": [
+          "experimental",
+          "ABIEncoderV2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "671:33:49"
+      },
+      {
+        "absolutePath": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "file": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "id": 10410,
+        "nodeType": "ImportDirective",
+        "scope": 10461,
+        "sourceUnit": 11685,
+        "src": "706:56:49",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/name/Desktop/Files/projects/dynamic/dollar/protocol/contracts/token/IDollar.sol",
+        "file": "../token/IDollar.sol",
+        "id": 10411,
+        "nodeType": "ImportDirective",
+        "scope": 10461,
+        "sourceUnit": 10585,
+        "src": "763:30:49",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/name/Desktop/Files/projects/dynamic/dollar/protocol/contracts/oracle/IDAO.sol",
+        "file": "./IDAO.sol",
+        "id": 10412,
+        "nodeType": "ImportDirective",
+        "scope": 10461,
+        "sourceUnit": 8592,
+        "src": "794:20:49",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/name/Desktop/Files/projects/dynamic/dollar/protocol/contracts/oracle/IUSDC.sol",
+        "file": "./IUSDC.sol",
+        "id": 10413,
+        "nodeType": "ImportDirective",
+        "scope": 10461,
+        "sourceUnit": 8622,
+        "src": "815:21:49",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 10429,
+        "linearizedBaseContracts": [
+          10429
+        ],
+        "name": "PoolAccount",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "canonicalName": "PoolAccount.Status",
+            "id": 10417,
+            "members": [
+              {
+                "id": 10414,
+                "name": "Frozen",
+                "nodeType": "EnumValue",
+                "src": "887:6:49"
+              },
+              {
+                "id": 10415,
+                "name": "Fluid",
+                "nodeType": "EnumValue",
+                "src": "903:5:49"
+              },
+              {
+                "id": 10416,
+                "name": "Locked",
+                "nodeType": "EnumValue",
+                "src": "918:6:49"
+              }
+            ],
+            "name": "Status",
+            "nodeType": "EnumDefinition",
+            "src": "865:65:49"
+          },
+          {
+            "canonicalName": "PoolAccount.State",
+            "id": 10428,
+            "members": [
+              {
+                "constant": false,
+                "id": 10419,
+                "name": "staged",
+                "nodeType": "VariableDeclaration",
+                "scope": 10428,
+                "src": "959:14:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 10418,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "959:7:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10421,
+                "name": "claimable",
+                "nodeType": "VariableDeclaration",
+                "scope": 10428,
+                "src": "983:17:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 10420,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "983:7:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10423,
+                "name": "bonded",
+                "nodeType": "VariableDeclaration",
+                "scope": 10428,
+                "src": "1010:14:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 10422,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1010:7:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10425,
+                "name": "phantom",
+                "nodeType": "VariableDeclaration",
+                "scope": 10428,
+                "src": "1034:15:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 10424,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1034:7:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10427,
+                "name": "fluidUntil",
+                "nodeType": "VariableDeclaration",
+                "scope": 10428,
+                "src": "1059:18:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 10426,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1059:7:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "State",
+            "nodeType": "StructDefinition",
+            "scope": 10429,
+            "src": "936:148:49",
+            "visibility": "public"
+          }
+        ],
+        "scope": 10461,
+        "src": "838:248:49"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 10457,
+        "linearizedBaseContracts": [
+          10457
+        ],
+        "name": "PoolStorage",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "canonicalName": "PoolStorage.Provider",
+            "id": 10436,
+            "members": [
+              {
+                "constant": false,
+                "id": 10431,
+                "name": "dao",
+                "nodeType": "VariableDeclaration",
+                "scope": 10436,
+                "src": "1141:8:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_contract$_IDAO_$8591",
+                  "typeString": "contract IDAO"
+                },
+                "typeName": {
+                  "contractScope": null,
+                  "id": 10430,
+                  "name": "IDAO",
+                  "nodeType": "UserDefinedTypeName",
+                  "referencedDeclaration": 8591,
+                  "src": "1141:4:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_IDAO_$8591",
+                    "typeString": "contract IDAO"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10433,
+                "name": "dollar",
+                "nodeType": "VariableDeclaration",
+                "scope": 10436,
+                "src": "1159:14:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_contract$_IDollar_$10584",
+                  "typeString": "contract IDollar"
+                },
+                "typeName": {
+                  "contractScope": null,
+                  "id": 10432,
+                  "name": "IDollar",
+                  "nodeType": "UserDefinedTypeName",
+                  "referencedDeclaration": 10584,
+                  "src": "1159:7:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_IDollar_$10584",
+                    "typeString": "contract IDollar"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10435,
+                "name": "univ2",
+                "nodeType": "VariableDeclaration",
+                "scope": 10436,
+                "src": "1183:12:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_contract$_IERC20_$11684",
+                  "typeString": "contract IERC20"
+                },
+                "typeName": {
+                  "contractScope": null,
+                  "id": 10434,
+                  "name": "IERC20",
+                  "nodeType": "UserDefinedTypeName",
+                  "referencedDeclaration": 11684,
+                  "src": "1183:6:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_IERC20_$11684",
+                    "typeString": "contract IERC20"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "Provider",
+            "nodeType": "StructDefinition",
+            "scope": 10457,
+            "src": "1115:87:49",
+            "visibility": "public"
+          },
+          {
+            "canonicalName": "PoolStorage.Balance",
+            "id": 10445,
+            "members": [
+              {
+                "constant": false,
+                "id": 10438,
+                "name": "staged",
+                "nodeType": "VariableDeclaration",
+                "scope": 10445,
+                "src": "1237:14:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 10437,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1237:7:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10440,
+                "name": "claimable",
+                "nodeType": "VariableDeclaration",
+                "scope": 10445,
+                "src": "1261:17:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 10439,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1261:7:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10442,
+                "name": "bonded",
+                "nodeType": "VariableDeclaration",
+                "scope": 10445,
+                "src": "1288:14:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 10441,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1288:7:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10444,
+                "name": "phantom",
+                "nodeType": "VariableDeclaration",
+                "scope": 10445,
+                "src": "1312:15:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 10443,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1312:7:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "Balance",
+            "nodeType": "StructDefinition",
+            "scope": 10457,
+            "src": "1212:122:49",
+            "visibility": "public"
+          },
+          {
+            "canonicalName": "PoolStorage.State",
+            "id": 10456,
+            "members": [
+              {
+                "constant": false,
+                "id": 10447,
+                "name": "balance",
+                "nodeType": "VariableDeclaration",
+                "scope": 10456,
+                "src": "1363:15:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_struct$_Balance_$10445_storage_ptr",
+                  "typeString": "struct PoolStorage.Balance"
+                },
+                "typeName": {
+                  "contractScope": null,
+                  "id": 10446,
+                  "name": "Balance",
+                  "nodeType": "UserDefinedTypeName",
+                  "referencedDeclaration": 10445,
+                  "src": "1363:7:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_Balance_$10445_storage_ptr",
+                    "typeString": "struct PoolStorage.Balance"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10449,
+                "name": "provider",
+                "nodeType": "VariableDeclaration",
+                "scope": 10456,
+                "src": "1388:17:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_struct$_Provider_$10436_storage_ptr",
+                  "typeString": "struct PoolStorage.Provider"
+                },
+                "typeName": {
+                  "contractScope": null,
+                  "id": 10448,
+                  "name": "Provider",
+                  "nodeType": "UserDefinedTypeName",
+                  "referencedDeclaration": 10436,
+                  "src": "1388:8:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_Provider_$10436_storage_ptr",
+                    "typeString": "struct PoolStorage.Provider"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10451,
+                "name": "paused",
+                "nodeType": "VariableDeclaration",
+                "scope": 10456,
+                "src": "1416:11:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bool",
+                  "typeString": "bool"
+                },
+                "typeName": {
+                  "id": 10450,
+                  "name": "bool",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1416:4:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10455,
+                "name": "accounts",
+                "nodeType": "VariableDeclaration",
+                "scope": 10456,
+                "src": "1438:46:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_mapping$_t_address_$_t_struct$_State_$10428_storage_$",
+                  "typeString": "mapping(address => struct PoolAccount.State)"
+                },
+                "typeName": {
+                  "id": 10454,
+                  "keyType": {
+                    "id": 10452,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1446:7:49",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "nodeType": "Mapping",
+                  "src": "1438:37:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_mapping$_t_address_$_t_struct$_State_$10428_storage_$",
+                    "typeString": "mapping(address => struct PoolAccount.State)"
+                  },
+                  "valueType": {
+                    "contractScope": null,
+                    "id": 10453,
+                    "name": "PoolAccount.State",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 10428,
+                    "src": "1457:17:49",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_State_$10428_storage_ptr",
+                      "typeString": "struct PoolAccount.State"
+                    }
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "State",
+            "nodeType": "StructDefinition",
+            "scope": 10457,
+            "src": "1340:151:49",
+            "visibility": "public"
+          }
+        ],
+        "scope": 10461,
+        "src": "1088:405:49"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 10460,
+        "linearizedBaseContracts": [
+          10460
+        ],
+        "name": "PoolState",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": false,
+            "id": 10459,
+            "name": "_state",
+            "nodeType": "VariableDeclaration",
+            "scope": 10460,
+            "src": "1520:24:49",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_struct$_State_$10456_storage",
+              "typeString": "struct PoolStorage.State"
+            },
+            "typeName": {
+              "contractScope": null,
+              "id": 10458,
+              "name": "PoolStorage.State",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 10456,
+              "src": "1520:17:49",
+              "typeDescriptions": {
+                "typeIdentifier": "t_struct$_State_$10456_storage_ptr",
+                "typeString": "struct PoolStorage.State"
+              }
+            },
+            "value": null,
+            "visibility": "internal"
+          }
+        ],
+        "scope": 10461,
+        "src": "1495:52:49"
+      }
+    ],
+    "src": "646:902:49"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.17+commit.d19bba13.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.3.1",
+  "updatedAt": "2020-11-25T22:34:45.309Z",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}

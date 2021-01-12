@@ -1,5 +1,5 @@
 /*
-    Copyright 2020 Empty Set Squad <emptysetsquad@protonmail.com>
+    Copyright 2020 Dynamic Dollar Devs, based on the works of the Empty Set Squad
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ contract MockPool is Pool {
     address private _dollar;
     address private _univ2;
 
-    constructor(address usdc) Pool() public {
+    constructor(address dollar, address usdc, address univ2) Pool(dollar, univ2) public {
         _usdc = usdc;
     }
 

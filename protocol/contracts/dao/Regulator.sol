@@ -1,5 +1,5 @@
 /*
-    Copyright 2020 Empty Set Squad <emptysetsquad@protonmail.com>
+    Copyright 2020 Dynamic Dollar Devs, based on the works of the Empty Set Squad
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ contract Regulator is Comptroller {
     }
 
     function shrinkSupply(Decimal.D256 memory price) private {
-        Decimal.D256 memory delta = limit(Decimal.one().sub(price), price);
+        Decimal.D256 memory delta = limit(Decimal.one().sub(price).div(Constants.getNegativeSupplyChangeDivisor()), price);
         uint256 newDebt = delta.mul(totalNet()).asUint256();
         uint256 cappedNewDebt = increaseDebt(newDebt);
 
@@ -81,16 +81,21 @@ contract Regulator is Comptroller {
     }
 
     function growSupply(Decimal.D256 memory price) private {
-        uint256 lessDebt = resetDebt(Decimal.zero());
+        Decimal.D256 memory supplyChangeDivisor = Constants.getSupplyChangeDivisor();
 
-        Decimal.D256 memory delta = limit(price.sub(Decimal.one()), price);
+        uint256 totalRedeemable = totalRedeemable();
+        uint256 totalCoupons = totalCoupons();
+        if (totalRedeemable < totalCoupons) {
+            supplyChangeDivisor = Constants.getCouponSupplyChangeDivisor();
+        }
+
+        Decimal.D256 memory delta = limit(price.sub(Decimal.one()).div(supplyChangeDivisor), price);
         uint256 newSupply = delta.mul(totalNet()).asUint256();
         (uint256 newRedeemable, uint256 newBonded) = increaseSupply(newSupply);
         emit SupplyIncrease(epoch(), price.value, newRedeemable, lessDebt, newBonded);
     }
 
     function limit(Decimal.D256 memory delta, Decimal.D256 memory price) private view returns (Decimal.D256 memory) {
-
         Decimal.D256 memory supplyChangeLimit = Constants.getSupplyChangeLimit();
         
         uint256 totalRedeemable = totalRedeemable();
@@ -100,7 +105,6 @@ contract Regulator is Comptroller {
         }
 
         return delta.greaterThan(supplyChangeLimit) ? supplyChangeLimit : delta;
-
     }
 
     function oracleCapture() private returns (Decimal.D256 memory) {

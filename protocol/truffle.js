@@ -18,9 +18,9 @@
  *
  */
 const PrivateKeyProvider = require('truffle-privatekey-provider');
-const privateKey = process.env.ESD_PRIVATE_KEY;
-const infuraId = process.env.ESD_INFURA_ID;
-const etherscanKey = process.env.ESD_ETHERSCAN_KEY;
+const privateKey = process.env.DSD_PRIVATE_KEY;
+const infuraId = process.env.DSD_INFURA_ID;
+const etherscanKey = process.env.DSD_ETHERSCAN_KEY;
 
 module.exports = {
   /**
@@ -44,7 +44,7 @@ module.exports = {
       host: "127.0.0.1",     // Localhost (default: none)
       port: 7545,            // Standard Ethereum port (default: none)
       network_id: "*",       // Any network (default: none)
-      gas: 8000000,
+      gas: 6721970,
     },
 
     //Another network with more advanced options...

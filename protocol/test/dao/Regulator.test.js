@@ -7,9 +7,7 @@ const MockRegulator = contract.fromArtifact('MockRegulator');
 const MockSettableOracle = contract.fromArtifact('MockSettableOracle');
 const Dollar = contract.fromArtifact('Dollar');
 
-const POOL_REWARD_PERCENT = 20;
-const TREASURY_REWARD_BIPS = 250;
-const TREASURY_ADDRESS = '0x460661bd4A5364A3ABCc9cfc4a8cE7038d05Ea22';
+const POOL_REWARD_PERCENT = 40;
 
 function lessPoolAndTreasuryIncentive(baseAmount, newAmount) {
   return new BN(baseAmount + newAmount - poolIncentive(newAmount) - treasuryIncentive(newAmount));
@@ -351,7 +349,6 @@ describe('Regulator', function () {
             expect(await this.dollar.totalSupply()).to.be.bignumber.equal(new BN(1000000));
             expect(await this.dollar.balanceOf(this.regulator.address)).to.be.bignumber.equal(new BN(1000000));
             expect(await this.dollar.balanceOf(poolAddress)).to.be.bignumber.equal(new BN(0));
-          });
 
           it('has created 1 auction in the past 8 epochs', async function () {
             for(var a_idx = 1; a_idx<8; a_idx++){

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020 Empty Set Squad <emptysetsquad@protonmail.com>
+    Copyright 2020 Dynamic Dollar Devs, based on the works of the Empty Set Squad
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ contract Bonding is Setters, Permission {
         incrementEpoch();
     }
 
-    function deposit(uint256 value) external onlyFrozenOrLocked(msg.sender) {
+    function deposit(uint256 value) external {
         dollar().transferFrom(msg.sender, address(this), value);
         incrementBalanceOfStaged(msg.sender, value);
 
