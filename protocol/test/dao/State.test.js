@@ -422,7 +422,6 @@ describe('State', function () {
     describe('before called', function () {
       it('is frozen', async function () {
         expect(await this.setters.statusOf(userAddress)).to.be.bignumber.equal(new BN(0));
-        expect(await this.setters.fluidUntil(userAddress)).to.be.bignumber.equal(new BN(0));
       });
     });
 
@@ -433,7 +432,6 @@ describe('State', function () {
 
       it('is fluid', async function () {
         expect(await this.setters.statusOf(userAddress)).to.be.bignumber.equal(new BN(1));
-        expect(await this.setters.fluidUntil(userAddress)).to.be.bignumber.equal(new BN(15));
       });
     });
 
@@ -445,7 +443,6 @@ describe('State', function () {
 
       it('is fluid', async function () {
         expect(await this.setters.statusOf(userAddress)).to.be.bignumber.equal(new BN(1));
-        expect(await this.setters.fluidUntil(userAddress)).to.be.bignumber.equal(new BN(15));
       });
     });
 
@@ -459,7 +456,6 @@ describe('State', function () {
 
       it('is frozen', async function () {
         expect(await this.setters.statusOf(userAddress)).to.be.bignumber.equal(new BN(0));
-        expect(await this.setters.fluidUntil(userAddress)).to.be.bignumber.equal(new BN(15));
       });
     });
   });
@@ -953,7 +949,6 @@ describe('State', function () {
       it('should have locked user', async function () {
         expect(await this.setters.isNominated(candidate)).to.be.equal(true);
         expect(await this.setters.statusOf(userAddress)).to.be.bignumber.equal(new BN(2));
-        expect(await this.setters.lockedUntil(userAddress)).to.be.bignumber.equal(new BN(8));
       });
     });
 
@@ -973,7 +968,6 @@ describe('State', function () {
       it('should have unlocked user', async function () {
         expect(await this.setters.isNominated(candidate)).to.be.equal(true);
         expect(await this.setters.statusOf(userAddress)).to.be.bignumber.equal(new BN(0));
-        expect(await this.setters.lockedUntil(userAddress)).to.be.bignumber.equal(new BN(8));
       });
     });
 
@@ -1000,7 +994,6 @@ describe('State', function () {
           expect(await this.setters.isNominated(candidate)).to.be.equal(true);
           expect(await this.setters.isNominated(ownerAddress)).to.be.equal(true);
           expect(await this.setters.statusOf(userAddress)).to.be.bignumber.equal(new BN(2));
-          expect(await this.setters.lockedUntil(userAddress)).to.be.bignumber.equal(new BN(10));
         });
       });
 
@@ -1018,7 +1011,6 @@ describe('State', function () {
         it('should have unlocked user', async function () {
           expect(await this.setters.isNominated(candidate)).to.be.equal(true);
           expect(await this.setters.statusOf(userAddress)).to.be.bignumber.equal(new BN(0));
-          expect(await this.setters.lockedUntil(userAddress)).to.be.bignumber.equal(new BN(10));
         });
       });
     });
@@ -1045,7 +1037,6 @@ describe('State', function () {
           expect(await this.setters.isNominated(candidate)).to.be.equal(true);
           expect(await this.setters.isNominated(ownerAddress)).to.be.equal(true);
           expect(await this.setters.statusOf(userAddress)).to.be.bignumber.equal(new BN(2));
-          expect(await this.setters.lockedUntil(userAddress)).to.be.bignumber.equal(new BN(10));
         });
       });
 
@@ -1063,7 +1054,6 @@ describe('State', function () {
         it('should have unlocked user', async function () {
           expect(await this.setters.isNominated(candidate)).to.be.equal(true);
           expect(await this.setters.statusOf(userAddress)).to.be.bignumber.equal(new BN(0));
-          expect(await this.setters.lockedUntil(userAddress)).to.be.bignumber.equal(new BN(10));
         });
       });
     });

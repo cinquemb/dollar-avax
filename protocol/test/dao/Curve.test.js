@@ -42,38 +42,38 @@ describe('Curve', function () {
     });
   });
 
-  describe('5-100-5: 0.26315 - not enough to round to unit', function () {
+  describe('10-100-10: 0.0037037 - not enough to round to unit', function () {
     it('returns correct amount', async function () {
-      expect(await this.curve.calculateCouponsE(100, 5, 5)).to.be.bignumber.equal(new BN(0));
+      expect(await this.curve.calculateCouponsE(100, 10, 10)).to.be.bignumber.equal(new BN(0));
     });
   });
 
-  describe('100000-5000-5000: 263.15 - should add 263', function () {
+  describe('100000-10000-10000: 370.37 - should add 370', function () {
     it('returns correct amount', async function () {
-      expect(await this.curve.calculateCouponsE(100000, 5000, 5000)).to.be.bignumber.equal(new BN(263));
+      expect(await this.curve.calculateCouponsE(100000, 10000, 10000)).to.be.bignumber.equal(new BN(370));
     });
   });
 
-  describe('100000-10000-5000: 864.19 - should add 864', function () {
+  describe('100000-10000-5000: 288.066 - should add 288', function () {
     it('returns correct amount', async function () {
-      expect(await this.curve.calculateCouponsE(100000, 10000, 5000)).to.be.bignumber.equal(new BN(864));
+      expect(await this.curve.calculateCouponsE(100000, 10000, 5000)).to.be.bignumber.equal(new BN(288));
     });
   });
 
-  describe('100000-70000-10000: 0.5625 (above threshold) - should add 5625', function () {
+  describe('100000-70000-10000: 0.455621 (above threshold) - should add 4556', function () {
     it('returns correct amount', async function () {
-      expect(await this.curve.calculateCouponsE(100000, 70000, 10000)).to.be.bignumber.equal(new BN(5625));
+      expect(await this.curve.calculateCouponsE(100000, 70000, 10000)).to.be.bignumber.equal(new BN(4556));
     });
   });
 
-  /* 60000/100000 -> 5000/45000
-   * 0.6 -> 1/9
-   * 0.6 - 0.2 (above threshold) + 1/9 - 0.2 (below threshold)
-   * (0.4 * 0.5625 + (0.2-1/9) * 0.40625) / (0.6-1/9) = 0.5340909
+  /* 60000/100000 -> 10000/50000
+   * 0.6 -> 0.1
+   * 0.6 - 0.35 (above threshold) + 0.2 - 0.35 (below threshold)
+   * (0.25 * 0.455621 + 0.15 * 0.307692) / 0.4 = 0.400148
    */
-  describe('100000-60000-55000: 29374 (above and below threshold) - should add 29374', function () {
+  describe('100000-60000-50000: 6636.44 (above and below threshold) - should add 6636', function () {
     it('returns correct amount', async function () {
-      expect(await this.curve.calculateCouponsE(100000, 60000, 55000)).to.be.bignumber.equal(new BN(29374));
+      expect(await this.curve.calculateCouponsE(100000, 60000, 50000)).to.be.bignumber.equal(new BN(20007));
     });
   });
 });

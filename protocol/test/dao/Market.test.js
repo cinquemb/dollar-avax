@@ -8,32 +8,6 @@ const Dollar = contract.fromArtifact('Dollar');
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 const MAX_UINT256 = new BN(2).pow(new BN(256)).subn(1);
-const DEBT_CAP = 0.15;
-
-function premium(supply, debt, amount) {
-  const start = debt / supply;
-  const end = (debt - amount) / (supply - amount)
-
-  if (start <= DEBT_CAP) {
-    return Math.floor(premiumMean(start, end) * amount)
-  }
-
-  if (end >= DEBT_CAP) {
-    return premiumSpot(DEBT_CAP);
-  }
-
-  const pCurve = Math.floor(premiumMean(start, DEBT_CAP)) * (start - DEBT_CAP);
-  const pFlat = premiumSpot(DEBT_CAP) * (DEBT_CAP - end);
-  return Math.floor((pCurve + pFlat) / (start - end) * amount);
-}
-
-function premiumSpot(ratio) {
-  return 1.0 / ((1.0 - ratio) ^ 2) - 1.0
-}
-
-function premiumMean(start, end) {
-  return 1.0 / ((1.0 - start) * (1.0 - end)) - 1.0
-}
 
 describe('Market', function () {
   const [ ownerAddress, userAddress, poolAddress ] = accounts;
@@ -55,7 +29,7 @@ describe('Market', function () {
       });
 
       it('shows correct potential coupon premium', async function () {
-        expect(await this.market.couponPremium(100000)).to.be.bignumber.equal(new BN(premium(1000000, 100000, 100000)));
+        expect(await this.market.couponPremium(100000)).to.be.bignumber.equal(new BN(3703));
       });
     });
 
@@ -84,17 +58,17 @@ describe('Market', function () {
 
       it('updates user balances', async function () {
         expect(await this.dollar.balanceOf(userAddress)).to.be.bignumber.equal(new BN(900000));
-        expect(await this.market.balanceOfCoupons(userAddress, 1)).to.be.bignumber.equal(new BN(100000 + premium(1000000, 100000, 100000)));
+        expect(await this.market.balanceOfCoupons(userAddress, 1)).to.be.bignumber.equal(new BN(103703));
       });
 
       it('shows correct preimum', async function () {
         expect(await this.dollar.balanceOf(userAddress)).to.be.bignumber.equal(new BN(900000));
-        expect(await this.market.balanceOfCoupons(userAddress, 1)).to.be.bignumber.equal(new BN(100000 + premium(1000000, 100000, 100000)));
+        expect(await this.market.balanceOfCoupons(userAddress, 1)).to.be.bignumber.equal(new BN(103703));
       });
 
       it('updates dao balances', async function () {
         expect(await this.dollar.balanceOf(this.market.address)).to.be.bignumber.equal(new BN(0));
-        expect(await this.market.totalCoupons()).to.be.bignumber.equal(new BN(100000 + premium(1000000, 100000, 100000)));
+        expect(await this.market.totalCoupons()).to.be.bignumber.equal(new BN(103703));
         expect(await this.market.totalDebt()).to.be.bignumber.equal(new BN(0));
         expect(await this.market.totalRedeemable()).to.be.bignumber.equal(new BN(0));
       });
@@ -106,7 +80,7 @@ describe('Market', function () {
 
         expect(event.args.epoch).to.be.bignumber.equal(new BN(1));
         expect(event.args.dollarAmount).to.be.bignumber.equal(new BN(100000));
-        expect(event.args.couponAmount).to.be.bignumber.equal(new BN(100000 + premium(1000000, 100000, 100000)));
+        expect(event.args.couponAmount).to.be.bignumber.equal(new BN(103703));
       });
     });
 
@@ -120,12 +94,12 @@ describe('Market', function () {
 
       it('updates user balances', async function () {
         expect(await this.dollar.balanceOf(userAddress)).to.be.bignumber.equal(new BN(900000));
-        expect(await this.market.balanceOfCoupons(userAddress, 1)).to.be.bignumber.equal(new BN(100000 + premium(1000000, 100000, 50000) + premium(950000, 50000, 50000)));
+        expect(await this.market.balanceOfCoupons(userAddress, 1)).to.be.bignumber.equal(new BN(103805));
       });
 
       it('updates dao balances', async function () {
         expect(await this.dollar.balanceOf(this.market.address)).to.be.bignumber.equal(new BN(0));
-        expect(await this.market.totalCoupons()).to.be.bignumber.equal(new BN(100000 + premium(1000000, 100000, 50000) + premium(950000, 50000, 50000)));
+        expect(await this.market.totalCoupons()).to.be.bignumber.equal(new BN(103805));
         expect(await this.market.totalDebt()).to.be.bignumber.equal(new BN(0));
         expect(await this.market.totalRedeemable()).to.be.bignumber.equal(new BN(0));
       });
@@ -137,7 +111,7 @@ describe('Market', function () {
 
         expect(event.args.epoch).to.be.bignumber.equal(new BN(1));
         expect(event.args.dollarAmount).to.be.bignumber.equal(new BN(50000));
-        expect(event.args.couponAmount).to.be.bignumber.equal(new BN(50000 + premium(950000, 50000, 50000)));
+        expect(event.args.couponAmount).to.be.bignumber.equal(new BN(50925));
       });
     });
   });
@@ -208,7 +182,6 @@ describe('Market', function () {
         expect(event.args.maxCouponAmount).to.be.bignumber.equal(new BN(50000));
       });
     });
-
   });
 
   describe('redeemCoupons', function () {
@@ -254,12 +227,12 @@ describe('Market', function () {
 
         it('updates user balances', async function () {
           expect(await this.dollar.balanceOf(userAddress)).to.be.bignumber.equal(new BN(1000000));
-          expect(await this.market.balanceOfCoupons(userAddress, 1)).to.be.bignumber.equal(new BN(premium(1000000, 100000, 100000)));
+          expect(await this.market.balanceOfCoupons(userAddress, 1)).to.be.bignumber.equal(new BN(3703));
         });
 
         it('updates dao balances', async function () {
           expect(await this.dollar.balanceOf(this.market.address)).to.be.bignumber.equal(new BN(0));
-          expect(await this.market.totalCoupons()).to.be.bignumber.equal(new BN(premium(1000000, 100000, 100000)));
+          expect(await this.market.totalCoupons()).to.be.bignumber.equal(new BN(3703));
           expect(await this.market.totalDebt()).to.be.bignumber.equal(new BN(0));
           expect(await this.market.totalRedeemable()).to.be.bignumber.equal(new BN(0));
         });
@@ -283,12 +256,12 @@ describe('Market', function () {
 
         it('updates user balances', async function () {
           expect(await this.dollar.balanceOf(userAddress)).to.be.bignumber.equal(new BN(980000));
-          expect(await this.market.balanceOfCoupons(userAddress, 1)).to.be.bignumber.equal(new BN(20000 + premium(1000000, 100000, 100000)));
+          expect(await this.market.balanceOfCoupons(userAddress, 1)).to.be.bignumber.equal(new BN(23703));
         });
 
         it('updates dao balances', async function () {
           expect(await this.dollar.balanceOf(this.market.address)).to.be.bignumber.equal(new BN(20000));
-          expect(await this.market.totalCoupons()).to.be.bignumber.equal(new BN(20000 + premium(1000000, 100000, 100000)));
+          expect(await this.market.totalCoupons()).to.be.bignumber.equal(new BN(23703));
           expect(await this.market.totalDebt()).to.be.bignumber.equal(new BN(0));
           expect(await this.market.totalRedeemable()).to.be.bignumber.equal(new BN(20000));
         });
@@ -394,7 +367,7 @@ describe('Market', function () {
       });
 
       it('updates balances', async function () {
-        expect(await this.market.balanceOfCoupons(userAddress, 1)).to.be.bignumber.equal(new BN(premium(1000000, 100000, 100000)));
+        expect(await this.market.balanceOfCoupons(userAddress, 1)).to.be.bignumber.equal(new BN(3703));
         expect(await this.market.balanceOfCoupons(ownerAddress, 1)).to.be.bignumber.equal(new BN(100000));
       });
 
@@ -429,7 +402,7 @@ describe('Market', function () {
       });
 
       it('updates balances', async function () {
-        expect(await this.market.balanceOfCoupons(userAddress, 1)).to.be.bignumber.equal(new BN(premium(1000000, 100000, 100000)));
+        expect(await this.market.balanceOfCoupons(userAddress, 1)).to.be.bignumber.equal(new BN(3703));
         expect(await this.market.balanceOfCoupons(ownerAddress, 1)).to.be.bignumber.equal(new BN(100000));
       });
 
@@ -495,7 +468,7 @@ describe('Market', function () {
         const event = await expectEvent.inTransaction(this.txHash, MockMarket, 'CouponExpiration', { });
 
         expect(event.args.epoch).to.be.bignumber.equal(new BN(2));
-        expect(event.args.couponsExpired).to.be.bignumber.equal(new BN(100000 + premium(1000000, 100000, 100000)));
+        expect(event.args.couponsExpired).to.be.bignumber.equal(new BN(103703));
         expect(event.args.lessDebt).to.be.bignumber.equal(new BN(0));
         expect(event.args.newBonded).to.be.bignumber.equal(new BN(0));
       });
@@ -525,10 +498,10 @@ describe('Market', function () {
         const event = await expectEvent.inTransaction(this.txHash, MockMarket, 'CouponExpiration', { });
 
         expect(event.args.epoch).to.be.bignumber.equal(new BN(2));
-        expect(event.args.couponsExpired).to.be.bignumber.equal(new BN(100000 + premium(1000000, 100000, 100000)));
+        expect(event.args.couponsExpired).to.be.bignumber.equal(new BN(103703));
         expect(event.args.lessRedeemable).to.be.bignumber.equal(new BN(100000));
         expect(event.args.lessDebt).to.be.bignumber.equal(new BN(0));
-        expect(event.args.newBonded).to.be.bignumber.equal(new BN(22500));
+        expect(event.args.newBonded).to.be.bignumber.equal(new BN(0));
       });
     });
 
@@ -562,7 +535,7 @@ describe('Market', function () {
           const event = await expectEvent.inTransaction(this.txHash, MockMarket, 'CouponExpiration', { });
 
           expect(event.args.epoch).to.be.bignumber.equal(new BN(2));
-          expect(event.args.couponsExpired).to.be.bignumber.closeTo(new BN(100000 + premium(1100000, 100000, 100000)), new BN(1));
+          expect(event.args.couponsExpired).to.be.bignumber.equal(new BN(103333));
           expect(event.args.lessRedeemable).to.be.bignumber.equal(new BN(100000));
           expect(event.args.lessDebt).to.be.bignumber.equal(new BN(0));
           expect(event.args.newBonded).to.be.bignumber.equal(new BN(100000));
@@ -595,13 +568,13 @@ describe('Market', function () {
           const event = await expectEvent.inTransaction(this.txHash, MockMarket, 'CouponExpiration', { });
 
           expect(event.args.epoch).to.be.bignumber.equal(new BN(2));
-          expect(event.args.couponsExpired).to.be.bignumber.equal(new BN(50000 + premium(1100000, 100000, 50000)));
+          expect(event.args.couponsExpired).to.be.bignumber.equal(new BN(52583));
           expect(event.args.lessDebt).to.be.bignumber.equal(new BN(0));
-          expect(event.args.newBonded).to.be.bignumber.closeTo(new BN(100000 - 50000 - premium(1050000, 50000, 50000)), new BN(1));
+          expect(event.args.newBonded).to.be.bignumber.equal(new BN(49167));
         });
       });
 
-      describe('with some debt', function () {
+      describe('reclaimed some debt', function () {
         this.timeout(30000);
 
         beforeEach(async function () {
@@ -627,14 +600,13 @@ describe('Market', function () {
           const event = await expectEvent.inTransaction(this.txHash, MockMarket, 'CouponExpiration', { });
 
           expect(event.args.epoch).to.be.bignumber.equal(new BN(2));
-          expect(event.args.couponsExpired).to.be.bignumber.equal(new BN(50000 + premium(1100000, 150000, 50000)));
-          expect(event.args.lessRedeemable).to.be.bignumber.equal(new BN(100000 - 50000 - premium(1050000, 100000, 50000)));
-          expect(event.args.lessDebt).to.be.bignumber.equal(new BN(0));
-          expect(event.args.newBonded).to.be.bignumber.equal(new BN(100000 - 50000 - premium(1050000, 100000, 50000)));
+          expect(event.args.couponsExpired).to.be.bignumber.equal(new BN(54662));
+          expect(event.args.lessDebt).to.be.bignumber.equal(new BN(47277));
+          expect(event.args.newBonded).to.be.bignumber.equal(new BN(0));
         });
       });
 
-      describe('with more reclaimed than debt', function () {
+      describe('reclaimed all debt and some bonded', function () {
         this.timeout(30000);
 
         beforeEach(async function () {
@@ -660,10 +632,9 @@ describe('Market', function () {
           const event = await expectEvent.inTransaction(this.txHash, MockMarket, 'CouponExpiration', { });
 
           expect(event.args.epoch).to.be.bignumber.equal(new BN(2));
-          expect(event.args.couponsExpired).to.be.bignumber.equal(new BN(50000 + premium(1100000, 120000, 50000)));
-          expect(event.args.lessRedeemable).to.be.bignumber.equal(new BN(100000 - 50000 - premium(1050000, 70000, 50000)));
-          expect(event.args.lessDebt).to.be.bignumber.equal(new BN(0));
-          expect(event.args.newBonded).to.be.bignumber.equal(new BN(100000 - 50000 - premium(1050000, 70000, 50000)));
+          expect(event.args.couponsExpired).to.be.bignumber.equal(new BN(53377));
+          expect(event.args.lessDebt).to.be.bignumber.equal(new BN(20000));
+          expect(event.args.newBonded).to.be.bignumber.equal(new BN(28446));
         });
       });
     });
