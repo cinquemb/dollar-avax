@@ -57,7 +57,7 @@ contract Comptroller is Setters {
         balanceCheck();
     }
 
-    function increaseDebt(uint256 amount) internal returns (uint256) {
+    function increaseDebt(uint256 amount) internal {
         incrementTotalDebt(amount);
         resetDebt(Constants.getDebtRatioCap());
 
@@ -77,21 +77,40 @@ contract Comptroller is Setters {
         uint256 totalRedeemable = totalRedeemable();
         uint256 totalCoupons = totalCoupons();
         if (totalRedeemable < totalCoupons) {
+
+            // Get new redeemable coupons
             newRedeemable = totalCoupons.sub(totalRedeemable);
+            // Pad with Pool's potential cut
+            newRedeemable = newRedeemable.mul(100).div(SafeMath.sub(100, Constants.getOraclePoolRatio()));
+            // Cap at newSupply
             newRedeemable = newRedeemable > newSupply ? newSupply : newRedeemable;
+            // Determine Pool's final cut
+            poolReward = newRedeemable.mul(Constants.getOraclePoolRatio()).div(100);
+            // Determine Redeemable's final cut
+            newRedeemable = newRedeemable.sub(poolReward);
+
+            mintToPool(poolReward);
             mintToRedeemable(newRedeemable);
+
+            newSupply = newSupply.sub(poolReward);
             newSupply = newSupply.sub(newRedeemable);
         }
+        // 2. Eliminate debt
+        uint256 totalDebt = totalDebt();
+        if (newSupply > 0 && totalDebt > 0) {
+            lessDebt = totalDebt > newSupply ? newSupply : totalDebt;
+            decreaseDebt(lessDebt);
 
-        // 2. Payout to DAO
+            newSupply = newSupply.sub(lessDebt);
+        }
+
+        // 3. Payout to bonded
         if (totalBonded() == 0) {
             newSupply = 0;
         }
         if (newSupply > 0) {
             mintToBonded(newSupply);
         }
-
-        balanceCheck();
 
         return (newRedeemable, lessDebt, newSupply.add(poolReward));
     }
