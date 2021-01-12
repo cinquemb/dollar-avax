@@ -108,10 +108,6 @@ library Constants {
         return GOVERNANCE_PERIOD;
     }
 
-    function getGovernanceExpiration() internal pure returns (uint256) {
-        return GOVERNANCE_EXPIRATION;
-    }
-
     function getGovernanceQuorum() internal pure returns (Decimal.D256 memory) {
         return Decimal.D256({value: GOVERNANCE_QUORUM});
     }

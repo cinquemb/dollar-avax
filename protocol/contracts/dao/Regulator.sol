@@ -47,6 +47,8 @@ contract Regulator is Comptroller {
         Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(epoch() - 1);
 
         if (price.greaterThan(Decimal.one())) {
+            setDebtToZero();
+
             //check for outstanding auction, if exists cancel it
             if (auction.isInit == true){
                 cancelCouponAuctionAtEpoch(epoch() - 1);
@@ -74,9 +76,9 @@ contract Regulator is Comptroller {
     function shrinkSupply(Decimal.D256 memory price) private {
         Decimal.D256 memory delta = limit(Decimal.one().sub(price).div(Constants.getNegativeSupplyChangeDivisor()), price);
         uint256 newDebt = delta.mul(totalNet()).asUint256();
-        uint256 cappedNewDebt = increaseDebt(newDebt);
+        increaseDebt(newDebt);
 
-        emit SupplyDecrease(epoch(), price.value, cappedNewDebt);
+        emit SupplyDecrease(epoch(), price.value, newDebt);
         return;
     }
 

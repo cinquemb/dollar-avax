@@ -81,6 +81,7 @@ contract Epoch {
         uint256 avgExpiryFilled;
         uint256 minDollarAmount;
         uint256 maxDollarAmount;
+        uint256 totalCouponsAuctioned;
         mapping(uint256 => address) couponBidder;
         mapping(address => CouponBidderState) couponBidderState;
     }
