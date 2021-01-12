@@ -47,7 +47,7 @@ describe('Regulator', function () {
         describe('on step', function () {
           beforeEach(async function () {
             await this.oracle.set(115, 100, true);
-            this.expectedReward = 30000;
+            this.expectedReward = 6000;
 
             this.result = await this.regulator.stepE();
             this.txHash = this.result.tx;
@@ -57,7 +57,6 @@ describe('Regulator', function () {
             expect(await this.dollar.totalSupply()).to.be.bignumber.equal(new BN(1000000).add(new BN(this.expectedReward)));
             expect(await this.dollar.balanceOf(this.regulator.address)).to.be.bignumber.equal(lessPoolIncentive(1000000, this.expectedReward));
             expect(await this.dollar.balanceOf(poolAddress)).to.be.bignumber.equal(poolIncentive(this.expectedReward));
-            expect(await this.dollar.balanceOf(TREASURY_ADDRESS)).to.be.bignumber.equal(treasuryIncentive(this.expectedReward));
           });
 
           it('updates totals', async function () {
@@ -97,7 +96,7 @@ describe('Regulator', function () {
         describe('on step', function () {
           beforeEach(async function () {
             await this.oracle.set(101, 100, true);
-            this.expectedReward = 10000;
+            this.expectedReward = 400;
 
             this.result = await this.regulator.stepE();
             this.txHash = this.result.tx;
@@ -107,7 +106,6 @@ describe('Regulator', function () {
             expect(await this.dollar.totalSupply()).to.be.bignumber.equal(new BN(1000000).add(new BN(this.expectedReward)));
             expect(await this.dollar.balanceOf(this.regulator.address)).to.be.bignumber.equal(lessPoolIncentive(1000000, this.expectedReward));
             expect(await this.dollar.balanceOf(poolAddress)).to.be.bignumber.equal(poolIncentive(this.expectedReward));
-            expect(await this.dollar.balanceOf(TREASURY_ADDRESS)).to.be.bignumber.equal(treasuryIncentive(this.expectedReward));
 
           });
 
@@ -154,10 +152,10 @@ describe('Regulator', function () {
         describe('on step', function () {
           beforeEach(async function () {
             await this.oracle.set(101, 100, true);
-            this.expectedReward = 10000;
+            this.expectedReward = 1000;
             this.expectedRewardCoupons = 8000;
             this.expectedRewardDAO = 0;
-            this.expectedRewardLP = 2000;
+            this.expectedRewardLP = 600;
 
             this.result = await this.regulator.stepE();
             this.txHash = this.result.tx;
@@ -167,7 +165,6 @@ describe('Regulator', function () {
             expect(await this.dollar.totalSupply()).to.be.bignumber.equal(new BN(1000000).add(new BN(this.expectedReward)));
             expect(await this.dollar.balanceOf(this.regulator.address)).to.be.bignumber.equal(new BN(1000000).add(new BN(this.expectedReward - this.expectedRewardLP)));
             expect(await this.dollar.balanceOf(poolAddress)).to.be.bignumber.equal(new BN(this.expectedRewardLP));
-            expect(await this.dollar.balanceOf(LEGACY_POOL_ADDRESS)).to.be.bignumber.equal(new BN(0));
           });
 
           it('updates totals', async function () {
@@ -215,7 +212,7 @@ describe('Regulator', function () {
       describe('on step', function () {
         beforeEach(async function () {
           await this.oracle.set(101, 100, true);
-          this.expectedReward = 10000;
+          this.expectedReward = 600;
           this.poolReward = 400;
 
           this.result = await this.regulator.stepE();
@@ -238,10 +235,10 @@ describe('Regulator', function () {
         });
 
         it('has not created any auction in the past 7 epochs', async function () {
-            for(var a_idx = 1; a_idx<8; a_idx++){
-              expect(await this.regulator.isCouponAuctionInitAtEpochE.call(a_idx)).equal(false);
-            }
-          });
+          for(var a_idx = 1; a_idx<8; a_idx++){
+            expect(await this.regulator.isCouponAuctionInitAtEpochE.call(a_idx)).equal(false);
+          }
+        });
 
         it('emits SupplyIncrease event', async function () {
           const event = await expectEvent.inTransaction(this.txHash, MockRegulator, 'SupplyIncrease', {});
@@ -271,8 +268,8 @@ describe('Regulator', function () {
         describe('on step', function () {
           beforeEach(async function () {
             await this.oracle.set(105, 100, true);
-            this.expectedReward = 50000;
-            this.expectedRewardCoupons = 40000;
+            this.expectedReward = 3001;
+            this.expectedRewardCoupons = 1801;
             this.expectedRewardDAO = 0;
             this.expectedRewardLP = 10000;
 
@@ -284,7 +281,6 @@ describe('Regulator', function () {
             expect(await this.dollar.totalSupply()).to.be.bignumber.equal(new BN(1000000).add(new BN(this.expectedReward)));
             expect(await this.dollar.balanceOf(this.regulator.address)).to.be.bignumber.equal(new BN(1000000).add(new BN(this.expectedReward - this.expectedRewardLP)));
             expect(await this.dollar.balanceOf(poolAddress)).to.be.bignumber.equal(new BN(this.expectedRewardLP));
-            expect(await this.dollar.balanceOf(LEGACY_POOL_ADDRESS)).to.be.bignumber.equal(new BN(0));
           });
 
           it('updates totals', async function () {
@@ -329,7 +325,7 @@ describe('Regulator', function () {
         describe('on step', function () {
           beforeEach(async function () {
             await this.oracle.set(85, 100, true);
-            this.expectedDebt = 30000;
+            this.expectedDebt = 20000;
 
             this.result = await this.regulator.stepE();
             this.txHash = this.result.tx;
@@ -339,6 +335,7 @@ describe('Regulator', function () {
             expect(await this.dollar.totalSupply()).to.be.bignumber.equal(new BN(1000000));
             expect(await this.dollar.balanceOf(this.regulator.address)).to.be.bignumber.equal(new BN(1000000));
             expect(await this.dollar.balanceOf(poolAddress)).to.be.bignumber.equal(new BN(0));
+          });
 
           it('has created 1 auction in the past 8 epochs', async function () {
             for(var a_idx = 1; a_idx<8; a_idx++){
@@ -380,7 +377,7 @@ describe('Regulator', function () {
         describe('on step', function () {
           beforeEach(async function () {
             await this.oracle.set(99, 100, true);
-            this.expectedDebt = 10000
+            this.expectedDebt = 2000
 
             this.result = await this.regulator.stepE();
             this.txHash = this.result.tx;
@@ -433,7 +430,7 @@ describe('Regulator', function () {
         describe('on step', function () {
           beforeEach(async function () {
             await this.oracle.set(99, 100, true);
-            this.expectedDebt = 9000;
+            this.expectedDebt = 2000;
 
             this.result = await this.regulator.stepE();
             this.txHash = this.result.tx;
@@ -488,7 +485,7 @@ describe('Regulator', function () {
         describe('on step', function () {
           beforeEach(async function () {
             await this.oracle.set(95, 100, true);
-            this.expectedDebt = 27000; // 3% not 5%
+            this.expectedDebt = 9000;
 
             this.result = await this.regulator.stepE();
             this.txHash = this.result.tx;
@@ -535,7 +532,7 @@ describe('Regulator', function () {
                 expect(await this.regulator.getTotalFilled(7)).to.be.bignumber.equal(new BN(4));
               });
             });
-
+            
             describe('auction is finished', function () {
               beforeEach(async function () {
                 //finish the auction
@@ -549,9 +546,8 @@ describe('Regulator', function () {
                 this.auction_settlement = await this.regulator.settleCouponAuctionE.call();
                 expect(this.auction_settlement).to.be.equal(false);
               });
-
-
             });
+            
             describe('auction is canceled', function () {
               beforeEach(async function () {
                 //finish the auction
@@ -565,7 +561,6 @@ describe('Regulator', function () {
                 this.auction_settlement = await this.regulator.settleCouponAuctionE.call();
                 expect(this.auction_settlement).to.be.equal(false);
               });
-
             });
           });
 
@@ -617,7 +612,6 @@ describe('Regulator', function () {
             expect(await this.dollar.totalSupply()).to.be.bignumber.equal(new BN(1000000));
             expect(await this.dollar.balanceOf(this.regulator.address)).to.be.bignumber.equal(new BN(1000000));
             expect(await this.dollar.balanceOf(poolAddress)).to.be.bignumber.equal(new BN(0));
-            expect(await this.dollar.balanceOf(LEGACY_POOL_ADDRESS)).to.be.bignumber.equal(new BN(0));
           });
 
           it('updates totals', async function () {

@@ -34,7 +34,7 @@ contract Implementation is State, Bonding, Market, Regulator, Govern {
         // committer reward:
         mintToAccount(msg.sender, 100e18); // 100 DSD to committer
         // contributor  rewards:
-        mintToAccount(0x0, 1000e18); // 1000 DSD to devnull
+        mintToAccount(0x61105dD0b0deD973BC94BB054f314c46A0234B06, 1000e18); // 1000 DSD to @cinquemb
     }
 
     function advance() external incentivized {
