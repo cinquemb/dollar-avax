@@ -269,14 +269,14 @@
     "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/token/IDollar.sol",
     "exportedSymbols": {
       "IDollar": [
-        13103
+        13290
       ]
     },
-    "id": 13104,
+    "id": 13291,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 13077,
+        "id": 13264,
         "literals": [
           "solidity",
           "^",
@@ -287,7 +287,7 @@
         "src": "646:24:51"
       },
       {
-        "id": 13078,
+        "id": 13265,
         "literals": [
           "experimental",
           "ABIEncoderV2"
@@ -298,10 +298,10 @@
       {
         "absolutePath": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
         "file": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "id": 13079,
+        "id": 13266,
         "nodeType": "ImportDirective",
-        "scope": 13104,
-        "sourceUnit": 14204,
+        "scope": 13291,
+        "sourceUnit": 14391,
         "src": "706:56:51",
         "symbolAliases": [],
         "unitAlias": ""
@@ -312,31 +312,31 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 13080,
+              "id": 13267,
               "name": "IERC20",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 14203,
+              "referencedDeclaration": 14390,
               "src": "784:6:51",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_IERC20_$14203",
+                "typeIdentifier": "t_contract$_IERC20_$14390",
                 "typeString": "contract IERC20"
               }
             },
-            "id": 13081,
+            "id": 13268,
             "nodeType": "InheritanceSpecifier",
             "src": "784:6:51"
           }
         ],
         "contractDependencies": [
-          14203
+          14390
         ],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 13103,
+        "id": 13290,
         "linearizedBaseContracts": [
-          13103,
-          14203
+          13290,
+          14390
         ],
         "name": "IDollar",
         "nodeType": "ContractDefinition",
@@ -344,22 +344,22 @@
           {
             "body": null,
             "documentation": null,
-            "id": 13086,
+            "id": 13273,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "burn",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 13084,
+              "id": 13271,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 13083,
+                  "id": 13270,
                   "name": "amount",
                   "nodeType": "VariableDeclaration",
-                  "scope": 13086,
+                  "scope": 13273,
                   "src": "811:14:51",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -368,7 +368,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 13082,
+                    "id": 13269,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
                     "src": "811:7:51",
@@ -384,12 +384,12 @@
               "src": "810:16:51"
             },
             "returnParameters": {
-              "id": 13085,
+              "id": 13272,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "833:0:51"
             },
-            "scope": 13103,
+            "scope": 13290,
             "src": "797:37:51",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -398,22 +398,22 @@
           {
             "body": null,
             "documentation": null,
-            "id": 13093,
+            "id": 13280,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "burnFrom",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 13091,
+              "id": 13278,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 13088,
+                  "id": 13275,
                   "name": "account",
                   "nodeType": "VariableDeclaration",
-                  "scope": 13093,
+                  "scope": 13280,
                   "src": "857:15:51",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -422,7 +422,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 13087,
+                    "id": 13274,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "857:7:51",
@@ -437,10 +437,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 13090,
+                  "id": 13277,
                   "name": "amount",
                   "nodeType": "VariableDeclaration",
-                  "scope": 13093,
+                  "scope": 13280,
                   "src": "874:14:51",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -449,7 +449,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 13089,
+                    "id": 13276,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
                     "src": "874:7:51",
@@ -465,12 +465,12 @@
               "src": "856:33:51"
             },
             "returnParameters": {
-              "id": 13092,
+              "id": 13279,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "896:0:51"
             },
-            "scope": 13103,
+            "scope": 13290,
             "src": "839:58:51",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -479,22 +479,22 @@
           {
             "body": null,
             "documentation": null,
-            "id": 13102,
+            "id": 13289,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "mint",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 13098,
+              "id": 13285,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 13095,
+                  "id": 13282,
                   "name": "account",
                   "nodeType": "VariableDeclaration",
-                  "scope": 13102,
+                  "scope": 13289,
                   "src": "916:15:51",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -503,7 +503,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 13094,
+                    "id": 13281,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "916:7:51",
@@ -518,10 +518,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 13097,
+                  "id": 13284,
                   "name": "amount",
                   "nodeType": "VariableDeclaration",
-                  "scope": 13102,
+                  "scope": 13289,
                   "src": "933:14:51",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -530,7 +530,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 13096,
+                    "id": 13283,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
                     "src": "933:7:51",
@@ -546,15 +546,15 @@
               "src": "915:33:51"
             },
             "returnParameters": {
-              "id": 13101,
+              "id": 13288,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 13100,
+                  "id": 13287,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 13102,
+                  "scope": 13289,
                   "src": "965:4:51",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -563,7 +563,7 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 13099,
+                    "id": 13286,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
                     "src": "965:4:51",
@@ -578,14 +578,14 @@
               ],
               "src": "964:6:51"
             },
-            "scope": 13103,
+            "scope": 13290,
             "src": "902:69:51",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "public"
           }
         ],
-        "scope": 13104,
+        "scope": 13291,
         "src": "764:209:51"
       }
     ],
@@ -596,7 +596,7 @@
       "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/token/IDollar.sol",
       "exportedSymbols": {
         "IDollar": [
-          13103
+          13290
         ]
       }
     },
@@ -610,7 +610,7 @@
             ".17"
           ]
         },
-        "id": 13077,
+        "id": 13264,
         "name": "PragmaDirective",
         "src": "646:24:51"
       },
@@ -621,39 +621,39 @@
             "ABIEncoderV2"
           ]
         },
-        "id": 13078,
+        "id": 13265,
         "name": "PragmaDirective",
         "src": "671:33:51"
       },
       {
         "attributes": {
-          "SourceUnit": 14204,
+          "SourceUnit": 14391,
           "absolutePath": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
           "file": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-          "scope": 13104,
+          "scope": 13291,
           "symbolAliases": [
             null
           ],
           "unitAlias": ""
         },
-        "id": 13079,
+        "id": 13266,
         "name": "ImportDirective",
         "src": "706:56:51"
       },
       {
         "attributes": {
           "contractDependencies": [
-            14203
+            14390
           ],
           "contractKind": "contract",
           "documentation": null,
           "fullyImplemented": false,
           "linearizedBaseContracts": [
-            13103,
-            14203
+            13290,
+            14390
           ],
           "name": "IDollar",
-          "scope": 13104
+          "scope": 13291
         },
         "children": [
           {
@@ -665,15 +665,15 @@
                 "attributes": {
                   "contractScope": null,
                   "name": "IERC20",
-                  "referencedDeclaration": 14203,
+                  "referencedDeclaration": 14390,
                   "type": "contract IERC20"
                 },
-                "id": 13080,
+                "id": 13267,
                 "name": "UserDefinedTypeName",
                 "src": "784:6:51"
               }
             ],
-            "id": 13081,
+            "id": 13268,
             "name": "InheritanceSpecifier",
             "src": "784:6:51"
           },
@@ -688,7 +688,7 @@
                 null
               ],
               "name": "burn",
-              "scope": 13103,
+              "scope": 13290,
               "stateMutability": "nonpayable",
               "superFunction": null,
               "visibility": "public"
@@ -700,7 +700,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "amount",
-                      "scope": 13086,
+                      "scope": 13273,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -713,17 +713,17 @@
                           "name": "uint256",
                           "type": "uint256"
                         },
-                        "id": 13082,
+                        "id": 13269,
                         "name": "ElementaryTypeName",
                         "src": "811:7:51"
                       }
                     ],
-                    "id": 13083,
+                    "id": 13270,
                     "name": "VariableDeclaration",
                     "src": "811:14:51"
                   }
                 ],
-                "id": 13084,
+                "id": 13271,
                 "name": "ParameterList",
                 "src": "810:16:51"
               },
@@ -734,12 +734,12 @@
                   ]
                 },
                 "children": [],
-                "id": 13085,
+                "id": 13272,
                 "name": "ParameterList",
                 "src": "833:0:51"
               }
             ],
-            "id": 13086,
+            "id": 13273,
             "name": "FunctionDefinition",
             "src": "797:37:51"
           },
@@ -754,7 +754,7 @@
                 null
               ],
               "name": "burnFrom",
-              "scope": 13103,
+              "scope": 13290,
               "stateMutability": "nonpayable",
               "superFunction": null,
               "visibility": "public"
@@ -766,7 +766,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "account",
-                      "scope": 13093,
+                      "scope": 13280,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -780,12 +780,12 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 13087,
+                        "id": 13274,
                         "name": "ElementaryTypeName",
                         "src": "857:7:51"
                       }
                     ],
-                    "id": 13088,
+                    "id": 13275,
                     "name": "VariableDeclaration",
                     "src": "857:15:51"
                   },
@@ -793,7 +793,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "amount",
-                      "scope": 13093,
+                      "scope": 13280,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -806,17 +806,17 @@
                           "name": "uint256",
                           "type": "uint256"
                         },
-                        "id": 13089,
+                        "id": 13276,
                         "name": "ElementaryTypeName",
                         "src": "874:7:51"
                       }
                     ],
-                    "id": 13090,
+                    "id": 13277,
                     "name": "VariableDeclaration",
                     "src": "874:14:51"
                   }
                 ],
-                "id": 13091,
+                "id": 13278,
                 "name": "ParameterList",
                 "src": "856:33:51"
               },
@@ -827,12 +827,12 @@
                   ]
                 },
                 "children": [],
-                "id": 13092,
+                "id": 13279,
                 "name": "ParameterList",
                 "src": "896:0:51"
               }
             ],
-            "id": 13093,
+            "id": 13280,
             "name": "FunctionDefinition",
             "src": "839:58:51"
           },
@@ -847,7 +847,7 @@
                 null
               ],
               "name": "mint",
-              "scope": 13103,
+              "scope": 13290,
               "stateMutability": "nonpayable",
               "superFunction": null,
               "visibility": "public"
@@ -859,7 +859,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "account",
-                      "scope": 13102,
+                      "scope": 13289,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -873,12 +873,12 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 13094,
+                        "id": 13281,
                         "name": "ElementaryTypeName",
                         "src": "916:7:51"
                       }
                     ],
-                    "id": 13095,
+                    "id": 13282,
                     "name": "VariableDeclaration",
                     "src": "916:15:51"
                   },
@@ -886,7 +886,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "amount",
-                      "scope": 13102,
+                      "scope": 13289,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -899,17 +899,17 @@
                           "name": "uint256",
                           "type": "uint256"
                         },
-                        "id": 13096,
+                        "id": 13283,
                         "name": "ElementaryTypeName",
                         "src": "933:7:51"
                       }
                     ],
-                    "id": 13097,
+                    "id": 13284,
                     "name": "VariableDeclaration",
                     "src": "933:14:51"
                   }
                 ],
-                "id": 13098,
+                "id": 13285,
                 "name": "ParameterList",
                 "src": "915:33:51"
               },
@@ -919,7 +919,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "",
-                      "scope": 13102,
+                      "scope": 13289,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "bool",
@@ -932,32 +932,32 @@
                           "name": "bool",
                           "type": "bool"
                         },
-                        "id": 13099,
+                        "id": 13286,
                         "name": "ElementaryTypeName",
                         "src": "965:4:51"
                       }
                     ],
-                    "id": 13100,
+                    "id": 13287,
                     "name": "VariableDeclaration",
                     "src": "965:4:51"
                   }
                 ],
-                "id": 13101,
+                "id": 13288,
                 "name": "ParameterList",
                 "src": "964:6:51"
               }
             ],
-            "id": 13102,
+            "id": 13289,
             "name": "FunctionDefinition",
             "src": "902:69:51"
           }
         ],
-        "id": 13103,
+        "id": 13290,
         "name": "ContractDefinition",
         "src": "764:209:51"
       }
     ],
-    "id": 13104,
+    "id": 13291,
     "name": "SourceUnit",
     "src": "646:328:51"
   },
@@ -967,7 +967,7 @@
   },
   "networks": {},
   "schemaVersion": "3.3.3",
-  "updatedAt": "2021-01-12T08:04:50.983Z",
+  "updatedAt": "2021-01-13T12:52:39.198Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {

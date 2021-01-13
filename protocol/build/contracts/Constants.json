@@ -44,7 +44,7 @@
         "id": 3,
         "nodeType": "ImportDirective",
         "scope": 332,
-        "sourceUnit": 7190,
+        "sourceUnit": 7377,
         "src": "706:32:0",
         "symbolAliases": [],
         "unitAlias": ""
@@ -1860,10 +1860,10 @@
                         "name": "Decimal",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 7189,
+                        "referencedDeclaration": 7376,
                         "src": "3796:7:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_contract$_Decimal_$7189_$",
+                          "typeIdentifier": "t_type$_t_contract$_Decimal_$7376_$",
                           "typeString": "type(library Decimal)"
                         }
                       },
@@ -1874,10 +1874,10 @@
                       "lValueRequested": false,
                       "memberName": "D256",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 6727,
+                      "referencedDeclaration": 6914,
                       "src": "3796:12:0",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_type$_t_struct$_D256_$6727_storage_ptr_$",
+                        "typeIdentifier": "t_type$_t_struct$_D256_$6914_storage_ptr_$",
                         "typeString": "type(struct Decimal.D256 storage pointer)"
                       }
                     },
@@ -1893,7 +1893,7 @@
                     "nodeType": "FunctionCall",
                     "src": "3796:42:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_D256_$6727_memory",
+                      "typeIdentifier": "t_struct$_D256_$6914_memory",
                       "typeString": "struct Decimal.D256 memory"
                     }
                   },
@@ -1931,7 +1931,7 @@
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_D256_$6727_memory_ptr",
+                    "typeIdentifier": "t_struct$_D256_$6914_memory_ptr",
                     "typeString": "struct Decimal.D256"
                   },
                   "typeName": {
@@ -1939,10 +1939,10 @@
                     "id": 139,
                     "name": "Decimal.D256",
                     "nodeType": "UserDefinedTypeName",
-                    "referencedDeclaration": 6727,
+                    "referencedDeclaration": 6914,
                     "src": "3758:12:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_D256_$6727_storage_ptr",
+                      "typeIdentifier": "t_struct$_D256_$6914_storage_ptr",
                       "typeString": "struct Decimal.D256"
                     }
                   },
@@ -2074,10 +2074,10 @@
                         "name": "Decimal",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 7189,
+                        "referencedDeclaration": 7376,
                         "src": "4053:7:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_contract$_Decimal_$7189_$",
+                          "typeIdentifier": "t_type$_t_contract$_Decimal_$7376_$",
                           "typeString": "type(library Decimal)"
                         }
                       },
@@ -2088,10 +2088,10 @@
                       "lValueRequested": false,
                       "memberName": "D256",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 6727,
+                      "referencedDeclaration": 6914,
                       "src": "4053:12:0",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_type$_t_struct$_D256_$6727_storage_ptr_$",
+                        "typeIdentifier": "t_type$_t_struct$_D256_$6914_storage_ptr_$",
                         "typeString": "type(struct Decimal.D256 storage pointer)"
                       }
                     },
@@ -2107,7 +2107,7 @@
                     "nodeType": "FunctionCall",
                     "src": "4053:40:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_D256_$6727_memory",
+                      "typeIdentifier": "t_struct$_D256_$6914_memory",
                       "typeString": "struct Decimal.D256 memory"
                     }
                   },
@@ -2145,7 +2145,7 @@
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_D256_$6727_memory_ptr",
+                    "typeIdentifier": "t_struct$_D256_$6914_memory_ptr",
                     "typeString": "struct Decimal.D256"
                   },
                   "typeName": {
@@ -2153,10 +2153,10 @@
                     "id": 158,
                     "name": "Decimal.D256",
                     "nodeType": "UserDefinedTypeName",
-                    "referencedDeclaration": 6727,
+                    "referencedDeclaration": 6914,
                     "src": "4015:12:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_D256_$6727_storage_ptr",
+                      "typeIdentifier": "t_struct$_D256_$6914_storage_ptr",
                       "typeString": "struct Decimal.D256"
                     }
                   },
@@ -2209,10 +2209,10 @@
                         "name": "Decimal",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 7189,
+                        "referencedDeclaration": 7376,
                         "src": "4209:7:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_contract$_Decimal_$7189_$",
+                          "typeIdentifier": "t_type$_t_contract$_Decimal_$7376_$",
                           "typeString": "type(library Decimal)"
                         }
                       },
@@ -2223,10 +2223,10 @@
                       "lValueRequested": false,
                       "memberName": "D256",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 6727,
+                      "referencedDeclaration": 6914,
                       "src": "4209:12:0",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_type$_t_struct$_D256_$6727_storage_ptr_$",
+                        "typeIdentifier": "t_type$_t_struct$_D256_$6914_storage_ptr_$",
                         "typeString": "type(struct Decimal.D256 storage pointer)"
                       }
                     },
@@ -2242,7 +2242,7 @@
                     "nodeType": "FunctionCall",
                     "src": "4209:52:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_D256_$6727_memory",
+                      "typeIdentifier": "t_struct$_D256_$6914_memory",
                       "typeString": "struct Decimal.D256 memory"
                     }
                   },
@@ -2280,7 +2280,7 @@
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_D256_$6727_memory_ptr",
+                    "typeIdentifier": "t_struct$_D256_$6914_memory_ptr",
                     "typeString": "struct Decimal.D256"
                   },
                   "typeName": {
@@ -2288,10 +2288,10 @@
                     "id": 169,
                     "name": "Decimal.D256",
                     "nodeType": "UserDefinedTypeName",
-                    "referencedDeclaration": 6727,
+                    "referencedDeclaration": 6914,
                     "src": "4171:12:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_D256_$6727_storage_ptr",
+                      "typeIdentifier": "t_struct$_D256_$6914_storage_ptr",
                       "typeString": "struct Decimal.D256"
                     }
                   },
@@ -2344,10 +2344,10 @@
                         "name": "Decimal",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 7189,
+                        "referencedDeclaration": 7376,
                         "src": "4373:7:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_contract$_Decimal_$7189_$",
+                          "typeIdentifier": "t_type$_t_contract$_Decimal_$7376_$",
                           "typeString": "type(library Decimal)"
                         }
                       },
@@ -2358,10 +2358,10 @@
                       "lValueRequested": false,
                       "memberName": "D256",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 6727,
+                      "referencedDeclaration": 6914,
                       "src": "4373:12:0",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_type$_t_struct$_D256_$6727_storage_ptr_$",
+                        "typeIdentifier": "t_type$_t_struct$_D256_$6914_storage_ptr_$",
                         "typeString": "type(struct Decimal.D256 storage pointer)"
                       }
                     },
@@ -2377,7 +2377,7 @@
                     "nodeType": "FunctionCall",
                     "src": "4373:48:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_D256_$6727_memory",
+                      "typeIdentifier": "t_struct$_D256_$6914_memory",
                       "typeString": "struct Decimal.D256 memory"
                     }
                   },
@@ -2415,7 +2415,7 @@
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_D256_$6727_memory_ptr",
+                    "typeIdentifier": "t_struct$_D256_$6914_memory_ptr",
                     "typeString": "struct Decimal.D256"
                   },
                   "typeName": {
@@ -2423,10 +2423,10 @@
                     "id": 180,
                     "name": "Decimal.D256",
                     "nodeType": "UserDefinedTypeName",
-                    "referencedDeclaration": 6727,
+                    "referencedDeclaration": 6914,
                     "src": "4335:12:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_D256_$6727_storage_ptr",
+                      "typeIdentifier": "t_struct$_D256_$6914_storage_ptr",
                       "typeString": "struct Decimal.D256"
                     }
                   },
@@ -2874,10 +2874,10 @@
                         "name": "Decimal",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 7189,
+                        "referencedDeclaration": 7376,
                         "src": "5107:7:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_contract$_Decimal_$7189_$",
+                          "typeIdentifier": "t_type$_t_contract$_Decimal_$7376_$",
                           "typeString": "type(library Decimal)"
                         }
                       },
@@ -2888,10 +2888,10 @@
                       "lValueRequested": false,
                       "memberName": "D256",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 6727,
+                      "referencedDeclaration": 6914,
                       "src": "5107:12:0",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_type$_t_struct$_D256_$6727_storage_ptr_$",
+                        "typeIdentifier": "t_type$_t_struct$_D256_$6914_storage_ptr_$",
                         "typeString": "type(struct Decimal.D256 storage pointer)"
                       }
                     },
@@ -2907,7 +2907,7 @@
                     "nodeType": "FunctionCall",
                     "src": "5107:37:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_D256_$6727_memory",
+                      "typeIdentifier": "t_struct$_D256_$6914_memory",
                       "typeString": "struct Decimal.D256 memory"
                     }
                   },
@@ -2945,7 +2945,7 @@
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_D256_$6727_memory_ptr",
+                    "typeIdentifier": "t_struct$_D256_$6914_memory_ptr",
                     "typeString": "struct Decimal.D256"
                   },
                   "typeName": {
@@ -2953,10 +2953,10 @@
                     "id": 231,
                     "name": "Decimal.D256",
                     "nodeType": "UserDefinedTypeName",
-                    "referencedDeclaration": 6727,
+                    "referencedDeclaration": 6914,
                     "src": "5069:12:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_D256_$6727_storage_ptr",
+                      "typeIdentifier": "t_struct$_D256_$6914_storage_ptr",
                       "typeString": "struct Decimal.D256"
                     }
                   },
@@ -3009,10 +3009,10 @@
                         "name": "Decimal",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 7189,
+                        "referencedDeclaration": 7376,
                         "src": "5267:7:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_contract$_Decimal_$7189_$",
+                          "typeIdentifier": "t_type$_t_contract$_Decimal_$7376_$",
                           "typeString": "type(library Decimal)"
                         }
                       },
@@ -3023,10 +3023,10 @@
                       "lValueRequested": false,
                       "memberName": "D256",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 6727,
+                      "referencedDeclaration": 6914,
                       "src": "5267:12:0",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_type$_t_struct$_D256_$6727_storage_ptr_$",
+                        "typeIdentifier": "t_type$_t_struct$_D256_$6914_storage_ptr_$",
                         "typeString": "type(struct Decimal.D256 storage pointer)"
                       }
                     },
@@ -3042,7 +3042,7 @@
                     "nodeType": "FunctionCall",
                     "src": "5267:56:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_D256_$6727_memory",
+                      "typeIdentifier": "t_struct$_D256_$6914_memory",
                       "typeString": "struct Decimal.D256 memory"
                     }
                   },
@@ -3080,7 +3080,7 @@
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_D256_$6727_memory_ptr",
+                    "typeIdentifier": "t_struct$_D256_$6914_memory_ptr",
                     "typeString": "struct Decimal.D256"
                   },
                   "typeName": {
@@ -3088,10 +3088,10 @@
                     "id": 242,
                     "name": "Decimal.D256",
                     "nodeType": "UserDefinedTypeName",
-                    "referencedDeclaration": 6727,
+                    "referencedDeclaration": 6914,
                     "src": "5229:12:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_D256_$6727_storage_ptr",
+                      "typeIdentifier": "t_struct$_D256_$6914_storage_ptr",
                       "typeString": "struct Decimal.D256"
                     }
                   },
@@ -3223,10 +3223,10 @@
                         "name": "Decimal",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 7189,
+                        "referencedDeclaration": 7376,
                         "src": "5565:7:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_contract$_Decimal_$7189_$",
+                          "typeIdentifier": "t_type$_t_contract$_Decimal_$7376_$",
                           "typeString": "type(library Decimal)"
                         }
                       },
@@ -3237,10 +3237,10 @@
                       "lValueRequested": false,
                       "memberName": "D256",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 6727,
+                      "referencedDeclaration": 6914,
                       "src": "5565:12:0",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_type$_t_struct$_D256_$6727_storage_ptr_$",
+                        "typeIdentifier": "t_type$_t_struct$_D256_$6914_storage_ptr_$",
                         "typeString": "type(struct Decimal.D256 storage pointer)"
                       }
                     },
@@ -3256,7 +3256,7 @@
                     "nodeType": "FunctionCall",
                     "src": "5565:42:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_D256_$6727_memory",
+                      "typeIdentifier": "t_struct$_D256_$6914_memory",
                       "typeString": "struct Decimal.D256 memory"
                     }
                   },
@@ -3294,7 +3294,7 @@
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_D256_$6727_memory_ptr",
+                    "typeIdentifier": "t_struct$_D256_$6914_memory_ptr",
                     "typeString": "struct Decimal.D256"
                   },
                   "typeName": {
@@ -3302,10 +3302,10 @@
                     "id": 261,
                     "name": "Decimal.D256",
                     "nodeType": "UserDefinedTypeName",
-                    "referencedDeclaration": 6727,
+                    "referencedDeclaration": 6914,
                     "src": "5527:12:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_D256_$6727_storage_ptr",
+                      "typeIdentifier": "t_struct$_D256_$6914_storage_ptr",
                       "typeString": "struct Decimal.D256"
                     }
                   },
@@ -3358,10 +3358,10 @@
                         "name": "Decimal",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 7189,
+                        "referencedDeclaration": 7376,
                         "src": "5715:7:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_contract$_Decimal_$7189_$",
+                          "typeIdentifier": "t_type$_t_contract$_Decimal_$7376_$",
                           "typeString": "type(library Decimal)"
                         }
                       },
@@ -3372,10 +3372,10 @@
                       "lValueRequested": false,
                       "memberName": "D256",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 6727,
+                      "referencedDeclaration": 6914,
                       "src": "5715:12:0",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_type$_t_struct$_D256_$6727_storage_ptr_$",
+                        "typeIdentifier": "t_type$_t_struct$_D256_$6914_storage_ptr_$",
                         "typeString": "type(struct Decimal.D256 storage pointer)"
                       }
                     },
@@ -3391,7 +3391,7 @@
                     "nodeType": "FunctionCall",
                     "src": "5715:44:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_D256_$6727_memory",
+                      "typeIdentifier": "t_struct$_D256_$6914_memory",
                       "typeString": "struct Decimal.D256 memory"
                     }
                   },
@@ -3429,7 +3429,7 @@
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_D256_$6727_memory_ptr",
+                    "typeIdentifier": "t_struct$_D256_$6914_memory_ptr",
                     "typeString": "struct Decimal.D256"
                   },
                   "typeName": {
@@ -3437,10 +3437,10 @@
                     "id": 272,
                     "name": "Decimal.D256",
                     "nodeType": "UserDefinedTypeName",
-                    "referencedDeclaration": 6727,
+                    "referencedDeclaration": 6914,
                     "src": "5677:12:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_D256_$6727_storage_ptr",
+                      "typeIdentifier": "t_struct$_D256_$6914_storage_ptr",
                       "typeString": "struct Decimal.D256"
                     }
                   },
@@ -3493,10 +3493,10 @@
                         "name": "Decimal",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 7189,
+                        "referencedDeclaration": 7376,
                         "src": "5871:7:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_contract$_Decimal_$7189_$",
+                          "typeIdentifier": "t_type$_t_contract$_Decimal_$7376_$",
                           "typeString": "type(library Decimal)"
                         }
                       },
@@ -3507,10 +3507,10 @@
                       "lValueRequested": false,
                       "memberName": "D256",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 6727,
+                      "referencedDeclaration": 6914,
                       "src": "5871:12:0",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_type$_t_struct$_D256_$6727_storage_ptr_$",
+                        "typeIdentifier": "t_type$_t_struct$_D256_$6914_storage_ptr_$",
                         "typeString": "type(struct Decimal.D256 storage pointer)"
                       }
                     },
@@ -3526,7 +3526,7 @@
                     "nodeType": "FunctionCall",
                     "src": "5871:49:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_D256_$6727_memory",
+                      "typeIdentifier": "t_struct$_D256_$6914_memory",
                       "typeString": "struct Decimal.D256 memory"
                     }
                   },
@@ -3564,7 +3564,7 @@
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_D256_$6727_memory_ptr",
+                    "typeIdentifier": "t_struct$_D256_$6914_memory_ptr",
                     "typeString": "struct Decimal.D256"
                   },
                   "typeName": {
@@ -3572,10 +3572,10 @@
                     "id": 283,
                     "name": "Decimal.D256",
                     "nodeType": "UserDefinedTypeName",
-                    "referencedDeclaration": 6727,
+                    "referencedDeclaration": 6914,
                     "src": "5833:12:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_D256_$6727_storage_ptr",
+                      "typeIdentifier": "t_struct$_D256_$6914_storage_ptr",
                       "typeString": "struct Decimal.D256"
                     }
                   },
@@ -3628,10 +3628,10 @@
                         "name": "Decimal",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 7189,
+                        "referencedDeclaration": 7376,
                         "src": "6034:7:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_contract$_Decimal_$7189_$",
+                          "typeIdentifier": "t_type$_t_contract$_Decimal_$7376_$",
                           "typeString": "type(library Decimal)"
                         }
                       },
@@ -3642,10 +3642,10 @@
                       "lValueRequested": false,
                       "memberName": "D256",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 6727,
+                      "referencedDeclaration": 6914,
                       "src": "6034:12:0",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_type$_t_struct$_D256_$6727_storage_ptr_$",
+                        "typeIdentifier": "t_type$_t_struct$_D256_$6914_storage_ptr_$",
                         "typeString": "type(struct Decimal.D256 storage pointer)"
                       }
                     },
@@ -3661,7 +3661,7 @@
                     "nodeType": "FunctionCall",
                     "src": "6034:51:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_D256_$6727_memory",
+                      "typeIdentifier": "t_struct$_D256_$6914_memory",
                       "typeString": "struct Decimal.D256 memory"
                     }
                   },
@@ -3699,7 +3699,7 @@
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_D256_$6727_memory_ptr",
+                    "typeIdentifier": "t_struct$_D256_$6914_memory_ptr",
                     "typeString": "struct Decimal.D256"
                   },
                   "typeName": {
@@ -3707,10 +3707,10 @@
                     "id": 294,
                     "name": "Decimal.D256",
                     "nodeType": "UserDefinedTypeName",
-                    "referencedDeclaration": 6727,
+                    "referencedDeclaration": 6914,
                     "src": "5996:12:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_D256_$6727_storage_ptr",
+                      "typeIdentifier": "t_struct$_D256_$6914_storage_ptr",
                       "typeString": "struct Decimal.D256"
                     }
                   },
@@ -3763,10 +3763,10 @@
                         "name": "Decimal",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 7189,
+                        "referencedDeclaration": 7376,
                         "src": "6201:7:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_contract$_Decimal_$7189_$",
+                          "typeIdentifier": "t_type$_t_contract$_Decimal_$7376_$",
                           "typeString": "type(library Decimal)"
                         }
                       },
@@ -3777,10 +3777,10 @@
                       "lValueRequested": false,
                       "memberName": "D256",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 6727,
+                      "referencedDeclaration": 6914,
                       "src": "6201:12:0",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_type$_t_struct$_D256_$6727_storage_ptr_$",
+                        "typeIdentifier": "t_type$_t_struct$_D256_$6914_storage_ptr_$",
                         "typeString": "type(struct Decimal.D256 storage pointer)"
                       }
                     },
@@ -3796,7 +3796,7 @@
                     "nodeType": "FunctionCall",
                     "src": "6201:53:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_D256_$6727_memory",
+                      "typeIdentifier": "t_struct$_D256_$6914_memory",
                       "typeString": "struct Decimal.D256 memory"
                     }
                   },
@@ -3834,7 +3834,7 @@
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_D256_$6727_memory_ptr",
+                    "typeIdentifier": "t_struct$_D256_$6914_memory_ptr",
                     "typeString": "struct Decimal.D256"
                   },
                   "typeName": {
@@ -3842,10 +3842,10 @@
                     "id": 305,
                     "name": "Decimal.D256",
                     "nodeType": "UserDefinedTypeName",
-                    "referencedDeclaration": 6727,
+                    "referencedDeclaration": 6914,
                     "src": "6163:12:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_D256_$6727_storage_ptr",
+                      "typeIdentifier": "t_struct$_D256_$6914_storage_ptr",
                       "typeString": "struct Decimal.D256"
                     }
                   },
@@ -4062,7 +4062,7 @@
       },
       {
         "attributes": {
-          "SourceUnit": 7190,
+          "SourceUnit": 7377,
           "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/external/Decimal.sol",
           "file": "./external/Decimal.sol",
           "scope": 332,
@@ -5963,7 +5963,7 @@
                         "attributes": {
                           "contractScope": null,
                           "name": "Decimal.D256",
-                          "referencedDeclaration": 6727,
+                          "referencedDeclaration": 6914,
                           "type": "struct Decimal.D256"
                         },
                         "id": 139,
@@ -6015,7 +6015,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "D256",
-                              "referencedDeclaration": 6727,
+                              "referencedDeclaration": 6914,
                               "type": "type(struct Decimal.D256 storage pointer)"
                             },
                             "children": [
@@ -6025,7 +6025,7 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 7189,
+                                  "referencedDeclaration": 7376,
                                   "type": "type(library Decimal)",
                                   "value": "Decimal"
                                 },
@@ -6213,7 +6213,7 @@
                         "attributes": {
                           "contractScope": null,
                           "name": "Decimal.D256",
-                          "referencedDeclaration": 6727,
+                          "referencedDeclaration": 6914,
                           "type": "struct Decimal.D256"
                         },
                         "id": 158,
@@ -6265,7 +6265,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "D256",
-                              "referencedDeclaration": 6727,
+                              "referencedDeclaration": 6914,
                               "type": "type(struct Decimal.D256 storage pointer)"
                             },
                             "children": [
@@ -6275,7 +6275,7 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 7189,
+                                  "referencedDeclaration": 7376,
                                   "type": "type(library Decimal)",
                                   "value": "Decimal"
                                 },
@@ -6367,7 +6367,7 @@
                         "attributes": {
                           "contractScope": null,
                           "name": "Decimal.D256",
-                          "referencedDeclaration": 6727,
+                          "referencedDeclaration": 6914,
                           "type": "struct Decimal.D256"
                         },
                         "id": 169,
@@ -6419,7 +6419,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "D256",
-                              "referencedDeclaration": 6727,
+                              "referencedDeclaration": 6914,
                               "type": "type(struct Decimal.D256 storage pointer)"
                             },
                             "children": [
@@ -6429,7 +6429,7 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 7189,
+                                  "referencedDeclaration": 7376,
                                   "type": "type(library Decimal)",
                                   "value": "Decimal"
                                 },
@@ -6521,7 +6521,7 @@
                         "attributes": {
                           "contractScope": null,
                           "name": "Decimal.D256",
-                          "referencedDeclaration": 6727,
+                          "referencedDeclaration": 6914,
                           "type": "struct Decimal.D256"
                         },
                         "id": 180,
@@ -6573,7 +6573,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "D256",
-                              "referencedDeclaration": 6727,
+                              "referencedDeclaration": 6914,
                               "type": "type(struct Decimal.D256 storage pointer)"
                             },
                             "children": [
@@ -6583,7 +6583,7 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 7189,
+                                  "referencedDeclaration": 7376,
                                   "type": "type(library Decimal)",
                                   "value": "Decimal"
                                 },
@@ -7155,7 +7155,7 @@
                         "attributes": {
                           "contractScope": null,
                           "name": "Decimal.D256",
-                          "referencedDeclaration": 6727,
+                          "referencedDeclaration": 6914,
                           "type": "struct Decimal.D256"
                         },
                         "id": 231,
@@ -7207,7 +7207,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "D256",
-                              "referencedDeclaration": 6727,
+                              "referencedDeclaration": 6914,
                               "type": "type(struct Decimal.D256 storage pointer)"
                             },
                             "children": [
@@ -7217,7 +7217,7 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 7189,
+                                  "referencedDeclaration": 7376,
                                   "type": "type(library Decimal)",
                                   "value": "Decimal"
                                 },
@@ -7309,7 +7309,7 @@
                         "attributes": {
                           "contractScope": null,
                           "name": "Decimal.D256",
-                          "referencedDeclaration": 6727,
+                          "referencedDeclaration": 6914,
                           "type": "struct Decimal.D256"
                         },
                         "id": 242,
@@ -7361,7 +7361,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "D256",
-                              "referencedDeclaration": 6727,
+                              "referencedDeclaration": 6914,
                               "type": "type(struct Decimal.D256 storage pointer)"
                             },
                             "children": [
@@ -7371,7 +7371,7 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 7189,
+                                  "referencedDeclaration": 7376,
                                   "type": "type(library Decimal)",
                                   "value": "Decimal"
                                 },
@@ -7559,7 +7559,7 @@
                         "attributes": {
                           "contractScope": null,
                           "name": "Decimal.D256",
-                          "referencedDeclaration": 6727,
+                          "referencedDeclaration": 6914,
                           "type": "struct Decimal.D256"
                         },
                         "id": 261,
@@ -7611,7 +7611,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "D256",
-                              "referencedDeclaration": 6727,
+                              "referencedDeclaration": 6914,
                               "type": "type(struct Decimal.D256 storage pointer)"
                             },
                             "children": [
@@ -7621,7 +7621,7 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 7189,
+                                  "referencedDeclaration": 7376,
                                   "type": "type(library Decimal)",
                                   "value": "Decimal"
                                 },
@@ -7713,7 +7713,7 @@
                         "attributes": {
                           "contractScope": null,
                           "name": "Decimal.D256",
-                          "referencedDeclaration": 6727,
+                          "referencedDeclaration": 6914,
                           "type": "struct Decimal.D256"
                         },
                         "id": 272,
@@ -7765,7 +7765,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "D256",
-                              "referencedDeclaration": 6727,
+                              "referencedDeclaration": 6914,
                               "type": "type(struct Decimal.D256 storage pointer)"
                             },
                             "children": [
@@ -7775,7 +7775,7 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 7189,
+                                  "referencedDeclaration": 7376,
                                   "type": "type(library Decimal)",
                                   "value": "Decimal"
                                 },
@@ -7867,7 +7867,7 @@
                         "attributes": {
                           "contractScope": null,
                           "name": "Decimal.D256",
-                          "referencedDeclaration": 6727,
+                          "referencedDeclaration": 6914,
                           "type": "struct Decimal.D256"
                         },
                         "id": 283,
@@ -7919,7 +7919,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "D256",
-                              "referencedDeclaration": 6727,
+                              "referencedDeclaration": 6914,
                               "type": "type(struct Decimal.D256 storage pointer)"
                             },
                             "children": [
@@ -7929,7 +7929,7 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 7189,
+                                  "referencedDeclaration": 7376,
                                   "type": "type(library Decimal)",
                                   "value": "Decimal"
                                 },
@@ -8021,7 +8021,7 @@
                         "attributes": {
                           "contractScope": null,
                           "name": "Decimal.D256",
-                          "referencedDeclaration": 6727,
+                          "referencedDeclaration": 6914,
                           "type": "struct Decimal.D256"
                         },
                         "id": 294,
@@ -8073,7 +8073,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "D256",
-                              "referencedDeclaration": 6727,
+                              "referencedDeclaration": 6914,
                               "type": "type(struct Decimal.D256 storage pointer)"
                             },
                             "children": [
@@ -8083,7 +8083,7 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 7189,
+                                  "referencedDeclaration": 7376,
                                   "type": "type(library Decimal)",
                                   "value": "Decimal"
                                 },
@@ -8175,7 +8175,7 @@
                         "attributes": {
                           "contractScope": null,
                           "name": "Decimal.D256",
-                          "referencedDeclaration": 6727,
+                          "referencedDeclaration": 6914,
                           "type": "struct Decimal.D256"
                         },
                         "id": 305,
@@ -8227,7 +8227,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "D256",
-                              "referencedDeclaration": 6727,
+                              "referencedDeclaration": 6914,
                               "type": "type(struct Decimal.D256 storage pointer)"
                             },
                             "children": [
@@ -8237,7 +8237,7 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 7189,
+                                  "referencedDeclaration": 7376,
                                   "type": "type(library Decimal)",
                                   "value": "Decimal"
                                 },
@@ -8492,7 +8492,7 @@
   },
   "networks": {},
   "schemaVersion": "3.3.3",
-  "updatedAt": "2021-01-12T08:04:47.253Z",
+  "updatedAt": "2021-01-13T12:52:36.940Z",
   "devdoc": {
     "methods": {}
   },

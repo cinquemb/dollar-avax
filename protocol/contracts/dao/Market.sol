@@ -192,6 +192,12 @@ contract Market is Comptroller, Curve {
             "Not enough debt"
         );
 
+        Require.that(
+            acceptableBidCheck(msg.sender, dollarAmount),
+            FILE,
+            "Must have enough in account"
+        );
+
         uint256 epoch = epoch().add(couponEpochExpiry);
         setCouponAuctionRelYield(maxCouponAmount.div(dollarAmount));
         setCouponAuctionRelDollarAmount(dollarAmount);

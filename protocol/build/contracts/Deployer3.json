@@ -1116,20 +1116,20 @@
     "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/dao/Deployer.sol",
     "exportedSymbols": {
       "Deployer1": [
-        1511
+        1542
       ],
       "Deployer2": [
-        1553
+        1584
       ],
       "Deployer3": [
-        1598
+        1629
       ]
     },
-    "id": 1599,
+    "id": 1630,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 1471,
+        "id": 1502,
         "literals": [
           "solidity",
           "^",
@@ -1140,7 +1140,7 @@
         "src": "646:24:5"
       },
       {
-        "id": 1472,
+        "id": 1503,
         "literals": [
           "experimental",
           "ABIEncoderV2"
@@ -1151,10 +1151,10 @@
       {
         "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/external/Decimal.sol",
         "file": "../external/Decimal.sol",
-        "id": 1473,
+        "id": 1504,
         "nodeType": "ImportDirective",
-        "scope": 1599,
-        "sourceUnit": 7314,
+        "scope": 1630,
+        "sourceUnit": 7377,
         "src": "706:33:5",
         "symbolAliases": [],
         "unitAlias": ""
@@ -1162,10 +1162,10 @@
       {
         "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/token/Dollar.sol",
         "file": "../token/Dollar.sol",
-        "id": 1474,
+        "id": 1505,
         "nodeType": "ImportDirective",
-        "scope": 1599,
-        "sourceUnit": 13200,
+        "scope": 1630,
+        "sourceUnit": 13263,
         "src": "740:29:5",
         "symbolAliases": [],
         "unitAlias": ""
@@ -1173,10 +1173,10 @@
       {
         "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/oracle/Oracle.sol",
         "file": "../oracle/Oracle.sol",
-        "id": 1475,
+        "id": 1506,
         "nodeType": "ImportDirective",
-        "scope": 1599,
-        "sourceUnit": 11810,
+        "scope": 1630,
+        "sourceUnit": 11873,
         "src": "770:30:5",
         "symbolAliases": [],
         "unitAlias": ""
@@ -1184,10 +1184,10 @@
       {
         "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/oracle/Pool.sol",
         "file": "../oracle/Pool.sol",
-        "id": 1476,
+        "id": 1507,
         "nodeType": "ImportDirective",
-        "scope": 1599,
-        "sourceUnit": 12410,
+        "scope": 1630,
+        "sourceUnit": 12473,
         "src": "801:28:5",
         "symbolAliases": [],
         "unitAlias": ""
@@ -1195,10 +1195,10 @@
       {
         "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/dao/Upgradeable.sol",
         "file": "./Upgradeable.sol",
-        "id": 1477,
+        "id": 1508,
         "nodeType": "ImportDirective",
-        "scope": 1599,
-        "sourceUnit": 6836,
+        "scope": 1630,
+        "sourceUnit": 6899,
         "src": "830:27:5",
         "symbolAliases": [],
         "unitAlias": ""
@@ -1206,10 +1206,10 @@
       {
         "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/dao/Permission.sol",
         "file": "./Permission.sol",
-        "id": 1478,
+        "id": 1509,
         "nodeType": "ImportDirective",
-        "scope": 1599,
-        "sourceUnit": 3916,
+        "scope": 1630,
+        "sourceUnit": 3959,
         "src": "858:26:5",
         "symbolAliases": [],
         "unitAlias": ""
@@ -1220,17 +1220,17 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 1479,
+              "id": 1510,
               "name": "State",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 6765,
+              "referencedDeclaration": 6828,
               "src": "909:5:5",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_State_$6765",
+                "typeIdentifier": "t_contract$_State_$6828",
                 "typeString": "contract State"
               }
             },
-            "id": 1480,
+            "id": 1511,
             "nodeType": "InheritanceSpecifier",
             "src": "909:5:5"
           },
@@ -1238,17 +1238,17 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 1481,
+              "id": 1512,
               "name": "Permission",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 3915,
+              "referencedDeclaration": 3958,
               "src": "916:10:5",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_Permission_$3915",
+                "typeIdentifier": "t_contract$_Permission_$3958",
                 "typeString": "contract Permission"
               }
             },
-            "id": 1482,
+            "id": 1513,
             "nodeType": "InheritanceSpecifier",
             "src": "916:10:5"
           },
@@ -1256,54 +1256,54 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 1483,
+              "id": 1514,
               "name": "Upgradeable",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 6835,
+              "referencedDeclaration": 6898,
               "src": "928:11:5",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_Upgradeable_$6835",
+                "typeIdentifier": "t_contract$_Upgradeable_$6898",
                 "typeString": "contract Upgradeable"
               }
             },
-            "id": 1484,
+            "id": 1515,
             "nodeType": "InheritanceSpecifier",
             "src": "928:11:5"
           }
         ],
         "contractDependencies": [
-          2576,
-          3915,
-          6580,
-          6765,
-          6835,
-          13199
+          2607,
+          3958,
+          6643,
+          6828,
+          6898,
+          13262
         ],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 1511,
+        "id": 1542,
         "linearizedBaseContracts": [
-          1511,
-          6835,
-          3915,
-          6580,
-          2576,
-          6765
+          1542,
+          6898,
+          3958,
+          6643,
+          2607,
+          6828
         ],
         "name": "Deployer1",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "body": {
-              "id": 1499,
+              "id": 1530,
               "nodeType": "Block",
               "src": "987:54:5",
               "statements": [
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "id": 1497,
+                    "id": 1528,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1314,42 +1314,42 @@
                         "argumentTypes": null,
                         "expression": {
                           "argumentTypes": null,
-                          "id": 1489,
+                          "id": 1520,
                           "name": "_state",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 6764,
+                          "referencedDeclaration": 6827,
                           "src": "997:6:5",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_struct$_State_$6761_storage",
+                            "typeIdentifier": "t_struct$_State_$6824_storage",
                             "typeString": "struct Storage.State storage ref"
                           }
                         },
-                        "id": 1492,
+                        "id": 1523,
                         "isConstant": false,
                         "isLValue": true,
                         "isPure": false,
                         "lValueRequested": false,
                         "memberName": "provider",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 6748,
+                        "referencedDeclaration": 6811,
                         "src": "997:15:5",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_struct$_Provider_$6729_storage",
+                          "typeIdentifier": "t_struct$_Provider_$6792_storage",
                           "typeString": "struct Storage.Provider storage ref"
                         }
                       },
-                      "id": 1493,
+                      "id": 1524,
                       "isConstant": false,
                       "isLValue": true,
                       "isPure": false,
                       "lValueRequested": true,
                       "memberName": "dollar",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 6724,
+                      "referencedDeclaration": 6787,
                       "src": "997:22:5",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_IDollar_$13227",
+                        "typeIdentifier": "t_contract$_IDollar_$13290",
                         "typeString": "contract IDollar"
                       }
                     },
@@ -1360,7 +1360,7 @@
                       "arguments": [],
                       "expression": {
                         "argumentTypes": [],
-                        "id": 1495,
+                        "id": 1526,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -1368,23 +1368,23 @@
                         "nodeType": "NewExpression",
                         "src": "1022:10:5",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_function_creation_nonpayable$__$returns$_t_contract$_Dollar_$13199_$",
+                          "typeIdentifier": "t_function_creation_nonpayable$__$returns$_t_contract$_Dollar_$13262_$",
                           "typeString": "function () returns (contract Dollar)"
                         },
                         "typeName": {
                           "contractScope": null,
-                          "id": 1494,
+                          "id": 1525,
                           "name": "Dollar",
                           "nodeType": "UserDefinedTypeName",
-                          "referencedDeclaration": 13199,
+                          "referencedDeclaration": 13262,
                           "src": "1026:6:5",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_contract$_Dollar_$13199",
+                            "typeIdentifier": "t_contract$_Dollar_$13262",
                             "typeString": "contract Dollar"
                           }
                         }
                       },
-                      "id": 1496,
+                      "id": 1527,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -1394,37 +1394,37 @@
                       "nodeType": "FunctionCall",
                       "src": "1022:12:5",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_Dollar_$13199",
+                        "typeIdentifier": "t_contract$_Dollar_$13262",
                         "typeString": "contract Dollar"
                       }
                     },
                     "src": "997:37:5",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_IDollar_$13227",
+                      "typeIdentifier": "t_contract$_IDollar_$13290",
                       "typeString": "contract IDollar"
                     }
                   },
-                  "id": 1498,
+                  "id": 1529,
                   "nodeType": "ExpressionStatement",
                   "src": "997:37:5"
                 }
               ]
             },
             "documentation": null,
-            "id": 1500,
+            "id": 1531,
             "implemented": true,
             "kind": "function",
             "modifiers": [
               {
                 "arguments": null,
-                "id": 1487,
+                "id": 1518,
                 "modifierName": {
                   "argumentTypes": null,
-                  "id": 1486,
+                  "id": 1517,
                   "name": "initializer",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 3914,
+                  "referencedDeclaration": 3957,
                   "src": "968:11:5",
                   "typeDescriptions": {
                     "typeIdentifier": "t_modifier$__$",
@@ -1438,26 +1438,26 @@
             "name": "initialize",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 1485,
+              "id": 1516,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "965:2:5"
             },
             "returnParameters": {
-              "id": 1488,
+              "id": 1519,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "987:0:5"
             },
-            "scope": 1511,
+            "scope": 1542,
             "src": "946:95:5",
             "stateMutability": "nonpayable",
-            "superFunction": 6782,
+            "superFunction": 6845,
             "visibility": "public"
           },
           {
             "body": {
-              "id": 1509,
+              "id": 1540,
               "nodeType": "Block",
               "src": "1099:42:5",
               "statements": [
@@ -1467,11 +1467,11 @@
                     "arguments": [
                       {
                         "argumentTypes": null,
-                        "id": 1506,
+                        "id": 1537,
                         "name": "implementation",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1502,
+                        "referencedDeclaration": 1533,
                         "src": "1119:14:5",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
@@ -1486,18 +1486,18 @@
                           "typeString": "address"
                         }
                       ],
-                      "id": 1505,
+                      "id": 1536,
                       "name": "upgradeTo",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 6815,
+                      "referencedDeclaration": 6878,
                       "src": "1109:9:5",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$_t_address_$returns$__$",
                         "typeString": "function (address)"
                       }
                     },
-                    "id": 1507,
+                    "id": 1538,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1511,29 +1511,29 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 1508,
+                  "id": 1539,
                   "nodeType": "ExpressionStatement",
                   "src": "1109:25:5"
                 }
               ]
             },
             "documentation": null,
-            "id": 1510,
+            "id": 1541,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
             "name": "implement",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 1503,
+              "id": 1534,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1502,
+                  "id": 1533,
                   "name": "implementation",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1510,
+                  "scope": 1541,
                   "src": "1066:22:5",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1542,7 +1542,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 1501,
+                    "id": 1532,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "1066:7:5",
@@ -1559,19 +1559,19 @@
               "src": "1065:24:5"
             },
             "returnParameters": {
-              "id": 1504,
+              "id": 1535,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "1099:0:5"
             },
-            "scope": 1511,
+            "scope": 1542,
             "src": "1047:94:5",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "external"
           }
         ],
-        "scope": 1599,
+        "scope": 1630,
         "src": "887:256:5"
       },
       {
@@ -1580,17 +1580,17 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 1512,
+              "id": 1543,
               "name": "State",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 6765,
+              "referencedDeclaration": 6828,
               "src": "1167:5:5",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_State_$6765",
+                "typeIdentifier": "t_contract$_State_$6828",
                 "typeString": "contract State"
               }
             },
-            "id": 1513,
+            "id": 1544,
             "nodeType": "InheritanceSpecifier",
             "src": "1167:5:5"
           },
@@ -1598,17 +1598,17 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 1514,
+              "id": 1545,
               "name": "Permission",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 3915,
+              "referencedDeclaration": 3958,
               "src": "1174:10:5",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_Permission_$3915",
+                "typeIdentifier": "t_contract$_Permission_$3958",
                 "typeString": "contract Permission"
               }
             },
-            "id": 1515,
+            "id": 1546,
             "nodeType": "InheritanceSpecifier",
             "src": "1174:10:5"
           },
@@ -1616,54 +1616,54 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 1516,
+              "id": 1547,
               "name": "Upgradeable",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 6835,
+              "referencedDeclaration": 6898,
               "src": "1186:11:5",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_Upgradeable_$6835",
+                "typeIdentifier": "t_contract$_Upgradeable_$6898",
                 "typeString": "contract Upgradeable"
               }
             },
-            "id": 1517,
+            "id": 1548,
             "nodeType": "InheritanceSpecifier",
             "src": "1186:11:5"
           }
         ],
         "contractDependencies": [
-          2576,
-          3915,
-          6580,
-          6765,
-          6835,
-          11809
+          2607,
+          3958,
+          6643,
+          6828,
+          6898,
+          11872
         ],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 1553,
+        "id": 1584,
         "linearizedBaseContracts": [
-          1553,
-          6835,
-          3915,
-          6580,
-          2576,
-          6765
+          1584,
+          6898,
+          3958,
+          6643,
+          2607,
+          6828
         ],
         "name": "Deployer2",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "body": {
-              "id": 1541,
+              "id": 1572,
               "nodeType": "Block",
               "src": "1245:97:5",
               "statements": [
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "id": 1534,
+                    "id": 1565,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1674,42 +1674,42 @@
                         "argumentTypes": null,
                         "expression": {
                           "argumentTypes": null,
-                          "id": 1522,
+                          "id": 1553,
                           "name": "_state",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 6764,
+                          "referencedDeclaration": 6827,
                           "src": "1255:6:5",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_struct$_State_$6761_storage",
+                            "typeIdentifier": "t_struct$_State_$6824_storage",
                             "typeString": "struct Storage.State storage ref"
                           }
                         },
-                        "id": 1525,
+                        "id": 1556,
                         "isConstant": false,
                         "isLValue": true,
                         "isPure": false,
                         "lValueRequested": false,
                         "memberName": "provider",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 6748,
+                        "referencedDeclaration": 6811,
                         "src": "1255:15:5",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_struct$_Provider_$6729_storage",
+                          "typeIdentifier": "t_struct$_Provider_$6792_storage",
                           "typeString": "struct Storage.Provider storage ref"
                         }
                       },
-                      "id": 1526,
+                      "id": 1557,
                       "isConstant": false,
                       "isLValue": true,
                       "isPure": false,
                       "lValueRequested": true,
                       "memberName": "oracle",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 6726,
+                      "referencedDeclaration": 6789,
                       "src": "1255:22:5",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_IOracle_$11240",
+                        "typeIdentifier": "t_contract$_IOracle_$11303",
                         "typeString": "contract IOracle"
                       }
                     },
@@ -1726,18 +1726,18 @@
                               "arguments": [],
                               "expression": {
                                 "argumentTypes": [],
-                                "id": 1530,
+                                "id": 1561,
                                 "name": "dollar",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 1685,
+                                "referencedDeclaration": 1716,
                                 "src": "1299:6:5",
                                 "typeDescriptions": {
-                                  "typeIdentifier": "t_function_internal_view$__$returns$_t_contract$_IDollar_$13227_$",
+                                  "typeIdentifier": "t_function_internal_view$__$returns$_t_contract$_IDollar_$13290_$",
                                   "typeString": "function () view returns (contract IDollar)"
                                 }
                               },
-                              "id": 1531,
+                              "id": 1562,
                               "isConstant": false,
                               "isLValue": false,
                               "isPure": false,
@@ -1747,7 +1747,7 @@
                               "nodeType": "FunctionCall",
                               "src": "1299:8:5",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_IDollar_$13227",
+                                "typeIdentifier": "t_contract$_IDollar_$13290",
                                 "typeString": "contract IDollar"
                               }
                             }
@@ -1755,11 +1755,11 @@
                           "expression": {
                             "argumentTypes": [
                               {
-                                "typeIdentifier": "t_contract$_IDollar_$13227",
+                                "typeIdentifier": "t_contract$_IDollar_$13290",
                                 "typeString": "contract IDollar"
                               }
                             ],
-                            "id": 1529,
+                            "id": 1560,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": true,
@@ -1772,7 +1772,7 @@
                             },
                             "typeName": "address"
                           },
-                          "id": 1532,
+                          "id": 1563,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
@@ -1794,7 +1794,7 @@
                             "typeString": "address"
                           }
                         ],
-                        "id": 1528,
+                        "id": 1559,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -1802,23 +1802,23 @@
                         "nodeType": "NewExpression",
                         "src": "1280:10:5",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_function_creation_nonpayable$_t_address_$returns$_t_contract$_Oracle_$11809_$",
+                          "typeIdentifier": "t_function_creation_nonpayable$_t_address_$returns$_t_contract$_Oracle_$11872_$",
                           "typeString": "function (address) returns (contract Oracle)"
                         },
                         "typeName": {
                           "contractScope": null,
-                          "id": 1527,
+                          "id": 1558,
                           "name": "Oracle",
                           "nodeType": "UserDefinedTypeName",
-                          "referencedDeclaration": 11809,
+                          "referencedDeclaration": 11872,
                           "src": "1284:6:5",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_contract$_Oracle_$11809",
+                            "typeIdentifier": "t_contract$_Oracle_$11872",
                             "typeString": "contract Oracle"
                           }
                         }
                       },
-                      "id": 1533,
+                      "id": 1564,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -1828,17 +1828,17 @@
                       "nodeType": "FunctionCall",
                       "src": "1280:29:5",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_Oracle_$11809",
+                        "typeIdentifier": "t_contract$_Oracle_$11872",
                         "typeString": "contract Oracle"
                       }
                     },
                     "src": "1255:54:5",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_IOracle_$11240",
+                      "typeIdentifier": "t_contract$_IOracle_$11303",
                       "typeString": "contract IOracle"
                     }
                   },
-                  "id": 1535,
+                  "id": 1566,
                   "nodeType": "ExpressionStatement",
                   "src": "1255:54:5"
                 },
@@ -1853,18 +1853,18 @@
                         "arguments": [],
                         "expression": {
                           "argumentTypes": [],
-                          "id": 1536,
+                          "id": 1567,
                           "name": "oracle",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 1695,
+                          "referencedDeclaration": 1726,
                           "src": "1319:6:5",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_function_internal_view$__$returns$_t_contract$_IOracle_$11240_$",
+                            "typeIdentifier": "t_function_internal_view$__$returns$_t_contract$_IOracle_$11303_$",
                             "typeString": "function () view returns (contract IOracle)"
                           }
                         },
-                        "id": 1537,
+                        "id": 1568,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -1874,25 +1874,25 @@
                         "nodeType": "FunctionCall",
                         "src": "1319:8:5",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_IOracle_$11240",
+                          "typeIdentifier": "t_contract$_IOracle_$11303",
                           "typeString": "contract IOracle"
                         }
                       },
-                      "id": 1538,
+                      "id": 1569,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
                       "lValueRequested": false,
                       "memberName": "setup",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 11227,
+                      "referencedDeclaration": 11290,
                       "src": "1319:14:5",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$__$returns$__$",
                         "typeString": "function () external"
                       }
                     },
-                    "id": 1539,
+                    "id": 1570,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1906,27 +1906,27 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 1540,
+                  "id": 1571,
                   "nodeType": "ExpressionStatement",
                   "src": "1319:16:5"
                 }
               ]
             },
             "documentation": null,
-            "id": 1542,
+            "id": 1573,
             "implemented": true,
             "kind": "function",
             "modifiers": [
               {
                 "arguments": null,
-                "id": 1520,
+                "id": 1551,
                 "modifierName": {
                   "argumentTypes": null,
-                  "id": 1519,
+                  "id": 1550,
                   "name": "initializer",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 3914,
+                  "referencedDeclaration": 3957,
                   "src": "1226:11:5",
                   "typeDescriptions": {
                     "typeIdentifier": "t_modifier$__$",
@@ -1940,26 +1940,26 @@
             "name": "initialize",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 1518,
+              "id": 1549,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "1223:2:5"
             },
             "returnParameters": {
-              "id": 1521,
+              "id": 1552,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "1245:0:5"
             },
-            "scope": 1553,
+            "scope": 1584,
             "src": "1204:138:5",
             "stateMutability": "nonpayable",
-            "superFunction": 6782,
+            "superFunction": 6845,
             "visibility": "public"
           },
           {
             "body": {
-              "id": 1551,
+              "id": 1582,
               "nodeType": "Block",
               "src": "1400:42:5",
               "statements": [
@@ -1969,11 +1969,11 @@
                     "arguments": [
                       {
                         "argumentTypes": null,
-                        "id": 1548,
+                        "id": 1579,
                         "name": "implementation",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1544,
+                        "referencedDeclaration": 1575,
                         "src": "1420:14:5",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
@@ -1988,18 +1988,18 @@
                           "typeString": "address"
                         }
                       ],
-                      "id": 1547,
+                      "id": 1578,
                       "name": "upgradeTo",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 6815,
+                      "referencedDeclaration": 6878,
                       "src": "1410:9:5",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$_t_address_$returns$__$",
                         "typeString": "function (address)"
                       }
                     },
-                    "id": 1549,
+                    "id": 1580,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -2013,29 +2013,29 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 1550,
+                  "id": 1581,
                   "nodeType": "ExpressionStatement",
                   "src": "1410:25:5"
                 }
               ]
             },
             "documentation": null,
-            "id": 1552,
+            "id": 1583,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
             "name": "implement",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 1545,
+              "id": 1576,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1544,
+                  "id": 1575,
                   "name": "implementation",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1552,
+                  "scope": 1583,
                   "src": "1367:22:5",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -2044,7 +2044,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 1543,
+                    "id": 1574,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "1367:7:5",
@@ -2061,19 +2061,19 @@
               "src": "1366:24:5"
             },
             "returnParameters": {
-              "id": 1546,
+              "id": 1577,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "1400:0:5"
             },
-            "scope": 1553,
+            "scope": 1584,
             "src": "1348:94:5",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "external"
           }
         ],
-        "scope": 1599,
+        "scope": 1630,
         "src": "1145:299:5"
       },
       {
@@ -2082,17 +2082,17 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 1554,
+              "id": 1585,
               "name": "State",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 6765,
+              "referencedDeclaration": 6828,
               "src": "1468:5:5",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_State_$6765",
+                "typeIdentifier": "t_contract$_State_$6828",
                 "typeString": "contract State"
               }
             },
-            "id": 1555,
+            "id": 1586,
             "nodeType": "InheritanceSpecifier",
             "src": "1468:5:5"
           },
@@ -2100,17 +2100,17 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 1556,
+              "id": 1587,
               "name": "Permission",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 3915,
+              "referencedDeclaration": 3958,
               "src": "1475:10:5",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_Permission_$3915",
+                "typeIdentifier": "t_contract$_Permission_$3958",
                 "typeString": "contract Permission"
               }
             },
-            "id": 1557,
+            "id": 1588,
             "nodeType": "InheritanceSpecifier",
             "src": "1475:10:5"
           },
@@ -2118,54 +2118,54 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 1558,
+              "id": 1589,
               "name": "Upgradeable",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 6835,
+              "referencedDeclaration": 6898,
               "src": "1487:11:5",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_Upgradeable_$6835",
+                "typeIdentifier": "t_contract$_Upgradeable_$6898",
                 "typeString": "contract Upgradeable"
               }
             },
-            "id": 1559,
+            "id": 1590,
             "nodeType": "InheritanceSpecifier",
             "src": "1487:11:5"
           }
         ],
         "contractDependencies": [
-          2576,
-          3915,
-          6580,
-          6765,
-          6835,
-          12409
+          2607,
+          3958,
+          6643,
+          6828,
+          6898,
+          12472
         ],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 1598,
+        "id": 1629,
         "linearizedBaseContracts": [
-          1598,
-          6835,
-          3915,
-          6580,
-          2576,
-          6765
+          1629,
+          6898,
+          3958,
+          6643,
+          2607,
+          6828
         ],
         "name": "Deployer3",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "body": {
-              "id": 1586,
+              "id": 1617,
               "nodeType": "Block",
               "src": "1546:102:5",
               "statements": [
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "id": 1584,
+                    "id": 1615,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -2176,39 +2176,39 @@
                         "argumentTypes": null,
                         "expression": {
                           "argumentTypes": null,
-                          "id": 1564,
+                          "id": 1595,
                           "name": "_state",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 6764,
+                          "referencedDeclaration": 6827,
                           "src": "1556:6:5",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_struct$_State_$6761_storage",
+                            "typeIdentifier": "t_struct$_State_$6824_storage",
                             "typeString": "struct Storage.State storage ref"
                           }
                         },
-                        "id": 1567,
+                        "id": 1598,
                         "isConstant": false,
                         "isLValue": true,
                         "isPure": false,
                         "lValueRequested": false,
                         "memberName": "provider",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 6748,
+                        "referencedDeclaration": 6811,
                         "src": "1556:15:5",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_struct$_Provider_$6729_storage",
+                          "typeIdentifier": "t_struct$_Provider_$6792_storage",
                           "typeString": "struct Storage.Provider storage ref"
                         }
                       },
-                      "id": 1568,
+                      "id": 1599,
                       "isConstant": false,
                       "isLValue": true,
                       "isPure": false,
                       "lValueRequested": true,
                       "memberName": "pool",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 6728,
+                      "referencedDeclaration": 6791,
                       "src": "1556:20:5",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
@@ -2231,18 +2231,18 @@
                                   "arguments": [],
                                   "expression": {
                                     "argumentTypes": [],
-                                    "id": 1573,
+                                    "id": 1604,
                                     "name": "dollar",
                                     "nodeType": "Identifier",
                                     "overloadedDeclarations": [],
-                                    "referencedDeclaration": 1685,
+                                    "referencedDeclaration": 1716,
                                     "src": "1604:6:5",
                                     "typeDescriptions": {
-                                      "typeIdentifier": "t_function_internal_view$__$returns$_t_contract$_IDollar_$13227_$",
+                                      "typeIdentifier": "t_function_internal_view$__$returns$_t_contract$_IDollar_$13290_$",
                                       "typeString": "function () view returns (contract IDollar)"
                                     }
                                   },
-                                  "id": 1574,
+                                  "id": 1605,
                                   "isConstant": false,
                                   "isLValue": false,
                                   "isPure": false,
@@ -2252,7 +2252,7 @@
                                   "nodeType": "FunctionCall",
                                   "src": "1604:8:5",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_contract$_IDollar_$13227",
+                                    "typeIdentifier": "t_contract$_IDollar_$13290",
                                     "typeString": "contract IDollar"
                                   }
                                 }
@@ -2260,11 +2260,11 @@
                               "expression": {
                                 "argumentTypes": [
                                   {
-                                    "typeIdentifier": "t_contract$_IDollar_$13227",
+                                    "typeIdentifier": "t_contract$_IDollar_$13290",
                                     "typeString": "contract IDollar"
                                   }
                                 ],
-                                "id": 1572,
+                                "id": 1603,
                                 "isConstant": false,
                                 "isLValue": false,
                                 "isPure": true,
@@ -2277,7 +2277,7 @@
                                 },
                                 "typeName": "address"
                               },
-                              "id": 1575,
+                              "id": 1606,
                               "isConstant": false,
                               "isLValue": false,
                               "isPure": false,
@@ -2304,18 +2304,18 @@
                                       "arguments": [],
                                       "expression": {
                                         "argumentTypes": [],
-                                        "id": 1577,
+                                        "id": 1608,
                                         "name": "oracle",
                                         "nodeType": "Identifier",
                                         "overloadedDeclarations": [],
-                                        "referencedDeclaration": 1695,
+                                        "referencedDeclaration": 1726,
                                         "src": "1623:6:5",
                                         "typeDescriptions": {
-                                          "typeIdentifier": "t_function_internal_view$__$returns$_t_contract$_IOracle_$11240_$",
+                                          "typeIdentifier": "t_function_internal_view$__$returns$_t_contract$_IOracle_$11303_$",
                                           "typeString": "function () view returns (contract IOracle)"
                                         }
                                       },
-                                      "id": 1578,
+                                      "id": 1609,
                                       "isConstant": false,
                                       "isLValue": false,
                                       "isPure": false,
@@ -2325,25 +2325,25 @@
                                       "nodeType": "FunctionCall",
                                       "src": "1623:8:5",
                                       "typeDescriptions": {
-                                        "typeIdentifier": "t_contract$_IOracle_$11240",
+                                        "typeIdentifier": "t_contract$_IOracle_$11303",
                                         "typeString": "contract IOracle"
                                       }
                                     },
-                                    "id": 1579,
+                                    "id": 1610,
                                     "isConstant": false,
                                     "isLValue": false,
                                     "isPure": false,
                                     "lValueRequested": false,
                                     "memberName": "pair",
                                     "nodeType": "MemberAccess",
-                                    "referencedDeclaration": 11239,
+                                    "referencedDeclaration": 11302,
                                     "src": "1623:13:5",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_function_external_view$__$returns$_t_address_$",
                                       "typeString": "function () view external returns (address)"
                                     }
                                   },
-                                  "id": 1580,
+                                  "id": 1611,
                                   "isConstant": false,
                                   "isLValue": false,
                                   "isPure": false,
@@ -2365,7 +2365,7 @@
                                     "typeString": "address"
                                   }
                                 ],
-                                "id": 1576,
+                                "id": 1607,
                                 "isConstant": false,
                                 "isLValue": false,
                                 "isPure": true,
@@ -2378,7 +2378,7 @@
                                 },
                                 "typeName": "address"
                               },
-                              "id": 1581,
+                              "id": 1612,
                               "isConstant": false,
                               "isLValue": false,
                               "isPure": false,
@@ -2404,7 +2404,7 @@
                                 "typeString": "address"
                               }
                             ],
-                            "id": 1571,
+                            "id": 1602,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": false,
@@ -2412,23 +2412,23 @@
                             "nodeType": "NewExpression",
                             "src": "1587:8:5",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_function_creation_nonpayable$_t_address_$_t_address_$returns$_t_contract$_Pool_$12409_$",
+                              "typeIdentifier": "t_function_creation_nonpayable$_t_address_$_t_address_$returns$_t_contract$_Pool_$12472_$",
                               "typeString": "function (address,address) returns (contract Pool)"
                             },
                             "typeName": {
                               "contractScope": null,
-                              "id": 1570,
+                              "id": 1601,
                               "name": "Pool",
                               "nodeType": "UserDefinedTypeName",
-                              "referencedDeclaration": 12409,
+                              "referencedDeclaration": 12472,
                               "src": "1591:4:5",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_Pool_$12409",
+                                "typeIdentifier": "t_contract$_Pool_$12472",
                                 "typeString": "contract Pool"
                               }
                             }
                           },
-                          "id": 1582,
+                          "id": 1613,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
@@ -2438,7 +2438,7 @@
                           "nodeType": "FunctionCall",
                           "src": "1587:53:5",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_contract$_Pool_$12409",
+                            "typeIdentifier": "t_contract$_Pool_$12472",
                             "typeString": "contract Pool"
                           }
                         }
@@ -2446,11 +2446,11 @@
                       "expression": {
                         "argumentTypes": [
                           {
-                            "typeIdentifier": "t_contract$_Pool_$12409",
+                            "typeIdentifier": "t_contract$_Pool_$12472",
                             "typeString": "contract Pool"
                           }
                         ],
-                        "id": 1569,
+                        "id": 1600,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
@@ -2463,7 +2463,7 @@
                         },
                         "typeName": "address"
                       },
-                      "id": 1583,
+                      "id": 1614,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -2483,27 +2483,27 @@
                       "typeString": "address"
                     }
                   },
-                  "id": 1585,
+                  "id": 1616,
                   "nodeType": "ExpressionStatement",
                   "src": "1556:85:5"
                 }
               ]
             },
             "documentation": null,
-            "id": 1587,
+            "id": 1618,
             "implemented": true,
             "kind": "function",
             "modifiers": [
               {
                 "arguments": null,
-                "id": 1562,
+                "id": 1593,
                 "modifierName": {
                   "argumentTypes": null,
-                  "id": 1561,
+                  "id": 1592,
                   "name": "initializer",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 3914,
+                  "referencedDeclaration": 3957,
                   "src": "1527:11:5",
                   "typeDescriptions": {
                     "typeIdentifier": "t_modifier$__$",
@@ -2517,26 +2517,26 @@
             "name": "initialize",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 1560,
+              "id": 1591,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "1524:2:5"
             },
             "returnParameters": {
-              "id": 1563,
+              "id": 1594,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "1546:0:5"
             },
-            "scope": 1598,
+            "scope": 1629,
             "src": "1505:143:5",
             "stateMutability": "nonpayable",
-            "superFunction": 6782,
+            "superFunction": 6845,
             "visibility": "public"
           },
           {
             "body": {
-              "id": 1596,
+              "id": 1627,
               "nodeType": "Block",
               "src": "1706:42:5",
               "statements": [
@@ -2546,11 +2546,11 @@
                     "arguments": [
                       {
                         "argumentTypes": null,
-                        "id": 1593,
+                        "id": 1624,
                         "name": "implementation",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1589,
+                        "referencedDeclaration": 1620,
                         "src": "1726:14:5",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
@@ -2565,18 +2565,18 @@
                           "typeString": "address"
                         }
                       ],
-                      "id": 1592,
+                      "id": 1623,
                       "name": "upgradeTo",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 6815,
+                      "referencedDeclaration": 6878,
                       "src": "1716:9:5",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$_t_address_$returns$__$",
                         "typeString": "function (address)"
                       }
                     },
-                    "id": 1594,
+                    "id": 1625,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -2590,29 +2590,29 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 1595,
+                  "id": 1626,
                   "nodeType": "ExpressionStatement",
                   "src": "1716:25:5"
                 }
               ]
             },
             "documentation": null,
-            "id": 1597,
+            "id": 1628,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
             "name": "implement",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 1590,
+              "id": 1621,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1589,
+                  "id": 1620,
                   "name": "implementation",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1597,
+                  "scope": 1628,
                   "src": "1673:22:5",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -2621,7 +2621,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 1588,
+                    "id": 1619,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "1673:7:5",
@@ -2638,19 +2638,19 @@
               "src": "1672:24:5"
             },
             "returnParameters": {
-              "id": 1591,
+              "id": 1622,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "1706:0:5"
             },
-            "scope": 1598,
+            "scope": 1629,
             "src": "1654:94:5",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "external"
           }
         ],
-        "scope": 1599,
+        "scope": 1630,
         "src": "1446:304:5"
       }
     ],
@@ -2661,13 +2661,13 @@
       "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/dao/Deployer.sol",
       "exportedSymbols": {
         "Deployer1": [
-          1511
+          1542
         ],
         "Deployer2": [
-          1553
+          1584
         ],
         "Deployer3": [
-          1598
+          1629
         ]
       }
     },
@@ -2681,7 +2681,7 @@
             ".17"
           ]
         },
-        "id": 1471,
+        "id": 1502,
         "name": "PragmaDirective",
         "src": "646:24:5"
       },
@@ -2692,123 +2692,123 @@
             "ABIEncoderV2"
           ]
         },
-        "id": 1472,
+        "id": 1503,
         "name": "PragmaDirective",
         "src": "671:33:5"
       },
       {
         "attributes": {
-          "SourceUnit": 7314,
+          "SourceUnit": 7377,
           "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/external/Decimal.sol",
           "file": "../external/Decimal.sol",
-          "scope": 1599,
+          "scope": 1630,
           "symbolAliases": [
             null
           ],
           "unitAlias": ""
         },
-        "id": 1473,
+        "id": 1504,
         "name": "ImportDirective",
         "src": "706:33:5"
       },
       {
         "attributes": {
-          "SourceUnit": 13200,
+          "SourceUnit": 13263,
           "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/token/Dollar.sol",
           "file": "../token/Dollar.sol",
-          "scope": 1599,
+          "scope": 1630,
           "symbolAliases": [
             null
           ],
           "unitAlias": ""
         },
-        "id": 1474,
+        "id": 1505,
         "name": "ImportDirective",
         "src": "740:29:5"
       },
       {
         "attributes": {
-          "SourceUnit": 11810,
+          "SourceUnit": 11873,
           "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/oracle/Oracle.sol",
           "file": "../oracle/Oracle.sol",
-          "scope": 1599,
+          "scope": 1630,
           "symbolAliases": [
             null
           ],
           "unitAlias": ""
         },
-        "id": 1475,
+        "id": 1506,
         "name": "ImportDirective",
         "src": "770:30:5"
       },
       {
         "attributes": {
-          "SourceUnit": 12410,
+          "SourceUnit": 12473,
           "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/oracle/Pool.sol",
           "file": "../oracle/Pool.sol",
-          "scope": 1599,
+          "scope": 1630,
           "symbolAliases": [
             null
           ],
           "unitAlias": ""
         },
-        "id": 1476,
+        "id": 1507,
         "name": "ImportDirective",
         "src": "801:28:5"
       },
       {
         "attributes": {
-          "SourceUnit": 6836,
+          "SourceUnit": 6899,
           "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/dao/Upgradeable.sol",
           "file": "./Upgradeable.sol",
-          "scope": 1599,
+          "scope": 1630,
           "symbolAliases": [
             null
           ],
           "unitAlias": ""
         },
-        "id": 1477,
+        "id": 1508,
         "name": "ImportDirective",
         "src": "830:27:5"
       },
       {
         "attributes": {
-          "SourceUnit": 3916,
+          "SourceUnit": 3959,
           "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/dao/Permission.sol",
           "file": "./Permission.sol",
-          "scope": 1599,
+          "scope": 1630,
           "symbolAliases": [
             null
           ],
           "unitAlias": ""
         },
-        "id": 1478,
+        "id": 1509,
         "name": "ImportDirective",
         "src": "858:26:5"
       },
       {
         "attributes": {
           "contractDependencies": [
-            2576,
-            3915,
-            6580,
-            6765,
-            6835,
-            13199
+            2607,
+            3958,
+            6643,
+            6828,
+            6898,
+            13262
           ],
           "contractKind": "contract",
           "documentation": null,
           "fullyImplemented": true,
           "linearizedBaseContracts": [
-            1511,
-            6835,
-            3915,
-            6580,
-            2576,
-            6765
+            1542,
+            6898,
+            3958,
+            6643,
+            2607,
+            6828
           ],
           "name": "Deployer1",
-          "scope": 1599
+          "scope": 1630
         },
         "children": [
           {
@@ -2820,15 +2820,15 @@
                 "attributes": {
                   "contractScope": null,
                   "name": "State",
-                  "referencedDeclaration": 6765,
+                  "referencedDeclaration": 6828,
                   "type": "contract State"
                 },
-                "id": 1479,
+                "id": 1510,
                 "name": "UserDefinedTypeName",
                 "src": "909:5:5"
               }
             ],
-            "id": 1480,
+            "id": 1511,
             "name": "InheritanceSpecifier",
             "src": "909:5:5"
           },
@@ -2841,15 +2841,15 @@
                 "attributes": {
                   "contractScope": null,
                   "name": "Permission",
-                  "referencedDeclaration": 3915,
+                  "referencedDeclaration": 3958,
                   "type": "contract Permission"
                 },
-                "id": 1481,
+                "id": 1512,
                 "name": "UserDefinedTypeName",
                 "src": "916:10:5"
               }
             ],
-            "id": 1482,
+            "id": 1513,
             "name": "InheritanceSpecifier",
             "src": "916:10:5"
           },
@@ -2862,15 +2862,15 @@
                 "attributes": {
                   "contractScope": null,
                   "name": "Upgradeable",
-                  "referencedDeclaration": 6835,
+                  "referencedDeclaration": 6898,
                   "type": "contract Upgradeable"
                 },
-                "id": 1483,
+                "id": 1514,
                 "name": "UserDefinedTypeName",
                 "src": "928:11:5"
               }
             ],
-            "id": 1484,
+            "id": 1515,
             "name": "InheritanceSpecifier",
             "src": "928:11:5"
           },
@@ -2881,9 +2881,9 @@
               "isConstructor": false,
               "kind": "function",
               "name": "initialize",
-              "scope": 1511,
+              "scope": 1542,
               "stateMutability": "nonpayable",
-              "superFunction": 6782,
+              "superFunction": 6845,
               "visibility": "public"
             },
             "children": [
@@ -2894,7 +2894,7 @@
                   ]
                 },
                 "children": [],
-                "id": 1485,
+                "id": 1516,
                 "name": "ParameterList",
                 "src": "965:2:5"
               },
@@ -2905,7 +2905,7 @@
                   ]
                 },
                 "children": [],
-                "id": 1488,
+                "id": 1519,
                 "name": "ParameterList",
                 "src": "987:0:5"
               },
@@ -2920,16 +2920,16 @@
                       "overloadedDeclarations": [
                         null
                       ],
-                      "referencedDeclaration": 3914,
+                      "referencedDeclaration": 3957,
                       "type": "modifier ()",
                       "value": "initializer"
                     },
-                    "id": 1486,
+                    "id": 1517,
                     "name": "Identifier",
                     "src": "968:11:5"
                   }
                 ],
-                "id": 1487,
+                "id": 1518,
                 "name": "ModifierInvocation",
                 "src": "968:11:5"
               },
@@ -2956,7 +2956,7 @@
                               "isPure": false,
                               "lValueRequested": true,
                               "member_name": "dollar",
-                              "referencedDeclaration": 6724,
+                              "referencedDeclaration": 6787,
                               "type": "contract IDollar"
                             },
                             "children": [
@@ -2968,7 +2968,7 @@
                                   "isPure": false,
                                   "lValueRequested": false,
                                   "member_name": "provider",
-                                  "referencedDeclaration": 6748,
+                                  "referencedDeclaration": 6811,
                                   "type": "struct Storage.Provider storage ref"
                                 },
                                 "children": [
@@ -2978,21 +2978,21 @@
                                       "overloadedDeclarations": [
                                         null
                                       ],
-                                      "referencedDeclaration": 6764,
+                                      "referencedDeclaration": 6827,
                                       "type": "struct Storage.State storage ref",
                                       "value": "_state"
                                     },
-                                    "id": 1489,
+                                    "id": 1520,
                                     "name": "Identifier",
                                     "src": "997:6:5"
                                   }
                                 ],
-                                "id": 1492,
+                                "id": 1523,
                                 "name": "MemberAccess",
                                 "src": "997:15:5"
                               }
                             ],
-                            "id": 1493,
+                            "id": 1524,
                             "name": "MemberAccess",
                             "src": "997:22:5"
                           },
@@ -3030,40 +3030,40 @@
                                     "attributes": {
                                       "contractScope": null,
                                       "name": "Dollar",
-                                      "referencedDeclaration": 13199,
+                                      "referencedDeclaration": 13262,
                                       "type": "contract Dollar"
                                     },
-                                    "id": 1494,
+                                    "id": 1525,
                                     "name": "UserDefinedTypeName",
                                     "src": "1026:6:5"
                                   }
                                 ],
-                                "id": 1495,
+                                "id": 1526,
                                 "name": "NewExpression",
                                 "src": "1022:10:5"
                               }
                             ],
-                            "id": 1496,
+                            "id": 1527,
                             "name": "FunctionCall",
                             "src": "1022:12:5"
                           }
                         ],
-                        "id": 1497,
+                        "id": 1528,
                         "name": "Assignment",
                         "src": "997:37:5"
                       }
                     ],
-                    "id": 1498,
+                    "id": 1529,
                     "name": "ExpressionStatement",
                     "src": "997:37:5"
                   }
                 ],
-                "id": 1499,
+                "id": 1530,
                 "name": "Block",
                 "src": "987:54:5"
               }
             ],
-            "id": 1500,
+            "id": 1531,
             "name": "FunctionDefinition",
             "src": "946:95:5"
           },
@@ -3077,7 +3077,7 @@
                 null
               ],
               "name": "implement",
-              "scope": 1511,
+              "scope": 1542,
               "stateMutability": "nonpayable",
               "superFunction": null,
               "visibility": "external"
@@ -3089,7 +3089,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "implementation",
-                      "scope": 1510,
+                      "scope": 1541,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -3103,17 +3103,17 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 1501,
+                        "id": 1532,
                         "name": "ElementaryTypeName",
                         "src": "1066:7:5"
                       }
                     ],
-                    "id": 1502,
+                    "id": 1533,
                     "name": "VariableDeclaration",
                     "src": "1066:22:5"
                   }
                 ],
-                "id": 1503,
+                "id": 1534,
                 "name": "ParameterList",
                 "src": "1065:24:5"
               },
@@ -3124,7 +3124,7 @@
                   ]
                 },
                 "children": [],
-                "id": 1504,
+                "id": 1535,
                 "name": "ParameterList",
                 "src": "1099:0:5"
               },
@@ -3158,11 +3158,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 6815,
+                              "referencedDeclaration": 6878,
                               "type": "function (address)",
                               "value": "upgradeTo"
                             },
-                            "id": 1505,
+                            "id": 1536,
                             "name": "Identifier",
                             "src": "1109:9:5"
                           },
@@ -3172,62 +3172,62 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 1502,
+                              "referencedDeclaration": 1533,
                               "type": "address",
                               "value": "implementation"
                             },
-                            "id": 1506,
+                            "id": 1537,
                             "name": "Identifier",
                             "src": "1119:14:5"
                           }
                         ],
-                        "id": 1507,
+                        "id": 1538,
                         "name": "FunctionCall",
                         "src": "1109:25:5"
                       }
                     ],
-                    "id": 1508,
+                    "id": 1539,
                     "name": "ExpressionStatement",
                     "src": "1109:25:5"
                   }
                 ],
-                "id": 1509,
+                "id": 1540,
                 "name": "Block",
                 "src": "1099:42:5"
               }
             ],
-            "id": 1510,
+            "id": 1541,
             "name": "FunctionDefinition",
             "src": "1047:94:5"
           }
         ],
-        "id": 1511,
+        "id": 1542,
         "name": "ContractDefinition",
         "src": "887:256:5"
       },
       {
         "attributes": {
           "contractDependencies": [
-            2576,
-            3915,
-            6580,
-            6765,
-            6835,
-            11809
+            2607,
+            3958,
+            6643,
+            6828,
+            6898,
+            11872
           ],
           "contractKind": "contract",
           "documentation": null,
           "fullyImplemented": true,
           "linearizedBaseContracts": [
-            1553,
-            6835,
-            3915,
-            6580,
-            2576,
-            6765
+            1584,
+            6898,
+            3958,
+            6643,
+            2607,
+            6828
           ],
           "name": "Deployer2",
-          "scope": 1599
+          "scope": 1630
         },
         "children": [
           {
@@ -3239,15 +3239,15 @@
                 "attributes": {
                   "contractScope": null,
                   "name": "State",
-                  "referencedDeclaration": 6765,
+                  "referencedDeclaration": 6828,
                   "type": "contract State"
                 },
-                "id": 1512,
+                "id": 1543,
                 "name": "UserDefinedTypeName",
                 "src": "1167:5:5"
               }
             ],
-            "id": 1513,
+            "id": 1544,
             "name": "InheritanceSpecifier",
             "src": "1167:5:5"
           },
@@ -3260,15 +3260,15 @@
                 "attributes": {
                   "contractScope": null,
                   "name": "Permission",
-                  "referencedDeclaration": 3915,
+                  "referencedDeclaration": 3958,
                   "type": "contract Permission"
                 },
-                "id": 1514,
+                "id": 1545,
                 "name": "UserDefinedTypeName",
                 "src": "1174:10:5"
               }
             ],
-            "id": 1515,
+            "id": 1546,
             "name": "InheritanceSpecifier",
             "src": "1174:10:5"
           },
@@ -3281,15 +3281,15 @@
                 "attributes": {
                   "contractScope": null,
                   "name": "Upgradeable",
-                  "referencedDeclaration": 6835,
+                  "referencedDeclaration": 6898,
                   "type": "contract Upgradeable"
                 },
-                "id": 1516,
+                "id": 1547,
                 "name": "UserDefinedTypeName",
                 "src": "1186:11:5"
               }
             ],
-            "id": 1517,
+            "id": 1548,
             "name": "InheritanceSpecifier",
             "src": "1186:11:5"
           },
@@ -3300,9 +3300,9 @@
               "isConstructor": false,
               "kind": "function",
               "name": "initialize",
-              "scope": 1553,
+              "scope": 1584,
               "stateMutability": "nonpayable",
-              "superFunction": 6782,
+              "superFunction": 6845,
               "visibility": "public"
             },
             "children": [
@@ -3313,7 +3313,7 @@
                   ]
                 },
                 "children": [],
-                "id": 1518,
+                "id": 1549,
                 "name": "ParameterList",
                 "src": "1223:2:5"
               },
@@ -3324,7 +3324,7 @@
                   ]
                 },
                 "children": [],
-                "id": 1521,
+                "id": 1552,
                 "name": "ParameterList",
                 "src": "1245:0:5"
               },
@@ -3339,16 +3339,16 @@
                       "overloadedDeclarations": [
                         null
                       ],
-                      "referencedDeclaration": 3914,
+                      "referencedDeclaration": 3957,
                       "type": "modifier ()",
                       "value": "initializer"
                     },
-                    "id": 1519,
+                    "id": 1550,
                     "name": "Identifier",
                     "src": "1226:11:5"
                   }
                 ],
-                "id": 1520,
+                "id": 1551,
                 "name": "ModifierInvocation",
                 "src": "1226:11:5"
               },
@@ -3375,7 +3375,7 @@
                               "isPure": false,
                               "lValueRequested": true,
                               "member_name": "oracle",
-                              "referencedDeclaration": 6726,
+                              "referencedDeclaration": 6789,
                               "type": "contract IOracle"
                             },
                             "children": [
@@ -3387,7 +3387,7 @@
                                   "isPure": false,
                                   "lValueRequested": false,
                                   "member_name": "provider",
-                                  "referencedDeclaration": 6748,
+                                  "referencedDeclaration": 6811,
                                   "type": "struct Storage.Provider storage ref"
                                 },
                                 "children": [
@@ -3397,21 +3397,21 @@
                                       "overloadedDeclarations": [
                                         null
                                       ],
-                                      "referencedDeclaration": 6764,
+                                      "referencedDeclaration": 6827,
                                       "type": "struct Storage.State storage ref",
                                       "value": "_state"
                                     },
-                                    "id": 1522,
+                                    "id": 1553,
                                     "name": "Identifier",
                                     "src": "1255:6:5"
                                   }
                                 ],
-                                "id": 1525,
+                                "id": 1556,
                                 "name": "MemberAccess",
                                 "src": "1255:15:5"
                               }
                             ],
-                            "id": 1526,
+                            "id": 1557,
                             "name": "MemberAccess",
                             "src": "1255:22:5"
                           },
@@ -3449,15 +3449,15 @@
                                     "attributes": {
                                       "contractScope": null,
                                       "name": "Oracle",
-                                      "referencedDeclaration": 11809,
+                                      "referencedDeclaration": 11872,
                                       "type": "contract Oracle"
                                     },
-                                    "id": 1527,
+                                    "id": 1558,
                                     "name": "UserDefinedTypeName",
                                     "src": "1284:6:5"
                                   }
                                 ],
-                                "id": 1528,
+                                "id": 1559,
                                 "name": "NewExpression",
                                 "src": "1280:10:5"
                               },
@@ -3480,7 +3480,7 @@
                                     "attributes": {
                                       "argumentTypes": [
                                         {
-                                          "typeIdentifier": "t_contract$_IDollar_$13227",
+                                          "typeIdentifier": "t_contract$_IDollar_$13290",
                                           "typeString": "contract IDollar"
                                         }
                                       ],
@@ -3491,7 +3491,7 @@
                                       "type": "type(address)",
                                       "value": "address"
                                     },
-                                    "id": 1529,
+                                    "id": 1560,
                                     "name": "ElementaryTypeNameExpression",
                                     "src": "1291:7:5"
                                   },
@@ -3521,36 +3521,36 @@
                                           "overloadedDeclarations": [
                                             null
                                           ],
-                                          "referencedDeclaration": 1685,
+                                          "referencedDeclaration": 1716,
                                           "type": "function () view returns (contract IDollar)",
                                           "value": "dollar"
                                         },
-                                        "id": 1530,
+                                        "id": 1561,
                                         "name": "Identifier",
                                         "src": "1299:6:5"
                                       }
                                     ],
-                                    "id": 1531,
+                                    "id": 1562,
                                     "name": "FunctionCall",
                                     "src": "1299:8:5"
                                   }
                                 ],
-                                "id": 1532,
+                                "id": 1563,
                                 "name": "FunctionCall",
                                 "src": "1291:17:5"
                               }
                             ],
-                            "id": 1533,
+                            "id": 1564,
                             "name": "FunctionCall",
                             "src": "1280:29:5"
                           }
                         ],
-                        "id": 1534,
+                        "id": 1565,
                         "name": "Assignment",
                         "src": "1255:54:5"
                       }
                     ],
-                    "id": 1535,
+                    "id": 1566,
                     "name": "ExpressionStatement",
                     "src": "1255:54:5"
                   },
@@ -3584,7 +3584,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "setup",
-                              "referencedDeclaration": 11227,
+                              "referencedDeclaration": 11290,
                               "type": "function () external"
                             },
                             "children": [
@@ -3614,41 +3614,41 @@
                                       "overloadedDeclarations": [
                                         null
                                       ],
-                                      "referencedDeclaration": 1695,
+                                      "referencedDeclaration": 1726,
                                       "type": "function () view returns (contract IOracle)",
                                       "value": "oracle"
                                     },
-                                    "id": 1536,
+                                    "id": 1567,
                                     "name": "Identifier",
                                     "src": "1319:6:5"
                                   }
                                 ],
-                                "id": 1537,
+                                "id": 1568,
                                 "name": "FunctionCall",
                                 "src": "1319:8:5"
                               }
                             ],
-                            "id": 1538,
+                            "id": 1569,
                             "name": "MemberAccess",
                             "src": "1319:14:5"
                           }
                         ],
-                        "id": 1539,
+                        "id": 1570,
                         "name": "FunctionCall",
                         "src": "1319:16:5"
                       }
                     ],
-                    "id": 1540,
+                    "id": 1571,
                     "name": "ExpressionStatement",
                     "src": "1319:16:5"
                   }
                 ],
-                "id": 1541,
+                "id": 1572,
                 "name": "Block",
                 "src": "1245:97:5"
               }
             ],
-            "id": 1542,
+            "id": 1573,
             "name": "FunctionDefinition",
             "src": "1204:138:5"
           },
@@ -3662,7 +3662,7 @@
                 null
               ],
               "name": "implement",
-              "scope": 1553,
+              "scope": 1584,
               "stateMutability": "nonpayable",
               "superFunction": null,
               "visibility": "external"
@@ -3674,7 +3674,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "implementation",
-                      "scope": 1552,
+                      "scope": 1583,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -3688,17 +3688,17 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 1543,
+                        "id": 1574,
                         "name": "ElementaryTypeName",
                         "src": "1367:7:5"
                       }
                     ],
-                    "id": 1544,
+                    "id": 1575,
                     "name": "VariableDeclaration",
                     "src": "1367:22:5"
                   }
                 ],
-                "id": 1545,
+                "id": 1576,
                 "name": "ParameterList",
                 "src": "1366:24:5"
               },
@@ -3709,7 +3709,7 @@
                   ]
                 },
                 "children": [],
-                "id": 1546,
+                "id": 1577,
                 "name": "ParameterList",
                 "src": "1400:0:5"
               },
@@ -3743,11 +3743,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 6815,
+                              "referencedDeclaration": 6878,
                               "type": "function (address)",
                               "value": "upgradeTo"
                             },
-                            "id": 1547,
+                            "id": 1578,
                             "name": "Identifier",
                             "src": "1410:9:5"
                           },
@@ -3757,62 +3757,62 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 1544,
+                              "referencedDeclaration": 1575,
                               "type": "address",
                               "value": "implementation"
                             },
-                            "id": 1548,
+                            "id": 1579,
                             "name": "Identifier",
                             "src": "1420:14:5"
                           }
                         ],
-                        "id": 1549,
+                        "id": 1580,
                         "name": "FunctionCall",
                         "src": "1410:25:5"
                       }
                     ],
-                    "id": 1550,
+                    "id": 1581,
                     "name": "ExpressionStatement",
                     "src": "1410:25:5"
                   }
                 ],
-                "id": 1551,
+                "id": 1582,
                 "name": "Block",
                 "src": "1400:42:5"
               }
             ],
-            "id": 1552,
+            "id": 1583,
             "name": "FunctionDefinition",
             "src": "1348:94:5"
           }
         ],
-        "id": 1553,
+        "id": 1584,
         "name": "ContractDefinition",
         "src": "1145:299:5"
       },
       {
         "attributes": {
           "contractDependencies": [
-            2576,
-            3915,
-            6580,
-            6765,
-            6835,
-            12409
+            2607,
+            3958,
+            6643,
+            6828,
+            6898,
+            12472
           ],
           "contractKind": "contract",
           "documentation": null,
           "fullyImplemented": true,
           "linearizedBaseContracts": [
-            1598,
-            6835,
-            3915,
-            6580,
-            2576,
-            6765
+            1629,
+            6898,
+            3958,
+            6643,
+            2607,
+            6828
           ],
           "name": "Deployer3",
-          "scope": 1599
+          "scope": 1630
         },
         "children": [
           {
@@ -3824,15 +3824,15 @@
                 "attributes": {
                   "contractScope": null,
                   "name": "State",
-                  "referencedDeclaration": 6765,
+                  "referencedDeclaration": 6828,
                   "type": "contract State"
                 },
-                "id": 1554,
+                "id": 1585,
                 "name": "UserDefinedTypeName",
                 "src": "1468:5:5"
               }
             ],
-            "id": 1555,
+            "id": 1586,
             "name": "InheritanceSpecifier",
             "src": "1468:5:5"
           },
@@ -3845,15 +3845,15 @@
                 "attributes": {
                   "contractScope": null,
                   "name": "Permission",
-                  "referencedDeclaration": 3915,
+                  "referencedDeclaration": 3958,
                   "type": "contract Permission"
                 },
-                "id": 1556,
+                "id": 1587,
                 "name": "UserDefinedTypeName",
                 "src": "1475:10:5"
               }
             ],
-            "id": 1557,
+            "id": 1588,
             "name": "InheritanceSpecifier",
             "src": "1475:10:5"
           },
@@ -3866,15 +3866,15 @@
                 "attributes": {
                   "contractScope": null,
                   "name": "Upgradeable",
-                  "referencedDeclaration": 6835,
+                  "referencedDeclaration": 6898,
                   "type": "contract Upgradeable"
                 },
-                "id": 1558,
+                "id": 1589,
                 "name": "UserDefinedTypeName",
                 "src": "1487:11:5"
               }
             ],
-            "id": 1559,
+            "id": 1590,
             "name": "InheritanceSpecifier",
             "src": "1487:11:5"
           },
@@ -3885,9 +3885,9 @@
               "isConstructor": false,
               "kind": "function",
               "name": "initialize",
-              "scope": 1598,
+              "scope": 1629,
               "stateMutability": "nonpayable",
-              "superFunction": 6782,
+              "superFunction": 6845,
               "visibility": "public"
             },
             "children": [
@@ -3898,7 +3898,7 @@
                   ]
                 },
                 "children": [],
-                "id": 1560,
+                "id": 1591,
                 "name": "ParameterList",
                 "src": "1524:2:5"
               },
@@ -3909,7 +3909,7 @@
                   ]
                 },
                 "children": [],
-                "id": 1563,
+                "id": 1594,
                 "name": "ParameterList",
                 "src": "1546:0:5"
               },
@@ -3924,16 +3924,16 @@
                       "overloadedDeclarations": [
                         null
                       ],
-                      "referencedDeclaration": 3914,
+                      "referencedDeclaration": 3957,
                       "type": "modifier ()",
                       "value": "initializer"
                     },
-                    "id": 1561,
+                    "id": 1592,
                     "name": "Identifier",
                     "src": "1527:11:5"
                   }
                 ],
-                "id": 1562,
+                "id": 1593,
                 "name": "ModifierInvocation",
                 "src": "1527:11:5"
               },
@@ -3960,7 +3960,7 @@
                               "isPure": false,
                               "lValueRequested": true,
                               "member_name": "pool",
-                              "referencedDeclaration": 6728,
+                              "referencedDeclaration": 6791,
                               "type": "address"
                             },
                             "children": [
@@ -3972,7 +3972,7 @@
                                   "isPure": false,
                                   "lValueRequested": false,
                                   "member_name": "provider",
-                                  "referencedDeclaration": 6748,
+                                  "referencedDeclaration": 6811,
                                   "type": "struct Storage.Provider storage ref"
                                 },
                                 "children": [
@@ -3982,21 +3982,21 @@
                                       "overloadedDeclarations": [
                                         null
                                       ],
-                                      "referencedDeclaration": 6764,
+                                      "referencedDeclaration": 6827,
                                       "type": "struct Storage.State storage ref",
                                       "value": "_state"
                                     },
-                                    "id": 1564,
+                                    "id": 1595,
                                     "name": "Identifier",
                                     "src": "1556:6:5"
                                   }
                                 ],
-                                "id": 1567,
+                                "id": 1598,
                                 "name": "MemberAccess",
                                 "src": "1556:15:5"
                               }
                             ],
-                            "id": 1568,
+                            "id": 1599,
                             "name": "MemberAccess",
                             "src": "1556:20:5"
                           },
@@ -4019,7 +4019,7 @@
                                 "attributes": {
                                   "argumentTypes": [
                                     {
-                                      "typeIdentifier": "t_contract$_Pool_$12409",
+                                      "typeIdentifier": "t_contract$_Pool_$12472",
                                       "typeString": "contract Pool"
                                     }
                                   ],
@@ -4030,7 +4030,7 @@
                                   "type": "type(address)",
                                   "value": "address"
                                 },
-                                "id": 1569,
+                                "id": 1600,
                                 "name": "ElementaryTypeNameExpression",
                                 "src": "1579:7:5"
                               },
@@ -4072,15 +4072,15 @@
                                         "attributes": {
                                           "contractScope": null,
                                           "name": "Pool",
-                                          "referencedDeclaration": 12409,
+                                          "referencedDeclaration": 12472,
                                           "type": "contract Pool"
                                         },
-                                        "id": 1570,
+                                        "id": 1601,
                                         "name": "UserDefinedTypeName",
                                         "src": "1591:4:5"
                                       }
                                     ],
-                                    "id": 1571,
+                                    "id": 1602,
                                     "name": "NewExpression",
                                     "src": "1587:8:5"
                                   },
@@ -4103,7 +4103,7 @@
                                         "attributes": {
                                           "argumentTypes": [
                                             {
-                                              "typeIdentifier": "t_contract$_IDollar_$13227",
+                                              "typeIdentifier": "t_contract$_IDollar_$13290",
                                               "typeString": "contract IDollar"
                                             }
                                           ],
@@ -4114,7 +4114,7 @@
                                           "type": "type(address)",
                                           "value": "address"
                                         },
-                                        "id": 1572,
+                                        "id": 1603,
                                         "name": "ElementaryTypeNameExpression",
                                         "src": "1596:7:5"
                                       },
@@ -4144,21 +4144,21 @@
                                               "overloadedDeclarations": [
                                                 null
                                               ],
-                                              "referencedDeclaration": 1685,
+                                              "referencedDeclaration": 1716,
                                               "type": "function () view returns (contract IDollar)",
                                               "value": "dollar"
                                             },
-                                            "id": 1573,
+                                            "id": 1604,
                                             "name": "Identifier",
                                             "src": "1604:6:5"
                                           }
                                         ],
-                                        "id": 1574,
+                                        "id": 1605,
                                         "name": "FunctionCall",
                                         "src": "1604:8:5"
                                       }
                                     ],
-                                    "id": 1575,
+                                    "id": 1606,
                                     "name": "FunctionCall",
                                     "src": "1596:17:5"
                                   },
@@ -4192,7 +4192,7 @@
                                           "type": "type(address)",
                                           "value": "address"
                                         },
-                                        "id": 1576,
+                                        "id": 1607,
                                         "name": "ElementaryTypeNameExpression",
                                         "src": "1615:7:5"
                                       },
@@ -4224,7 +4224,7 @@
                                               "isPure": false,
                                               "lValueRequested": false,
                                               "member_name": "pair",
-                                              "referencedDeclaration": 11239,
+                                              "referencedDeclaration": 11302,
                                               "type": "function () view external returns (address)"
                                             },
                                             "children": [
@@ -4254,61 +4254,61 @@
                                                       "overloadedDeclarations": [
                                                         null
                                                       ],
-                                                      "referencedDeclaration": 1695,
+                                                      "referencedDeclaration": 1726,
                                                       "type": "function () view returns (contract IOracle)",
                                                       "value": "oracle"
                                                     },
-                                                    "id": 1577,
+                                                    "id": 1608,
                                                     "name": "Identifier",
                                                     "src": "1623:6:5"
                                                   }
                                                 ],
-                                                "id": 1578,
+                                                "id": 1609,
                                                 "name": "FunctionCall",
                                                 "src": "1623:8:5"
                                               }
                                             ],
-                                            "id": 1579,
+                                            "id": 1610,
                                             "name": "MemberAccess",
                                             "src": "1623:13:5"
                                           }
                                         ],
-                                        "id": 1580,
+                                        "id": 1611,
                                         "name": "FunctionCall",
                                         "src": "1623:15:5"
                                       }
                                     ],
-                                    "id": 1581,
+                                    "id": 1612,
                                     "name": "FunctionCall",
                                     "src": "1615:24:5"
                                   }
                                 ],
-                                "id": 1582,
+                                "id": 1613,
                                 "name": "FunctionCall",
                                 "src": "1587:53:5"
                               }
                             ],
-                            "id": 1583,
+                            "id": 1614,
                             "name": "FunctionCall",
                             "src": "1579:62:5"
                           }
                         ],
-                        "id": 1584,
+                        "id": 1615,
                         "name": "Assignment",
                         "src": "1556:85:5"
                       }
                     ],
-                    "id": 1585,
+                    "id": 1616,
                     "name": "ExpressionStatement",
                     "src": "1556:85:5"
                   }
                 ],
-                "id": 1586,
+                "id": 1617,
                 "name": "Block",
                 "src": "1546:102:5"
               }
             ],
-            "id": 1587,
+            "id": 1618,
             "name": "FunctionDefinition",
             "src": "1505:143:5"
           },
@@ -4322,7 +4322,7 @@
                 null
               ],
               "name": "implement",
-              "scope": 1598,
+              "scope": 1629,
               "stateMutability": "nonpayable",
               "superFunction": null,
               "visibility": "external"
@@ -4334,7 +4334,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "implementation",
-                      "scope": 1597,
+                      "scope": 1628,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -4348,17 +4348,17 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 1588,
+                        "id": 1619,
                         "name": "ElementaryTypeName",
                         "src": "1673:7:5"
                       }
                     ],
-                    "id": 1589,
+                    "id": 1620,
                     "name": "VariableDeclaration",
                     "src": "1673:22:5"
                   }
                 ],
-                "id": 1590,
+                "id": 1621,
                 "name": "ParameterList",
                 "src": "1672:24:5"
               },
@@ -4369,7 +4369,7 @@
                   ]
                 },
                 "children": [],
-                "id": 1591,
+                "id": 1622,
                 "name": "ParameterList",
                 "src": "1706:0:5"
               },
@@ -4403,11 +4403,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 6815,
+                              "referencedDeclaration": 6878,
                               "type": "function (address)",
                               "value": "upgradeTo"
                             },
-                            "id": 1592,
+                            "id": 1623,
                             "name": "Identifier",
                             "src": "1716:9:5"
                           },
@@ -4417,41 +4417,41 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 1589,
+                              "referencedDeclaration": 1620,
                               "type": "address",
                               "value": "implementation"
                             },
-                            "id": 1593,
+                            "id": 1624,
                             "name": "Identifier",
                             "src": "1726:14:5"
                           }
                         ],
-                        "id": 1594,
+                        "id": 1625,
                         "name": "FunctionCall",
                         "src": "1716:25:5"
                       }
                     ],
-                    "id": 1595,
+                    "id": 1626,
                     "name": "ExpressionStatement",
                     "src": "1716:25:5"
                   }
                 ],
-                "id": 1596,
+                "id": 1627,
                 "name": "Block",
                 "src": "1706:42:5"
               }
             ],
-            "id": 1597,
+            "id": 1628,
             "name": "FunctionDefinition",
             "src": "1654:94:5"
           }
         ],
-        "id": 1598,
+        "id": 1629,
         "name": "ContractDefinition",
         "src": "1446:304:5"
       }
     ],
-    "id": 1599,
+    "id": 1630,
     "name": "SourceUnit",
     "src": "646:1104:5"
   },
@@ -4507,7 +4507,7 @@
     }
   },
   "schemaVersion": "3.3.3",
-  "updatedAt": "2021-01-12T11:27:05.396Z",
+  "updatedAt": "2021-01-13T12:52:37.204Z",
   "devdoc": {
     "methods": {}
   },

@@ -494,7 +494,7 @@ describe('Regulator', function () {
           describe('when settling auction', function () {
             describe('auction is not finished and not canceled', function () {
               beforeEach(async function () {
-                await this.regulator.mintToE(userAddress, 1000000);
+                //await this.regulator.mintToE(userAddress, 1000000);
                 await this.regulator.mintToE(userAddress2, 1000000);
                 await this.regulator.mintToE(userAddress3, 1000000);
                 await this.regulator.mintToE(userAddress4, 1000000);
@@ -506,11 +506,12 @@ describe('Regulator', function () {
 
               it('is able to settle auction and generated internals', async function () {
                 // add some bidders
-                this.result = await this.regulator.placeCouponAuctionBid(20, 1000, 50000, {from: userAddress});
                 this.result1 = await this.regulator.placeCouponAuctionBid(5, 2000, 50000, {from: userAddress2});
-                //thise bidders will be rejected
                 this.result2 = await this.regulator.placeCouponAuctionBid(1000, 900, 50000, {from: userAddress3});
                 this.result3 = await this.regulator.placeCouponAuctionBid(100990, 900, 50000, {from: userAddress4});
+
+                //this bidder will be rejected
+                this.result = await this.regulator.placeCouponAuctionBid(20, 1000, 50000, {from: userAddress});
                 this.auction_settlement = await this.regulator.settleCouponAuctionE();
                 
 
@@ -524,14 +525,14 @@ describe('Regulator', function () {
 
                 expect(await this.regulator.getMinExpiryFilled(7)).to.be.bignumber.equal(new BN(12));
                 expect(await this.regulator.getMaxExpiryFilled(7)).to.be.bignumber.equal(new BN(100997));
-                expect(await this.regulator.getAvgExpiryFilled(7)).to.be.bignumber.equal(new BN(25510));
+                expect(await this.regulator.getAvgExpiryFilled(7)).to.be.bignumber.equal(new BN(34005));
                 expect(await this.regulator.getMinYieldFilled(7)).to.be.bignumber.equal(new BN(25));
                 expect(await this.regulator.getMaxYieldFilled(7)).to.be.bignumber.equal(new BN(55));
-                expect(await this.regulator.getAvgYieldFilled(7)).to.be.bignumber.equal(new BN(46));
-                expect(await this.regulator.getBidToCover(7)).to.be.bignumber.equal(new BN(100));
-                expect(await this.regulator.getTotalFilled(7)).to.be.bignumber.equal(new BN(4));
-                expect(await this.regulator.getTotalAuctioned(7)).to.be.bignumber.equal(new BN(4 * 50000));
-                expect(await this.regulator.getTotalBurned(7)).to.be.bignumber.equal(new BN(4800));
+                expect(await this.regulator.getAvgYieldFilled(7)).to.be.bignumber.equal(new BN(45));
+                expect(await this.regulator.getBidToCover(7)).to.be.bignumber.equal(new BN(133));
+                expect(await this.regulator.getTotalFilled(7)).to.be.bignumber.equal(new BN(3));
+                expect(await this.regulator.getTotalAuctioned(7)).to.be.bignumber.equal(new BN(3 * 50000));
+                expect(await this.regulator.getTotalBurned(7)).to.be.bignumber.equal(new BN(3800));
               });
             });
             

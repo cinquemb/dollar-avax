@@ -64,14 +64,14 @@
     "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/oracle/IOracle.sol",
     "exportedSymbols": {
       "IOracle": [
-        11116
+        11303
       ]
     },
-    "id": 11117,
+    "id": 11304,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 11098,
+        "id": 11285,
         "literals": [
           "solidity",
           "^",
@@ -82,7 +82,7 @@
         "src": "646:24:42"
       },
       {
-        "id": 11099,
+        "id": 11286,
         "literals": [
           "experimental",
           "ABIEncoderV2"
@@ -93,10 +93,10 @@
       {
         "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/external/Decimal.sol",
         "file": "../external/Decimal.sol",
-        "id": 11100,
+        "id": 11287,
         "nodeType": "ImportDirective",
-        "scope": 11117,
-        "sourceUnit": 7190,
+        "scope": 11304,
+        "sourceUnit": 7377,
         "src": "706:33:42",
         "symbolAliases": [],
         "unitAlias": ""
@@ -107,9 +107,9 @@
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 11116,
+        "id": 11303,
         "linearizedBaseContracts": [
-          11116
+          11303
         ],
         "name": "IOracle",
         "nodeType": "ContractDefinition",
@@ -117,25 +117,25 @@
           {
             "body": null,
             "documentation": null,
-            "id": 11103,
+            "id": 11290,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "setup",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 11101,
+              "id": 11288,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "778:2:42"
             },
             "returnParameters": {
-              "id": 11102,
+              "id": 11289,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "787:0:42"
             },
-            "scope": 11116,
+            "scope": 11303,
             "src": "764:24:42",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -144,44 +144,44 @@
           {
             "body": null,
             "documentation": null,
-            "id": 11110,
+            "id": 11297,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "capture",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 11104,
+              "id": 11291,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "809:2:42"
             },
             "returnParameters": {
-              "id": 11109,
+              "id": 11296,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 11106,
+                  "id": 11293,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 11110,
+                  "scope": 11297,
                   "src": "828:19:42",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_D256_$6727_memory_ptr",
+                    "typeIdentifier": "t_struct$_D256_$6914_memory_ptr",
                     "typeString": "struct Decimal.D256"
                   },
                   "typeName": {
                     "contractScope": null,
-                    "id": 11105,
+                    "id": 11292,
                     "name": "Decimal.D256",
                     "nodeType": "UserDefinedTypeName",
-                    "referencedDeclaration": 6727,
+                    "referencedDeclaration": 6914,
                     "src": "828:12:42",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_D256_$6727_storage_ptr",
+                      "typeIdentifier": "t_struct$_D256_$6914_storage_ptr",
                       "typeString": "struct Decimal.D256"
                     }
                   },
@@ -190,10 +190,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 11108,
+                  "id": 11295,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 11110,
+                  "scope": 11297,
                   "src": "849:4:42",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -202,7 +202,7 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 11107,
+                    "id": 11294,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
                     "src": "849:4:42",
@@ -217,7 +217,7 @@
               ],
               "src": "827:27:42"
             },
-            "scope": 11116,
+            "scope": 11303,
             "src": "793:62:42",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -226,28 +226,28 @@
           {
             "body": null,
             "documentation": null,
-            "id": 11115,
+            "id": 11302,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "pair",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 11111,
+              "id": 11298,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "873:2:42"
             },
             "returnParameters": {
-              "id": 11114,
+              "id": 11301,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 11113,
+                  "id": 11300,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 11115,
+                  "scope": 11302,
                   "src": "899:7:42",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -256,7 +256,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 11112,
+                    "id": 11299,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "899:7:42",
@@ -272,14 +272,14 @@
               ],
               "src": "898:9:42"
             },
-            "scope": 11116,
+            "scope": 11303,
             "src": "860:48:42",
             "stateMutability": "view",
             "superFunction": null,
             "visibility": "external"
           }
         ],
-        "scope": 11117,
+        "scope": 11304,
         "src": "741:169:42"
       }
     ],
@@ -290,7 +290,7 @@
       "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/oracle/IOracle.sol",
       "exportedSymbols": {
         "IOracle": [
-          11116
+          11303
         ]
       }
     },
@@ -304,7 +304,7 @@
             ".17"
           ]
         },
-        "id": 11098,
+        "id": 11285,
         "name": "PragmaDirective",
         "src": "646:24:42"
       },
@@ -315,22 +315,22 @@
             "ABIEncoderV2"
           ]
         },
-        "id": 11099,
+        "id": 11286,
         "name": "PragmaDirective",
         "src": "671:33:42"
       },
       {
         "attributes": {
-          "SourceUnit": 7190,
+          "SourceUnit": 7377,
           "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/external/Decimal.sol",
           "file": "../external/Decimal.sol",
-          "scope": 11117,
+          "scope": 11304,
           "symbolAliases": [
             null
           ],
           "unitAlias": ""
         },
-        "id": 11100,
+        "id": 11287,
         "name": "ImportDirective",
         "src": "706:33:42"
       },
@@ -346,10 +346,10 @@
           "documentation": null,
           "fullyImplemented": false,
           "linearizedBaseContracts": [
-            11116
+            11303
           ],
           "name": "IOracle",
-          "scope": 11117
+          "scope": 11304
         },
         "children": [
           {
@@ -363,7 +363,7 @@
                 null
               ],
               "name": "setup",
-              "scope": 11116,
+              "scope": 11303,
               "stateMutability": "nonpayable",
               "superFunction": null,
               "visibility": "public"
@@ -376,7 +376,7 @@
                   ]
                 },
                 "children": [],
-                "id": 11101,
+                "id": 11288,
                 "name": "ParameterList",
                 "src": "778:2:42"
               },
@@ -387,12 +387,12 @@
                   ]
                 },
                 "children": [],
-                "id": 11102,
+                "id": 11289,
                 "name": "ParameterList",
                 "src": "787:0:42"
               }
             ],
-            "id": 11103,
+            "id": 11290,
             "name": "FunctionDefinition",
             "src": "764:24:42"
           },
@@ -407,7 +407,7 @@
                 null
               ],
               "name": "capture",
-              "scope": 11116,
+              "scope": 11303,
               "stateMutability": "nonpayable",
               "superFunction": null,
               "visibility": "public"
@@ -420,7 +420,7 @@
                   ]
                 },
                 "children": [],
-                "id": 11104,
+                "id": 11291,
                 "name": "ParameterList",
                 "src": "809:2:42"
               },
@@ -430,7 +430,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "",
-                      "scope": 11110,
+                      "scope": 11297,
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "type": "struct Decimal.D256",
@@ -442,15 +442,15 @@
                         "attributes": {
                           "contractScope": null,
                           "name": "Decimal.D256",
-                          "referencedDeclaration": 6727,
+                          "referencedDeclaration": 6914,
                           "type": "struct Decimal.D256"
                         },
-                        "id": 11105,
+                        "id": 11292,
                         "name": "UserDefinedTypeName",
                         "src": "828:12:42"
                       }
                     ],
-                    "id": 11106,
+                    "id": 11293,
                     "name": "VariableDeclaration",
                     "src": "828:19:42"
                   },
@@ -458,7 +458,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "",
-                      "scope": 11110,
+                      "scope": 11297,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "bool",
@@ -471,22 +471,22 @@
                           "name": "bool",
                           "type": "bool"
                         },
-                        "id": 11107,
+                        "id": 11294,
                         "name": "ElementaryTypeName",
                         "src": "849:4:42"
                       }
                     ],
-                    "id": 11108,
+                    "id": 11295,
                     "name": "VariableDeclaration",
                     "src": "849:4:42"
                   }
                 ],
-                "id": 11109,
+                "id": 11296,
                 "name": "ParameterList",
                 "src": "827:27:42"
               }
             ],
-            "id": 11110,
+            "id": 11297,
             "name": "FunctionDefinition",
             "src": "793:62:42"
           },
@@ -501,7 +501,7 @@
                 null
               ],
               "name": "pair",
-              "scope": 11116,
+              "scope": 11303,
               "stateMutability": "view",
               "superFunction": null,
               "visibility": "external"
@@ -514,7 +514,7 @@
                   ]
                 },
                 "children": [],
-                "id": 11111,
+                "id": 11298,
                 "name": "ParameterList",
                 "src": "873:2:42"
               },
@@ -524,7 +524,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "",
-                      "scope": 11115,
+                      "scope": 11302,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -538,32 +538,32 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 11112,
+                        "id": 11299,
                         "name": "ElementaryTypeName",
                         "src": "899:7:42"
                       }
                     ],
-                    "id": 11113,
+                    "id": 11300,
                     "name": "VariableDeclaration",
                     "src": "899:7:42"
                   }
                 ],
-                "id": 11114,
+                "id": 11301,
                 "name": "ParameterList",
                 "src": "898:9:42"
               }
             ],
-            "id": 11115,
+            "id": 11302,
             "name": "FunctionDefinition",
             "src": "860:48:42"
           }
         ],
-        "id": 11116,
+        "id": 11303,
         "name": "ContractDefinition",
         "src": "741:169:42"
       }
     ],
-    "id": 11117,
+    "id": 11304,
     "name": "SourceUnit",
     "src": "646:264:42"
   },
@@ -573,7 +573,7 @@
   },
   "networks": {},
   "schemaVersion": "3.3.3",
-  "updatedAt": "2021-01-12T08:04:50.396Z",
+  "updatedAt": "2021-01-13T12:52:38.921Z",
   "devdoc": {
     "methods": {}
   },

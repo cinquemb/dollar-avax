@@ -28,14 +28,14 @@
     "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/oracle/IDAO.sol",
     "exportedSymbols": {
       "IDAO": [
-        11096
+        11283
       ]
     },
-    "id": 11097,
+    "id": 11284,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 11090,
+        "id": 11277,
         "literals": [
           "solidity",
           "^",
@@ -51,9 +51,9 @@
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 11096,
+        "id": 11283,
         "linearizedBaseContracts": [
-          11096
+          11283
         ],
         "name": "IDAO",
         "nodeType": "ContractDefinition",
@@ -61,28 +61,28 @@
           {
             "body": null,
             "documentation": null,
-            "id": 11095,
+            "id": 11282,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "epoch",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 11091,
+              "id": 11278,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "706:2:41"
             },
             "returnParameters": {
-              "id": 11094,
+              "id": 11281,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 11093,
+                  "id": 11280,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 11095,
+                  "scope": 11282,
                   "src": "732:7:41",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -91,7 +91,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 11092,
+                    "id": 11279,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
                     "src": "732:7:41",
@@ -106,14 +106,14 @@
               ],
               "src": "731:9:41"
             },
-            "scope": 11096,
+            "scope": 11283,
             "src": "692:49:41",
             "stateMutability": "view",
             "superFunction": null,
             "visibility": "external"
           }
         ],
-        "scope": 11097,
+        "scope": 11284,
         "src": "672:71:41"
       }
     ],
@@ -124,7 +124,7 @@
       "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/oracle/IDAO.sol",
       "exportedSymbols": {
         "IDAO": [
-          11096
+          11283
         ]
       }
     },
@@ -138,7 +138,7 @@
             ".17"
           ]
         },
-        "id": 11090,
+        "id": 11277,
         "name": "PragmaDirective",
         "src": "646:24:41"
       },
@@ -154,10 +154,10 @@
           "documentation": null,
           "fullyImplemented": false,
           "linearizedBaseContracts": [
-            11096
+            11283
           ],
           "name": "IDAO",
-          "scope": 11097
+          "scope": 11284
         },
         "children": [
           {
@@ -171,7 +171,7 @@
                 null
               ],
               "name": "epoch",
-              "scope": 11096,
+              "scope": 11283,
               "stateMutability": "view",
               "superFunction": null,
               "visibility": "external"
@@ -184,7 +184,7 @@
                   ]
                 },
                 "children": [],
-                "id": 11091,
+                "id": 11278,
                 "name": "ParameterList",
                 "src": "706:2:41"
               },
@@ -194,7 +194,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "",
-                      "scope": 11095,
+                      "scope": 11282,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -207,32 +207,32 @@
                           "name": "uint256",
                           "type": "uint256"
                         },
-                        "id": 11092,
+                        "id": 11279,
                         "name": "ElementaryTypeName",
                         "src": "732:7:41"
                       }
                     ],
-                    "id": 11093,
+                    "id": 11280,
                     "name": "VariableDeclaration",
                     "src": "732:7:41"
                   }
                 ],
-                "id": 11094,
+                "id": 11281,
                 "name": "ParameterList",
                 "src": "731:9:41"
               }
             ],
-            "id": 11095,
+            "id": 11282,
             "name": "FunctionDefinition",
             "src": "692:49:41"
           }
         ],
-        "id": 11096,
+        "id": 11283,
         "name": "ContractDefinition",
         "src": "672:71:41"
       }
     ],
-    "id": 11097,
+    "id": 11284,
     "name": "SourceUnit",
     "src": "646:97:41"
   },
@@ -242,7 +242,7 @@
   },
   "networks": {},
   "schemaVersion": "3.3.3",
-  "updatedAt": "2021-01-12T08:04:50.393Z",
+  "updatedAt": "2021-01-13T12:52:38.919Z",
   "devdoc": {
     "methods": {}
   },

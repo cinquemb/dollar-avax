@@ -43,14 +43,14 @@
     "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/mock/MockSettableDAO.sol",
     "exportedSymbols": {
       "MockSettableDAO": [
-        9300
+        9487
       ]
     },
-    "id": 9301,
+    "id": 9488,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 9275,
+        "id": 9462,
         "literals": [
           "solidity",
           "^",
@@ -61,7 +61,7 @@
         "src": "646:24:32"
       },
       {
-        "id": 9276,
+        "id": 9463,
         "literals": [
           "experimental",
           "ABIEncoderV2"
@@ -72,10 +72,10 @@
       {
         "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/oracle/IDAO.sol",
         "file": "../oracle/IDAO.sol",
-        "id": 9277,
+        "id": 9464,
         "nodeType": "ImportDirective",
-        "scope": 9301,
-        "sourceUnit": 11097,
+        "scope": 9488,
+        "sourceUnit": 11284,
         "src": "706:28:32",
         "symbolAliases": [],
         "unitAlias": ""
@@ -86,41 +86,41 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 9278,
+              "id": 9465,
               "name": "IDAO",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 11096,
+              "referencedDeclaration": 11283,
               "src": "764:4:32",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_IDAO_$11096",
+                "typeIdentifier": "t_contract$_IDAO_$11283",
                 "typeString": "contract IDAO"
               }
             },
-            "id": 9279,
+            "id": 9466,
             "nodeType": "InheritanceSpecifier",
             "src": "764:4:32"
           }
         ],
         "contractDependencies": [
-          11096
+          11283
         ],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 9300,
+        "id": 9487,
         "linearizedBaseContracts": [
-          9300,
-          11096
+          9487,
+          11283
         ],
         "name": "MockSettableDAO",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "constant": false,
-            "id": 9281,
+            "id": 9468,
             "name": "_epoch",
             "nodeType": "VariableDeclaration",
-            "scope": 9300,
+            "scope": 9487,
             "src": "775:23:32",
             "stateVariable": true,
             "storageLocation": "default",
@@ -129,7 +129,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 9280,
+              "id": 9467,
               "name": "uint256",
               "nodeType": "ElementaryTypeName",
               "src": "775:7:32",
@@ -143,25 +143,25 @@
           },
           {
             "body": {
-              "id": 9290,
+              "id": 9477,
               "nodeType": "Block",
               "src": "842:31:32",
               "statements": [
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "id": 9288,
+                    "id": 9475,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftHandSide": {
                       "argumentTypes": null,
-                      "id": 9286,
+                      "id": 9473,
                       "name": "_epoch",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 9281,
+                      "referencedDeclaration": 9468,
                       "src": "852:6:32",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
@@ -172,11 +172,11 @@
                     "operator": "=",
                     "rightHandSide": {
                       "argumentTypes": null,
-                      "id": 9287,
+                      "id": 9474,
                       "name": "epoch",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 9283,
+                      "referencedDeclaration": 9470,
                       "src": "861:5:32",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
@@ -189,29 +189,29 @@
                       "typeString": "uint256"
                     }
                   },
-                  "id": 9289,
+                  "id": 9476,
                   "nodeType": "ExpressionStatement",
                   "src": "852:14:32"
                 }
               ]
             },
             "documentation": null,
-            "id": 9291,
+            "id": 9478,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
             "name": "set",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 9284,
+              "id": 9471,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 9283,
+                  "id": 9470,
                   "name": "epoch",
                   "nodeType": "VariableDeclaration",
-                  "scope": 9291,
+                  "scope": 9478,
                   "src": "818:13:32",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -220,7 +220,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 9282,
+                    "id": 9469,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
                     "src": "818:7:32",
@@ -236,12 +236,12 @@
               "src": "817:15:32"
             },
             "returnParameters": {
-              "id": 9285,
+              "id": 9472,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "842:0:32"
             },
-            "scope": 9300,
+            "scope": 9487,
             "src": "805:68:32",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -249,54 +249,54 @@
           },
           {
             "body": {
-              "id": 9298,
+              "id": 9485,
               "nodeType": "Block",
               "src": "928:30:32",
               "statements": [
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "id": 9296,
+                    "id": 9483,
                     "name": "_epoch",
                     "nodeType": "Identifier",
                     "overloadedDeclarations": [],
-                    "referencedDeclaration": 9281,
+                    "referencedDeclaration": 9468,
                     "src": "945:6:32",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     }
                   },
-                  "functionReturnParameters": 9295,
-                  "id": 9297,
+                  "functionReturnParameters": 9482,
+                  "id": 9484,
                   "nodeType": "Return",
                   "src": "938:13:32"
                 }
               ]
             },
             "documentation": null,
-            "id": 9299,
+            "id": 9486,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
             "name": "epoch",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 9292,
+              "id": 9479,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "893:2:32"
             },
             "returnParameters": {
-              "id": 9295,
+              "id": 9482,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 9294,
+                  "id": 9481,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 9299,
+                  "scope": 9486,
                   "src": "919:7:32",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -305,7 +305,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 9293,
+                    "id": 9480,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
                     "src": "919:7:32",
@@ -320,14 +320,14 @@
               ],
               "src": "918:9:32"
             },
-            "scope": 9300,
+            "scope": 9487,
             "src": "879:79:32",
             "stateMutability": "view",
-            "superFunction": 11095,
+            "superFunction": 11282,
             "visibility": "external"
           }
         ],
-        "scope": 9301,
+        "scope": 9488,
         "src": "736:224:32"
       }
     ],
@@ -338,7 +338,7 @@
       "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/mock/MockSettableDAO.sol",
       "exportedSymbols": {
         "MockSettableDAO": [
-          9300
+          9487
         ]
       }
     },
@@ -352,7 +352,7 @@
             ".17"
           ]
         },
-        "id": 9275,
+        "id": 9462,
         "name": "PragmaDirective",
         "src": "646:24:32"
       },
@@ -363,39 +363,39 @@
             "ABIEncoderV2"
           ]
         },
-        "id": 9276,
+        "id": 9463,
         "name": "PragmaDirective",
         "src": "671:33:32"
       },
       {
         "attributes": {
-          "SourceUnit": 11097,
+          "SourceUnit": 11284,
           "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/oracle/IDAO.sol",
           "file": "../oracle/IDAO.sol",
-          "scope": 9301,
+          "scope": 9488,
           "symbolAliases": [
             null
           ],
           "unitAlias": ""
         },
-        "id": 9277,
+        "id": 9464,
         "name": "ImportDirective",
         "src": "706:28:32"
       },
       {
         "attributes": {
           "contractDependencies": [
-            11096
+            11283
           ],
           "contractKind": "contract",
           "documentation": null,
           "fullyImplemented": true,
           "linearizedBaseContracts": [
-            9300,
-            11096
+            9487,
+            11283
           ],
           "name": "MockSettableDAO",
-          "scope": 9301
+          "scope": 9488
         },
         "children": [
           {
@@ -407,15 +407,15 @@
                 "attributes": {
                   "contractScope": null,
                   "name": "IDAO",
-                  "referencedDeclaration": 11096,
+                  "referencedDeclaration": 11283,
                   "type": "contract IDAO"
                 },
-                "id": 9278,
+                "id": 9465,
                 "name": "UserDefinedTypeName",
                 "src": "764:4:32"
               }
             ],
-            "id": 9279,
+            "id": 9466,
             "name": "InheritanceSpecifier",
             "src": "764:4:32"
           },
@@ -423,7 +423,7 @@
             "attributes": {
               "constant": false,
               "name": "_epoch",
-              "scope": 9300,
+              "scope": 9487,
               "stateVariable": true,
               "storageLocation": "default",
               "type": "uint256",
@@ -436,12 +436,12 @@
                   "name": "uint256",
                   "type": "uint256"
                 },
-                "id": 9280,
+                "id": 9467,
                 "name": "ElementaryTypeName",
                 "src": "775:7:32"
               }
             ],
-            "id": 9281,
+            "id": 9468,
             "name": "VariableDeclaration",
             "src": "775:23:32"
           },
@@ -455,7 +455,7 @@
                 null
               ],
               "name": "set",
-              "scope": 9300,
+              "scope": 9487,
               "stateMutability": "nonpayable",
               "superFunction": null,
               "visibility": "external"
@@ -467,7 +467,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "epoch",
-                      "scope": 9291,
+                      "scope": 9478,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -480,17 +480,17 @@
                           "name": "uint256",
                           "type": "uint256"
                         },
-                        "id": 9282,
+                        "id": 9469,
                         "name": "ElementaryTypeName",
                         "src": "818:7:32"
                       }
                     ],
-                    "id": 9283,
+                    "id": 9470,
                     "name": "VariableDeclaration",
                     "src": "818:13:32"
                   }
                 ],
-                "id": 9284,
+                "id": 9471,
                 "name": "ParameterList",
                 "src": "817:15:32"
               },
@@ -501,7 +501,7 @@
                   ]
                 },
                 "children": [],
-                "id": 9285,
+                "id": 9472,
                 "name": "ParameterList",
                 "src": "842:0:32"
               },
@@ -526,11 +526,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 9281,
+                              "referencedDeclaration": 9468,
                               "type": "uint256",
                               "value": "_epoch"
                             },
-                            "id": 9286,
+                            "id": 9473,
                             "name": "Identifier",
                             "src": "852:6:32"
                           },
@@ -540,31 +540,31 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 9283,
+                              "referencedDeclaration": 9470,
                               "type": "uint256",
                               "value": "epoch"
                             },
-                            "id": 9287,
+                            "id": 9474,
                             "name": "Identifier",
                             "src": "861:5:32"
                           }
                         ],
-                        "id": 9288,
+                        "id": 9475,
                         "name": "Assignment",
                         "src": "852:14:32"
                       }
                     ],
-                    "id": 9289,
+                    "id": 9476,
                     "name": "ExpressionStatement",
                     "src": "852:14:32"
                   }
                 ],
-                "id": 9290,
+                "id": 9477,
                 "name": "Block",
                 "src": "842:31:32"
               }
             ],
-            "id": 9291,
+            "id": 9478,
             "name": "FunctionDefinition",
             "src": "805:68:32"
           },
@@ -578,9 +578,9 @@
                 null
               ],
               "name": "epoch",
-              "scope": 9300,
+              "scope": 9487,
               "stateMutability": "view",
-              "superFunction": 11095,
+              "superFunction": 11282,
               "visibility": "external"
             },
             "children": [
@@ -591,7 +591,7 @@
                   ]
                 },
                 "children": [],
-                "id": 9292,
+                "id": 9479,
                 "name": "ParameterList",
                 "src": "893:2:32"
               },
@@ -601,7 +601,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "",
-                      "scope": 9299,
+                      "scope": 9486,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -614,17 +614,17 @@
                           "name": "uint256",
                           "type": "uint256"
                         },
-                        "id": 9293,
+                        "id": 9480,
                         "name": "ElementaryTypeName",
                         "src": "919:7:32"
                       }
                     ],
-                    "id": 9294,
+                    "id": 9481,
                     "name": "VariableDeclaration",
                     "src": "919:7:32"
                   }
                 ],
-                "id": 9295,
+                "id": 9482,
                 "name": "ParameterList",
                 "src": "918:9:32"
               },
@@ -632,7 +632,7 @@
                 "children": [
                   {
                     "attributes": {
-                      "functionReturnParameters": 9295
+                      "functionReturnParameters": 9482
                     },
                     "children": [
                       {
@@ -641,36 +641,36 @@
                           "overloadedDeclarations": [
                             null
                           ],
-                          "referencedDeclaration": 9281,
+                          "referencedDeclaration": 9468,
                           "type": "uint256",
                           "value": "_epoch"
                         },
-                        "id": 9296,
+                        "id": 9483,
                         "name": "Identifier",
                         "src": "945:6:32"
                       }
                     ],
-                    "id": 9297,
+                    "id": 9484,
                     "name": "Return",
                     "src": "938:13:32"
                   }
                 ],
-                "id": 9298,
+                "id": 9485,
                 "name": "Block",
                 "src": "928:30:32"
               }
             ],
-            "id": 9299,
+            "id": 9486,
             "name": "FunctionDefinition",
             "src": "879:79:32"
           }
         ],
-        "id": 9300,
+        "id": 9487,
         "name": "ContractDefinition",
         "src": "736:224:32"
       }
     ],
-    "id": 9301,
+    "id": 9488,
     "name": "SourceUnit",
     "src": "646:315:32"
   },
@@ -680,7 +680,7 @@
   },
   "networks": {},
   "schemaVersion": "3.3.3",
-  "updatedAt": "2021-01-12T08:04:49.959Z",
+  "updatedAt": "2021-01-13T12:52:38.632Z",
   "devdoc": {
     "methods": {}
   },

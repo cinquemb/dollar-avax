@@ -49,14 +49,14 @@
     "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/mock/MockUSDC.sol",
     "exportedSymbols": {
       "MockUSDC": [
-        9917
+        10104
       ]
     },
-    "id": 9918,
+    "id": 10105,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 9890,
+        "id": 10077,
         "literals": [
           "solidity",
           "^",
@@ -67,7 +67,7 @@
         "src": "646:24:36"
       },
       {
-        "id": 9891,
+        "id": 10078,
         "literals": [
           "experimental",
           "ABIEncoderV2"
@@ -78,10 +78,10 @@
       {
         "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/oracle/IUSDC.sol",
         "file": "../oracle/IUSDC.sol",
-        "id": 9892,
+        "id": 10079,
         "nodeType": "ImportDirective",
-        "scope": 9918,
-        "sourceUnit": 11127,
+        "scope": 10105,
+        "sourceUnit": 11314,
         "src": "706:29:36",
         "symbolAliases": [],
         "unitAlias": ""
@@ -92,41 +92,41 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 9893,
+              "id": 10080,
               "name": "IUSDC",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 11126,
+              "referencedDeclaration": 11313,
               "src": "758:5:36",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_IUSDC_$11126",
+                "typeIdentifier": "t_contract$_IUSDC_$11313",
                 "typeString": "contract IUSDC"
               }
             },
-            "id": 9894,
+            "id": 10081,
             "nodeType": "InheritanceSpecifier",
             "src": "758:5:36"
           }
         ],
         "contractDependencies": [
-          11126
+          11313
         ],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 9917,
+        "id": 10104,
         "linearizedBaseContracts": [
-          9917,
-          11126
+          10104,
+          11313
         ],
         "name": "MockUSDC",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "constant": false,
-            "id": 9896,
+            "id": 10083,
             "name": "_blacklisted",
             "nodeType": "VariableDeclaration",
-            "scope": 9917,
+            "scope": 10104,
             "src": "770:25:36",
             "stateVariable": true,
             "storageLocation": "default",
@@ -135,7 +135,7 @@
               "typeString": "bool"
             },
             "typeName": {
-              "id": 9895,
+              "id": 10082,
               "name": "bool",
               "nodeType": "ElementaryTypeName",
               "src": "770:4:36",
@@ -149,48 +149,48 @@
           },
           {
             "body": {
-              "id": 9905,
+              "id": 10092,
               "nodeType": "Block",
               "src": "872:36:36",
               "statements": [
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "id": 9903,
+                    "id": 10090,
                     "name": "_blacklisted",
                     "nodeType": "Identifier",
                     "overloadedDeclarations": [],
-                    "referencedDeclaration": 9896,
+                    "referencedDeclaration": 10083,
                     "src": "889:12:36",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
                     }
                   },
-                  "functionReturnParameters": 9902,
-                  "id": 9904,
+                  "functionReturnParameters": 10089,
+                  "id": 10091,
                   "nodeType": "Return",
                   "src": "882:19:36"
                 }
               ]
             },
             "documentation": null,
-            "id": 9906,
+            "id": 10093,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
             "name": "isBlacklisted",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 9899,
+              "id": 10086,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 9898,
+                  "id": 10085,
                   "name": "_account",
                   "nodeType": "VariableDeclaration",
-                  "scope": 9906,
+                  "scope": 10093,
                   "src": "825:16:36",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -199,7 +199,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 9897,
+                    "id": 10084,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "825:7:36",
@@ -216,15 +216,15 @@
               "src": "824:18:36"
             },
             "returnParameters": {
-              "id": 9902,
+              "id": 10089,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 9901,
+                  "id": 10088,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 9906,
+                  "scope": 10093,
                   "src": "866:4:36",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -233,7 +233,7 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 9900,
+                    "id": 10087,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
                     "src": "866:4:36",
@@ -248,33 +248,33 @@
               ],
               "src": "865:6:36"
             },
-            "scope": 9917,
+            "scope": 10104,
             "src": "802:106:36",
             "stateMutability": "view",
-            "superFunction": 11125,
+            "superFunction": 11312,
             "visibility": "external"
           },
           {
             "body": {
-              "id": 9915,
+              "id": 10102,
               "nodeType": "Block",
               "src": "967:43:36",
               "statements": [
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "id": 9913,
+                    "id": 10100,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftHandSide": {
                       "argumentTypes": null,
-                      "id": 9911,
+                      "id": 10098,
                       "name": "_blacklisted",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 9896,
+                      "referencedDeclaration": 10083,
                       "src": "977:12:36",
                       "typeDescriptions": {
                         "typeIdentifier": "t_bool",
@@ -285,11 +285,11 @@
                     "operator": "=",
                     "rightHandSide": {
                       "argumentTypes": null,
-                      "id": 9912,
+                      "id": 10099,
                       "name": "blacklisted",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 9908,
+                      "referencedDeclaration": 10095,
                       "src": "992:11:36",
                       "typeDescriptions": {
                         "typeIdentifier": "t_bool",
@@ -302,29 +302,29 @@
                       "typeString": "bool"
                     }
                   },
-                  "id": 9914,
+                  "id": 10101,
                   "nodeType": "ExpressionStatement",
                   "src": "977:26:36"
                 }
               ]
             },
             "documentation": null,
-            "id": 9916,
+            "id": 10103,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
             "name": "setIsBlacklisted",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 9909,
+              "id": 10096,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 9908,
+                  "id": 10095,
                   "name": "blacklisted",
                   "nodeType": "VariableDeclaration",
-                  "scope": 9916,
+                  "scope": 10103,
                   "src": "940:16:36",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -333,7 +333,7 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 9907,
+                    "id": 10094,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
                     "src": "940:4:36",
@@ -349,19 +349,19 @@
               "src": "939:18:36"
             },
             "returnParameters": {
-              "id": 9910,
+              "id": 10097,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "967:0:36"
             },
-            "scope": 9917,
+            "scope": 10104,
             "src": "914:96:36",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "external"
           }
         ],
-        "scope": 9918,
+        "scope": 10105,
         "src": "737:275:36"
       }
     ],
@@ -372,7 +372,7 @@
       "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/mock/MockUSDC.sol",
       "exportedSymbols": {
         "MockUSDC": [
-          9917
+          10104
         ]
       }
     },
@@ -386,7 +386,7 @@
             ".17"
           ]
         },
-        "id": 9890,
+        "id": 10077,
         "name": "PragmaDirective",
         "src": "646:24:36"
       },
@@ -397,39 +397,39 @@
             "ABIEncoderV2"
           ]
         },
-        "id": 9891,
+        "id": 10078,
         "name": "PragmaDirective",
         "src": "671:33:36"
       },
       {
         "attributes": {
-          "SourceUnit": 11127,
+          "SourceUnit": 11314,
           "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/oracle/IUSDC.sol",
           "file": "../oracle/IUSDC.sol",
-          "scope": 9918,
+          "scope": 10105,
           "symbolAliases": [
             null
           ],
           "unitAlias": ""
         },
-        "id": 9892,
+        "id": 10079,
         "name": "ImportDirective",
         "src": "706:29:36"
       },
       {
         "attributes": {
           "contractDependencies": [
-            11126
+            11313
           ],
           "contractKind": "contract",
           "documentation": null,
           "fullyImplemented": true,
           "linearizedBaseContracts": [
-            9917,
-            11126
+            10104,
+            11313
           ],
           "name": "MockUSDC",
-          "scope": 9918
+          "scope": 10105
         },
         "children": [
           {
@@ -441,15 +441,15 @@
                 "attributes": {
                   "contractScope": null,
                   "name": "IUSDC",
-                  "referencedDeclaration": 11126,
+                  "referencedDeclaration": 11313,
                   "type": "contract IUSDC"
                 },
-                "id": 9893,
+                "id": 10080,
                 "name": "UserDefinedTypeName",
                 "src": "758:5:36"
               }
             ],
-            "id": 9894,
+            "id": 10081,
             "name": "InheritanceSpecifier",
             "src": "758:5:36"
           },
@@ -457,7 +457,7 @@
             "attributes": {
               "constant": false,
               "name": "_blacklisted",
-              "scope": 9917,
+              "scope": 10104,
               "stateVariable": true,
               "storageLocation": "default",
               "type": "bool",
@@ -470,12 +470,12 @@
                   "name": "bool",
                   "type": "bool"
                 },
-                "id": 9895,
+                "id": 10082,
                 "name": "ElementaryTypeName",
                 "src": "770:4:36"
               }
             ],
-            "id": 9896,
+            "id": 10083,
             "name": "VariableDeclaration",
             "src": "770:25:36"
           },
@@ -489,9 +489,9 @@
                 null
               ],
               "name": "isBlacklisted",
-              "scope": 9917,
+              "scope": 10104,
               "stateMutability": "view",
-              "superFunction": 11125,
+              "superFunction": 11312,
               "visibility": "external"
             },
             "children": [
@@ -501,7 +501,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "_account",
-                      "scope": 9906,
+                      "scope": 10093,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -515,17 +515,17 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 9897,
+                        "id": 10084,
                         "name": "ElementaryTypeName",
                         "src": "825:7:36"
                       }
                     ],
-                    "id": 9898,
+                    "id": 10085,
                     "name": "VariableDeclaration",
                     "src": "825:16:36"
                   }
                 ],
-                "id": 9899,
+                "id": 10086,
                 "name": "ParameterList",
                 "src": "824:18:36"
               },
@@ -535,7 +535,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "",
-                      "scope": 9906,
+                      "scope": 10093,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "bool",
@@ -548,17 +548,17 @@
                           "name": "bool",
                           "type": "bool"
                         },
-                        "id": 9900,
+                        "id": 10087,
                         "name": "ElementaryTypeName",
                         "src": "866:4:36"
                       }
                     ],
-                    "id": 9901,
+                    "id": 10088,
                     "name": "VariableDeclaration",
                     "src": "866:4:36"
                   }
                 ],
-                "id": 9902,
+                "id": 10089,
                 "name": "ParameterList",
                 "src": "865:6:36"
               },
@@ -566,7 +566,7 @@
                 "children": [
                   {
                     "attributes": {
-                      "functionReturnParameters": 9902
+                      "functionReturnParameters": 10089
                     },
                     "children": [
                       {
@@ -575,26 +575,26 @@
                           "overloadedDeclarations": [
                             null
                           ],
-                          "referencedDeclaration": 9896,
+                          "referencedDeclaration": 10083,
                           "type": "bool",
                           "value": "_blacklisted"
                         },
-                        "id": 9903,
+                        "id": 10090,
                         "name": "Identifier",
                         "src": "889:12:36"
                       }
                     ],
-                    "id": 9904,
+                    "id": 10091,
                     "name": "Return",
                     "src": "882:19:36"
                   }
                 ],
-                "id": 9905,
+                "id": 10092,
                 "name": "Block",
                 "src": "872:36:36"
               }
             ],
-            "id": 9906,
+            "id": 10093,
             "name": "FunctionDefinition",
             "src": "802:106:36"
           },
@@ -608,7 +608,7 @@
                 null
               ],
               "name": "setIsBlacklisted",
-              "scope": 9917,
+              "scope": 10104,
               "stateMutability": "nonpayable",
               "superFunction": null,
               "visibility": "external"
@@ -620,7 +620,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "blacklisted",
-                      "scope": 9916,
+                      "scope": 10103,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "bool",
@@ -633,17 +633,17 @@
                           "name": "bool",
                           "type": "bool"
                         },
-                        "id": 9907,
+                        "id": 10094,
                         "name": "ElementaryTypeName",
                         "src": "940:4:36"
                       }
                     ],
-                    "id": 9908,
+                    "id": 10095,
                     "name": "VariableDeclaration",
                     "src": "940:16:36"
                   }
                 ],
-                "id": 9909,
+                "id": 10096,
                 "name": "ParameterList",
                 "src": "939:18:36"
               },
@@ -654,7 +654,7 @@
                   ]
                 },
                 "children": [],
-                "id": 9910,
+                "id": 10097,
                 "name": "ParameterList",
                 "src": "967:0:36"
               },
@@ -679,11 +679,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 9896,
+                              "referencedDeclaration": 10083,
                               "type": "bool",
                               "value": "_blacklisted"
                             },
-                            "id": 9911,
+                            "id": 10098,
                             "name": "Identifier",
                             "src": "977:12:36"
                           },
@@ -693,41 +693,41 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 9908,
+                              "referencedDeclaration": 10095,
                               "type": "bool",
                               "value": "blacklisted"
                             },
-                            "id": 9912,
+                            "id": 10099,
                             "name": "Identifier",
                             "src": "992:11:36"
                           }
                         ],
-                        "id": 9913,
+                        "id": 10100,
                         "name": "Assignment",
                         "src": "977:26:36"
                       }
                     ],
-                    "id": 9914,
+                    "id": 10101,
                     "name": "ExpressionStatement",
                     "src": "977:26:36"
                   }
                 ],
-                "id": 9915,
+                "id": 10102,
                 "name": "Block",
                 "src": "967:43:36"
               }
             ],
-            "id": 9916,
+            "id": 10103,
             "name": "FunctionDefinition",
             "src": "914:96:36"
           }
         ],
-        "id": 9917,
+        "id": 10104,
         "name": "ContractDefinition",
         "src": "737:275:36"
       }
     ],
-    "id": 9918,
+    "id": 10105,
     "name": "SourceUnit",
     "src": "646:367:36"
   },
@@ -737,7 +737,7 @@
   },
   "networks": {},
   "schemaVersion": "3.3.3",
-  "updatedAt": "2021-01-12T08:04:50.081Z",
+  "updatedAt": "2021-01-13T12:52:38.739Z",
   "devdoc": {
     "methods": {}
   },

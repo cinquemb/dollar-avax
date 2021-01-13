@@ -1128,14 +1128,14 @@
     "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/mock/MockImplB.sol",
     "exportedSymbols": {
       "MockImplB": [
-        8673
+        8736
       ]
     },
-    "id": 8674,
+    "id": 8737,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 8638,
+        "id": 8701,
         "literals": [
           "solidity",
           "^",
@@ -1146,7 +1146,7 @@
         "src": "646:24:26"
       },
       {
-        "id": 8639,
+        "id": 8702,
         "literals": [
           "experimental",
           "ABIEncoderV2"
@@ -1157,10 +1157,10 @@
       {
         "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/dao/Upgradeable.sol",
         "file": "../dao/Upgradeable.sol",
-        "id": 8640,
+        "id": 8703,
         "nodeType": "ImportDirective",
-        "scope": 8674,
-        "sourceUnit": 6836,
+        "scope": 8737,
+        "sourceUnit": 6899,
         "src": "706:32:26",
         "symbolAliases": [],
         "unitAlias": ""
@@ -1168,10 +1168,10 @@
       {
         "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/dao/Permission.sol",
         "file": "../dao/Permission.sol",
-        "id": 8641,
+        "id": 8704,
         "nodeType": "ImportDirective",
-        "scope": 8674,
-        "sourceUnit": 3916,
+        "scope": 8737,
+        "sourceUnit": 3959,
         "src": "739:31:26",
         "symbolAliases": [],
         "unitAlias": ""
@@ -1182,17 +1182,17 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 8642,
+              "id": 8705,
               "name": "Upgradeable",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 6835,
+              "referencedDeclaration": 6898,
               "src": "794:11:26",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_Upgradeable_$6835",
+                "typeIdentifier": "t_contract$_Upgradeable_$6898",
                 "typeString": "contract Upgradeable"
               }
             },
-            "id": 8643,
+            "id": 8706,
             "nodeType": "InheritanceSpecifier",
             "src": "794:11:26"
           },
@@ -1200,70 +1200,70 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 8644,
+              "id": 8707,
               "name": "Permission",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 3915,
+              "referencedDeclaration": 3958,
               "src": "807:10:26",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_Permission_$3915",
+                "typeIdentifier": "t_contract$_Permission_$3958",
                 "typeString": "contract Permission"
               }
             },
-            "id": 8645,
+            "id": 8708,
             "nodeType": "InheritanceSpecifier",
             "src": "807:10:26"
           }
         ],
         "contractDependencies": [
-          2576,
-          3915,
-          6580,
-          6765,
-          6835
+          2607,
+          3958,
+          6643,
+          6828,
+          6898
         ],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 8673,
+        "id": 8736,
         "linearizedBaseContracts": [
-          8673,
-          3915,
-          6580,
-          2576,
-          6835,
-          6765
+          8736,
+          3958,
+          6643,
+          2607,
+          6898,
+          6828
         ],
         "name": "MockImplB",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "body": {
-              "id": 8648,
+              "id": 8711,
               "nodeType": "Block",
               "src": "846:3:26",
               "statements": []
             },
             "documentation": null,
-            "id": 8649,
+            "id": 8712,
             "implemented": true,
             "kind": "constructor",
             "modifiers": [],
             "name": "",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 8646,
+              "id": 8709,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "836:2:26"
             },
             "returnParameters": {
-              "id": 8647,
+              "id": 8710,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "846:0:26"
             },
-            "scope": 8673,
+            "scope": 8736,
             "src": "824:25:26",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -1272,11 +1272,11 @@
           {
             "anonymous": false,
             "documentation": null,
-            "id": 8651,
+            "id": 8714,
             "name": "MockInitializedB",
             "nodeType": "EventDefinition",
             "parameters": {
-              "id": 8650,
+              "id": 8713,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "877:2:26"
@@ -1285,7 +1285,7 @@
           },
           {
             "body": {
-              "id": 8659,
+              "id": 8722,
               "nodeType": "Block",
               "src": "927:40:26",
               "statements": [
@@ -1295,18 +1295,18 @@
                     "arguments": [],
                     "expression": {
                       "argumentTypes": [],
-                      "id": 8656,
+                      "id": 8719,
                       "name": "MockInitializedB",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 8651,
+                      "referencedDeclaration": 8714,
                       "src": "942:16:26",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_event_nonpayable$__$returns$__$",
                         "typeString": "function ()"
                       }
                     },
-                    "id": 8657,
+                    "id": 8720,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1320,27 +1320,27 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 8658,
+                  "id": 8721,
                   "nodeType": "EmitStatement",
                   "src": "937:23:26"
                 }
               ]
             },
             "documentation": null,
-            "id": 8660,
+            "id": 8723,
             "implemented": true,
             "kind": "function",
             "modifiers": [
               {
                 "arguments": null,
-                "id": 8654,
+                "id": 8717,
                 "modifierName": {
                   "argumentTypes": null,
-                  "id": 8653,
+                  "id": 8716,
                   "name": "initializer",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 3914,
+                  "referencedDeclaration": 3957,
                   "src": "915:11:26",
                   "typeDescriptions": {
                     "typeIdentifier": "t_modifier$__$",
@@ -1354,26 +1354,26 @@
             "name": "initialize",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 8652,
+              "id": 8715,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "905:2:26"
             },
             "returnParameters": {
-              "id": 8655,
+              "id": 8718,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "927:0:26"
             },
-            "scope": 8673,
+            "scope": 8736,
             "src": "886:81:26",
             "stateMutability": "nonpayable",
-            "superFunction": 6782,
+            "superFunction": 6845,
             "visibility": "public"
           },
           {
             "body": {
-              "id": 8671,
+              "id": 8734,
               "nodeType": "Block",
               "src": "1029:51:26",
               "statements": [
@@ -1383,11 +1383,11 @@
                     "arguments": [
                       {
                         "argumentTypes": null,
-                        "id": 8668,
+                        "id": 8731,
                         "name": "newImplementation",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 8662,
+                        "referencedDeclaration": 8725,
                         "src": "1055:17:26",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
@@ -1404,32 +1404,32 @@
                       ],
                       "expression": {
                         "argumentTypes": null,
-                        "id": 8665,
+                        "id": 8728,
                         "name": "super",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 15228,
+                        "referencedDeclaration": 15301,
                         "src": "1039:5:26",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_super$_MockImplB_$8673",
+                          "typeIdentifier": "t_super$_MockImplB_$8736",
                           "typeString": "contract super MockImplB"
                         }
                       },
-                      "id": 8667,
+                      "id": 8730,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
                       "lValueRequested": false,
                       "memberName": "upgradeTo",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 6815,
+                      "referencedDeclaration": 6878,
                       "src": "1039:15:26",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$_t_address_$returns$__$",
                         "typeString": "function (address)"
                       }
                     },
-                    "id": 8669,
+                    "id": 8732,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1443,29 +1443,29 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 8670,
+                  "id": 8733,
                   "nodeType": "ExpressionStatement",
                   "src": "1039:34:26"
                 }
               ]
             },
             "documentation": null,
-            "id": 8672,
+            "id": 8735,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
             "name": "upgradeToE",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 8663,
+              "id": 8726,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 8662,
+                  "id": 8725,
                   "name": "newImplementation",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8672,
+                  "scope": 8735,
                   "src": "993:25:26",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1474,7 +1474,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 8661,
+                    "id": 8724,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "993:7:26",
@@ -1491,19 +1491,19 @@
               "src": "992:27:26"
             },
             "returnParameters": {
-              "id": 8664,
+              "id": 8727,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "1029:0:26"
             },
-            "scope": 8673,
+            "scope": 8736,
             "src": "973:107:26",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "external"
           }
         ],
-        "scope": 8674,
+        "scope": 8737,
         "src": "772:310:26"
       }
     ],
@@ -1514,7 +1514,7 @@
       "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/mock/MockImplB.sol",
       "exportedSymbols": {
         "MockImplB": [
-          8673
+          8736
         ]
       }
     },
@@ -1528,7 +1528,7 @@
             ".17"
           ]
         },
-        "id": 8638,
+        "id": 8701,
         "name": "PragmaDirective",
         "src": "646:24:26"
       },
@@ -1539,62 +1539,62 @@
             "ABIEncoderV2"
           ]
         },
-        "id": 8639,
+        "id": 8702,
         "name": "PragmaDirective",
         "src": "671:33:26"
       },
       {
         "attributes": {
-          "SourceUnit": 6836,
+          "SourceUnit": 6899,
           "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/dao/Upgradeable.sol",
           "file": "../dao/Upgradeable.sol",
-          "scope": 8674,
+          "scope": 8737,
           "symbolAliases": [
             null
           ],
           "unitAlias": ""
         },
-        "id": 8640,
+        "id": 8703,
         "name": "ImportDirective",
         "src": "706:32:26"
       },
       {
         "attributes": {
-          "SourceUnit": 3916,
+          "SourceUnit": 3959,
           "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/dao/Permission.sol",
           "file": "../dao/Permission.sol",
-          "scope": 8674,
+          "scope": 8737,
           "symbolAliases": [
             null
           ],
           "unitAlias": ""
         },
-        "id": 8641,
+        "id": 8704,
         "name": "ImportDirective",
         "src": "739:31:26"
       },
       {
         "attributes": {
           "contractDependencies": [
-            2576,
-            3915,
-            6580,
-            6765,
-            6835
+            2607,
+            3958,
+            6643,
+            6828,
+            6898
           ],
           "contractKind": "contract",
           "documentation": null,
           "fullyImplemented": true,
           "linearizedBaseContracts": [
-            8673,
-            3915,
-            6580,
-            2576,
-            6835,
-            6765
+            8736,
+            3958,
+            6643,
+            2607,
+            6898,
+            6828
           ],
           "name": "MockImplB",
-          "scope": 8674
+          "scope": 8737
         },
         "children": [
           {
@@ -1606,15 +1606,15 @@
                 "attributes": {
                   "contractScope": null,
                   "name": "Upgradeable",
-                  "referencedDeclaration": 6835,
+                  "referencedDeclaration": 6898,
                   "type": "contract Upgradeable"
                 },
-                "id": 8642,
+                "id": 8705,
                 "name": "UserDefinedTypeName",
                 "src": "794:11:26"
               }
             ],
-            "id": 8643,
+            "id": 8706,
             "name": "InheritanceSpecifier",
             "src": "794:11:26"
           },
@@ -1627,15 +1627,15 @@
                 "attributes": {
                   "contractScope": null,
                   "name": "Permission",
-                  "referencedDeclaration": 3915,
+                  "referencedDeclaration": 3958,
                   "type": "contract Permission"
                 },
-                "id": 8644,
+                "id": 8707,
                 "name": "UserDefinedTypeName",
                 "src": "807:10:26"
               }
             ],
-            "id": 8645,
+            "id": 8708,
             "name": "InheritanceSpecifier",
             "src": "807:10:26"
           },
@@ -1649,7 +1649,7 @@
                 null
               ],
               "name": "",
-              "scope": 8673,
+              "scope": 8736,
               "stateMutability": "nonpayable",
               "superFunction": null,
               "visibility": "public"
@@ -1662,7 +1662,7 @@
                   ]
                 },
                 "children": [],
-                "id": 8646,
+                "id": 8709,
                 "name": "ParameterList",
                 "src": "836:2:26"
               },
@@ -1673,7 +1673,7 @@
                   ]
                 },
                 "children": [],
-                "id": 8647,
+                "id": 8710,
                 "name": "ParameterList",
                 "src": "846:0:26"
               },
@@ -1684,12 +1684,12 @@
                   ]
                 },
                 "children": [],
-                "id": 8648,
+                "id": 8711,
                 "name": "Block",
                 "src": "846:3:26"
               }
             ],
-            "id": 8649,
+            "id": 8712,
             "name": "FunctionDefinition",
             "src": "824:25:26"
           },
@@ -1707,12 +1707,12 @@
                   ]
                 },
                 "children": [],
-                "id": 8650,
+                "id": 8713,
                 "name": "ParameterList",
                 "src": "877:2:26"
               }
             ],
-            "id": 8651,
+            "id": 8714,
             "name": "EventDefinition",
             "src": "855:25:26"
           },
@@ -1723,9 +1723,9 @@
               "isConstructor": false,
               "kind": "function",
               "name": "initialize",
-              "scope": 8673,
+              "scope": 8736,
               "stateMutability": "nonpayable",
-              "superFunction": 6782,
+              "superFunction": 6845,
               "visibility": "public"
             },
             "children": [
@@ -1736,7 +1736,7 @@
                   ]
                 },
                 "children": [],
-                "id": 8652,
+                "id": 8715,
                 "name": "ParameterList",
                 "src": "905:2:26"
               },
@@ -1747,7 +1747,7 @@
                   ]
                 },
                 "children": [],
-                "id": 8655,
+                "id": 8718,
                 "name": "ParameterList",
                 "src": "927:0:26"
               },
@@ -1762,16 +1762,16 @@
                       "overloadedDeclarations": [
                         null
                       ],
-                      "referencedDeclaration": 3914,
+                      "referencedDeclaration": 3957,
                       "type": "modifier ()",
                       "value": "initializer"
                     },
-                    "id": 8653,
+                    "id": 8716,
                     "name": "Identifier",
                     "src": "915:11:26"
                   }
                 ],
-                "id": 8654,
+                "id": 8717,
                 "name": "ModifierInvocation",
                 "src": "915:11:26"
               },
@@ -1805,31 +1805,31 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 8651,
+                              "referencedDeclaration": 8714,
                               "type": "function ()",
                               "value": "MockInitializedB"
                             },
-                            "id": 8656,
+                            "id": 8719,
                             "name": "Identifier",
                             "src": "942:16:26"
                           }
                         ],
-                        "id": 8657,
+                        "id": 8720,
                         "name": "FunctionCall",
                         "src": "942:18:26"
                       }
                     ],
-                    "id": 8658,
+                    "id": 8721,
                     "name": "EmitStatement",
                     "src": "937:23:26"
                   }
                 ],
-                "id": 8659,
+                "id": 8722,
                 "name": "Block",
                 "src": "927:40:26"
               }
             ],
-            "id": 8660,
+            "id": 8723,
             "name": "FunctionDefinition",
             "src": "886:81:26"
           },
@@ -1843,7 +1843,7 @@
                 null
               ],
               "name": "upgradeToE",
-              "scope": 8673,
+              "scope": 8736,
               "stateMutability": "nonpayable",
               "superFunction": null,
               "visibility": "external"
@@ -1855,7 +1855,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "newImplementation",
-                      "scope": 8672,
+                      "scope": 8735,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -1869,17 +1869,17 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 8661,
+                        "id": 8724,
                         "name": "ElementaryTypeName",
                         "src": "993:7:26"
                       }
                     ],
-                    "id": 8662,
+                    "id": 8725,
                     "name": "VariableDeclaration",
                     "src": "993:25:26"
                   }
                 ],
-                "id": 8663,
+                "id": 8726,
                 "name": "ParameterList",
                 "src": "992:27:26"
               },
@@ -1890,7 +1890,7 @@
                   ]
                 },
                 "children": [],
-                "id": 8664,
+                "id": 8727,
                 "name": "ParameterList",
                 "src": "1029:0:26"
               },
@@ -1926,7 +1926,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "upgradeTo",
-                              "referencedDeclaration": 6815,
+                              "referencedDeclaration": 6878,
                               "type": "function (address)"
                             },
                             "children": [
@@ -1936,16 +1936,16 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 15228,
+                                  "referencedDeclaration": 15301,
                                   "type": "contract super MockImplB",
                                   "value": "super"
                                 },
-                                "id": 8665,
+                                "id": 8728,
                                 "name": "Identifier",
                                 "src": "1039:5:26"
                               }
                             ],
-                            "id": 8667,
+                            "id": 8730,
                             "name": "MemberAccess",
                             "src": "1039:15:26"
                           },
@@ -1955,41 +1955,41 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 8662,
+                              "referencedDeclaration": 8725,
                               "type": "address",
                               "value": "newImplementation"
                             },
-                            "id": 8668,
+                            "id": 8731,
                             "name": "Identifier",
                             "src": "1055:17:26"
                           }
                         ],
-                        "id": 8669,
+                        "id": 8732,
                         "name": "FunctionCall",
                         "src": "1039:34:26"
                       }
                     ],
-                    "id": 8670,
+                    "id": 8733,
                     "name": "ExpressionStatement",
                     "src": "1039:34:26"
                   }
                 ],
-                "id": 8671,
+                "id": 8734,
                 "name": "Block",
                 "src": "1029:51:26"
               }
             ],
-            "id": 8672,
+            "id": 8735,
             "name": "FunctionDefinition",
             "src": "973:107:26"
           }
         ],
-        "id": 8673,
+        "id": 8736,
         "name": "ContractDefinition",
         "src": "772:310:26"
       }
     ],
-    "id": 8674,
+    "id": 8737,
     "name": "SourceUnit",
     "src": "646:437:26"
   },
@@ -1999,7 +1999,7 @@
   },
   "networks": {},
   "schemaVersion": "3.3.3",
-  "updatedAt": "2021-01-12T11:27:06.633Z",
+  "updatedAt": "2021-01-13T12:52:38.434Z",
   "devdoc": {
     "methods": {}
   },

@@ -120,6 +120,7 @@ describe('Market', function () {
     describe('before call', function () {
       beforeEach(async function () {
         await this.market.incrementTotalDebtE(100000);
+
       });
     });
 
@@ -144,6 +145,17 @@ describe('Market', function () {
     describe('no debt', function () {
       it('reverts', async function () {
         await expectRevert(this.market.placeCouponAuctionBid(1, 100000, 100000000), "Market: Not enough debt");
+      });
+    });
+
+    describe('not enough dollars', function () {
+      beforeEach(async function () {
+        await this.market.incrementTotalDebtE(100000);
+        await this.market.mintToE(userAddress, 0);
+        await this.dollar.approve(this.market.address, 0, {from: userAddress});
+      });
+      it('reverts', async function () {
+        await expectRevert(this.market.placeCouponAuctionBid(1, 100000, 100000000), "Market: Must have enough in account");
       });
     });
 

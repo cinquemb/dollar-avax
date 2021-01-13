@@ -50,14 +50,14 @@
     "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/mock/MockCurve.sol",
     "exportedSymbols": {
       "MockCurve": [
-        8415
+        8602
       ]
     },
-    "id": 8416,
+    "id": 8603,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 8387,
+        "id": 8574,
         "literals": [
           "solidity",
           "^",
@@ -68,7 +68,7 @@
         "src": "646:24:23"
       },
       {
-        "id": 8388,
+        "id": 8575,
         "literals": [
           "experimental",
           "ABIEncoderV2"
@@ -79,10 +79,10 @@
       {
         "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/dao/Curve.sol",
         "file": "../dao/Curve.sol",
-        "id": 8389,
+        "id": 8576,
         "nodeType": "ImportDirective",
-        "scope": 8416,
-        "sourceUnit": 1470,
+        "scope": 8603,
+        "sourceUnit": 1501,
         "src": "706:26:23",
         "symbolAliases": [],
         "unitAlias": ""
@@ -93,62 +93,62 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 8390,
+              "id": 8577,
               "name": "Curve",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 1469,
+              "referencedDeclaration": 1500,
               "src": "756:5:23",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_Curve_$1469",
+                "typeIdentifier": "t_contract$_Curve_$1500",
                 "typeString": "contract Curve"
               }
             },
-            "id": 8391,
+            "id": 8578,
             "nodeType": "InheritanceSpecifier",
             "src": "756:5:23"
           }
         ],
         "contractDependencies": [
-          1469
+          1500
         ],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 8415,
+        "id": 8602,
         "linearizedBaseContracts": [
-          8415,
-          1469
+          8602,
+          1500
         ],
         "name": "MockCurve",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "body": {
-              "id": 8394,
+              "id": 8581,
               "nodeType": "Block",
               "src": "790:3:23",
               "statements": []
             },
             "documentation": null,
-            "id": 8395,
+            "id": 8582,
             "implemented": true,
             "kind": "constructor",
             "modifiers": [],
             "name": "",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 8392,
+              "id": 8579,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "780:2:23"
             },
             "returnParameters": {
-              "id": 8393,
+              "id": 8580,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "790:0:23"
             },
-            "scope": 8415,
+            "scope": 8602,
             "src": "768:25:23",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -156,7 +156,7 @@
           },
           {
             "body": {
-              "id": 8413,
+              "id": 8600,
               "nodeType": "Block",
               "src": "944:84:23",
               "statements": [
@@ -166,11 +166,11 @@
                     "arguments": [
                       {
                         "argumentTypes": null,
-                        "id": 8408,
+                        "id": 8595,
                         "name": "totalSupply",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 8397,
+                        "referencedDeclaration": 8584,
                         "src": "990:11:23",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
@@ -179,11 +179,11 @@
                       },
                       {
                         "argumentTypes": null,
-                        "id": 8409,
+                        "id": 8596,
                         "name": "totalDebt",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 8399,
+                        "referencedDeclaration": 8586,
                         "src": "1003:9:23",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
@@ -192,11 +192,11 @@
                       },
                       {
                         "argumentTypes": null,
-                        "id": 8410,
+                        "id": 8597,
                         "name": "amount",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 8401,
+                        "referencedDeclaration": 8588,
                         "src": "1014:6:23",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
@@ -221,32 +221,32 @@
                       ],
                       "expression": {
                         "argumentTypes": null,
-                        "id": 8406,
+                        "id": 8593,
                         "name": "super",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 15108,
+                        "referencedDeclaration": 15293,
                         "src": "961:5:23",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_super$_MockCurve_$8415",
+                          "typeIdentifier": "t_super$_MockCurve_$8602",
                           "typeString": "contract super MockCurve"
                         }
                       },
-                      "id": 8407,
+                      "id": 8594,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
                       "lValueRequested": false,
                       "memberName": "calculateCouponPremium",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 1250,
+                      "referencedDeclaration": 1281,
                       "src": "961:28:23",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$_t_uint256_$returns$_t_uint256_$",
                         "typeString": "function (uint256,uint256,uint256) pure returns (uint256)"
                       }
                     },
-                    "id": 8411,
+                    "id": 8598,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -260,30 +260,30 @@
                       "typeString": "uint256"
                     }
                   },
-                  "functionReturnParameters": 8405,
-                  "id": 8412,
+                  "functionReturnParameters": 8592,
+                  "id": 8599,
                   "nodeType": "Return",
                   "src": "954:67:23"
                 }
               ]
             },
             "documentation": null,
-            "id": 8414,
+            "id": 8601,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
             "name": "calculateCouponsE",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 8402,
+              "id": 8589,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 8397,
+                  "id": 8584,
                   "name": "totalSupply",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8414,
+                  "scope": 8601,
                   "src": "835:19:23",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -292,7 +292,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 8396,
+                    "id": 8583,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
                     "src": "835:7:23",
@@ -306,10 +306,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 8399,
+                  "id": 8586,
                   "name": "totalDebt",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8414,
+                  "scope": 8601,
                   "src": "864:17:23",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -318,7 +318,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 8398,
+                    "id": 8585,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
                     "src": "864:7:23",
@@ -332,10 +332,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 8401,
+                  "id": 8588,
                   "name": "amount",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8414,
+                  "scope": 8601,
                   "src": "891:14:23",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -344,7 +344,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 8400,
+                    "id": 8587,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
                     "src": "891:7:23",
@@ -360,15 +360,15 @@
               "src": "825:86:23"
             },
             "returnParameters": {
-              "id": 8405,
+              "id": 8592,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 8404,
+                  "id": 8591,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8414,
+                  "scope": 8601,
                   "src": "935:7:23",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -377,7 +377,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 8403,
+                    "id": 8590,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
                     "src": "935:7:23",
@@ -392,14 +392,14 @@
               ],
               "src": "934:9:23"
             },
-            "scope": 8415,
+            "scope": 8602,
             "src": "799:229:23",
             "stateMutability": "pure",
             "superFunction": null,
             "visibility": "external"
           }
         ],
-        "scope": 8416,
+        "scope": 8603,
         "src": "734:296:23"
       }
     ],
@@ -410,7 +410,7 @@
       "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/mock/MockCurve.sol",
       "exportedSymbols": {
         "MockCurve": [
-          8415
+          8602
         ]
       }
     },
@@ -424,7 +424,7 @@
             ".17"
           ]
         },
-        "id": 8387,
+        "id": 8574,
         "name": "PragmaDirective",
         "src": "646:24:23"
       },
@@ -435,39 +435,39 @@
             "ABIEncoderV2"
           ]
         },
-        "id": 8388,
+        "id": 8575,
         "name": "PragmaDirective",
         "src": "671:33:23"
       },
       {
         "attributes": {
-          "SourceUnit": 1470,
+          "SourceUnit": 1501,
           "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/dao/Curve.sol",
           "file": "../dao/Curve.sol",
-          "scope": 8416,
+          "scope": 8603,
           "symbolAliases": [
             null
           ],
           "unitAlias": ""
         },
-        "id": 8389,
+        "id": 8576,
         "name": "ImportDirective",
         "src": "706:26:23"
       },
       {
         "attributes": {
           "contractDependencies": [
-            1469
+            1500
           ],
           "contractKind": "contract",
           "documentation": null,
           "fullyImplemented": true,
           "linearizedBaseContracts": [
-            8415,
-            1469
+            8602,
+            1500
           ],
           "name": "MockCurve",
-          "scope": 8416
+          "scope": 8603
         },
         "children": [
           {
@@ -479,15 +479,15 @@
                 "attributes": {
                   "contractScope": null,
                   "name": "Curve",
-                  "referencedDeclaration": 1469,
+                  "referencedDeclaration": 1500,
                   "type": "contract Curve"
                 },
-                "id": 8390,
+                "id": 8577,
                 "name": "UserDefinedTypeName",
                 "src": "756:5:23"
               }
             ],
-            "id": 8391,
+            "id": 8578,
             "name": "InheritanceSpecifier",
             "src": "756:5:23"
           },
@@ -501,7 +501,7 @@
                 null
               ],
               "name": "",
-              "scope": 8415,
+              "scope": 8602,
               "stateMutability": "nonpayable",
               "superFunction": null,
               "visibility": "public"
@@ -514,7 +514,7 @@
                   ]
                 },
                 "children": [],
-                "id": 8392,
+                "id": 8579,
                 "name": "ParameterList",
                 "src": "780:2:23"
               },
@@ -525,7 +525,7 @@
                   ]
                 },
                 "children": [],
-                "id": 8393,
+                "id": 8580,
                 "name": "ParameterList",
                 "src": "790:0:23"
               },
@@ -536,12 +536,12 @@
                   ]
                 },
                 "children": [],
-                "id": 8394,
+                "id": 8581,
                 "name": "Block",
                 "src": "790:3:23"
               }
             ],
-            "id": 8395,
+            "id": 8582,
             "name": "FunctionDefinition",
             "src": "768:25:23"
           },
@@ -555,7 +555,7 @@
                 null
               ],
               "name": "calculateCouponsE",
-              "scope": 8415,
+              "scope": 8602,
               "stateMutability": "pure",
               "superFunction": null,
               "visibility": "external"
@@ -567,7 +567,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "totalSupply",
-                      "scope": 8414,
+                      "scope": 8601,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -580,12 +580,12 @@
                           "name": "uint256",
                           "type": "uint256"
                         },
-                        "id": 8396,
+                        "id": 8583,
                         "name": "ElementaryTypeName",
                         "src": "835:7:23"
                       }
                     ],
-                    "id": 8397,
+                    "id": 8584,
                     "name": "VariableDeclaration",
                     "src": "835:19:23"
                   },
@@ -593,7 +593,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "totalDebt",
-                      "scope": 8414,
+                      "scope": 8601,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -606,12 +606,12 @@
                           "name": "uint256",
                           "type": "uint256"
                         },
-                        "id": 8398,
+                        "id": 8585,
                         "name": "ElementaryTypeName",
                         "src": "864:7:23"
                       }
                     ],
-                    "id": 8399,
+                    "id": 8586,
                     "name": "VariableDeclaration",
                     "src": "864:17:23"
                   },
@@ -619,7 +619,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "amount",
-                      "scope": 8414,
+                      "scope": 8601,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -632,17 +632,17 @@
                           "name": "uint256",
                           "type": "uint256"
                         },
-                        "id": 8400,
+                        "id": 8587,
                         "name": "ElementaryTypeName",
                         "src": "891:7:23"
                       }
                     ],
-                    "id": 8401,
+                    "id": 8588,
                     "name": "VariableDeclaration",
                     "src": "891:14:23"
                   }
                 ],
-                "id": 8402,
+                "id": 8589,
                 "name": "ParameterList",
                 "src": "825:86:23"
               },
@@ -652,7 +652,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "",
-                      "scope": 8414,
+                      "scope": 8601,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -665,17 +665,17 @@
                           "name": "uint256",
                           "type": "uint256"
                         },
-                        "id": 8403,
+                        "id": 8590,
                         "name": "ElementaryTypeName",
                         "src": "935:7:23"
                       }
                     ],
-                    "id": 8404,
+                    "id": 8591,
                     "name": "VariableDeclaration",
                     "src": "935:7:23"
                   }
                 ],
-                "id": 8405,
+                "id": 8592,
                 "name": "ParameterList",
                 "src": "934:9:23"
               },
@@ -683,7 +683,7 @@
                 "children": [
                   {
                     "attributes": {
-                      "functionReturnParameters": 8405
+                      "functionReturnParameters": 8592
                     },
                     "children": [
                       {
@@ -722,7 +722,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "calculateCouponPremium",
-                              "referencedDeclaration": 1250,
+                              "referencedDeclaration": 1281,
                               "type": "function (uint256,uint256,uint256) pure returns (uint256)"
                             },
                             "children": [
@@ -732,16 +732,16 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 15108,
+                                  "referencedDeclaration": 15293,
                                   "type": "contract super MockCurve",
                                   "value": "super"
                                 },
-                                "id": 8406,
+                                "id": 8593,
                                 "name": "Identifier",
                                 "src": "961:5:23"
                               }
                             ],
-                            "id": 8407,
+                            "id": 8594,
                             "name": "MemberAccess",
                             "src": "961:28:23"
                           },
@@ -751,11 +751,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 8397,
+                              "referencedDeclaration": 8584,
                               "type": "uint256",
                               "value": "totalSupply"
                             },
-                            "id": 8408,
+                            "id": 8595,
                             "name": "Identifier",
                             "src": "990:11:23"
                           },
@@ -765,11 +765,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 8399,
+                              "referencedDeclaration": 8586,
                               "type": "uint256",
                               "value": "totalDebt"
                             },
-                            "id": 8409,
+                            "id": 8596,
                             "name": "Identifier",
                             "src": "1003:9:23"
                           },
@@ -779,41 +779,41 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 8401,
+                              "referencedDeclaration": 8588,
                               "type": "uint256",
                               "value": "amount"
                             },
-                            "id": 8410,
+                            "id": 8597,
                             "name": "Identifier",
                             "src": "1014:6:23"
                           }
                         ],
-                        "id": 8411,
+                        "id": 8598,
                         "name": "FunctionCall",
                         "src": "961:60:23"
                       }
                     ],
-                    "id": 8412,
+                    "id": 8599,
                     "name": "Return",
                     "src": "954:67:23"
                   }
                 ],
-                "id": 8413,
+                "id": 8600,
                 "name": "Block",
                 "src": "944:84:23"
               }
             ],
-            "id": 8414,
+            "id": 8601,
             "name": "FunctionDefinition",
             "src": "799:229:23"
           }
         ],
-        "id": 8415,
+        "id": 8602,
         "name": "ContractDefinition",
         "src": "734:296:23"
       }
     ],
-    "id": 8416,
+    "id": 8603,
     "name": "SourceUnit",
     "src": "646:385:23"
   },
@@ -823,7 +823,7 @@
   },
   "networks": {},
   "schemaVersion": "3.3.3",
-  "updatedAt": "2021-01-12T08:04:49.688Z",
+  "updatedAt": "2021-01-13T12:52:38.418Z",
   "devdoc": {
     "methods": {}
   },

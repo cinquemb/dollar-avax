@@ -216,30 +216,34 @@ contract Regulator is Comptroller {
                             bids[i].couponAmount,
                             bids[i].dollarAmount
                         );
-                        
-                        if (yield.lessThan(minYieldFilled)) {
-                            minYieldFilled = yield;
-                        } else if (yield.greaterThan(maxYieldFilled)) {
-                            maxYieldFilled = yield;
-                        }
 
-                        if (bids[i].couponExpiryEpoch < minExpiryFilled) {
-                            minExpiryFilled = bids[i].couponExpiryEpoch;
-                        } else if (bids[i].couponExpiryEpoch > maxExpiryFilled) {
-                            maxExpiryFilled = bids[i].couponExpiryEpoch;
-                        }
-                        
-                        sumYieldFilled += yield.asUint256();
-                        sumExpiryFilled += bids[i].couponExpiryEpoch;
-                        totalAuctioned += bids[i].couponAmount;
-                        totalBurned += bids[i].dollarAmount;
-                        
-                        uint256 epoch = epoch().add(bids[i].couponExpiryEpoch);
-                        burnFromAccount(bids[i].bidder, bids[i].dollarAmount);
-                        incrementBalanceOfCoupons(bids[i].bidder, epoch, bids[i].couponAmount);
-                        setCouponBidderStateSelected(bids[i].bidder, i);
-                        totalFilled++;
+                        //must check again if account is able to be assigned
+                        if (acceptableBidCheck(bids[i].bidder, bids[i].dollarAmount)){
+                            if (yield.lessThan(minYieldFilled)) {
+                                minYieldFilled = yield;
+                            } else if (yield.greaterThan(maxYieldFilled)) {
+                                maxYieldFilled = yield;
+                            }
 
+                            if (bids[i].couponExpiryEpoch < minExpiryFilled) {
+                                minExpiryFilled = bids[i].couponExpiryEpoch;
+                            } else if (bids[i].couponExpiryEpoch > maxExpiryFilled) {
+                                maxExpiryFilled = bids[i].couponExpiryEpoch;
+                            }
+                            
+                            sumYieldFilled += yield.asUint256();
+                            sumExpiryFilled += bids[i].couponExpiryEpoch;
+                            totalAuctioned += bids[i].couponAmount;
+                            totalBurned += bids[i].dollarAmount;
+                            
+                            uint256 epoch = epoch().add(bids[i].couponExpiryEpoch);
+                            burnFromAccount(bids[i].bidder, bids[i].dollarAmount);
+                            incrementBalanceOfCoupons(bids[i].bidder, epoch, bids[i].couponAmount);
+                            setCouponBidderStateSelected(bids[i].bidder, i);
+                            totalFilled++;
+                        } else {
+                            setCouponBidderStateRejected(bids[i].bidder);
+                        }
                     }
                 } else {
                     /* setCouponBidderStateRejected(bids[i].bidder); or just break and close the auction */
