@@ -27,11 +27,7 @@ import "./Liquidity.sol";
 contract Pool is PoolSetters, Liquidity {
     using SafeMath for uint256;
 
-    constructor(address dollar, address univ2) public {
-        _state.provider.dao = IDAO(msg.sender);
-        _state.provider.dollar = IDollar(dollar);
-        _state.provider.univ2 = IERC20(univ2);
-    }
+    constructor() public { }
 
     bytes32 private constant FILE = "Pool";
 
@@ -109,7 +105,7 @@ contract Pool is PoolSetters, Liquidity {
         emit Unbond(msg.sender, epoch().add(1), value, newClaimable);
     }
 
-    function provide(uint256 value) external onlyFrozen(msg.sender) notPaused {
+    function provide(uint256 value) external notPaused {
         Require.that(
             totalBonded() > 0,
             FILE,
