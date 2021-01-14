@@ -19,6 +19,7 @@ pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "./Comptroller.sol";
+import "./Market.sol";
 import "../external/Decimal.sol";
 import "../Constants.sol";
 
@@ -302,5 +303,70 @@ contract Regulator is Comptroller {
         } else {
             return false;
         }        
+    }
+
+    function autoRedeemFromCouponAuction() internal returns (bool success) {
+
+        // loop over past epochs from the latest `dead` epoch to the current
+        for (uint256 d_idx = getLatestDeadAuctionEpoch(); d_idx < uint256(epoch()); d_idx++) {
+            uint256 temp_coupon_auction_epoch = d_idx;
+            Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(temp_coupon_auction_epoch);
+            
+            // skip auctions that have been canceld and or dead or no auction present?
+            if (!auction.canceled && !auction.dead && auction.isInit) {
+                if (auction.finished) {
+                    
+                    uint256 totalCurrentlyTriedRedeemed = 0;
+                    // loop over bidders in order of assigned per epoch and redeem automatically untill capp is filled for epoch, mark those bids as redeemed, 
+                    
+                    for (uint256 s_idx = 0; s_idx < getTotalFilled(temp_coupon_auction_epoch); s_idx++) {
+                        address bidderAddress = getCouponBidderStateAssginedAtIndex(temp_coupon_auction_epoch, s_idx);
+                        Epoch.CouponBidderState storage bidder = getCouponBidderState(bidderAddress);
+
+                        // skip over those bids that have already been redeemed
+                        if (bidder.redeemed) {
+                            totalCurrentlyTriedRedeemed++;
+                            continue;
+                        }
+
+                        if (totalRedeemable() > bidder.couponAmount) {  
+                            /* TODO
+                                - check if coupons for bid have been redeemed already?
+                                    - balanceOfCoupons(address account, uint256 epoch) > 0
+                                    - couponBidAmount >= balanceOfCoupons(address account, uint256 epoch)
+
+                                - check if coupons for epoch are expired already?
+                                    - auction epoch + bid expriation > epoch()
+
+                                - need to make sure this is "safe" (i.e. it should NOT revert and undo all the previous redemptions, just break and skip while still incrementing total redeemed tried count)
+                            */
+                            uint256 couponExpiryEpoch = temp_coupon_auction_epoch.add(bidder.couponExpiryEpoch);
+
+                            require(epoch().sub(couponExpiryEpoch) >= 2, "Market: Too early to redeem");
+
+                            decrementBalanceOfCoupons(bidderAddress, couponExpiryEpoch, bidder.couponAmount, "Market: Insufficient coupon balance");
+                            
+                            uint burnAmount = Market.couponRedemptionPenalty(couponExpiryEpoch, bidder.couponAmount);
+                            uint256 redeemAmount = bidder.couponAmount.sub(burnAmount);
+                            
+                            redeemToAccount(bidderAddress, redeemAmount);
+                        } else {
+                            // no point in trying to redeem more if quota for epoch is done;
+                            break;
+                        }
+                    } 
+
+                    /*
+                        - if all have been tried to be redeemd or expired, market auction as `dead`
+                    
+                    */
+
+                    if (totalCurrentlyTriedRedeemed == getTotalFilled(temp_coupon_auction_epoch)) {
+                        setLatestDeadAuctionEpoch(temp_coupon_auction_epoch);
+                        setDeadAuction(temp_coupon_auction_epoch);
+                    }
+                }
+            }
+        }
     }
 }

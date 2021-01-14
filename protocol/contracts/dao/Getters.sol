@@ -204,6 +204,10 @@ contract Getters is State {
         return _state.epochs[epoch].auction.couponBidderState[bidder].selected;
     }
 
+    function getCouponBidderStateAssginedAtIndex(uint256 epoch, uint256 index) {
+        return _state.epochs[epoch].auction.seletedCouponBidder[index];
+    }
+
     function getCouponBidderStateRejected(uint256 epoch, address bidder) internal view returns (bool) {
         return _state.epochs[epoch].auction.couponBidderState[bidder].rejected;
     }
@@ -282,6 +286,10 @@ contract Getters is State {
 
     function getTotalBurned(uint256 epoch) public view returns (uint256) {
         return _state.epochs[epoch].auction.totalBurned;
+    }
+
+    function getLatestDeadAuctionEpoch() public view returns (uint256) {
+        return _state.epoch.latestDeadAuction;
     }
 
     /**

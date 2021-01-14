@@ -44,6 +44,7 @@ contract Epoch {
         uint256 start;
         uint256 period;
         uint256 current;
+        uint256 latestDeadAuction;
     }
 
     struct Coupons {
@@ -55,6 +56,7 @@ contract Epoch {
     struct CouponBidderState {
         bool selected;
         bool rejected;
+        bool redeemed;
         address bidder;
         uint256 dollarAmount;
         uint256 couponAmount;
@@ -64,6 +66,7 @@ contract Epoch {
     }
 
     struct AuctionState {
+        bool dead;
         bool isInit;
         bool canceled;
         bool finished;
