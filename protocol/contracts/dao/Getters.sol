@@ -204,7 +204,7 @@ contract Getters is State {
         return _state.epochs[epoch].auction.couponBidderState[bidder].selected;
     }
 
-    function getCouponBidderStateAssginedAtIndex(uint256 epoch, uint256 index) {
+    function getCouponBidderStateAssginedAtIndex(uint256 epoch, uint256 index) internal view returns (address) {
         return _state.epochs[epoch].auction.seletedCouponBidder[index];
     }
 
