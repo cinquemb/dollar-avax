@@ -30,6 +30,9 @@ contract Regulator is Comptroller {
     Epoch.CouponBidderState[] private bids;
     uint256 private totalFilled = 0;
     uint256 private totalBurned = 0;
+    uint256 private yieldRelNorm = 1;
+    uint256 private expiryRelNorm = 1;
+    uint256 private dollarRelNorm = 1;
     uint256 private totalAuctioned = 0;
     uint256 private maxExpiryFilled = 0;
     uint256 private sumExpiryFilled = 0;
@@ -63,7 +66,7 @@ contract Regulator is Comptroller {
         if (price.lessThan(Decimal.one())) {
             //check for outstanding auction, if exists settle it and start a new one
             if (auction.isInit == true){
-                bool isAuctionSettled = settleCouponAuction();
+                bool isAuctionSettled = settleCouponAuction(epoch() - 1);
                 finishCouponAuctionAtEpoch(epoch() - 1);
             }
             initCouponAuction();
@@ -159,15 +162,15 @@ contract Regulator is Comptroller {
         return y;
     }
 
-    function settleCouponAuction() internal returns (bool success) {
-        if (!isCouponAuctionFinished() && !isCouponAuctionCanceled()) {
-            uint256 yieldRelNorm = getCouponAuctionMaxYield() - getCouponAuctionMinYield();
-            uint256 expiryRelNorm = getCouponAuctionMaxExpiry() - getCouponAuctionMinExpiry();    
-            uint256 dollarRelNorm = getCouponAuctionMaxDollarAmount() - getCouponAuctionMinDollarAmount();
+    function settleCouponAuction(uint256 settlementEpoch) internal returns (bool success) {
+        if (!isCouponAuctionFinished(settlementEpoch) && !isCouponAuctionCanceled(settlementEpoch)) {
+            yieldRelNorm = getCouponAuctionMaxYield(settlementEpoch) - getCouponAuctionMinYield(settlementEpoch);
+            expiryRelNorm = getCouponAuctionMaxExpiry(settlementEpoch) - getCouponAuctionMinExpiry(settlementEpoch);    
+            dollarRelNorm = getCouponAuctionMaxDollarAmount(settlementEpoch) - getCouponAuctionMinDollarAmount(settlementEpoch);
             
             // loop over bids and compute distance
-            for (uint256 i = 0; i < getCouponAuctionBids(); i++) {
-                Epoch.CouponBidderState storage bidder = getCouponBidderState(getCouponBidderStateIndex(i));
+            for (uint256 i = 0; i < getCouponAuctionBids(settlementEpoch); i++) {
+                Epoch.CouponBidderState storage bidder = getCouponBidderState(settlementEpoch, getCouponBidderStateIndex(settlementEpoch, i));
                 Decimal.D256 memory yieldRel = Decimal.ratio(
                     Decimal.ratio(
                         bidder.couponAmount,
@@ -199,8 +202,8 @@ contract Regulator is Comptroller {
                     distance = Decimal.zero();
                 }
 
-                setCouponBidderStateDistance(getCouponBidderStateIndex(i), distance);
-                bidder = getCouponBidderState(getCouponBidderStateIndex(i));
+                setCouponBidderStateDistance(settlementEpoch, getCouponBidderStateIndex(settlementEpoch, i), distance);
+                bidder = getCouponBidderState(settlementEpoch, getCouponBidderStateIndex(settlementEpoch, i));
                 bids.push(bidder);
             }
 
@@ -211,7 +214,7 @@ contract Regulator is Comptroller {
             // assign coupons until totalDebt filled, reject the rest
             for (uint256 i = 0; i < bids.length; i++) {
                 if (totalDebt() >= bids[i].dollarAmount) {
-                    if (!getCouponBidderStateRejected(bids[i].bidder) && !getCouponBidderStateRejected(bids[i].bidder)) {
+                    if (!getCouponBidderStateRejected(settlementEpoch, bids[i].bidder) && !getCouponBidderStateRejected(settlementEpoch, bids[i].bidder)) {
                         Decimal.D256 memory yield = Decimal.ratio(
                             bids[i].couponAmount,
                             bids[i].dollarAmount
@@ -236,17 +239,17 @@ contract Regulator is Comptroller {
                             totalAuctioned += bids[i].couponAmount;
                             totalBurned += bids[i].dollarAmount;
                             
-                            uint256 epoch = epoch().add(bids[i].couponExpiryEpoch);
+                            uint256 epochExpiry = epoch().add(bids[i].couponExpiryEpoch);
                             burnFromAccount(bids[i].bidder, bids[i].dollarAmount);
-                            incrementBalanceOfCoupons(bids[i].bidder, epoch, bids[i].couponAmount);
-                            setCouponBidderStateSelected(bids[i].bidder, i);
+                            incrementBalanceOfCoupons(bids[i].bidder, epochExpiry, bids[i].couponAmount);
+                            setCouponBidderStateSelected(settlementEpoch, bids[i].bidder, i);
                             totalFilled++;
                         } else {
-                            setCouponBidderStateRejected(bids[i].bidder);
+                            setCouponBidderStateRejected(settlementEpoch, bids[i].bidder);
                         }
                     }
                 } else {
-                    /* setCouponBidderStateRejected(bids[i].bidder); or just break and close the auction */
+                    /* setCouponBidderStateRejected(settlementEpoch, bids[i].bidder); or just break and close the auction */
                     break;
                 } 
             }
@@ -268,22 +271,25 @@ contract Regulator is Comptroller {
                     totalFilled
                 ).mul(100);
 
-                setMinExpiryFilled(minExpiryFilled);
-                setMaxExpiryFilled(maxExpiryFilled);
-                setAvgExpiryFilled(avgExpiryFilled.asUint256());
-                setMinYieldFilled(minYieldFilled.asUint256());
-                setMaxYieldFilled(maxYieldFilled.asUint256());
-                setAvgYieldFilled(avgYieldFilled.asUint256());
-                setBidToCover(bidToCover.asUint256());
-                setTotalFilled(totalFilled);
-                setTotalAuctioned(totalAuctioned);
-                setTotalBurned(totalBurned);
+                setMinExpiryFilled(settlementEpoch, minExpiryFilled);
+                setMaxExpiryFilled(settlementEpoch, maxExpiryFilled);
+                setAvgExpiryFilled(settlementEpoch, avgExpiryFilled.asUint256());
+                setMinYieldFilled(settlementEpoch, minYieldFilled.asUint256());
+                setMaxYieldFilled(settlementEpoch, maxYieldFilled.asUint256());
+                setAvgYieldFilled(settlementEpoch, avgYieldFilled.asUint256());
+                setBidToCover(settlementEpoch, bidToCover.asUint256());
+                setTotalFilled(settlementEpoch, totalFilled);
+                setTotalAuctioned(settlementEpoch, totalAuctioned);
+                setTotalBurned(settlementEpoch, totalBurned);
             }
 
             //clear bids and reset vars
             delete bids;
             totalFilled = 0;
             totalBurned = 0;
+            yieldRelNorm = 1;
+            expiryRelNorm = 1;
+            dollarRelNorm = 1;
             totalAuctioned = 0;
             maxExpiryFilled = 0;
             sumExpiryFilled = 0;

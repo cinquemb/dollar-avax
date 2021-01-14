@@ -1068,11 +1068,11 @@
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.5.17+commit.d19bba13\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"}],\"name\":\"allowanceCoupons\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"candidate\",\"type\":\"address\"}],\"name\":\"approveFor\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"balanceOfBonded\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"balanceOfCoupons\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"balanceOfStaged\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"bootstrappingAt\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"couponsExpiration\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"decimals\",\"outputs\":[{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"dollar\",\"outputs\":[{\"internalType\":\"contract IDollar\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"epoch\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"epochTime\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"expiringCoupons\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"i\",\"type\":\"uint256\"}],\"name\":\"expiringCouponsAtIndex\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"fluidUntil\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"getAvgExpiryFilled\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"getAvgYieldFilled\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"getBidToCover\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"getMaxExpiryFilled\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"getMaxYieldFilled\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"getMinExpiryFilled\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"getMinYieldFilled\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"getTotalAuctioned\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"getTotalBurned\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"getTotalFilled\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"implementation\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"impl\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"candidate\",\"type\":\"address\"}],\"name\":\"isInitialized\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"candidate\",\"type\":\"address\"}],\"name\":\"isNominated\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"lockedUntil\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"name\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"oracle\",\"outputs\":[{\"internalType\":\"contract IOracle\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"outstandingCoupons\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"candidate\",\"type\":\"address\"}],\"name\":\"periodFor\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"pool\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"candidate\",\"type\":\"address\"}],\"name\":\"recordedVote\",\"outputs\":[{\"internalType\":\"enum Candidate.Vote\",\"name\":\"\",\"type\":\"uint8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"candidate\",\"type\":\"address\"}],\"name\":\"rejectFor\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"candidate\",\"type\":\"address\"}],\"name\":\"startFor\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"statusOf\",\"outputs\":[{\"internalType\":\"enum Account.Status\",\"name\":\"\",\"type\":\"uint8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"symbol\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalBonded\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"totalBondedAt\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalCoupons\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalDebt\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalNet\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalRedeemable\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalStaged\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"candidate\",\"type\":\"address\"}],\"name\":\"votesFor\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{\"balanceOfStaged(address)\":{\"notice\":\"Account\"},\"dollar()\":{\"notice\":\"Global\"},\"epoch()\":{\"notice\":\"Epoch\"},\"name()\":{\"notice\":\"ERC20 Interface\"},\"recordedVote(address,address)\":{\"notice\":\"Governance\"},\"transfer(address,uint256)\":{\"notice\":\"ERC20 Interface\"}}}},\"settings\":{\"compilationTarget\":{\"/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/dao/Comptroller.sol\":\"Comptroller\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/Constants.sol\":{\"keccak256\":\"0x834e5d0e52471055ef51bc96e982e7eaa0ab23e9ba0d99c3fd9176e1eab9d8d7\",\"urls\":[\"bzz-raw://7562db230d020fb0b63b12bb0682d88ee29503750b85948635d10e88a7681fd4\",\"dweb:/ipfs/QmSCuWLhCT6oBWU6SeTF5dZdYB9wyspTPQxTm2RAiJNwPz\"]},\"/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/dao/Comptroller.sol\":{\"keccak256\":\"0xda4f6054c2b9c5dadf748936070fe678520081ce0bbc4517751852ed8f39afbc\",\"urls\":[\"bzz-raw://c94a721a642566fcfceda7dd42c6c31f0581dfacc13a5b02d0a2a0fdb3d20556\",\"dweb:/ipfs/QmbYoHMhfQMSKTEdZ7UMM8BenaS8ndAX2zoggGNGzhjgJ9\"]},\"/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/dao/Getters.sol\":{\"keccak256\":\"0xd67ff4eb50c03922d9470918f724b20a04cf6d30986972c0e403bd1535fd36f5\",\"urls\":[\"bzz-raw://8006cb1db8d1f9aa6371a408410a645955194fc8117e8522e1eb1d1eb2453df1\",\"dweb:/ipfs/QmcdVWaMhg1n4KLYUNRXrUcKaKxrrQSLt7aRcnue8DTYV2\"]},\"/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/dao/Setters.sol\":{\"keccak256\":\"0xe0139519c0ff9d83f3b2d714e8b3505b580d542b9bd3f473bf5bd651c33576ce\",\"urls\":[\"bzz-raw://e32195078a08cd25dfc9e8ec508a17852337f0c2b290e9c381917a418fb997a6\",\"dweb:/ipfs/QmZCDXsd7gSdZ8bPHUpfM2g4GYGJ6sw3JXW1gAvGuYYHyk\"]},\"/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/dao/State.sol\":{\"keccak256\":\"0x678e3130fbc6c792c25d527a57392fd97976ac36ad2e668740a9eb005d4381f8\",\"urls\":[\"bzz-raw://fb359847a1cbf4b61ab95e82d8ed0aa70f6306b1b7a213414b1996ca344961b9\",\"dweb:/ipfs/QmZxRQbxxU8qR5cw1u1XLnL6bxhpQNeau769Rw7Fb6ZEzG\"]},\"/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/external/Decimal.sol\":{\"keccak256\":\"0x30e09d378faf66b3a145053b10b88ff1e82767bed24ed20191d5359431904a33\",\"urls\":[\"bzz-raw://16580a28ab63a9b862342ff81b084eec5ccee04889e4240d77a7407507ec5aad\",\"dweb:/ipfs/QmZ1ryrLYrLu4UvtQQic5wnzkmhQMHWqpf4swkmNiKNhr7\"]},\"/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/external/Require.sol\":{\"keccak256\":\"0x3b8edcc166414f1c408972bf8130893a601a29eb87454621b187e754a8372922\",\"urls\":[\"bzz-raw://3a900707d5229254a1f021438d32adf87cf37a251cc0eea926e24cccad3ecf14\",\"dweb:/ipfs/QmWda2qiJEUnjftpqhxR1cZPJXqjkHJwFhLpXurod3uwnW\"]},\"/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/oracle/IOracle.sol\":{\"keccak256\":\"0x6226531e2530a21ac4af9b6f66a4ad164df392f65b811476578a5a2cd245bb08\",\"urls\":[\"bzz-raw://b135160ee7c29a3347f29cfc5ba4cad7e0a09579e64bd291df833a143ed47c9d\",\"dweb:/ipfs/QmNxnPcKAomHGE5ZjmrUiyM4mFDBC1AwtKFhzeK6Wx87kD\"]},\"/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/token/IDollar.sol\":{\"keccak256\":\"0xecc042c5725b0527c0600d51b363c95c0ed3f550b84df58526eed7486b5d7389\",\"urls\":[\"bzz-raw://34341e2fcb5d0038105bf54b1beab508e063e4f47bab1f6dcb397200f2bf569b\",\"dweb:/ipfs/QmeT36ma9bZpRVx4CxYPvvU1aTgVXUUdcrhUzooqC3jY2S\"]},\"@openzeppelin/contracts/math/SafeMath.sol\":{\"keccak256\":\"0x640b6dee7a4b830bdfd52b5031a07fc2b12209f5b2e29e5d364a7d37f69d8076\",\"urls\":[\"bzz-raw://31113152e1ddb78fe7a4197f247591ca894e93f916867beb708d8e747b6cc74f\",\"dweb:/ipfs/QmbZaJyXdpsYGykVhHH9qpVGQg9DGCxE2QufbCUy3daTgq\"]},\"@openzeppelin/contracts/token/ERC20/IERC20.sol\":{\"keccak256\":\"0xe5bb0f57cff3e299f360052ba50f1ea0fff046df2be070b6943e0e3c3fdad8a9\",\"urls\":[\"bzz-raw://59fd025151435da35faa8093a5c7a17de02de9d08ad27275c5cdf05050820d91\",\"dweb:/ipfs/QmQMvwEcPhoRXzbXyrdoeRtvLoifUW9Qh7Luho7bmUPRkc\"]},\"@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol\":{\"keccak256\":\"0x7c9bc70e5996c763e02ff38905282bc24fb242b0ef2519a003b36824fc524a4b\",\"urls\":[\"bzz-raw://85d5ad2dd23ee127f40907a12865a1e8cb5828814f6f2480285e1827dd72dedf\",\"dweb:/ipfs/QmayKQWJgWmr46DqWseADyUanmqxh662hPNdAkdHRjiQQH\"]}},\"version\":1}",
-  "bytecode": "0x608060405234801561001057600080fd5b506111ce806100206000396000f3fe608060405234801561001057600080fd5b506004361061030c5760003560e01c80637dc0d1d01161019d578063bc7513e2116100e9578063d60b347f116100a2578063eeaca09b1161007c578063eeaca09b14610648578063f1b7cf491461065b578063fc7b9c181461066e578063ffbe3b73146106765761030c565b8063d60b347f14610614578063dd62ed3e14610627578063dde74dc3146106355761030c565b8063bc7513e2146105ad578063c34eee65146105c0578063c9aff70c146105d3578063cb0fbc71146105e6578063cf023779146105f9578063d53c6f5f146106015761030c565b80639a649edc116101565780639f6e1b26116101305780639f6e1b261461057f578063a50cd8e714610592578063a6c409f1146105a5578063a9059cbb1461032f5761030c565b80639a649edc146105515780639bc289f1146105595780639f1a09291461056c5761030c565b80637dc0d1d014610500578063825ad6071461050857806386cf9f141461051b578063900cf0cf1461052e57806395d89b411461053657806397a5d5b51461053e5761030c565b80633fbba9a61161025c578063520acb76116102155780636a39e328116101ef5780636a39e328146104b457806370a08231146104c757806375d5024b146104da5780637d8bb869146104ed5761030c565b8063520acb76146104865780635c60da1b1461049957806364668022146104a15761030c565b80633fbba9a61461041b57806344d96e951461043b5780634c736099146104435780635053e4611461045657806351adeb571461045e57806351bf21d8146104735761030c565b80631edbcf6c116102c9578063313ce567116102a3578063313ce567146103cd578063353a420c146103e25780633a3e6c81146103f55780633dc905c7146104085761030c565b80631edbcf6c1461039f57806323b872dd146103a75780632d7f23b3146103ba5761030c565b806306fdde0314610311578063095ea7b31461032f57806310e95b6c1461034f57806315e14bf61461036f57806316f0115b1461038257806318160ddd14610397575b600080fd5b610319610689565b6040516103269190611088565b60405180910390f35b61034261033d366004610ed5565b6106c0565b604051610326919061105e565b61036261035d366004610f05565b6106c9565b60405161032691906110b9565b61036261037d366004610e28565b6106e1565b61038a6106ff565b6040516103269190611050565b61036261070e565b610362610714565b6103426103b5366004610e88565b61071a565b6103626103c8366004610f05565b610723565b6103d5610738565b60405161032691906110c7565b6103626103f0366004610e28565b61073d565b610342610403366004610e28565b61075b565b610362610416366004610f05565b610778565b61042e610429366004610e4e565b61078d565b604051610326919061107a565b6103626107c0565b610362610451366004610f41565b6107c6565b6103626107f6565b610466610819565b604051610326919061106c565b610362610481366004610e28565b610828565b610362610494366004610f05565b610846565b61038a61085b565b6103626104af366004610e28565b610880565b6103626104c2366004610f05565b61089e565b6103626104d5366004610e28565b6108b3565b6103426104e8366004610f05565b6108d1565b6103626104fb366004610f05565b6108e4565b6104666108f9565b610362610516366004610e28565b610908565b610362610529366004610e28565b61095b565b610362610976565b61031961097c565b61042e61054c366004610e28565b61099a565b6103626109ff565b610362610567366004610e28565b610a05565b61036261057a366004610f05565b610a23565b61036261058d366004610e4e565b610a39565b6103626105a0366004610e28565b610a68565b610362610a8b565b6103626105bb366004610ed5565b610b21565b6103626105ce366004610f05565b610b65565b6103626105e1366004610f05565b610b7a565b6103626105f4366004610f05565b610b8f565b610362610ba4565b61036261060f366004610f05565b610baa565b610342610622366004610e28565b610bbf565b61036261033d366004610e4e565b610362610643366004610f05565b610be0565b610362610656366004610f05565b610bf5565b610362610669366004610e28565b610c0a565b610362610c25565b610362610684366004610f05565b610c2b565b60408051808201909152601881527f44796e616d69632053657420446f6c6c6172205374616b650000000000000000602082015290565b60005b92915050565b6000818152600d60205260409020600201545b919050565b6001600160a01b03166000908152600e602052604090206001015490565b600b546001600160a01b031690565b60035490565b60065490565b60009392505050565b6000908152600d60205260409020600a015490565b601290565b6001600160a01b03166000908152600e602052604090206003015490565b6001600160a01b03166000908152600e6020526040902054151590565b6000908152600d60205260409020600e015490565b6001600160a01b038082166000908152600e60209081526040808320938616835260049093019052205460ff1692915050565b60045490565b6000828152600d602052604081206003018054839081106107e357fe5b9060005260206000200154905092915050565b6000610800610de6565b610808610c3d565b905061081381610c6c565b91505090565b6009546001600160a01b031690565b6001600160a01b03166000908152600c602052604090206004015490565b6000908152600d602052604090206010015490565b7f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc5490565b6001600160a01b03166000908152600e602052604090206002015490565b6000908152600d602052604090206003015490565b6001600160a01b03166000908152600c602052604090206001015490565b60006108db610c8e565b90911115919050565b6000908152600d602052604090206012015490565b600a546001600160a01b031690565b60008061091361070e565b9050806109245760009150506106dc565b61095481610948610934866108b3565b61093c6107c0565b9063ffffffff610c9316565b9063ffffffff610cd616565b9392505050565b6001600160a01b03166000908152600c602052604090205490565b60025490565b6040805180820190915260048152634453445360e01b602082015290565b60006109a4610976565b6001600160a01b0383166000908152600c602052604090206005015411156109ce575060026106dc565b6001600160a01b0382166000908152600c60205260409020600401546109f2610976565b10156106c05760016106c3565b60085490565b6001600160a01b03166000908152600c602052604090206005015490565b6000908152600d60208190526040909120015490565b6001600160a01b039182166000908152600c602090815260408083209390941682526003909201909152205490565b60006106c3610a768361073d565b610a7f84610880565b9063ffffffff610d1816565b6000610b1c610a98610c25565b610aa0610819565b6001600160a01b03166318160ddd6040518163ffffffff1660e01b815260040160206040518083038186803b158015610ad857600080fd5b505afa158015610aec573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250610b109190810190610f23565b9063ffffffff610d3d16565b905090565b6000610b2c82610b7a565b610b38575060006106c3565b506001600160a01b03919091166000908152600c6020908152604080832093835260029093019052205490565b6000908152600d602052604090206011015490565b6000908152600d602052604090206001015490565b6000908152600d602052604090206013015490565b60055490565b6000908152600d60205260409020600f015490565b6001600160a01b03166000908152600e602052604090206005015460ff1690565b6000908152600d60205260409020600c015490565b6000908152600d60205260409020600b015490565b6001600160a01b03166000908152600e602052604090205490565b60075490565b6000908152600d602052604090205490565b610c45610de6565b604051806060016040528060008152602001635fbef0008152602001611c20815250905090565b60006106c38260000151610a7f84604001516109488660200151610b10610d7f565b609690565b600082610ca2575060006106c3565b82820282848281610caf57fe5b04146109545760405162461bcd60e51b8152600401610ccd906110a9565b60405180910390fd5b600061095483836040518060400160405280601a81526020017f536166654d6174683a206469766973696f6e206279207a65726f000000000000815250610d83565b6000828201838110156109545760405162461bcd60e51b8152600401610ccd90611099565b600061095483836040518060400160405280601e81526020017f536166654d6174683a207375627472616374696f6e206f766572666c6f770000815250610dba565b4290565b60008183610da45760405162461bcd60e51b8152600401610ccd9190611088565b506000838581610db057fe5b0495945050505050565b60008184841115610dde5760405162461bcd60e51b8152600401610ccd9190611088565b505050900390565b60405180606001604052806000815260200160008152602001600081525090565b80356106c38161116e565b80356106c381611182565b80516106c381611182565b600060208284031215610e3a57600080fd5b6000610e468484610e07565b949350505050565b60008060408385031215610e6157600080fd5b6000610e6d8585610e07565b9250506020610e7e85828601610e07565b9150509250929050565b600080600060608486031215610e9d57600080fd5b6000610ea98686610e07565b9350506020610eba86828701610e07565b9250506040610ecb86828701610e12565b9150509250925092565b60008060408385031215610ee857600080fd5b6000610ef48585610e07565b9250506020610e7e85828601610e12565b600060208284031215610f1757600080fd5b6000610e468484610e12565b600060208284031215610f3557600080fd5b6000610e468484610e1d565b60008060408385031215610f5457600080fd5b6000610ef48585610e12565b610f69816110e2565b82525050565b610f69816110ed565b610f6981611111565b610f698161111c565b6000610f95826110d5565b610f9f81856110d9565b9350610faf818560208601611127565b610fb881611157565b9093019392505050565b6000610fcf601b836110d9565b7f536166654d6174683a206164646974696f6e206f766572666c6f770000000000815260200192915050565b60006110086021836110d9565b7f536166654d6174683a206d756c7469706c69636174696f6e206f766572666c6f8152607760f81b602082015260400192915050565b610f6981611108565b610f698161110b565b602081016106c38284610f60565b602081016106c38284610f6f565b602081016106c38284610f78565b602081016106c38284610f81565b602080825281016109548184610f8a565b602080825281016106c381610fc2565b602080825281016106c381610ffb565b602081016106c3828461103e565b602081016106c38284611047565b5190565b90815260200190565b60006106c3826110fc565b151590565b806106dc81611161565b6001600160a01b031690565b90565b60ff1690565b60006106c3826110e2565b60006106c3826110f2565b60005b8381101561114257818101518382015260200161112a565b83811115611151576000848401525b50505050565b601f01601f191690565b6003811061116b57fe5b50565b611177816110e2565b811461116b57600080fd5b6111778161110856fea365627a7a723158204fd4be2c475349b563b129e814aebdebcb557d6689e557fe1975e250874ce9316c6578706572696d656e74616cf564736f6c63430005110040",
-  "deployedBytecode": "0x608060405234801561001057600080fd5b506004361061030c5760003560e01c80637dc0d1d01161019d578063bc7513e2116100e9578063d60b347f116100a2578063eeaca09b1161007c578063eeaca09b14610648578063f1b7cf491461065b578063fc7b9c181461066e578063ffbe3b73146106765761030c565b8063d60b347f14610614578063dd62ed3e14610627578063dde74dc3146106355761030c565b8063bc7513e2146105ad578063c34eee65146105c0578063c9aff70c146105d3578063cb0fbc71146105e6578063cf023779146105f9578063d53c6f5f146106015761030c565b80639a649edc116101565780639f6e1b26116101305780639f6e1b261461057f578063a50cd8e714610592578063a6c409f1146105a5578063a9059cbb1461032f5761030c565b80639a649edc146105515780639bc289f1146105595780639f1a09291461056c5761030c565b80637dc0d1d014610500578063825ad6071461050857806386cf9f141461051b578063900cf0cf1461052e57806395d89b411461053657806397a5d5b51461053e5761030c565b80633fbba9a61161025c578063520acb76116102155780636a39e328116101ef5780636a39e328146104b457806370a08231146104c757806375d5024b146104da5780637d8bb869146104ed5761030c565b8063520acb76146104865780635c60da1b1461049957806364668022146104a15761030c565b80633fbba9a61461041b57806344d96e951461043b5780634c736099146104435780635053e4611461045657806351adeb571461045e57806351bf21d8146104735761030c565b80631edbcf6c116102c9578063313ce567116102a3578063313ce567146103cd578063353a420c146103e25780633a3e6c81146103f55780633dc905c7146104085761030c565b80631edbcf6c1461039f57806323b872dd146103a75780632d7f23b3146103ba5761030c565b806306fdde0314610311578063095ea7b31461032f57806310e95b6c1461034f57806315e14bf61461036f57806316f0115b1461038257806318160ddd14610397575b600080fd5b610319610689565b6040516103269190611088565b60405180910390f35b61034261033d366004610ed5565b6106c0565b604051610326919061105e565b61036261035d366004610f05565b6106c9565b60405161032691906110b9565b61036261037d366004610e28565b6106e1565b61038a6106ff565b6040516103269190611050565b61036261070e565b610362610714565b6103426103b5366004610e88565b61071a565b6103626103c8366004610f05565b610723565b6103d5610738565b60405161032691906110c7565b6103626103f0366004610e28565b61073d565b610342610403366004610e28565b61075b565b610362610416366004610f05565b610778565b61042e610429366004610e4e565b61078d565b604051610326919061107a565b6103626107c0565b610362610451366004610f41565b6107c6565b6103626107f6565b610466610819565b604051610326919061106c565b610362610481366004610e28565b610828565b610362610494366004610f05565b610846565b61038a61085b565b6103626104af366004610e28565b610880565b6103626104c2366004610f05565b61089e565b6103626104d5366004610e28565b6108b3565b6103426104e8366004610f05565b6108d1565b6103626104fb366004610f05565b6108e4565b6104666108f9565b610362610516366004610e28565b610908565b610362610529366004610e28565b61095b565b610362610976565b61031961097c565b61042e61054c366004610e28565b61099a565b6103626109ff565b610362610567366004610e28565b610a05565b61036261057a366004610f05565b610a23565b61036261058d366004610e4e565b610a39565b6103626105a0366004610e28565b610a68565b610362610a8b565b6103626105bb366004610ed5565b610b21565b6103626105ce366004610f05565b610b65565b6103626105e1366004610f05565b610b7a565b6103626105f4366004610f05565b610b8f565b610362610ba4565b61036261060f366004610f05565b610baa565b610342610622366004610e28565b610bbf565b61036261033d366004610e4e565b610362610643366004610f05565b610be0565b610362610656366004610f05565b610bf5565b610362610669366004610e28565b610c0a565b610362610c25565b610362610684366004610f05565b610c2b565b60408051808201909152601881527f44796e616d69632053657420446f6c6c6172205374616b650000000000000000602082015290565b60005b92915050565b6000818152600d60205260409020600201545b919050565b6001600160a01b03166000908152600e602052604090206001015490565b600b546001600160a01b031690565b60035490565b60065490565b60009392505050565b6000908152600d60205260409020600a015490565b601290565b6001600160a01b03166000908152600e602052604090206003015490565b6001600160a01b03166000908152600e6020526040902054151590565b6000908152600d60205260409020600e015490565b6001600160a01b038082166000908152600e60209081526040808320938616835260049093019052205460ff1692915050565b60045490565b6000828152600d602052604081206003018054839081106107e357fe5b9060005260206000200154905092915050565b6000610800610de6565b610808610c3d565b905061081381610c6c565b91505090565b6009546001600160a01b031690565b6001600160a01b03166000908152600c602052604090206004015490565b6000908152600d602052604090206010015490565b7f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc5490565b6001600160a01b03166000908152600e602052604090206002015490565b6000908152600d602052604090206003015490565b6001600160a01b03166000908152600c602052604090206001015490565b60006108db610c8e565b90911115919050565b6000908152600d602052604090206012015490565b600a546001600160a01b031690565b60008061091361070e565b9050806109245760009150506106dc565b61095481610948610934866108b3565b61093c6107c0565b9063ffffffff610c9316565b9063ffffffff610cd616565b9392505050565b6001600160a01b03166000908152600c602052604090205490565b60025490565b6040805180820190915260048152634453445360e01b602082015290565b60006109a4610976565b6001600160a01b0383166000908152600c602052604090206005015411156109ce575060026106dc565b6001600160a01b0382166000908152600c60205260409020600401546109f2610976565b10156106c05760016106c3565b60085490565b6001600160a01b03166000908152600c602052604090206005015490565b6000908152600d60208190526040909120015490565b6001600160a01b039182166000908152600c602090815260408083209390941682526003909201909152205490565b60006106c3610a768361073d565b610a7f84610880565b9063ffffffff610d1816565b6000610b1c610a98610c25565b610aa0610819565b6001600160a01b03166318160ddd6040518163ffffffff1660e01b815260040160206040518083038186803b158015610ad857600080fd5b505afa158015610aec573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250610b109190810190610f23565b9063ffffffff610d3d16565b905090565b6000610b2c82610b7a565b610b38575060006106c3565b506001600160a01b03919091166000908152600c6020908152604080832093835260029093019052205490565b6000908152600d602052604090206011015490565b6000908152600d602052604090206001015490565b6000908152600d602052604090206013015490565b60055490565b6000908152600d60205260409020600f015490565b6001600160a01b03166000908152600e602052604090206005015460ff1690565b6000908152600d60205260409020600c015490565b6000908152600d60205260409020600b015490565b6001600160a01b03166000908152600e602052604090205490565b60075490565b6000908152600d602052604090205490565b610c45610de6565b604051806060016040528060008152602001635fbef0008152602001611c20815250905090565b60006106c38260000151610a7f84604001516109488660200151610b10610d7f565b609690565b600082610ca2575060006106c3565b82820282848281610caf57fe5b04146109545760405162461bcd60e51b8152600401610ccd906110a9565b60405180910390fd5b600061095483836040518060400160405280601a81526020017f536166654d6174683a206469766973696f6e206279207a65726f000000000000815250610d83565b6000828201838110156109545760405162461bcd60e51b8152600401610ccd90611099565b600061095483836040518060400160405280601e81526020017f536166654d6174683a207375627472616374696f6e206f766572666c6f770000815250610dba565b4290565b60008183610da45760405162461bcd60e51b8152600401610ccd9190611088565b506000838581610db057fe5b0495945050505050565b60008184841115610dde5760405162461bcd60e51b8152600401610ccd9190611088565b505050900390565b60405180606001604052806000815260200160008152602001600081525090565b80356106c38161116e565b80356106c381611182565b80516106c381611182565b600060208284031215610e3a57600080fd5b6000610e468484610e07565b949350505050565b60008060408385031215610e6157600080fd5b6000610e6d8585610e07565b9250506020610e7e85828601610e07565b9150509250929050565b600080600060608486031215610e9d57600080fd5b6000610ea98686610e07565b9350506020610eba86828701610e07565b9250506040610ecb86828701610e12565b9150509250925092565b60008060408385031215610ee857600080fd5b6000610ef48585610e07565b9250506020610e7e85828601610e12565b600060208284031215610f1757600080fd5b6000610e468484610e12565b600060208284031215610f3557600080fd5b6000610e468484610e1d565b60008060408385031215610f5457600080fd5b6000610ef48585610e12565b610f69816110e2565b82525050565b610f69816110ed565b610f6981611111565b610f698161111c565b6000610f95826110d5565b610f9f81856110d9565b9350610faf818560208601611127565b610fb881611157565b9093019392505050565b6000610fcf601b836110d9565b7f536166654d6174683a206164646974696f6e206f766572666c6f770000000000815260200192915050565b60006110086021836110d9565b7f536166654d6174683a206d756c7469706c69636174696f6e206f766572666c6f8152607760f81b602082015260400192915050565b610f6981611108565b610f698161110b565b602081016106c38284610f60565b602081016106c38284610f6f565b602081016106c38284610f78565b602081016106c38284610f81565b602080825281016109548184610f8a565b602080825281016106c381610fc2565b602080825281016106c381610ffb565b602081016106c3828461103e565b602081016106c38284611047565b5190565b90815260200190565b60006106c3826110fc565b151590565b806106dc81611161565b6001600160a01b031690565b90565b60ff1690565b60006106c3826110e2565b60006106c3826110f2565b60005b8381101561114257818101518382015260200161112a565b83811115611151576000848401525b50505050565b601f01601f191690565b6003811061116b57fe5b50565b611177816110e2565b811461116b57600080fd5b6111778161110856fea365627a7a723158204fd4be2c475349b563b129e814aebdebcb557d6689e557fe1975e250874ce9316c6578706572696d656e74616cf564736f6c63430005110040",
+  "metadata": "{\"compiler\":{\"version\":\"0.5.17+commit.d19bba13\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"}],\"name\":\"allowanceCoupons\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"candidate\",\"type\":\"address\"}],\"name\":\"approveFor\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"balanceOfBonded\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"balanceOfCoupons\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"balanceOfStaged\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"bootstrappingAt\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"couponsExpiration\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"decimals\",\"outputs\":[{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"dollar\",\"outputs\":[{\"internalType\":\"contract IDollar\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"epoch\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"epochTime\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"expiringCoupons\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"i\",\"type\":\"uint256\"}],\"name\":\"expiringCouponsAtIndex\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"fluidUntil\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"getAvgExpiryFilled\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"getAvgYieldFilled\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"getBidToCover\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"getMaxExpiryFilled\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"getMaxYieldFilled\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"getMinExpiryFilled\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"getMinYieldFilled\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"getTotalAuctioned\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"getTotalBurned\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"getTotalFilled\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"implementation\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"impl\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"candidate\",\"type\":\"address\"}],\"name\":\"isInitialized\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"candidate\",\"type\":\"address\"}],\"name\":\"isNominated\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"lockedUntil\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"name\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"oracle\",\"outputs\":[{\"internalType\":\"contract IOracle\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"outstandingCoupons\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"candidate\",\"type\":\"address\"}],\"name\":\"periodFor\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"pool\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"candidate\",\"type\":\"address\"}],\"name\":\"recordedVote\",\"outputs\":[{\"internalType\":\"enum Candidate.Vote\",\"name\":\"\",\"type\":\"uint8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"candidate\",\"type\":\"address\"}],\"name\":\"rejectFor\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"candidate\",\"type\":\"address\"}],\"name\":\"startFor\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"statusOf\",\"outputs\":[{\"internalType\":\"enum Account.Status\",\"name\":\"\",\"type\":\"uint8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"symbol\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalBonded\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"}],\"name\":\"totalBondedAt\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalCoupons\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalDebt\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalNet\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalRedeemable\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalStaged\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"candidate\",\"type\":\"address\"}],\"name\":\"votesFor\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{\"balanceOfStaged(address)\":{\"notice\":\"Account\"},\"dollar()\":{\"notice\":\"Global\"},\"epoch()\":{\"notice\":\"Epoch\"},\"name()\":{\"notice\":\"ERC20 Interface\"},\"recordedVote(address,address)\":{\"notice\":\"Governance\"},\"transfer(address,uint256)\":{\"notice\":\"ERC20 Interface\"}}}},\"settings\":{\"compilationTarget\":{\"/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/dao/Comptroller.sol\":\"Comptroller\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/Constants.sol\":{\"keccak256\":\"0x834e5d0e52471055ef51bc96e982e7eaa0ab23e9ba0d99c3fd9176e1eab9d8d7\",\"urls\":[\"bzz-raw://7562db230d020fb0b63b12bb0682d88ee29503750b85948635d10e88a7681fd4\",\"dweb:/ipfs/QmSCuWLhCT6oBWU6SeTF5dZdYB9wyspTPQxTm2RAiJNwPz\"]},\"/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/dao/Comptroller.sol\":{\"keccak256\":\"0xda4f6054c2b9c5dadf748936070fe678520081ce0bbc4517751852ed8f39afbc\",\"urls\":[\"bzz-raw://c94a721a642566fcfceda7dd42c6c31f0581dfacc13a5b02d0a2a0fdb3d20556\",\"dweb:/ipfs/QmbYoHMhfQMSKTEdZ7UMM8BenaS8ndAX2zoggGNGzhjgJ9\"]},\"/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/dao/Getters.sol\":{\"keccak256\":\"0xbd5da9010dd9455e2830487c411e3babccd0376a97ca0012d36541975b5f2cc9\",\"urls\":[\"bzz-raw://32a6252f901ab53c09ba003ddbff5827f593a742692c21dc719e716fb43f1436\",\"dweb:/ipfs/QmUnfK8Wax2CpJQWJj31yZW5zaNfeSwD8inKdqaURTsHYo\"]},\"/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/dao/Setters.sol\":{\"keccak256\":\"0x2f1ddd8da38238675b291e5d3f04bf51eefeba4429ed5b4a2bfc98d72b0997fb\",\"urls\":[\"bzz-raw://338e7fa50dea0decadb87f33cd2964a4fe021615419dff54c7d8b9948285e120\",\"dweb:/ipfs/QmUBMHoqMPnsQXtFxjepgfqf31o9sYoQeLugDwxF7S4PnR\"]},\"/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/dao/State.sol\":{\"keccak256\":\"0x678e3130fbc6c792c25d527a57392fd97976ac36ad2e668740a9eb005d4381f8\",\"urls\":[\"bzz-raw://fb359847a1cbf4b61ab95e82d8ed0aa70f6306b1b7a213414b1996ca344961b9\",\"dweb:/ipfs/QmZxRQbxxU8qR5cw1u1XLnL6bxhpQNeau769Rw7Fb6ZEzG\"]},\"/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/external/Decimal.sol\":{\"keccak256\":\"0x30e09d378faf66b3a145053b10b88ff1e82767bed24ed20191d5359431904a33\",\"urls\":[\"bzz-raw://16580a28ab63a9b862342ff81b084eec5ccee04889e4240d77a7407507ec5aad\",\"dweb:/ipfs/QmZ1ryrLYrLu4UvtQQic5wnzkmhQMHWqpf4swkmNiKNhr7\"]},\"/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/external/Require.sol\":{\"keccak256\":\"0x3b8edcc166414f1c408972bf8130893a601a29eb87454621b187e754a8372922\",\"urls\":[\"bzz-raw://3a900707d5229254a1f021438d32adf87cf37a251cc0eea926e24cccad3ecf14\",\"dweb:/ipfs/QmWda2qiJEUnjftpqhxR1cZPJXqjkHJwFhLpXurod3uwnW\"]},\"/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/oracle/IOracle.sol\":{\"keccak256\":\"0x6226531e2530a21ac4af9b6f66a4ad164df392f65b811476578a5a2cd245bb08\",\"urls\":[\"bzz-raw://b135160ee7c29a3347f29cfc5ba4cad7e0a09579e64bd291df833a143ed47c9d\",\"dweb:/ipfs/QmNxnPcKAomHGE5ZjmrUiyM4mFDBC1AwtKFhzeK6Wx87kD\"]},\"/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/token/IDollar.sol\":{\"keccak256\":\"0xecc042c5725b0527c0600d51b363c95c0ed3f550b84df58526eed7486b5d7389\",\"urls\":[\"bzz-raw://34341e2fcb5d0038105bf54b1beab508e063e4f47bab1f6dcb397200f2bf569b\",\"dweb:/ipfs/QmeT36ma9bZpRVx4CxYPvvU1aTgVXUUdcrhUzooqC3jY2S\"]},\"@openzeppelin/contracts/math/SafeMath.sol\":{\"keccak256\":\"0x640b6dee7a4b830bdfd52b5031a07fc2b12209f5b2e29e5d364a7d37f69d8076\",\"urls\":[\"bzz-raw://31113152e1ddb78fe7a4197f247591ca894e93f916867beb708d8e747b6cc74f\",\"dweb:/ipfs/QmbZaJyXdpsYGykVhHH9qpVGQg9DGCxE2QufbCUy3daTgq\"]},\"@openzeppelin/contracts/token/ERC20/IERC20.sol\":{\"keccak256\":\"0xe5bb0f57cff3e299f360052ba50f1ea0fff046df2be070b6943e0e3c3fdad8a9\",\"urls\":[\"bzz-raw://59fd025151435da35faa8093a5c7a17de02de9d08ad27275c5cdf05050820d91\",\"dweb:/ipfs/QmQMvwEcPhoRXzbXyrdoeRtvLoifUW9Qh7Luho7bmUPRkc\"]},\"@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol\":{\"keccak256\":\"0x7c9bc70e5996c763e02ff38905282bc24fb242b0ef2519a003b36824fc524a4b\",\"urls\":[\"bzz-raw://85d5ad2dd23ee127f40907a12865a1e8cb5828814f6f2480285e1827dd72dedf\",\"dweb:/ipfs/QmayKQWJgWmr46DqWseADyUanmqxh662hPNdAkdHRjiQQH\"]}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b506111ce806100206000396000f3fe608060405234801561001057600080fd5b506004361061030c5760003560e01c80637dc0d1d01161019d578063bc7513e2116100e9578063d60b347f116100a2578063eeaca09b1161007c578063eeaca09b14610648578063f1b7cf491461065b578063fc7b9c181461066e578063ffbe3b73146106765761030c565b8063d60b347f14610614578063dd62ed3e14610627578063dde74dc3146106355761030c565b8063bc7513e2146105ad578063c34eee65146105c0578063c9aff70c146105d3578063cb0fbc71146105e6578063cf023779146105f9578063d53c6f5f146106015761030c565b80639a649edc116101565780639f6e1b26116101305780639f6e1b261461057f578063a50cd8e714610592578063a6c409f1146105a5578063a9059cbb1461032f5761030c565b80639a649edc146105515780639bc289f1146105595780639f1a09291461056c5761030c565b80637dc0d1d014610500578063825ad6071461050857806386cf9f141461051b578063900cf0cf1461052e57806395d89b411461053657806397a5d5b51461053e5761030c565b80633fbba9a61161025c578063520acb76116102155780636a39e328116101ef5780636a39e328146104b457806370a08231146104c757806375d5024b146104da5780637d8bb869146104ed5761030c565b8063520acb76146104865780635c60da1b1461049957806364668022146104a15761030c565b80633fbba9a61461041b57806344d96e951461043b5780634c736099146104435780635053e4611461045657806351adeb571461045e57806351bf21d8146104735761030c565b80631edbcf6c116102c9578063313ce567116102a3578063313ce567146103cd578063353a420c146103e25780633a3e6c81146103f55780633dc905c7146104085761030c565b80631edbcf6c1461039f57806323b872dd146103a75780632d7f23b3146103ba5761030c565b806306fdde0314610311578063095ea7b31461032f57806310e95b6c1461034f57806315e14bf61461036f57806316f0115b1461038257806318160ddd14610397575b600080fd5b610319610689565b6040516103269190611088565b60405180910390f35b61034261033d366004610ed5565b6106c0565b604051610326919061105e565b61036261035d366004610f05565b6106c9565b60405161032691906110b9565b61036261037d366004610e28565b6106e1565b61038a6106ff565b6040516103269190611050565b61036261070e565b610362610714565b6103426103b5366004610e88565b61071a565b6103626103c8366004610f05565b610723565b6103d5610738565b60405161032691906110c7565b6103626103f0366004610e28565b61073d565b610342610403366004610e28565b61075b565b610362610416366004610f05565b610778565b61042e610429366004610e4e565b61078d565b604051610326919061107a565b6103626107c0565b610362610451366004610f41565b6107c6565b6103626107f6565b610466610819565b604051610326919061106c565b610362610481366004610e28565b610828565b610362610494366004610f05565b610846565b61038a61085b565b6103626104af366004610e28565b610880565b6103626104c2366004610f05565b61089e565b6103626104d5366004610e28565b6108b3565b6103426104e8366004610f05565b6108d1565b6103626104fb366004610f05565b6108e4565b6104666108f9565b610362610516366004610e28565b610908565b610362610529366004610e28565b61095b565b610362610976565b61031961097c565b61042e61054c366004610e28565b61099a565b6103626109ff565b610362610567366004610e28565b610a05565b61036261057a366004610f05565b610a23565b61036261058d366004610e4e565b610a39565b6103626105a0366004610e28565b610a68565b610362610a8b565b6103626105bb366004610ed5565b610b21565b6103626105ce366004610f05565b610b65565b6103626105e1366004610f05565b610b7a565b6103626105f4366004610f05565b610b8f565b610362610ba4565b61036261060f366004610f05565b610baa565b610342610622366004610e28565b610bbf565b61036261033d366004610e4e565b610362610643366004610f05565b610be0565b610362610656366004610f05565b610bf5565b610362610669366004610e28565b610c0a565b610362610c25565b610362610684366004610f05565b610c2b565b60408051808201909152601881527f44796e616d69632053657420446f6c6c6172205374616b650000000000000000602082015290565b60005b92915050565b6000818152600d60205260409020600201545b919050565b6001600160a01b03166000908152600e602052604090206001015490565b600b546001600160a01b031690565b60035490565b60065490565b60009392505050565b6000908152600d60205260409020600a015490565b601290565b6001600160a01b03166000908152600e602052604090206003015490565b6001600160a01b03166000908152600e6020526040902054151590565b6000908152600d60205260409020600e015490565b6001600160a01b038082166000908152600e60209081526040808320938616835260049093019052205460ff1692915050565b60045490565b6000828152600d602052604081206003018054839081106107e357fe5b9060005260206000200154905092915050565b6000610800610de6565b610808610c3d565b905061081381610c6c565b91505090565b6009546001600160a01b031690565b6001600160a01b03166000908152600c602052604090206004015490565b6000908152600d602052604090206010015490565b7f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc5490565b6001600160a01b03166000908152600e602052604090206002015490565b6000908152600d602052604090206003015490565b6001600160a01b03166000908152600c602052604090206001015490565b60006108db610c8e565b90911115919050565b6000908152600d602052604090206012015490565b600a546001600160a01b031690565b60008061091361070e565b9050806109245760009150506106dc565b61095481610948610934866108b3565b61093c6107c0565b9063ffffffff610c9316565b9063ffffffff610cd616565b9392505050565b6001600160a01b03166000908152600c602052604090205490565b60025490565b6040805180820190915260048152634453445360e01b602082015290565b60006109a4610976565b6001600160a01b0383166000908152600c602052604090206005015411156109ce575060026106dc565b6001600160a01b0382166000908152600c60205260409020600401546109f2610976565b10156106c05760016106c3565b60085490565b6001600160a01b03166000908152600c602052604090206005015490565b6000908152600d60208190526040909120015490565b6001600160a01b039182166000908152600c602090815260408083209390941682526003909201909152205490565b60006106c3610a768361073d565b610a7f84610880565b9063ffffffff610d1816565b6000610b1c610a98610c25565b610aa0610819565b6001600160a01b03166318160ddd6040518163ffffffff1660e01b815260040160206040518083038186803b158015610ad857600080fd5b505afa158015610aec573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250610b109190810190610f23565b9063ffffffff610d3d16565b905090565b6000610b2c82610b7a565b610b38575060006106c3565b506001600160a01b03919091166000908152600c6020908152604080832093835260029093019052205490565b6000908152600d602052604090206011015490565b6000908152600d602052604090206001015490565b6000908152600d602052604090206013015490565b60055490565b6000908152600d60205260409020600f015490565b6001600160a01b03166000908152600e602052604090206005015460ff1690565b6000908152600d60205260409020600c015490565b6000908152600d60205260409020600b015490565b6001600160a01b03166000908152600e602052604090205490565b60075490565b6000908152600d602052604090205490565b610c45610de6565b604051806060016040528060008152602001635fbef0008152602001611c20815250905090565b60006106c38260000151610a7f84604001516109488660200151610b10610d7f565b609690565b600082610ca2575060006106c3565b82820282848281610caf57fe5b04146109545760405162461bcd60e51b8152600401610ccd906110a9565b60405180910390fd5b600061095483836040518060400160405280601a81526020017f536166654d6174683a206469766973696f6e206279207a65726f000000000000815250610d83565b6000828201838110156109545760405162461bcd60e51b8152600401610ccd90611099565b600061095483836040518060400160405280601e81526020017f536166654d6174683a207375627472616374696f6e206f766572666c6f770000815250610dba565b4290565b60008183610da45760405162461bcd60e51b8152600401610ccd9190611088565b506000838581610db057fe5b0495945050505050565b60008184841115610dde5760405162461bcd60e51b8152600401610ccd9190611088565b505050900390565b60405180606001604052806000815260200160008152602001600081525090565b80356106c38161116e565b80356106c381611182565b80516106c381611182565b600060208284031215610e3a57600080fd5b6000610e468484610e07565b949350505050565b60008060408385031215610e6157600080fd5b6000610e6d8585610e07565b9250506020610e7e85828601610e07565b9150509250929050565b600080600060608486031215610e9d57600080fd5b6000610ea98686610e07565b9350506020610eba86828701610e07565b9250506040610ecb86828701610e12565b9150509250925092565b60008060408385031215610ee857600080fd5b6000610ef48585610e07565b9250506020610e7e85828601610e12565b600060208284031215610f1757600080fd5b6000610e468484610e12565b600060208284031215610f3557600080fd5b6000610e468484610e1d565b60008060408385031215610f5457600080fd5b6000610ef48585610e12565b610f69816110e2565b82525050565b610f69816110ed565b610f6981611111565b610f698161111c565b6000610f95826110d5565b610f9f81856110d9565b9350610faf818560208601611127565b610fb881611157565b9093019392505050565b6000610fcf601b836110d9565b7f536166654d6174683a206164646974696f6e206f766572666c6f770000000000815260200192915050565b60006110086021836110d9565b7f536166654d6174683a206d756c7469706c69636174696f6e206f766572666c6f8152607760f81b602082015260400192915050565b610f6981611108565b610f698161110b565b602081016106c38284610f60565b602081016106c38284610f6f565b602081016106c38284610f78565b602081016106c38284610f81565b602080825281016109548184610f8a565b602080825281016106c381610fc2565b602080825281016106c381610ffb565b602081016106c3828461103e565b602081016106c38284611047565b5190565b90815260200190565b60006106c3826110fc565b151590565b806106dc81611161565b6001600160a01b031690565b90565b60ff1690565b60006106c3826110e2565b60006106c3826110f2565b60005b8381101561114257818101518382015260200161112a565b83811115611151576000848401525b50505050565b601f01601f191690565b6003811061116b57fe5b50565b611177816110e2565b811461116b57600080fd5b6111778161110856fea365627a7a7231582059098879f5853afbf95b198864790bc8b91ed5c65b53916e26a2d3cac853fa116c6578706572696d656e74616cf564736f6c63430005110040",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b506004361061030c5760003560e01c80637dc0d1d01161019d578063bc7513e2116100e9578063d60b347f116100a2578063eeaca09b1161007c578063eeaca09b14610648578063f1b7cf491461065b578063fc7b9c181461066e578063ffbe3b73146106765761030c565b8063d60b347f14610614578063dd62ed3e14610627578063dde74dc3146106355761030c565b8063bc7513e2146105ad578063c34eee65146105c0578063c9aff70c146105d3578063cb0fbc71146105e6578063cf023779146105f9578063d53c6f5f146106015761030c565b80639a649edc116101565780639f6e1b26116101305780639f6e1b261461057f578063a50cd8e714610592578063a6c409f1146105a5578063a9059cbb1461032f5761030c565b80639a649edc146105515780639bc289f1146105595780639f1a09291461056c5761030c565b80637dc0d1d014610500578063825ad6071461050857806386cf9f141461051b578063900cf0cf1461052e57806395d89b411461053657806397a5d5b51461053e5761030c565b80633fbba9a61161025c578063520acb76116102155780636a39e328116101ef5780636a39e328146104b457806370a08231146104c757806375d5024b146104da5780637d8bb869146104ed5761030c565b8063520acb76146104865780635c60da1b1461049957806364668022146104a15761030c565b80633fbba9a61461041b57806344d96e951461043b5780634c736099146104435780635053e4611461045657806351adeb571461045e57806351bf21d8146104735761030c565b80631edbcf6c116102c9578063313ce567116102a3578063313ce567146103cd578063353a420c146103e25780633a3e6c81146103f55780633dc905c7146104085761030c565b80631edbcf6c1461039f57806323b872dd146103a75780632d7f23b3146103ba5761030c565b806306fdde0314610311578063095ea7b31461032f57806310e95b6c1461034f57806315e14bf61461036f57806316f0115b1461038257806318160ddd14610397575b600080fd5b610319610689565b6040516103269190611088565b60405180910390f35b61034261033d366004610ed5565b6106c0565b604051610326919061105e565b61036261035d366004610f05565b6106c9565b60405161032691906110b9565b61036261037d366004610e28565b6106e1565b61038a6106ff565b6040516103269190611050565b61036261070e565b610362610714565b6103426103b5366004610e88565b61071a565b6103626103c8366004610f05565b610723565b6103d5610738565b60405161032691906110c7565b6103626103f0366004610e28565b61073d565b610342610403366004610e28565b61075b565b610362610416366004610f05565b610778565b61042e610429366004610e4e565b61078d565b604051610326919061107a565b6103626107c0565b610362610451366004610f41565b6107c6565b6103626107f6565b610466610819565b604051610326919061106c565b610362610481366004610e28565b610828565b610362610494366004610f05565b610846565b61038a61085b565b6103626104af366004610e28565b610880565b6103626104c2366004610f05565b61089e565b6103626104d5366004610e28565b6108b3565b6103426104e8366004610f05565b6108d1565b6103626104fb366004610f05565b6108e4565b6104666108f9565b610362610516366004610e28565b610908565b610362610529366004610e28565b61095b565b610362610976565b61031961097c565b61042e61054c366004610e28565b61099a565b6103626109ff565b610362610567366004610e28565b610a05565b61036261057a366004610f05565b610a23565b61036261058d366004610e4e565b610a39565b6103626105a0366004610e28565b610a68565b610362610a8b565b6103626105bb366004610ed5565b610b21565b6103626105ce366004610f05565b610b65565b6103626105e1366004610f05565b610b7a565b6103626105f4366004610f05565b610b8f565b610362610ba4565b61036261060f366004610f05565b610baa565b610342610622366004610e28565b610bbf565b61036261033d366004610e4e565b610362610643366004610f05565b610be0565b610362610656366004610f05565b610bf5565b610362610669366004610e28565b610c0a565b610362610c25565b610362610684366004610f05565b610c2b565b60408051808201909152601881527f44796e616d69632053657420446f6c6c6172205374616b650000000000000000602082015290565b60005b92915050565b6000818152600d60205260409020600201545b919050565b6001600160a01b03166000908152600e602052604090206001015490565b600b546001600160a01b031690565b60035490565b60065490565b60009392505050565b6000908152600d60205260409020600a015490565b601290565b6001600160a01b03166000908152600e602052604090206003015490565b6001600160a01b03166000908152600e6020526040902054151590565b6000908152600d60205260409020600e015490565b6001600160a01b038082166000908152600e60209081526040808320938616835260049093019052205460ff1692915050565b60045490565b6000828152600d602052604081206003018054839081106107e357fe5b9060005260206000200154905092915050565b6000610800610de6565b610808610c3d565b905061081381610c6c565b91505090565b6009546001600160a01b031690565b6001600160a01b03166000908152600c602052604090206004015490565b6000908152600d602052604090206010015490565b7f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc5490565b6001600160a01b03166000908152600e602052604090206002015490565b6000908152600d602052604090206003015490565b6001600160a01b03166000908152600c602052604090206001015490565b60006108db610c8e565b90911115919050565b6000908152600d602052604090206012015490565b600a546001600160a01b031690565b60008061091361070e565b9050806109245760009150506106dc565b61095481610948610934866108b3565b61093c6107c0565b9063ffffffff610c9316565b9063ffffffff610cd616565b9392505050565b6001600160a01b03166000908152600c602052604090205490565b60025490565b6040805180820190915260048152634453445360e01b602082015290565b60006109a4610976565b6001600160a01b0383166000908152600c602052604090206005015411156109ce575060026106dc565b6001600160a01b0382166000908152600c60205260409020600401546109f2610976565b10156106c05760016106c3565b60085490565b6001600160a01b03166000908152600c602052604090206005015490565b6000908152600d60208190526040909120015490565b6001600160a01b039182166000908152600c602090815260408083209390941682526003909201909152205490565b60006106c3610a768361073d565b610a7f84610880565b9063ffffffff610d1816565b6000610b1c610a98610c25565b610aa0610819565b6001600160a01b03166318160ddd6040518163ffffffff1660e01b815260040160206040518083038186803b158015610ad857600080fd5b505afa158015610aec573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250610b109190810190610f23565b9063ffffffff610d3d16565b905090565b6000610b2c82610b7a565b610b38575060006106c3565b506001600160a01b03919091166000908152600c6020908152604080832093835260029093019052205490565b6000908152600d602052604090206011015490565b6000908152600d602052604090206001015490565b6000908152600d602052604090206013015490565b60055490565b6000908152600d60205260409020600f015490565b6001600160a01b03166000908152600e602052604090206005015460ff1690565b6000908152600d60205260409020600c015490565b6000908152600d60205260409020600b015490565b6001600160a01b03166000908152600e602052604090205490565b60075490565b6000908152600d602052604090205490565b610c45610de6565b604051806060016040528060008152602001635fbef0008152602001611c20815250905090565b60006106c38260000151610a7f84604001516109488660200151610b10610d7f565b609690565b600082610ca2575060006106c3565b82820282848281610caf57fe5b04146109545760405162461bcd60e51b8152600401610ccd906110a9565b60405180910390fd5b600061095483836040518060400160405280601a81526020017f536166654d6174683a206469766973696f6e206279207a65726f000000000000815250610d83565b6000828201838110156109545760405162461bcd60e51b8152600401610ccd90611099565b600061095483836040518060400160405280601e81526020017f536166654d6174683a207375627472616374696f6e206f766572666c6f770000815250610dba565b4290565b60008183610da45760405162461bcd60e51b8152600401610ccd9190611088565b506000838581610db057fe5b0495945050505050565b60008184841115610dde5760405162461bcd60e51b8152600401610ccd9190611088565b505050900390565b60405180606001604052806000815260200160008152602001600081525090565b80356106c38161116e565b80356106c381611182565b80516106c381611182565b600060208284031215610e3a57600080fd5b6000610e468484610e07565b949350505050565b60008060408385031215610e6157600080fd5b6000610e6d8585610e07565b9250506020610e7e85828601610e07565b9150509250929050565b600080600060608486031215610e9d57600080fd5b6000610ea98686610e07565b9350506020610eba86828701610e07565b9250506040610ecb86828701610e12565b9150509250925092565b60008060408385031215610ee857600080fd5b6000610ef48585610e07565b9250506020610e7e85828601610e12565b600060208284031215610f1757600080fd5b6000610e468484610e12565b600060208284031215610f3557600080fd5b6000610e468484610e1d565b60008060408385031215610f5457600080fd5b6000610ef48585610e12565b610f69816110e2565b82525050565b610f69816110ed565b610f6981611111565b610f698161111c565b6000610f95826110d5565b610f9f81856110d9565b9350610faf818560208601611127565b610fb881611157565b9093019392505050565b6000610fcf601b836110d9565b7f536166654d6174683a206164646974696f6e206f766572666c6f770000000000815260200192915050565b60006110086021836110d9565b7f536166654d6174683a206d756c7469706c69636174696f6e206f766572666c6f8152607760f81b602082015260400192915050565b610f6981611108565b610f698161110b565b602081016106c38284610f60565b602081016106c38284610f6f565b602081016106c38284610f78565b602081016106c38284610f81565b602080825281016109548184610f8a565b602080825281016106c381610fc2565b602080825281016106c381610ffb565b602081016106c3828461103e565b602081016106c38284611047565b5190565b90815260200190565b60006106c3826110fc565b151590565b806106dc81611161565b6001600160a01b031690565b90565b60ff1690565b60006106c3826110e2565b60006106c3826110f2565b60005b8381101561114257818101518382015260200161112a565b83811115611151576000848401525b50505050565b601f01601f191690565b6003811061116b57fe5b50565b611177816110e2565b811461116b57600080fd5b6111778161110856fea365627a7a7231582059098879f5853afbf95b198864790bc8b91ed5c65b53916e26a2d3cac853fa116c6578706572696d656e74616cf564736f6c63430005110040",
   "sourceMap": "817:4808:3:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;817:4808:3;;;;;;;",
-  "deployedSourceMap": "817:4808:3:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;817:4808:3;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1069:102:6;;;:::i;:::-;;;;;;;;;;;;;;;;1109:103:13;;;;;;;;;:::i;:::-;;;;;;;;4917:135:6;;;;;;;;;:::i;:::-;;;;;;;;9543:127;;;;;;;;;:::i;1924:90::-;;;:::i;:::-;;;;;;;;1475:98;;;:::i;2328:106::-;;;:::i;1218:126:13:-;;;;;;;;;:::i;8786:133:6:-;;;;;;;;;:::i;1267:74::-;;;:::i;:::-;;;;;;;;9811:127;;;;;;;;;:::i;10088:129::-;;;;;;;;;:::i;8198:139::-;;;;;;;;;:::i;9244:162::-;;;;;;;;;:::i;:::-;;;;;;;;2020:98;;;:::i;5202:152::-;;;;;;;;;:::i;4199:185::-;;;:::i;1724:94::-;;;:::i;:::-;;;;;;;;3640:126;;;;;;;;;:::i;8496:139::-;;;;;;;;;:::i;10362:173::-;;;:::i;9676:129::-;;;;;;;;;:::i;5058:138::-;;;;;;;;;:::i;1347:122::-;;;;;;;;;:::i;5485:134::-;;;;;;;;;:::i;7896:141::-;;;;;;;;;:::i;1824:94::-;;;:::i;2830:259::-;;;;;;;;;:::i;2697:127::-;;;;;;;;;:::i;4102:91::-;;;:::i;1177:84::-;;;:::i;3330:304::-;;;;;;;;;:::i;2440:100::-;;;:::i;3772:128::-;;;;;;;;;:::i;9070:133::-;;;;;;;;;:::i;3906:160::-;;;;;;;;;:::i;9944:138::-;;;;;;;;;:::i;2546:113::-;;;:::i;3095:229::-;;;;;;;;;:::i;7745:141::-;;;;;;;;;:::i;4774:137::-;;;;;;;;;:::i;8047:141::-;;;;;;;;;:::i;2124:98::-;;;:::i;8347:139::-;;;;;;;;;:::i;10223:133::-;;;;;;;;;:::i;1579:108::-;;;;;;;8925:139;;;;;;;;;:::i;8645:131::-;;;;;;;;;:::i;9412:125::-;;;;;;;;;:::i;2228:94::-;;;:::i;5360:119::-;;;;;;;;;:::i;1069:102::-;1131:33;;;;;;;;;;;;;;;;;1069:102;:::o;1109:103:13:-;1177:4;1109:103;;;;;:::o;4917:135:6:-;4980:7;5006:20;;;:13;:20;;;;;:39;;;4917:135;;;;:::o;9543:127::-;-1:-1:-1;;;;;9628:28:6;9602:7;9628:28;;;:17;:28;;;;;:35;;;;9543:127::o;1924:90::-;1987:20;;-1:-1:-1;;;;;1987:20:6;1924:90;:::o;1475:98::-;1545:14;:21;1475:98;:::o;2328:106::-;2402:25;;2328:106;:::o;1218:126:13:-;1309:4;1218:126;;;;;:::o;8786:133:6:-;8846:7;8872:20;;;:13;:20;;;;;:40;;;;8786:133::o;1267:74::-;1332:2;1267:74;:::o;9811:127::-;-1:-1:-1;;;;;9896:28:6;9870:7;9896:28;;;:17;:28;;;;;:35;;;;9811:127::o;10088:129::-;-1:-1:-1;;;;;10172:28:6;10149:4;10172:28;;;:17;:28;;;;;:34;:38;;;10088:129::o;8198:139::-;8261:7;8287:20;;;:13;:20;;;;;:43;;;;8198:139::o;9244:162::-;-1:-1:-1;;;;;9356:28:6;;;9323:14;9356:28;;;:17;:28;;;;;;;;:43;;;;;:34;;;;:43;;;;;;9244:162;;;;:::o;2020:98::-;2090:21;;2020:98;:::o;5202:152::-;5281:7;5307:20;;;:13;:20;;;;;:37;;:40;;5345:1;;5307:40;;;;;;;;;;;;;;5300:47;;5202:152;;;;:::o;4199:185::-;4241:7;4260:38;;:::i;:::-;4301:28;:26;:28::i;:::-;4260:69;;4347:30;4369:7;4347:21;:30::i;:::-;4340:37;;;4199:185;:::o;1724:94::-;1789:15;:22;-1:-1:-1;;;;;1789:22:6;1724:94;:::o;3640:126::-;-1:-1:-1;;;;;3724:24:6;3698:7;3724:24;;;:15;:24;;;;;:35;;;;3640:126::o;8496:139::-;8559:7;8585:20;;;:13;:20;;;;;:43;;;;8496:139::o;10362:173::-;956:66;10508:11;;10486:43::o;9676:129::-;-1:-1:-1;;;;;9762:28:6;9736:7;9762:28;;;:17;:28;;;;;:36;;;;9676:129::o;5058:138::-;5119:7;5145:20;;;:13;:20;;;;;:37;;:44;;5058:138::o;1347:122::-;-1:-1:-1;;;;;1430:24:6;1404:7;1430:24;;;:15;:24;;;;;:32;;;;1347:122::o;5485:134::-;5546:4;5578:34;:32;:34::i;:::-;5569:43;;;;;5485:134;-1:-1:-1;5485:134:6:o;7896:141::-;7960:7;7986:20;;;:13;:20;;;;;:44;;;;7896:141::o;1824:94::-;1889:22;;-1:-1:-1;;;;;1889:22:6;1824:94;:::o;2830:259::-;2893:7;2912:19;2934:13;:11;:13::i;:::-;2912:35;-1:-1:-1;2961:16:6;2957:55;;3000:1;2993:8;;;;;2957:55;3028:54;3070:11;3028:37;3046:18;3056:7;3046:9;:18::i;:::-;3028:13;:11;:13::i;:::-;:17;:37;:17;:37;:::i;:::-;:41;:54;:41;:54;:::i;:::-;3021:61;2830:259;-1:-1:-1;;;2830:259:6:o;2697:127::-;-1:-1:-1;;;;;2786:24:6;2760:7;2786:24;;;:15;:24;;;;;:31;;2697:127::o;4102:91::-;4166:20;;4102:91;:::o;1177:84::-;1241:13;;;;;;;;;;;;-1:-1:-1;;;1241:13:6;;;;1177:84;:::o;3330:304::-;3386:14;3455:7;:5;:7::i;:::-;-1:-1:-1;;;;;3416:24:6;;:6;:24;;;:15;:24;;;;;:36;;;:46;3412:105;;;-1:-1:-1;3485:21:6;3478:28;;3412:105;-1:-1:-1;;;;;3545:24:6;;:6;:24;;;:15;:24;;;;;:35;;;3534:7;:5;:7::i;:::-;:46;;:93;;3607:20;3534:93;;2440:100;2511:22;;2440:100;:::o;3772:128::-;-1:-1:-1;;;;;3857:24:6;3831:7;3857:24;;;:15;:24;;;;;:36;;;;3772:128::o;9070:133::-;9130:7;9156:20;;;:13;:20;;;;;;;;:40;;;9070:133::o;3906:160::-;-1:-1:-1;;;;;4011:22:6;;;3985:7;4011:22;;;:15;:22;;;;;;;;:48;;;;;;:39;;;;:48;;;;;;3906:160::o;9944:138::-;10002:7;10028:47;10054:20;10064:9;10054;:20::i;:::-;10028:21;10039:9;10028:10;:21::i;:::-;:25;:47;:25;:47;:::i;2546:113::-;2587:7;2613:39;2640:11;:9;:11::i;:::-;2613:8;:6;:8::i;:::-;-1:-1:-1;;;;;2613:20:6;;:22;;;;;;;;;;;;;;;;;;;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;2613:22:6;;;;8:9:-1;5:2;;;45:16;42:1;39;24:38;77:16;74:1;67:27;5:2;2613:22:6;;;;;;;101:4:-1;97:9;90:4;84;80:15;76:31;69:5;65:43;126:6;120:4;113:20;0:138;2613:22:6;;;;;;;;;:26;:39;:26;:39;:::i;:::-;2606:46;;2546:113;:::o;3095:229::-;3174:7;3197:25;3216:5;3197:18;:25::i;:::-;3193:69;;-1:-1:-1;3250:1:6;3243:8;;3193:69;-1:-1:-1;;;;;;3278:24:6;;;;:6;:24;;;:15;:24;;;;;;;;:39;;;:32;;;;:39;;;;;3095:229::o;7745:141::-;7809:7;7835:20;;;:13;:20;;;;;:44;;;;7745:141::o;4774:137::-;4838:7;4864:20;;;:13;:20;;;;;:28;;:40;;4774:137::o;8047:141::-;8111:7;8137:20;;;:13;:20;;;;;:44;;;;8047:141::o;2124:98::-;2194:21;;2124:98;:::o;8347:139::-;8410:7;8436:20;;;:13;:20;;;;;:43;;;;8347:139::o;10223:133::-;-1:-1:-1;;;;;10309:28:6;10286:4;10309:28;;;:17;:28;;;;;:40;;;;;;10223:133::o;8925:139::-;8988:7;9014:20;;;:13;:20;;;;;:43;;;;8925:139::o;8645:131::-;8704:7;8730:20;;;:13;:20;;;;;:39;;;;8645:131::o;9412:125::-;-1:-1:-1;;;;;9496:28:6;9470:7;9496:28;;;:17;:28;;;;;:34;;9412:125::o;2228:94::-;2296:19;;2228:94;:::o;5360:119::-;5419:7;5445:20;;;:13;:20;;;;;:27;;5360:119::o;3239:222:0:-;3290:20;;:::i;:::-;3329:125;;;;;;;;1475:1;3329:125;;;;1521:10;3329:125;;;;1577:4;3329:125;;;3322:132;;3239:222;:::o;4390:244:6:-;4484:7;4510:117;4611:8;:15;;;4510:83;4577:8;:15;;;4510:49;4544:8;:14;;;4510:16;:14;:16::i;3586:110:0:-;907:3;3586:110;:::o;2159:459:56:-;2217:7;2458:6;2454:45;;-1:-1:-1;2487:1:56;2480:8;;2454:45;2521:5;;;2525:1;2521;:5;:1;2544:5;;;;;:10;2536:56;;;;-1:-1:-1;;;2536:56:56;;;;;;;;;;;;;;;;3073:130;3131:7;3157:39;3161:1;3164;3157:39;;;;;;;;;;;;;;;;;:3;:39::i;834:176::-;892:7;923:5;;;946:6;;;;938:46;;;;-1:-1:-1;;;938:46:56;;;;;;;;1274:134;1332:7;1358:43;1362:1;1365;1358:43;;;;;;;;;;;;;;;;;:3;:43::i;4671:97:6:-;4746:15;4671:97;:::o;3718:338:56:-;3804:7;3904:12;3897:5;3889:28;;;;-1:-1:-1;;;3889:28:56;;;;;;;;;;;3927:9;3943:1;3939;:5;;;;;;;3718:338;-1:-1:-1;;;;;3718:338:56:o;1732:187::-;1818:7;1853:12;1845:6;;;;1837:29;;;;-1:-1:-1;;;1837:29:56;;;;;;;;;;-1:-1:-1;;;1888:5:56;;;1732:187::o;817:4808:3:-;;;;;;;;;;;;;;;;;;;;;;;;:::o;5:130:-1:-;72:20;;97:33;72:20;97:33;;142:130;209:20;;234:33;209:20;234:33;;279:134;357:13;;375:33;357:13;375:33;;420:241;;524:2;512:9;503:7;499:23;495:32;492:2;;;540:1;537;530:12;492:2;575:1;592:53;637:7;617:9;592:53;;;582:63;486:175;-1:-1;;;;486:175;668:366;;;789:2;777:9;768:7;764:23;760:32;757:2;;;805:1;802;795:12;757:2;840:1;857:53;902:7;882:9;857:53;;;847:63;;819:97;947:2;965:53;1010:7;1001:6;990:9;986:22;965:53;;;955:63;;926:98;751:283;;;;;;1041:491;;;;1179:2;1167:9;1158:7;1154:23;1150:32;1147:2;;;1195:1;1192;1185:12;1147:2;1230:1;1247:53;1292:7;1272:9;1247:53;;;1237:63;;1209:97;1337:2;1355:53;1400:7;1391:6;1380:9;1376:22;1355:53;;;1345:63;;1316:98;1445:2;1463:53;1508:7;1499:6;1488:9;1484:22;1463:53;;;1453:63;;1424:98;1141:391;;;;;;1539:366;;;1660:2;1648:9;1639:7;1635:23;1631:32;1628:2;;;1676:1;1673;1666:12;1628:2;1711:1;1728:53;1773:7;1753:9;1728:53;;;1718:63;;1690:97;1818:2;1836:53;1881:7;1872:6;1861:9;1857:22;1836:53;;1912:241;;2016:2;2004:9;1995:7;1991:23;1987:32;1984:2;;;2032:1;2029;2022:12;1984:2;2067:1;2084:53;2129:7;2109:9;2084:53;;2160:263;;2275:2;2263:9;2254:7;2250:23;2246:32;2243:2;;;2291:1;2288;2281:12;2243:2;2326:1;2343:64;2399:7;2379:9;2343:64;;2430:366;;;2551:2;2539:9;2530:7;2526:23;2522:32;2519:2;;;2567:1;2564;2557:12;2519:2;2602:1;2619:53;2664:7;2644:9;2619:53;;2803:113;2886:24;2904:5;2886:24;;;2881:3;2874:37;2868:48;;;2923:104;3000:21;3015:5;3000:21;;3034:160;3134:54;3182:5;3134:54;;3368:144;3460:46;3500:5;3460:46;;3666:347;;3778:39;3811:5;3778:39;;;3829:71;3893:6;3888:3;3829:71;;;3822:78;;3905:52;3950:6;3945:3;3938:4;3931:5;3927:16;3905:52;;;3978:29;4000:6;3978:29;;;3969:39;;;;3758:255;-1:-1;;;3758:255;4021:327;;4181:67;4245:2;4240:3;4181:67;;;4281:29;4261:50;;4339:2;4330:12;;4167:181;-1:-1;;4167:181;4357:370;;4517:67;4581:2;4576:3;4517:67;;;4617:34;4597:55;;-1:-1;;;4681:2;4672:12;;4665:25;4718:2;4709:12;;4503:224;-1:-1;;4503:224;4735:113;4818:24;4836:5;4818:24;;4855:107;4934:22;4950:5;4934:22;;4969:213;5087:2;5072:18;;5101:71;5076:9;5145:6;5101:71;;5189:201;5301:2;5286:18;;5315:65;5290:9;5353:6;5315:65;;5397:247;5532:2;5517:18;;5546:88;5521:9;5607:6;5546:88;;5905:231;6032:2;6017:18;;6046:80;6021:9;6099:6;6046:80;;6377:301;6515:2;6529:47;;;6500:18;;6590:78;6500:18;6654:6;6590:78;;6685:407;6876:2;6890:47;;;6861:18;;6951:131;6861:18;6951:131;;7099:407;7290:2;7304:47;;;7275:18;;7365:131;7275:18;7365:131;;7513:213;7631:2;7616:18;;7645:71;7620:9;7689:6;7645:71;;7733:205;7847:2;7832:18;;7861:67;7836:9;7901:6;7861:67;;7945:122;8033:12;;8004:63;8075:163;8178:19;;;8227:4;8218:14;;8171:67;8246:91;;8308:24;8326:5;8308:24;;8344:85;8410:13;8403:21;;8386:43;8436:128;8509:5;8515:44;8509:5;8515:44;;8702:121;-1:-1;;;;;8764:54;;8747:76;8830:72;8892:5;8875:27;8909:81;8980:4;8969:16;;8952:38;8997:155;;9093:54;9141:5;9093:54;;9585:128;;9673:35;9702:5;9673:35;;9852:268;9917:1;9924:101;9938:6;9935:1;9932:13;9924:101;;;10005:11;;;9999:18;9986:11;;;9979:39;9960:2;9953:10;9924:101;;;10040:6;10037:1;10034:13;10031:2;;;10105:1;10096:6;10091:3;10087:16;10080:27;10031:2;9901:219;;;;;10128:97;10216:2;10196:14;-1:-1;;10192:28;;10176:49;10233:102;10313:1;10306:5;10303:12;10293:2;;10319:9;10293:2;10287:48;;10449:117;10518:24;10536:5;10518:24;;;10511:5;10508:35;10498:2;;10557:1;10554;10547:12;10573:117;10642:24;10660:5;10642:24;",
+  "deployedSourceMap": "817:4808:3:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;817:4808:3;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1069:102:6;;;:::i;:::-;;;;;;;;;;;;;;;;1109:103:13;;;;;;;;;:::i;:::-;;;;;;;;4917:135:6;;;;;;;;;:::i;:::-;;;;;;;;9694:127;;;;;;;;;:::i;1924:90::-;;;:::i;:::-;;;;;;;;1475:98;;;:::i;2328:106::-;;;:::i;1218:126:13:-;;;;;;;;;:::i;8937:133:6:-;;;;;;;;;:::i;1267:74::-;;;:::i;:::-;;;;;;;;9962:127;;;;;;;;;:::i;10239:129::-;;;;;;;;;:::i;8349:139::-;;;;;;;;;:::i;9395:162::-;;;;;;;;;:::i;:::-;;;;;;;;2020:98;;;:::i;5202:152::-;;;;;;;;;:::i;4199:185::-;;;:::i;1724:94::-;;;:::i;:::-;;;;;;;;3640:126;;;;;;;;;:::i;8647:139::-;;;;;;;;;:::i;10513:173::-;;;:::i;9827:129::-;;;;;;;;;:::i;5058:138::-;;;;;;;;;:::i;1347:122::-;;;;;;;;;:::i;5485:134::-;;;;;;;;;:::i;8047:141::-;;;;;;;;;:::i;1824:94::-;;;:::i;2830:259::-;;;;;;;;;:::i;2697:127::-;;;;;;;;;:::i;4102:91::-;;;:::i;1177:84::-;;;:::i;3330:304::-;;;;;;;;;:::i;2440:100::-;;;:::i;3772:128::-;;;;;;;;;:::i;9221:133::-;;;;;;;;;:::i;3906:160::-;;;;;;;;;:::i;10095:138::-;;;;;;;;;:::i;2546:113::-;;;:::i;3095:229::-;;;;;;;;;:::i;7896:141::-;;;;;;;;;:::i;4774:137::-;;;;;;;;;:::i;8198:141::-;;;;;;;;;:::i;2124:98::-;;;:::i;8498:139::-;;;;;;;;;:::i;10374:133::-;;;;;;;;;:::i;1579:108::-;;;;;;;9076:139;;;;;;;;;:::i;8796:131::-;;;;;;;;;:::i;9563:125::-;;;;;;;;;:::i;2228:94::-;;;:::i;5360:119::-;;;;;;;;;:::i;1069:102::-;1131:33;;;;;;;;;;;;;;;;;1069:102;:::o;1109:103:13:-;1177:4;1109:103;;;;;:::o;4917:135:6:-;4980:7;5006:20;;;:13;:20;;;;;:39;;;4917:135;;;;:::o;9694:127::-;-1:-1:-1;;;;;9779:28:6;9753:7;9779:28;;;:17;:28;;;;;:35;;;;9694:127::o;1924:90::-;1987:20;;-1:-1:-1;;;;;1987:20:6;1924:90;:::o;1475:98::-;1545:14;:21;1475:98;:::o;2328:106::-;2402:25;;2328:106;:::o;1218:126:13:-;1309:4;1218:126;;;;;:::o;8937:133:6:-;8997:7;9023:20;;;:13;:20;;;;;:40;;;;8937:133::o;1267:74::-;1332:2;1267:74;:::o;9962:127::-;-1:-1:-1;;;;;10047:28:6;10021:7;10047:28;;;:17;:28;;;;;:35;;;;9962:127::o;10239:129::-;-1:-1:-1;;;;;10323:28:6;10300:4;10323:28;;;:17;:28;;;;;:34;:38;;;10239:129::o;8349:139::-;8412:7;8438:20;;;:13;:20;;;;;:43;;;;8349:139::o;9395:162::-;-1:-1:-1;;;;;9507:28:6;;;9474:14;9507:28;;;:17;:28;;;;;;;;:43;;;;;:34;;;;:43;;;;;;9395:162;;;;:::o;2020:98::-;2090:21;;2020:98;:::o;5202:152::-;5281:7;5307:20;;;:13;:20;;;;;:37;;:40;;5345:1;;5307:40;;;;;;;;;;;;;;5300:47;;5202:152;;;;:::o;4199:185::-;4241:7;4260:38;;:::i;:::-;4301:28;:26;:28::i;:::-;4260:69;;4347:30;4369:7;4347:21;:30::i;:::-;4340:37;;;4199:185;:::o;1724:94::-;1789:15;:22;-1:-1:-1;;;;;1789:22:6;1724:94;:::o;3640:126::-;-1:-1:-1;;;;;3724:24:6;3698:7;3724:24;;;:15;:24;;;;;:35;;;;3640:126::o;8647:139::-;8710:7;8736:20;;;:13;:20;;;;;:43;;;;8647:139::o;10513:173::-;956:66;10659:11;;10637:43::o;9827:129::-;-1:-1:-1;;;;;9913:28:6;9887:7;9913:28;;;:17;:28;;;;;:36;;;;9827:129::o;5058:138::-;5119:7;5145:20;;;:13;:20;;;;;:37;;:44;;5058:138::o;1347:122::-;-1:-1:-1;;;;;1430:24:6;1404:7;1430:24;;;:15;:24;;;;;:32;;;;1347:122::o;5485:134::-;5546:4;5578:34;:32;:34::i;:::-;5569:43;;;;;5485:134;-1:-1:-1;5485:134:6:o;8047:141::-;8111:7;8137:20;;;:13;:20;;;;;:44;;;;8047:141::o;1824:94::-;1889:22;;-1:-1:-1;;;;;1889:22:6;1824:94;:::o;2830:259::-;2893:7;2912:19;2934:13;:11;:13::i;:::-;2912:35;-1:-1:-1;2961:16:6;2957:55;;3000:1;2993:8;;;;;2957:55;3028:54;3070:11;3028:37;3046:18;3056:7;3046:9;:18::i;:::-;3028:13;:11;:13::i;:::-;:17;:37;:17;:37;:::i;:::-;:41;:54;:41;:54;:::i;:::-;3021:61;2830:259;-1:-1:-1;;;2830:259:6:o;2697:127::-;-1:-1:-1;;;;;2786:24:6;2760:7;2786:24;;;:15;:24;;;;;:31;;2697:127::o;4102:91::-;4166:20;;4102:91;:::o;1177:84::-;1241:13;;;;;;;;;;;;-1:-1:-1;;;1241:13:6;;;;1177:84;:::o;3330:304::-;3386:14;3455:7;:5;:7::i;:::-;-1:-1:-1;;;;;3416:24:6;;:6;:24;;;:15;:24;;;;;:36;;;:46;3412:105;;;-1:-1:-1;3485:21:6;3478:28;;3412:105;-1:-1:-1;;;;;3545:24:6;;:6;:24;;;:15;:24;;;;;:35;;;3534:7;:5;:7::i;:::-;:46;;:93;;3607:20;3534:93;;2440:100;2511:22;;2440:100;:::o;3772:128::-;-1:-1:-1;;;;;3857:24:6;3831:7;3857:24;;;:15;:24;;;;;:36;;;;3772:128::o;9221:133::-;9281:7;9307:20;;;:13;:20;;;;;;;;:40;;;9221:133::o;3906:160::-;-1:-1:-1;;;;;4011:22:6;;;3985:7;4011:22;;;:15;:22;;;;;;;;:48;;;;;;:39;;;;:48;;;;;;3906:160::o;10095:138::-;10153:7;10179:47;10205:20;10215:9;10205;:20::i;:::-;10179:21;10190:9;10179:10;:21::i;:::-;:25;:47;:25;:47;:::i;2546:113::-;2587:7;2613:39;2640:11;:9;:11::i;:::-;2613:8;:6;:8::i;:::-;-1:-1:-1;;;;;2613:20:6;;:22;;;;;;;;;;;;;;;;;;;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;2613:22:6;;;;8:9:-1;5:2;;;45:16;42:1;39;24:38;77:16;74:1;67:27;5:2;2613:22:6;;;;;;;101:4:-1;97:9;90:4;84;80:15;76:31;69:5;65:43;126:6;120:4;113:20;0:138;2613:22:6;;;;;;;;;:26;:39;:26;:39;:::i;:::-;2606:46;;2546:113;:::o;3095:229::-;3174:7;3197:25;3216:5;3197:18;:25::i;:::-;3193:69;;-1:-1:-1;3250:1:6;3243:8;;3193:69;-1:-1:-1;;;;;;3278:24:6;;;;:6;:24;;;:15;:24;;;;;;;;:39;;;:32;;;;:39;;;;;3095:229::o;7896:141::-;7960:7;7986:20;;;:13;:20;;;;;:44;;;;7896:141::o;4774:137::-;4838:7;4864:20;;;:13;:20;;;;;:28;;:40;;4774:137::o;8198:141::-;8262:7;8288:20;;;:13;:20;;;;;:44;;;;8198:141::o;2124:98::-;2194:21;;2124:98;:::o;8498:139::-;8561:7;8587:20;;;:13;:20;;;;;:43;;;;8498:139::o;10374:133::-;-1:-1:-1;;;;;10460:28:6;10437:4;10460:28;;;:17;:28;;;;;:40;;;;;;10374:133::o;9076:139::-;9139:7;9165:20;;;:13;:20;;;;;:43;;;;9076:139::o;8796:131::-;8855:7;8881:20;;;:13;:20;;;;;:39;;;;8796:131::o;9563:125::-;-1:-1:-1;;;;;9647:28:6;9621:7;9647:28;;;:17;:28;;;;;:34;;9563:125::o;2228:94::-;2296:19;;2228:94;:::o;5360:119::-;5419:7;5445:20;;;:13;:20;;;;;:27;;5360:119::o;3239:222:0:-;3290:20;;:::i;:::-;3329:125;;;;;;;;1475:1;3329:125;;;;1521:10;3329:125;;;;1577:4;3329:125;;;3322:132;;3239:222;:::o;4390:244:6:-;4484:7;4510:117;4611:8;:15;;;4510:83;4577:8;:15;;;4510:49;4544:8;:14;;;4510:16;:14;:16::i;3586:110:0:-;907:3;3586:110;:::o;2159:459:56:-;2217:7;2458:6;2454:45;;-1:-1:-1;2487:1:56;2480:8;;2454:45;2521:5;;;2525:1;2521;:5;:1;2544:5;;;;;:10;2536:56;;;;-1:-1:-1;;;2536:56:56;;;;;;;;;;;;;;;;3073:130;3131:7;3157:39;3161:1;3164;3157:39;;;;;;;;;;;;;;;;;:3;:39::i;834:176::-;892:7;923:5;;;946:6;;;;938:46;;;;-1:-1:-1;;;938:46:56;;;;;;;;1274:134;1332:7;1358:43;1362:1;1365;1358:43;;;;;;;;;;;;;;;;;:3;:43::i;4671:97:6:-;4746:15;4671:97;:::o;3718:338:56:-;3804:7;3904:12;3897:5;3889:28;;;;-1:-1:-1;;;3889:28:56;;;;;;;;;;;3927:9;3943:1;3939;:5;;;;;;;3718:338;-1:-1:-1;;;;;3718:338:56:o;1732:187::-;1818:7;1853:12;1845:6;;;;1837:29;;;;-1:-1:-1;;;1837:29:56;;;;;;;;;;-1:-1:-1;;;1888:5:56;;;1732:187::o;817:4808:3:-;;;;;;;;;;;;;;;;;;;;;;;;:::o;5:130:-1:-;72:20;;97:33;72:20;97:33;;142:130;209:20;;234:33;209:20;234:33;;279:134;357:13;;375:33;357:13;375:33;;420:241;;524:2;512:9;503:7;499:23;495:32;492:2;;;540:1;537;530:12;492:2;575:1;592:53;637:7;617:9;592:53;;;582:63;486:175;-1:-1;;;;486:175;668:366;;;789:2;777:9;768:7;764:23;760:32;757:2;;;805:1;802;795:12;757:2;840:1;857:53;902:7;882:9;857:53;;;847:63;;819:97;947:2;965:53;1010:7;1001:6;990:9;986:22;965:53;;;955:63;;926:98;751:283;;;;;;1041:491;;;;1179:2;1167:9;1158:7;1154:23;1150:32;1147:2;;;1195:1;1192;1185:12;1147:2;1230:1;1247:53;1292:7;1272:9;1247:53;;;1237:63;;1209:97;1337:2;1355:53;1400:7;1391:6;1380:9;1376:22;1355:53;;;1345:63;;1316:98;1445:2;1463:53;1508:7;1499:6;1488:9;1484:22;1463:53;;;1453:63;;1424:98;1141:391;;;;;;1539:366;;;1660:2;1648:9;1639:7;1635:23;1631:32;1628:2;;;1676:1;1673;1666:12;1628:2;1711:1;1728:53;1773:7;1753:9;1728:53;;;1718:63;;1690:97;1818:2;1836:53;1881:7;1872:6;1861:9;1857:22;1836:53;;1912:241;;2016:2;2004:9;1995:7;1991:23;1987:32;1984:2;;;2032:1;2029;2022:12;1984:2;2067:1;2084:53;2129:7;2109:9;2084:53;;2160:263;;2275:2;2263:9;2254:7;2250:23;2246:32;2243:2;;;2291:1;2288;2281:12;2243:2;2326:1;2343:64;2399:7;2379:9;2343:64;;2430:366;;;2551:2;2539:9;2530:7;2526:23;2522:32;2519:2;;;2567:1;2564;2557:12;2519:2;2602:1;2619:53;2664:7;2644:9;2619:53;;2803:113;2886:24;2904:5;2886:24;;;2881:3;2874:37;2868:48;;;2923:104;3000:21;3015:5;3000:21;;3034:160;3134:54;3182:5;3134:54;;3368:144;3460:46;3500:5;3460:46;;3666:347;;3778:39;3811:5;3778:39;;;3829:71;3893:6;3888:3;3829:71;;;3822:78;;3905:52;3950:6;3945:3;3938:4;3931:5;3927:16;3905:52;;;3978:29;4000:6;3978:29;;;3969:39;;;;3758:255;-1:-1;;;3758:255;4021:327;;4181:67;4245:2;4240:3;4181:67;;;4281:29;4261:50;;4339:2;4330:12;;4167:181;-1:-1;;4167:181;4357:370;;4517:67;4581:2;4576:3;4517:67;;;4617:34;4597:55;;-1:-1;;;4681:2;4672:12;;4665:25;4718:2;4709:12;;4503:224;-1:-1;;4503:224;4735:113;4818:24;4836:5;4818:24;;4855:107;4934:22;4950:5;4934:22;;4969:213;5087:2;5072:18;;5101:71;5076:9;5145:6;5101:71;;5189:201;5301:2;5286:18;;5315:65;5290:9;5353:6;5315:65;;5397:247;5532:2;5517:18;;5546:88;5521:9;5607:6;5546:88;;5905:231;6032:2;6017:18;;6046:80;6021:9;6099:6;6046:80;;6377:301;6515:2;6529:47;;;6500:18;;6590:78;6500:18;6654:6;6590:78;;6685:407;6876:2;6890:47;;;6861:18;;6951:131;6861:18;6951:131;;7099:407;7290:2;7304:47;;;7275:18;;7365:131;7275:18;7365:131;;7513:213;7631:2;7616:18;;7645:71;7620:9;7689:6;7645:71;;7733:205;7847:2;7832:18;;7861:67;7836:9;7901:6;7861:67;;7945:122;8033:12;;8004:63;8075:163;8178:19;;;8227:4;8218:14;;8171:67;8246:91;;8308:24;8326:5;8308:24;;8344:85;8410:13;8403:21;;8386:43;8436:128;8509:5;8515:44;8509:5;8515:44;;8702:121;-1:-1;;;;;8764:54;;8747:76;8830:72;8892:5;8875:27;8909:81;8980:4;8969:16;;8952:38;8997:155;;9093:54;9141:5;9093:54;;9585:128;;9673:35;9702:5;9673:35;;9852:268;9917:1;9924:101;9938:6;9935:1;9932:13;9924:101;;;10005:11;;;9999:18;9986:11;;;9979:39;9960:2;9953:10;9924:101;;;10040:6;10037:1;10034:13;10031:2;;;10105:1;10096:6;10091:3;10087:16;10080:27;10031:2;9901:219;;;;;10128:97;10216:2;10196:14;-1:-1;;10192:28;;10176:49;10233:102;10313:1;10306:5;10303:12;10293:2;;10319:9;10293:2;10287:48;;10449:117;10518:24;10536:5;10518:24;;;10511:5;10508:35;10498:2;;10557:1;10554;10547:12;10573:117;10642:24;10660:5;10642:24;",
   "source": "/*\n    Copyright 2020 Dynamic Dollar Devs, based on the works of the Empty Set Squad\n\n    Licensed under the Apache License, Version 2.0 (the \"License\");\n    you may not use this file except in compliance with the License.\n    You may obtain a copy of the License at\n\n    http://www.apache.org/licenses/LICENSE-2.0\n\n    Unless required by applicable law or agreed to in writing, software\n    distributed under the License is distributed on an \"AS IS\" BASIS,\n    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n    See the License for the specific language governing permissions and\n    limitations under the License.\n*/\n\npragma solidity ^0.5.17;\npragma experimental ABIEncoderV2;\n\nimport \"@openzeppelin/contracts/math/SafeMath.sol\";\nimport \"./Setters.sol\";\nimport \"../external/Require.sol\";\n\ncontract Comptroller is Setters {\n    using SafeMath for uint256;\n\n    bytes32 private constant FILE = \"Comptroller\";\n\n    function mintToAccount(address account, uint256 amount) internal {\n        dollar().mint(account, amount);\n        if (!bootstrappingAt(epoch())) {\n            increaseDebt(amount);\n        }\n\n        balanceCheck();\n    }\n\n    function burnFromAccount(address account, uint256 amount) internal {\n        dollar().transferFrom(account, address(this), amount);\n        dollar().burn(amount);\n        decrementTotalDebt(amount, \"Comptroller: not enough outstanding debt\");\n\n        balanceCheck();\n    }\n\n    function redeemToAccount(address account, uint256 amount) internal {\n        dollar().transfer(account, amount);\n        decrementTotalRedeemable(amount, \"Comptroller: not enough redeemable balance\");\n\n        balanceCheck();\n    }\n\n    function burnRedeemable(uint256 amount) internal {\n        dollar().burn(amount);\n        decrementTotalRedeemable(amount, \"Comptroller: not enough redeemable balance\");\n\n        balanceCheck();\n    }\n\n    function increaseDebt(uint256 amount) internal {\n        incrementTotalDebt(amount);\n        resetDebt(Constants.getDebtRatioCap());\n\n        balanceCheck();\n    }\n\n    function decreaseDebt(uint256 amount) internal {\n        decrementTotalDebt(amount, \"Comptroller: not enough debt\");\n\n        balanceCheck();\n    }\n\n    function increaseSupply(uint256 newSupply) internal returns (uint256, uint256, uint256) {\n        (uint256 newRedeemable, uint256 lessDebt, uint256 poolReward) = (0, 0, 0);\n\n        // 1. True up redeemable pool\n        uint256 totalRedeemable = totalRedeemable();\n        uint256 totalCoupons = totalCoupons();\n        if (totalRedeemable < totalCoupons) {\n\n            // Get new redeemable coupons\n            newRedeemable = totalCoupons.sub(totalRedeemable);\n            // Pad with Pool's potential cut\n            newRedeemable = newRedeemable.mul(100).div(SafeMath.sub(100, Constants.getOraclePoolRatio()));\n            // Cap at newSupply\n            newRedeemable = newRedeemable > newSupply ? newSupply : newRedeemable;\n            // Determine Pool's final cut\n            poolReward = newRedeemable.mul(Constants.getOraclePoolRatio()).div(100);\n            // Determine Redeemable's final cut\n            newRedeemable = newRedeemable.sub(poolReward);\n\n            mintToPool(poolReward);\n            mintToRedeemable(newRedeemable);\n\n            newSupply = newSupply.sub(poolReward);\n            newSupply = newSupply.sub(newRedeemable);\n        }\n        // 2. Eliminate debt\n        uint256 totalDebt = totalDebt();\n        if (newSupply > 0 && totalDebt > 0) {\n            lessDebt = totalDebt > newSupply ? newSupply : totalDebt;\n            decreaseDebt(lessDebt);\n\n            newSupply = newSupply.sub(lessDebt);\n        }\n\n        // 3. Payout to bonded\n        if (totalBonded() == 0) {\n            newSupply = 0;\n        }\n        if (newSupply > 0) {\n            mintToBonded(newSupply);\n        }\n\n        return (newRedeemable, lessDebt, newSupply.add(poolReward));\n    }\n\n    function resetDebt(Decimal.D256 memory targetDebtRatio) internal {\n        uint256 targetDebt = targetDebtRatio.mul(dollar().totalSupply()).asUint256();\n        uint256 currentDebt = totalDebt();\n\n        if (currentDebt > targetDebt) {\n            uint256 lessDebt = currentDebt.sub(targetDebt);\n            decreaseDebt(lessDebt);\n        }\n    }\n\n    function acceptableBidCheck(address account, uint256 dollarAmount) internal returns (bool) {\n        return (dollar().balanceOf(account) >= balanceOfBonded(account).add(dollarAmount));\n    }\n\n    function balanceCheck() private {\n        Require.that(\n            dollar().balanceOf(address(this)) >= totalBonded().add(totalStaged()).add(totalRedeemable()),\n            FILE,\n            \"Inconsistent balances\"\n        );\n    }\n\n    function mintToBonded(uint256 amount) private {\n        Require.that(\n            totalBonded() > 0,\n            FILE,\n            \"Cant mint to empty pool\"\n        );\n\n        uint256 poolAmount = amount.mul(Constants.getOraclePoolRatio()).div(100);\n        uint256 daoAmount = amount > poolAmount ? amount.sub(poolAmount) : 0;\n\n        mintToPool(poolAmount);\n        mintToDAO(daoAmount);\n\n        balanceCheck();\n    }\n\n    function mintToDAO(uint256 amount) private {\n        if (amount > 0) {\n            dollar().mint(address(this), amount);\n            incrementTotalBonded(amount);\n        }\n    }\n\n    function mintToPool(uint256 amount) private {\n        if (amount > 0) {\n            dollar().mint(pool(), amount);\n        }\n    }\n\n    function mintToRedeemable(uint256 amount) private {\n        dollar().mint(address(this), amount);\n        incrementTotalRedeemable(amount);\n\n        balanceCheck();\n    }\n}\n",
   "sourcePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/dao/Comptroller.sol",
   "ast": {
@@ -1111,7 +1111,7 @@
         "id": 710,
         "nodeType": "ImportDirective",
         "scope": 1240,
-        "sourceUnit": 13818,
+        "sourceUnit": 13961,
         "src": "706:51:3",
         "symbolAliases": [],
         "unitAlias": ""
@@ -1122,7 +1122,7 @@
         "id": 711,
         "nodeType": "ImportDirective",
         "scope": 1240,
-        "sourceUnit": 6637,
+        "sourceUnit": 6732,
         "src": "758:23:3",
         "symbolAliases": [],
         "unitAlias": ""
@@ -1133,7 +1133,7 @@
         "id": 712,
         "nodeType": "ImportDirective",
         "scope": 1240,
-        "sourceUnit": 8103,
+        "sourceUnit": 8198,
         "src": "782:33:3",
         "symbolAliases": [],
         "unitAlias": ""
@@ -1147,10 +1147,10 @@
               "id": 713,
               "name": "Setters",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 6636,
+              "referencedDeclaration": 6731,
               "src": "841:7:3",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_Setters_$6636",
+                "typeIdentifier": "t_contract$_Setters_$6731",
                 "typeString": "contract Setters"
               }
             },
@@ -1160,9 +1160,9 @@
           }
         ],
         "contractDependencies": [
-          2600,
-          6636,
-          6821
+          2613,
+          6731,
+          6916
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -1170,9 +1170,9 @@
         "id": 1239,
         "linearizedBaseContracts": [
           1239,
-          6636,
-          2600,
-          6821
+          6731,
+          2613,
+          6916
         ],
         "name": "Comptroller",
         "nodeType": "ContractDefinition",
@@ -1184,10 +1184,10 @@
               "id": 715,
               "name": "SafeMath",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 13817,
+              "referencedDeclaration": 13960,
               "src": "861:8:3",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_SafeMath_$13817",
+                "typeIdentifier": "t_contract$_SafeMath_$13960",
                 "typeString": "library SafeMath"
               }
             },
@@ -1307,7 +1307,7 @@
                           "referencedDeclaration": 1709,
                           "src": "1015:6:3",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_function_internal_view$__$returns$_t_contract$_IDollar_$13283_$",
+                            "typeIdentifier": "t_function_internal_view$__$returns$_t_contract$_IDollar_$13426_$",
                             "typeString": "function () view returns (contract IDollar)"
                           }
                         },
@@ -1321,7 +1321,7 @@
                         "nodeType": "FunctionCall",
                         "src": "1015:8:3",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_IDollar_$13283",
+                          "typeIdentifier": "t_contract$_IDollar_$13426",
                           "typeString": "contract IDollar"
                         }
                       },
@@ -1332,7 +1332,7 @@
                       "lValueRequested": false,
                       "memberName": "mint",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 13282,
+                      "referencedDeclaration": 13425,
                       "src": "1015:13:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_address_$_t_uint256_$returns$_t_bool_$",
@@ -1654,7 +1654,7 @@
                             "name": "this",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 15197,
+                            "referencedDeclaration": 15344,
                             "src": "1284:4:3",
                             "typeDescriptions": {
                               "typeIdentifier": "t_contract$_Comptroller_$1239",
@@ -1737,7 +1737,7 @@
                           "referencedDeclaration": 1709,
                           "src": "1245:6:3",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_function_internal_view$__$returns$_t_contract$_IDollar_$13283_$",
+                            "typeIdentifier": "t_function_internal_view$__$returns$_t_contract$_IDollar_$13426_$",
                             "typeString": "function () view returns (contract IDollar)"
                           }
                         },
@@ -1751,7 +1751,7 @@
                         "nodeType": "FunctionCall",
                         "src": "1245:8:3",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_IDollar_$13283",
+                          "typeIdentifier": "t_contract$_IDollar_$13426",
                           "typeString": "contract IDollar"
                         }
                       },
@@ -1762,7 +1762,7 @@
                       "lValueRequested": false,
                       "memberName": "transferFrom",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 14366,
+                      "referencedDeclaration": 14509,
                       "src": "1245:21:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_address_$_t_address_$_t_uint256_$returns$_t_bool_$",
@@ -1824,7 +1824,7 @@
                           "referencedDeclaration": 1709,
                           "src": "1308:6:3",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_function_internal_view$__$returns$_t_contract$_IDollar_$13283_$",
+                            "typeIdentifier": "t_function_internal_view$__$returns$_t_contract$_IDollar_$13426_$",
                             "typeString": "function () view returns (contract IDollar)"
                           }
                         },
@@ -1838,7 +1838,7 @@
                         "nodeType": "FunctionCall",
                         "src": "1308:8:3",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_IDollar_$13283",
+                          "typeIdentifier": "t_contract$_IDollar_$13426",
                           "typeString": "contract IDollar"
                         }
                       },
@@ -1849,7 +1849,7 @@
                       "lValueRequested": false,
                       "memberName": "burn",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 13266,
+                      "referencedDeclaration": 13409,
                       "src": "1308:13:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_uint256_$returns$__$",
@@ -1925,7 +1925,7 @@
                       "name": "decrementTotalDebt",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 5271,
+                      "referencedDeclaration": 5352,
                       "src": "1339:18:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$_t_uint256_$_t_string_memory_ptr_$returns$__$",
@@ -2126,7 +2126,7 @@
                           "referencedDeclaration": 1709,
                           "src": "1524:6:3",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_function_internal_view$__$returns$_t_contract$_IDollar_$13283_$",
+                            "typeIdentifier": "t_function_internal_view$__$returns$_t_contract$_IDollar_$13426_$",
                             "typeString": "function () view returns (contract IDollar)"
                           }
                         },
@@ -2140,7 +2140,7 @@
                         "nodeType": "FunctionCall",
                         "src": "1524:8:3",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_IDollar_$13283",
+                          "typeIdentifier": "t_contract$_IDollar_$13426",
                           "typeString": "contract IDollar"
                         }
                       },
@@ -2151,7 +2151,7 @@
                       "lValueRequested": false,
                       "memberName": "transfer",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 14337,
+                      "referencedDeclaration": 14480,
                       "src": "1524:17:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_address_$_t_uint256_$returns$_t_bool_$",
@@ -2227,7 +2227,7 @@
                       "name": "decrementTotalRedeemable",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 5324,
+                      "referencedDeclaration": 5405,
                       "src": "1568:24:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$_t_uint256_$_t_string_memory_ptr_$returns$__$",
@@ -2411,7 +2411,7 @@
                           "referencedDeclaration": 1709,
                           "src": "1743:6:3",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_function_internal_view$__$returns$_t_contract$_IDollar_$13283_$",
+                            "typeIdentifier": "t_function_internal_view$__$returns$_t_contract$_IDollar_$13426_$",
                             "typeString": "function () view returns (contract IDollar)"
                           }
                         },
@@ -2425,7 +2425,7 @@
                         "nodeType": "FunctionCall",
                         "src": "1743:8:3",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_IDollar_$13283",
+                          "typeIdentifier": "t_contract$_IDollar_$13426",
                           "typeString": "contract IDollar"
                         }
                       },
@@ -2436,7 +2436,7 @@
                       "lValueRequested": false,
                       "memberName": "burn",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 13266,
+                      "referencedDeclaration": 13409,
                       "src": "1743:13:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_uint256_$returns$__$",
@@ -2512,7 +2512,7 @@
                       "name": "decrementTotalRedeemable",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 5324,
+                      "referencedDeclaration": 5405,
                       "src": "1774:24:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$_t_uint256_$_t_string_memory_ptr_$returns$__$",
@@ -2661,7 +2661,7 @@
                       "name": "incrementTotalDebt",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 5249,
+                      "referencedDeclaration": 5330,
                       "src": "1947:18:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$_t_uint256_$returns$__$",
@@ -2718,7 +2718,7 @@
                           "referencedDeclaration": 240,
                           "src": "1993:25:3",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_D256_$6907_memory_ptr_$",
+                            "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_D256_$7002_memory_ptr_$",
                             "typeString": "function () pure returns (struct Decimal.D256 memory)"
                           }
                         },
@@ -2732,7 +2732,7 @@
                         "nodeType": "FunctionCall",
                         "src": "1993:27:3",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_struct$_D256_$6907_memory_ptr",
+                          "typeIdentifier": "t_struct$_D256_$7002_memory_ptr",
                           "typeString": "struct Decimal.D256 memory"
                         }
                       }
@@ -2740,7 +2740,7 @@
                     "expression": {
                       "argumentTypes": [
                         {
-                          "typeIdentifier": "t_struct$_D256_$6907_memory_ptr",
+                          "typeIdentifier": "t_struct$_D256_$7002_memory_ptr",
                           "typeString": "struct Decimal.D256 memory"
                         }
                       ],
@@ -2751,7 +2751,7 @@
                       "referencedDeclaration": 1068,
                       "src": "1983:9:3",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_function_internal_nonpayable$_t_struct$_D256_$6907_memory_ptr_$returns$__$",
+                        "typeIdentifier": "t_function_internal_nonpayable$_t_struct$_D256_$7002_memory_ptr_$returns$__$",
                         "typeString": "function (struct Decimal.D256 memory)"
                       }
                     },
@@ -2919,7 +2919,7 @@
                       "name": "decrementTotalDebt",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 5271,
+                      "referencedDeclaration": 5352,
                       "src": "2116:18:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$_t_uint256_$_t_string_memory_ptr_$returns$__$",
@@ -3454,7 +3454,7 @@
                               "lValueRequested": false,
                               "memberName": "sub",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 13673,
+                              "referencedDeclaration": 13816,
                               "src": "2641:16:3",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -3596,10 +3596,10 @@
                                     "name": "SafeMath",
                                     "nodeType": "Identifier",
                                     "overloadedDeclarations": [],
-                                    "referencedDeclaration": 13817,
+                                    "referencedDeclaration": 13960,
                                     "src": "2776:8:3",
                                     "typeDescriptions": {
-                                      "typeIdentifier": "t_type$_t_contract$_SafeMath_$13817_$",
+                                      "typeIdentifier": "t_type$_t_contract$_SafeMath_$13960_$",
                                       "typeString": "type(library SafeMath)"
                                     }
                                   },
@@ -3610,7 +3610,7 @@
                                   "lValueRequested": false,
                                   "memberName": "sub",
                                   "nodeType": "MemberAccess",
-                                  "referencedDeclaration": 13673,
+                                  "referencedDeclaration": 13816,
                                   "src": "2776:12:3",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$",
@@ -3688,7 +3688,7 @@
                                   "lValueRequested": false,
                                   "memberName": "mul",
                                   "nodeType": "MemberAccess",
-                                  "referencedDeclaration": 13734,
+                                  "referencedDeclaration": 13877,
                                   "src": "2749:17:3",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -3716,7 +3716,7 @@
                               "lValueRequested": false,
                               "memberName": "div",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 13750,
+                              "referencedDeclaration": 13893,
                               "src": "2749:26:3",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -3994,7 +3994,7 @@
                                   "lValueRequested": false,
                                   "memberName": "mul",
                                   "nodeType": "MemberAccess",
-                                  "referencedDeclaration": 13734,
+                                  "referencedDeclaration": 13877,
                                   "src": "3010:17:3",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -4022,7 +4022,7 @@
                               "lValueRequested": false,
                               "memberName": "div",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 13750,
+                              "referencedDeclaration": 13893,
                               "src": "3010:53:3",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -4120,7 +4120,7 @@
                               "lValueRequested": false,
                               "memberName": "sub",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 13673,
+                              "referencedDeclaration": 13816,
                               "src": "3146:17:3",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -4326,7 +4326,7 @@
                               "lValueRequested": false,
                               "memberName": "sub",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 13673,
+                              "referencedDeclaration": 13816,
                               "src": "3284:13:3",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -4424,7 +4424,7 @@
                               "lValueRequested": false,
                               "memberName": "sub",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 13673,
+                              "referencedDeclaration": 13816,
                               "src": "3335:13:3",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -4892,7 +4892,7 @@
                               "lValueRequested": false,
                               "memberName": "sub",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 13673,
+                              "referencedDeclaration": 13816,
                               "src": "3622:13:3",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -5248,7 +5248,7 @@
                           "lValueRequested": false,
                           "memberName": "add",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 13657,
+                          "referencedDeclaration": 13800,
                           "src": "3878:13:3",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -5485,7 +5485,7 @@
                                   "referencedDeclaration": 1709,
                                   "src": "4033:6:3",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_function_internal_view$__$returns$_t_contract$_IDollar_$13283_$",
+                                    "typeIdentifier": "t_function_internal_view$__$returns$_t_contract$_IDollar_$13426_$",
                                     "typeString": "function () view returns (contract IDollar)"
                                   }
                                 },
@@ -5499,7 +5499,7 @@
                                 "nodeType": "FunctionCall",
                                 "src": "4033:8:3",
                                 "typeDescriptions": {
-                                  "typeIdentifier": "t_contract$_IDollar_$13283",
+                                  "typeIdentifier": "t_contract$_IDollar_$13426",
                                   "typeString": "contract IDollar"
                                 }
                               },
@@ -5510,7 +5510,7 @@
                               "lValueRequested": false,
                               "memberName": "totalSupply",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 14321,
+                              "referencedDeclaration": 14464,
                               "src": "4033:20:3",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_external_view$__$returns$_t_uint256_$",
@@ -5548,7 +5548,7 @@
                             "referencedDeclaration": 1031,
                             "src": "4013:15:3",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_D256_$6907_memory_ptr",
+                              "typeIdentifier": "t_struct$_D256_$7002_memory_ptr",
                               "typeString": "struct Decimal.D256 memory"
                             }
                           },
@@ -5559,10 +5559,10 @@
                           "lValueRequested": false,
                           "memberName": "mul",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 7044,
+                          "referencedDeclaration": 7139,
                           "src": "4013:19:3",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_function_internal_pure$_t_struct$_D256_$6907_memory_ptr_$_t_uint256_$returns$_t_struct$_D256_$6907_memory_ptr_$bound_to$_t_struct$_D256_$6907_memory_ptr_$",
+                            "typeIdentifier": "t_function_internal_pure$_t_struct$_D256_$7002_memory_ptr_$_t_uint256_$returns$_t_struct$_D256_$7002_memory_ptr_$bound_to$_t_struct$_D256_$7002_memory_ptr_$",
                             "typeString": "function (struct Decimal.D256 memory,uint256) pure returns (struct Decimal.D256 memory)"
                           }
                         },
@@ -5576,7 +5576,7 @@
                         "nodeType": "FunctionCall",
                         "src": "4013:43:3",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_struct$_D256_$6907_memory_ptr",
+                          "typeIdentifier": "t_struct$_D256_$7002_memory_ptr",
                           "typeString": "struct Decimal.D256 memory"
                         }
                       },
@@ -5587,10 +5587,10 @@
                       "lValueRequested": false,
                       "memberName": "asUint256",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 7320,
+                      "referencedDeclaration": 7415,
                       "src": "4013:53:3",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_function_internal_pure$_t_struct$_D256_$6907_memory_ptr_$returns$_t_uint256_$bound_to$_t_struct$_D256_$6907_memory_ptr_$",
+                        "typeIdentifier": "t_function_internal_pure$_t_struct$_D256_$7002_memory_ptr_$returns$_t_uint256_$bound_to$_t_struct$_D256_$7002_memory_ptr_$",
                         "typeString": "function (struct Decimal.D256 memory) pure returns (uint256)"
                       }
                     },
@@ -5809,7 +5809,7 @@
                             "lValueRequested": false,
                             "memberName": "sub",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 13673,
+                            "referencedDeclaration": 13816,
                             "src": "4185:15:3",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -5913,7 +5913,7 @@
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_D256_$6907_memory_ptr",
+                    "typeIdentifier": "t_struct$_D256_$7002_memory_ptr",
                     "typeString": "struct Decimal.D256"
                   },
                   "typeName": {
@@ -5921,10 +5921,10 @@
                     "id": 1030,
                     "name": "Decimal.D256",
                     "nodeType": "UserDefinedTypeName",
-                    "referencedDeclaration": 6907,
+                    "referencedDeclaration": 7002,
                     "src": "3936:12:3",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_D256_$6907_storage_ptr",
+                      "typeIdentifier": "t_struct$_D256_$7002_storage_ptr",
                       "typeString": "struct Decimal.D256"
                     }
                   },
@@ -6003,7 +6003,7 @@
                                 "referencedDeclaration": 1709,
                                 "src": "4380:6:3",
                                 "typeDescriptions": {
-                                  "typeIdentifier": "t_function_internal_view$__$returns$_t_contract$_IDollar_$13283_$",
+                                  "typeIdentifier": "t_function_internal_view$__$returns$_t_contract$_IDollar_$13426_$",
                                   "typeString": "function () view returns (contract IDollar)"
                                 }
                               },
@@ -6017,7 +6017,7 @@
                               "nodeType": "FunctionCall",
                               "src": "4380:8:3",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_IDollar_$13283",
+                                "typeIdentifier": "t_contract$_IDollar_$13426",
                                 "typeString": "contract IDollar"
                               }
                             },
@@ -6028,7 +6028,7 @@
                             "lValueRequested": false,
                             "memberName": "balanceOf",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 14328,
+                            "referencedDeclaration": 14471,
                             "src": "4380:18:3",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_external_view$_t_address_$returns$_t_uint256_$",
@@ -6131,7 +6131,7 @@
                             "lValueRequested": false,
                             "memberName": "add",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 13657,
+                            "referencedDeclaration": 13800,
                             "src": "4411:28:3",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -6318,7 +6318,7 @@
                                   "name": "this",
                                   "nodeType": "Identifier",
                                   "overloadedDeclarations": [],
-                                  "referencedDeclaration": 15197,
+                                  "referencedDeclaration": 15344,
                                   "src": "4562:4:3",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_contract$_Comptroller_$1239",
@@ -6380,7 +6380,7 @@
                                 "referencedDeclaration": 1709,
                                 "src": "4535:6:3",
                                 "typeDescriptions": {
-                                  "typeIdentifier": "t_function_internal_view$__$returns$_t_contract$_IDollar_$13283_$",
+                                  "typeIdentifier": "t_function_internal_view$__$returns$_t_contract$_IDollar_$13426_$",
                                   "typeString": "function () view returns (contract IDollar)"
                                 }
                               },
@@ -6394,7 +6394,7 @@
                               "nodeType": "FunctionCall",
                               "src": "4535:8:3",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_IDollar_$13283",
+                                "typeIdentifier": "t_contract$_IDollar_$13426",
                                 "typeString": "contract IDollar"
                               }
                             },
@@ -6405,7 +6405,7 @@
                             "lValueRequested": false,
                             "memberName": "balanceOf",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 14328,
+                            "referencedDeclaration": 14471,
                             "src": "4535:18:3",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_external_view$_t_address_$returns$_t_uint256_$",
@@ -6547,7 +6547,7 @@
                                 "lValueRequested": false,
                                 "memberName": "add",
                                 "nodeType": "MemberAccess",
-                                "referencedDeclaration": 13657,
+                                "referencedDeclaration": 13800,
                                 "src": "4572:17:3",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -6575,7 +6575,7 @@
                             "lValueRequested": false,
                             "memberName": "add",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 13657,
+                            "referencedDeclaration": 13800,
                             "src": "4572:36:3",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -6655,10 +6655,10 @@
                         "name": "Require",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 8102,
+                        "referencedDeclaration": 8197,
                         "src": "4509:7:3",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_contract$_Require_$8102_$",
+                          "typeIdentifier": "t_type$_t_contract$_Require_$8197_$",
                           "typeString": "type(library Require)"
                         }
                       },
@@ -6669,7 +6669,7 @@
                       "lValueRequested": false,
                       "memberName": "that",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 7464,
+                      "referencedDeclaration": 7559,
                       "src": "4509:12:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_pure$_t_bool_$_t_bytes32_$_t_bytes32_$returns$__$",
@@ -6851,10 +6851,10 @@
                         "name": "Require",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 8102,
+                        "referencedDeclaration": 8197,
                         "src": "4761:7:3",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_contract$_Require_$8102_$",
+                          "typeIdentifier": "t_type$_t_contract$_Require_$8197_$",
                           "typeString": "type(library Require)"
                         }
                       },
@@ -6865,7 +6865,7 @@
                       "lValueRequested": false,
                       "memberName": "that",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 7464,
+                      "referencedDeclaration": 7559,
                       "src": "4761:12:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_pure$_t_bool_$_t_bytes32_$_t_bytes32_$returns$__$",
@@ -7029,7 +7029,7 @@
                           "lValueRequested": false,
                           "memberName": "mul",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 13734,
+                          "referencedDeclaration": 13877,
                           "src": "4903:10:3",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -7057,7 +7057,7 @@
                       "lValueRequested": false,
                       "memberName": "div",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 13750,
+                      "referencedDeclaration": 13893,
                       "src": "4903:46:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -7230,7 +7230,7 @@
                         "lValueRequested": false,
                         "memberName": "sub",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 13673,
+                        "referencedDeclaration": 13816,
                         "src": "5006:10:3",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -7535,7 +7535,7 @@
                                   "name": "this",
                                   "nodeType": "Identifier",
                                   "overloadedDeclarations": [],
-                                  "referencedDeclaration": 15197,
+                                  "referencedDeclaration": 15344,
                                   "src": "5238:4:3",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_contract$_Comptroller_$1239",
@@ -7614,7 +7614,7 @@
                                 "referencedDeclaration": 1709,
                                 "src": "5216:6:3",
                                 "typeDescriptions": {
-                                  "typeIdentifier": "t_function_internal_view$__$returns$_t_contract$_IDollar_$13283_$",
+                                  "typeIdentifier": "t_function_internal_view$__$returns$_t_contract$_IDollar_$13426_$",
                                   "typeString": "function () view returns (contract IDollar)"
                                 }
                               },
@@ -7628,7 +7628,7 @@
                               "nodeType": "FunctionCall",
                               "src": "5216:8:3",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_IDollar_$13283",
+                                "typeIdentifier": "t_contract$_IDollar_$13426",
                                 "typeString": "contract IDollar"
                               }
                             },
@@ -7639,7 +7639,7 @@
                             "lValueRequested": false,
                             "memberName": "mint",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 13282,
+                            "referencedDeclaration": 13425,
                             "src": "5216:13:3",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_external_nonpayable$_t_address_$_t_uint256_$returns$_t_bool_$",
@@ -7693,7 +7693,7 @@
                             "name": "incrementTotalBonded",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 5208,
+                            "referencedDeclaration": 5289,
                             "src": "5266:20:3",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_internal_nonpayable$_t_uint256_$returns$__$",
@@ -7912,7 +7912,7 @@
                                 "referencedDeclaration": 1709,
                                 "src": "5401:6:3",
                                 "typeDescriptions": {
-                                  "typeIdentifier": "t_function_internal_view$__$returns$_t_contract$_IDollar_$13283_$",
+                                  "typeIdentifier": "t_function_internal_view$__$returns$_t_contract$_IDollar_$13426_$",
                                   "typeString": "function () view returns (contract IDollar)"
                                 }
                               },
@@ -7926,7 +7926,7 @@
                               "nodeType": "FunctionCall",
                               "src": "5401:8:3",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_IDollar_$13283",
+                                "typeIdentifier": "t_contract$_IDollar_$13426",
                                 "typeString": "contract IDollar"
                               }
                             },
@@ -7937,7 +7937,7 @@
                             "lValueRequested": false,
                             "memberName": "mint",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 13282,
+                            "referencedDeclaration": 13425,
                             "src": "5401:13:3",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_external_nonpayable$_t_address_$_t_uint256_$returns$_t_bool_$",
@@ -8038,7 +8038,7 @@
                             "name": "this",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 15197,
+                            "referencedDeclaration": 15344,
                             "src": "5535:4:3",
                             "typeDescriptions": {
                               "typeIdentifier": "t_contract$_Comptroller_$1239",
@@ -8117,7 +8117,7 @@
                           "referencedDeclaration": 1709,
                           "src": "5513:6:3",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_function_internal_view$__$returns$_t_contract$_IDollar_$13283_$",
+                            "typeIdentifier": "t_function_internal_view$__$returns$_t_contract$_IDollar_$13426_$",
                             "typeString": "function () view returns (contract IDollar)"
                           }
                         },
@@ -8131,7 +8131,7 @@
                         "nodeType": "FunctionCall",
                         "src": "5513:8:3",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_IDollar_$13283",
+                          "typeIdentifier": "t_contract$_IDollar_$13426",
                           "typeString": "contract IDollar"
                         }
                       },
@@ -8142,7 +8142,7 @@
                       "lValueRequested": false,
                       "memberName": "mint",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 13282,
+                      "referencedDeclaration": 13425,
                       "src": "5513:13:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_address_$_t_uint256_$returns$_t_bool_$",
@@ -8196,7 +8196,7 @@
                       "name": "incrementTotalRedeemable",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 5302,
+                      "referencedDeclaration": 5383,
                       "src": "5559:24:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$_t_uint256_$returns$__$",
@@ -8353,7 +8353,7 @@
       },
       {
         "attributes": {
-          "SourceUnit": 13818,
+          "SourceUnit": 13961,
           "absolutePath": "@openzeppelin/contracts/math/SafeMath.sol",
           "file": "@openzeppelin/contracts/math/SafeMath.sol",
           "scope": 1240,
@@ -8368,7 +8368,7 @@
       },
       {
         "attributes": {
-          "SourceUnit": 6637,
+          "SourceUnit": 6732,
           "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/dao/Setters.sol",
           "file": "./Setters.sol",
           "scope": 1240,
@@ -8383,7 +8383,7 @@
       },
       {
         "attributes": {
-          "SourceUnit": 8103,
+          "SourceUnit": 8198,
           "absolutePath": "/Users/cinquemb/Documents/Startups/crypto/dollar/protocol/contracts/external/Require.sol",
           "file": "../external/Require.sol",
           "scope": 1240,
@@ -8399,18 +8399,18 @@
       {
         "attributes": {
           "contractDependencies": [
-            2600,
-            6636,
-            6821
+            2613,
+            6731,
+            6916
           ],
           "contractKind": "contract",
           "documentation": null,
           "fullyImplemented": true,
           "linearizedBaseContracts": [
             1239,
-            6636,
-            2600,
-            6821
+            6731,
+            2613,
+            6916
           ],
           "name": "Comptroller",
           "scope": 1240
@@ -8425,7 +8425,7 @@
                 "attributes": {
                   "contractScope": null,
                   "name": "Setters",
-                  "referencedDeclaration": 6636,
+                  "referencedDeclaration": 6731,
                   "type": "contract Setters"
                 },
                 "id": 713,
@@ -8443,7 +8443,7 @@
                 "attributes": {
                   "contractScope": null,
                   "name": "SafeMath",
-                  "referencedDeclaration": 13817,
+                  "referencedDeclaration": 13960,
                   "type": "library SafeMath"
                 },
                 "id": 715,
@@ -8629,7 +8629,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "mint",
-                              "referencedDeclaration": 13282,
+                              "referencedDeclaration": 13425,
                               "type": "function (address,uint256) external returns (bool)"
                             },
                             "children": [
@@ -9070,7 +9070,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "transferFrom",
-                              "referencedDeclaration": 14366,
+                              "referencedDeclaration": 14509,
                               "type": "function (address,address,uint256) external returns (bool)"
                             },
                             "children": [
@@ -9172,7 +9172,7 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 15197,
+                                  "referencedDeclaration": 15344,
                                   "type": "contract Comptroller",
                                   "value": "this"
                                 },
@@ -9239,7 +9239,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "burn",
-                              "referencedDeclaration": 13266,
+                              "referencedDeclaration": 13409,
                               "type": "function (uint256) external"
                             },
                             "children": [
@@ -9343,7 +9343,7 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 5271,
+                              "referencedDeclaration": 5352,
                               "type": "function (uint256,string memory)",
                               "value": "decrementTotalDebt"
                             },
@@ -9571,7 +9571,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "transfer",
-                              "referencedDeclaration": 14337,
+                              "referencedDeclaration": 14480,
                               "type": "function (address,uint256) external returns (bool)"
                             },
                             "children": [
@@ -9689,7 +9689,7 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 5324,
+                              "referencedDeclaration": 5405,
                               "type": "function (uint256,string memory)",
                               "value": "decrementTotalRedeemable"
                             },
@@ -9886,7 +9886,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "burn",
-                              "referencedDeclaration": 13266,
+                              "referencedDeclaration": 13409,
                               "type": "function (uint256) external"
                             },
                             "children": [
@@ -9990,7 +9990,7 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 5324,
+                              "referencedDeclaration": 5405,
                               "type": "function (uint256,string memory)",
                               "value": "decrementTotalRedeemable"
                             },
@@ -10185,7 +10185,7 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 5249,
+                              "referencedDeclaration": 5330,
                               "type": "function (uint256)",
                               "value": "incrementTotalDebt"
                             },
@@ -10238,7 +10238,7 @@
                             "attributes": {
                               "argumentTypes": [
                                 {
-                                  "typeIdentifier": "t_struct$_D256_$6907_memory_ptr",
+                                  "typeIdentifier": "t_struct$_D256_$7002_memory_ptr",
                                   "typeString": "struct Decimal.D256 memory"
                                 }
                               ],
@@ -10469,7 +10469,7 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 5271,
+                              "referencedDeclaration": 5352,
                               "type": "function (uint256,string memory)",
                               "value": "decrementTotalDebt"
                             },
@@ -11133,7 +11133,7 @@
                                           "isPure": false,
                                           "lValueRequested": false,
                                           "member_name": "sub",
-                                          "referencedDeclaration": 13673,
+                                          "referencedDeclaration": 13816,
                                           "type": "function (uint256,uint256) pure returns (uint256)"
                                         },
                                         "children": [
@@ -11240,7 +11240,7 @@
                                           "isPure": false,
                                           "lValueRequested": false,
                                           "member_name": "div",
-                                          "referencedDeclaration": 13750,
+                                          "referencedDeclaration": 13893,
                                           "type": "function (uint256,uint256) pure returns (uint256)"
                                         },
                                         "children": [
@@ -11272,7 +11272,7 @@
                                                   "isPure": false,
                                                   "lValueRequested": false,
                                                   "member_name": "mul",
-                                                  "referencedDeclaration": 13734,
+                                                  "referencedDeclaration": 13877,
                                                   "type": "function (uint256,uint256) pure returns (uint256)"
                                                 },
                                                 "children": [
@@ -11354,7 +11354,7 @@
                                               "isPure": false,
                                               "lValueRequested": false,
                                               "member_name": "sub",
-                                              "referencedDeclaration": 13673,
+                                              "referencedDeclaration": 13816,
                                               "type": "function (uint256,uint256) pure returns (uint256)"
                                             },
                                             "children": [
@@ -11364,7 +11364,7 @@
                                                   "overloadedDeclarations": [
                                                     null
                                                   ],
-                                                  "referencedDeclaration": 13817,
+                                                  "referencedDeclaration": 13960,
                                                   "type": "type(library SafeMath)",
                                                   "value": "SafeMath"
                                                 },
@@ -11653,7 +11653,7 @@
                                           "isPure": false,
                                           "lValueRequested": false,
                                           "member_name": "div",
-                                          "referencedDeclaration": 13750,
+                                          "referencedDeclaration": 13893,
                                           "type": "function (uint256,uint256) pure returns (uint256)"
                                         },
                                         "children": [
@@ -11685,7 +11685,7 @@
                                                   "isPure": false,
                                                   "lValueRequested": false,
                                                   "member_name": "mul",
-                                                  "referencedDeclaration": 13734,
+                                                  "referencedDeclaration": 13877,
                                                   "type": "function (uint256,uint256) pure returns (uint256)"
                                                 },
                                                 "children": [
@@ -11861,7 +11861,7 @@
                                           "isPure": false,
                                           "lValueRequested": false,
                                           "member_name": "sub",
-                                          "referencedDeclaration": 13673,
+                                          "referencedDeclaration": 13816,
                                           "type": "function (uint256,uint256) pure returns (uint256)"
                                         },
                                         "children": [
@@ -12088,7 +12088,7 @@
                                           "isPure": false,
                                           "lValueRequested": false,
                                           "member_name": "sub",
-                                          "referencedDeclaration": 13673,
+                                          "referencedDeclaration": 13816,
                                           "type": "function (uint256,uint256) pure returns (uint256)"
                                         },
                                         "children": [
@@ -12195,7 +12195,7 @@
                                           "isPure": false,
                                           "lValueRequested": false,
                                           "member_name": "sub",
-                                          "referencedDeclaration": 13673,
+                                          "referencedDeclaration": 13816,
                                           "type": "function (uint256,uint256) pure returns (uint256)"
                                         },
                                         "children": [
@@ -12706,7 +12706,7 @@
                                           "isPure": false,
                                           "lValueRequested": false,
                                           "member_name": "sub",
-                                          "referencedDeclaration": 13673,
+                                          "referencedDeclaration": 13816,
                                           "type": "function (uint256,uint256) pure returns (uint256)"
                                         },
                                         "children": [
@@ -13115,7 +13115,7 @@
                                   "isPure": false,
                                   "lValueRequested": false,
                                   "member_name": "add",
-                                  "referencedDeclaration": 13657,
+                                  "referencedDeclaration": 13800,
                                   "type": "function (uint256,uint256) pure returns (uint256)"
                                 },
                                 "children": [
@@ -13211,7 +13211,7 @@
                         "attributes": {
                           "contractScope": null,
                           "name": "Decimal.D256",
-                          "referencedDeclaration": 6907,
+                          "referencedDeclaration": 7002,
                           "type": "struct Decimal.D256"
                         },
                         "id": 1030,
@@ -13302,7 +13302,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "asUint256",
-                              "referencedDeclaration": 7320,
+                              "referencedDeclaration": 7415,
                               "type": "function (struct Decimal.D256 memory) pure returns (uint256)"
                             },
                             "children": [
@@ -13334,7 +13334,7 @@
                                       "isPure": false,
                                       "lValueRequested": false,
                                       "member_name": "mul",
-                                      "referencedDeclaration": 7044,
+                                      "referencedDeclaration": 7139,
                                       "type": "function (struct Decimal.D256 memory,uint256) pure returns (struct Decimal.D256 memory)"
                                     },
                                     "children": [
@@ -13385,7 +13385,7 @@
                                           "isPure": false,
                                           "lValueRequested": false,
                                           "member_name": "totalSupply",
-                                          "referencedDeclaration": 14321,
+                                          "referencedDeclaration": 14464,
                                           "type": "function () view external returns (uint256)"
                                         },
                                         "children": [
@@ -13651,7 +13651,7 @@
                                       "isPure": false,
                                       "lValueRequested": false,
                                       "member_name": "sub",
-                                      "referencedDeclaration": 13673,
+                                      "referencedDeclaration": 13816,
                                       "type": "function (uint256,uint256) pure returns (uint256)"
                                     },
                                     "children": [
@@ -13948,7 +13948,7 @@
                                       "isPure": false,
                                       "lValueRequested": false,
                                       "member_name": "balanceOf",
-                                      "referencedDeclaration": 14328,
+                                      "referencedDeclaration": 14471,
                                       "type": "function (address) view external returns (uint256)"
                                     },
                                     "children": [
@@ -14043,7 +14043,7 @@
                                       "isPure": false,
                                       "lValueRequested": false,
                                       "member_name": "add",
-                                      "referencedDeclaration": 13657,
+                                      "referencedDeclaration": 13800,
                                       "type": "function (uint256,uint256) pure returns (uint256)"
                                     },
                                     "children": [
@@ -14227,7 +14227,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "that",
-                              "referencedDeclaration": 7464,
+                              "referencedDeclaration": 7559,
                               "type": "function (bool,bytes32,bytes32) pure"
                             },
                             "children": [
@@ -14237,7 +14237,7 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 8102,
+                                  "referencedDeclaration": 8197,
                                   "type": "type(library Require)",
                                   "value": "Require"
                                 },
@@ -14293,7 +14293,7 @@
                                       "isPure": false,
                                       "lValueRequested": false,
                                       "member_name": "balanceOf",
-                                      "referencedDeclaration": 14328,
+                                      "referencedDeclaration": 14471,
                                       "type": "function (address) view external returns (uint256)"
                                     },
                                     "children": [
@@ -14381,7 +14381,7 @@
                                           "overloadedDeclarations": [
                                             null
                                           ],
-                                          "referencedDeclaration": 15197,
+                                          "referencedDeclaration": 15344,
                                           "type": "contract Comptroller",
                                           "value": "this"
                                         },
@@ -14427,7 +14427,7 @@
                                       "isPure": false,
                                       "lValueRequested": false,
                                       "member_name": "add",
-                                      "referencedDeclaration": 13657,
+                                      "referencedDeclaration": 13800,
                                       "type": "function (uint256,uint256) pure returns (uint256)"
                                     },
                                     "children": [
@@ -14459,7 +14459,7 @@
                                               "isPure": false,
                                               "lValueRequested": false,
                                               "member_name": "add",
-                                              "referencedDeclaration": 13657,
+                                              "referencedDeclaration": 13800,
                                               "type": "function (uint256,uint256) pure returns (uint256)"
                                             },
                                             "children": [
@@ -14756,7 +14756,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "that",
-                              "referencedDeclaration": 7464,
+                              "referencedDeclaration": 7559,
                               "type": "function (bool,bytes32,bytes32) pure"
                             },
                             "children": [
@@ -14766,7 +14766,7 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 8102,
+                                  "referencedDeclaration": 8197,
                                   "type": "type(library Require)",
                                   "value": "Require"
                                 },
@@ -14957,7 +14957,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "div",
-                              "referencedDeclaration": 13750,
+                              "referencedDeclaration": 13893,
                               "type": "function (uint256,uint256) pure returns (uint256)"
                             },
                             "children": [
@@ -14989,7 +14989,7 @@
                                       "isPure": false,
                                       "lValueRequested": false,
                                       "member_name": "mul",
-                                      "referencedDeclaration": 13734,
+                                      "referencedDeclaration": 13877,
                                       "type": "function (uint256,uint256) pure returns (uint256)"
                                     },
                                     "children": [
@@ -15224,7 +15224,7 @@
                                   "isPure": false,
                                   "lValueRequested": false,
                                   "member_name": "sub",
-                                  "referencedDeclaration": 13673,
+                                  "referencedDeclaration": 13816,
                                   "type": "function (uint256,uint256) pure returns (uint256)"
                                 },
                                 "children": [
@@ -15623,7 +15623,7 @@
                                       "isPure": false,
                                       "lValueRequested": false,
                                       "member_name": "mint",
-                                      "referencedDeclaration": 13282,
+                                      "referencedDeclaration": 13425,
                                       "type": "function (address,uint256) external returns (bool)"
                                     },
                                     "children": [
@@ -15711,7 +15711,7 @@
                                           "overloadedDeclarations": [
                                             null
                                           ],
-                                          "referencedDeclaration": 15197,
+                                          "referencedDeclaration": 15344,
                                           "type": "contract Comptroller",
                                           "value": "this"
                                         },
@@ -15776,7 +15776,7 @@
                                       "overloadedDeclarations": [
                                         null
                                       ],
-                                      "referencedDeclaration": 5208,
+                                      "referencedDeclaration": 5289,
                                       "type": "function (uint256)",
                                       "value": "incrementTotalBonded"
                                     },
@@ -15982,7 +15982,7 @@
                                       "isPure": false,
                                       "lValueRequested": false,
                                       "member_name": "mint",
-                                      "referencedDeclaration": 13282,
+                                      "referencedDeclaration": 13425,
                                       "type": "function (address,uint256) external returns (bool)"
                                     },
                                     "children": [
@@ -16209,7 +16209,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "member_name": "mint",
-                              "referencedDeclaration": 13282,
+                              "referencedDeclaration": 13425,
                               "type": "function (address,uint256) external returns (bool)"
                             },
                             "children": [
@@ -16297,7 +16297,7 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 15197,
+                                  "referencedDeclaration": 15344,
                                   "type": "contract Comptroller",
                                   "value": "this"
                                 },
@@ -16362,7 +16362,7 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 5302,
+                              "referencedDeclaration": 5383,
                               "type": "function (uint256)",
                               "value": "incrementTotalRedeemable"
                             },
@@ -16466,7 +16466,7 @@
   },
   "networks": {},
   "schemaVersion": "3.3.3",
-  "updatedAt": "2021-01-13T13:26:25.206Z",
+  "updatedAt": "2021-01-14T02:02:04.001Z",
   "devdoc": {
     "methods": {}
   },

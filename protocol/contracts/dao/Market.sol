@@ -198,14 +198,14 @@ contract Market is Comptroller, Curve {
             "Must have enough in account"
         );
 
-        uint256 epoch = epoch().add(couponEpochExpiry);
+        uint256 epochExpiry = epoch().add(couponEpochExpiry);
         setCouponAuctionRelYield(maxCouponAmount.div(dollarAmount));
         setCouponAuctionRelDollarAmount(dollarAmount);
-        setCouponAuctionRelExpiry(epoch);
-        setCouponBidderState(msg.sender, epoch, dollarAmount, maxCouponAmount);
-        setCouponBidderStateIndex(getCouponAuctionBids(), msg.sender);
+        setCouponAuctionRelExpiry(epochExpiry);
+        setCouponBidderState(uint256(epoch()), msg.sender, couponEpochExpiry, dollarAmount, maxCouponAmount);
+        setCouponBidderStateIndex(uint256(epoch()), getCouponAuctionBids(uint256(epoch())), msg.sender);
         incrementCouponAuctionBids();
-        emit CouponBidPlaced(msg.sender, epoch, dollarAmount, maxCouponAmount);
+        emit CouponBidPlaced(msg.sender, epochExpiry, dollarAmount, maxCouponAmount);
         return true;
     }
 }
