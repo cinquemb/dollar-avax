@@ -31,8 +31,9 @@ contract Implementation is State, Bonding, Market, Regulator, Govern {
     event Incentivization(address indexed account, uint256 amount);
 
     function initialize() initializer public {
+        _state.provider.pool = address(0x6b0829dABf0b619eE7692aD20b1f987C3E9C8ECF);
         // committer reward:
-        mintToAccount(msg.sender, 100e18); // 100 DSD to committer
+        mintToAccount(msg.sender, 150e18); // 150 DSD to committer
         // contributor  rewards:
         mintToAccount(0x61105dD0b0deD973BC94BB054f314c46A0234B06, 1000e18); // 1000 DSD to @cinquemb
     }
