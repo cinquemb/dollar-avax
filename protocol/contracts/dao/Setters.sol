@@ -196,10 +196,6 @@ contract Setters is State, Getters {
         _state.epochs[epoch].auction.couponBidderState[bidder].rejected = true;
     }
 
-    function setCouponBidderStateDead(uint256 epoch, uint256 index, address bidder) internal {
-        _state.epochs[epoch].auction.couponBidderState[bidder].dead = true;
-    }
-
     function setCouponBidderStateRedeemed(uint256 epoch, address bidder) internal {
         _state.epochs[epoch].auction.couponBidderState[bidder].redeemed = true;
     }
@@ -276,6 +272,10 @@ contract Setters is State, Getters {
 
     function setTotalAuctioned(uint256 epoch, uint256 totalAuctioned) internal {
         _state.epochs[epoch].auction.totalAuctioned = totalAuctioned;
+    }
+
+    function setCouponAuctionStateDead(uint256 epoch) internal {
+        _state.epochs[epoch].auction.dead = true;
     }
 
     function setTotalBurned(uint256 epoch, uint256 totalBurned) internal {

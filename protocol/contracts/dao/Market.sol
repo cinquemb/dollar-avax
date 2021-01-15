@@ -198,10 +198,13 @@ contract Market is Comptroller, Curve {
             "Must have enough in account"
         );
 
+        uint256 yield = maxCouponAmount.div(dollarAmount);
+        uint256 maxYield = Constants.getCouponMaxYieldToBurn();
+
         Require.that(
-            maxCouponAmount.div(dollarAmount) <= Constants.getCouponMaxYieldToBurn(),
+            maxYield >= yield,
             FILE,
-            "Must be under MAX_COUPON_YIELD_MULT"
+            "Must be under maxYield"
         );
 
         uint256 epochExpiry = epoch().add(couponEpochExpiry);
