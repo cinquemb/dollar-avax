@@ -53,7 +53,7 @@ library Constants {
     uint256 private constant GOVERNANCE_EMERGENCY_DELAY = 6; // 6 epochs
 
     /* DAO */
-    uint256 private constant ADVANCE_INCENTIVE = 150e18; // 150 DSD
+    uint256 private constant ADVANCE_INCENTIVE = 50e18; // 50 DSD
     uint256 private constant DAO_EXIT_LOCKUP_EPOCHS = 36; // 36 epochs fluid
 
     /* Pool */
@@ -73,11 +73,6 @@ library Constants {
     uint256 private constant COUPON_SUPPLY_CHANGE_DIVISOR = 1666e16; // 16.66 > Max expansion at ~1.5
     uint256 private constant NEGATIVE_SUPPLY_CHANGE_DIVISOR = 5e18; // 5 > Max negative expansion at 0.9
     uint256 private constant ORACLE_POOL_RATIO = 40; // 40%
-
-    /* Deployed */
-    address private constant DAO_ADDRESS = address(0x6Bf977ED1A09214E6209F4EA5f525261f1A2690a);
-    address private constant DOLLAR_ADDRESS = address(0xBD2F0Cd039E0BFcf88901C98c0bFAc5ab27566e3);
-    address private constant PAIR_ADDRESS = address(0x66e33d2605c5fB25eBb7cd7528E7997b0afA55E8);
 
     /**
      * Getters
@@ -188,17 +183,5 @@ library Constants {
 
     function getChainId() internal pure returns (uint256) {
         return CHAIN_ID;
-    }
-
-    function getDaoAddress() internal pure returns (address) {
-        return DAO_ADDRESS;
-    }
-
-    function getDollarAddress() internal pure returns (address) {
-        return DOLLAR_ADDRESS;
-    }
-
-    function getPairAddress() internal pure returns (address) {
-        return PAIR_ADDRESS;
     }
 }

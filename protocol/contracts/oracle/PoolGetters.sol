@@ -33,15 +33,15 @@ contract PoolGetters is PoolState {
     }
 
     function dao() public view returns (IDAO) {
-        return IDAO(Constants.getDaoAddress());
+        return _state.provider.dao;
     }
 
     function dollar() public view returns (IDollar) {
-        return IDollar(Constants.getDollarAddress());
+        return _state.provider.dollar;
     }
 
     function univ2() public view returns (IERC20) {
-        return IERC20(Constants.getPairAddress());
+        return _state.provider.univ2;
     }
 
     function totalBonded() public view returns (uint256) {
