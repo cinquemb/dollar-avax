@@ -64,6 +64,7 @@ library Constants {
     uint256 private constant DEBT_RATIO_CAP = 35e16; // 35%
     uint256 private constant INITIAL_COUPON_REDEMPTION_PENALTY = 50e16; // 50%
     uint256 private constant COUPON_REDEMPTION_PENALTY_DECAY = 3600; // 1 hour
+    uint256 private constant MAX_COUPON_YIELD_MULT = 2000; //2000 coupouns per 1 dollar burn
 
     /* Regulator */
     uint256 private constant SUPPLY_CHANGE_LIMIT = 2e16; // 2%
@@ -155,6 +156,10 @@ library Constants {
 
     function getCouponRedemptionPenaltyDecay() internal pure returns (uint256) {
         return COUPON_REDEMPTION_PENALTY_DECAY;
+    }
+
+    function getCouponMaxYieldToBurn() internal pure returns (uint256) {
+        return MAX_COUPON_YIELD_MULT;
     }
 
     function getSupplyChangeLimit() internal pure returns (Decimal.D256 memory) {

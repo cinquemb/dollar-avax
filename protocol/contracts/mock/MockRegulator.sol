@@ -115,6 +115,12 @@ contract MockRegulator is MockComptroller, Regulator {
             "Must have enough in account"
         );
 
+        Require.that(
+            maxCouponAmount.div(dollarAmount) <= Constants.getCouponMaxYieldToBurn(),
+            FILE,
+            "Must be under MAX_COUPON_YIELD_MULT"
+        );
+
         uint256 epochExpiry = epoch().add(couponEpochExpiry);
         setCouponAuctionRelYield(maxCouponAmount.div(dollarAmount));
         setCouponAuctionRelDollarAmount(dollarAmount);

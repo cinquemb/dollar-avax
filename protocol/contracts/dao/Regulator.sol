@@ -306,6 +306,9 @@ contract Regulator is Comptroller {
     }
 
     function autoRedeemFromCouponAuction() internal returns (bool success) {
+        /*
+            WARNING: may need fundemental constraints in order to cap max run time as epocs grow
+        */
 
         // loop over past epochs from the latest `dead` epoch to the current
         for (uint256 d_idx = getLatestDeadAuctionEpoch(); d_idx < uint256(epoch()); d_idx++) {
@@ -329,27 +332,47 @@ contract Regulator is Comptroller {
                             continue;
                         }
 
-                        if (totalRedeemable() > bidder.couponAmount) {  
+                        uint256 halfTotalRedeemable = totalRedeemable().div(2);
+
+                        if (halfTotalRedeemable > bidder.couponAmount) {  
                             /* TODO
-                                - check if coupons for bid have been redeemed already?
-                                    - balanceOfCoupons(address account, uint256 epoch) > 0
-                                    - couponBidAmount >= balanceOfCoupons(address account, uint256 epoch)
-
-                                - check if coupons for epoch are expired already?
-                                    - auction epoch + bid expriation > epoch()
-
                                 - need to make sure this is "safe" (i.e. it should NOT revert and undo all the previous redemptions, just break and skip while still incrementing total redeemed tried count)
                             */
                             uint256 couponExpiryEpoch = temp_coupon_auction_epoch.add(bidder.couponExpiryEpoch);
 
-                            require(epoch().sub(couponExpiryEpoch) >= 2, "Market: Too early to redeem");
+                            if (couponExpiryEpoch > uint256(couponExpiryEpoch)) {
+                                //check if coupons for epoch are expired already
+                                totalCurrentlyTriedRedeemed++;
+                                setCouponBidderStateRedeemed(couponExpiryEpoch, bidderAddress);
+                                continue;
+                            }
 
-                            decrementBalanceOfCoupons(bidderAddress, couponExpiryEpoch, bidder.couponAmount, "Market: Insufficient coupon balance");
+                            uint256 couponBalance = balanceOfCoupons(bidderAddress, couponExpiryEpoch);
+
+                            if (couponBalance > 0) {
+                                unint256 minCouponAmount = 0;
+                                if (couponBalance >= bidder.couponAmount) {
+                                    minCouponAmount = bidder.couponAmount;
+                                } else {
+                                    minCouponAmount = couponBalance;
+                                }
+
+                                require(epoch().sub(couponExpiryEpoch) >= 2, "Market: Too early to redeem");
+
+                                decrementBalanceOfCoupons(bidderAddress, couponExpiryEpoch, minCouponAmount, "Market: Insufficient coupon balance");
+                                
+                                uint burnAmount = Market.couponRedemptionPenalty(couponExpiryEpoch, minCouponAmount);
+                                uint256 redeemAmount = minCouponAmount.sub(burnAmount);
+                                redeemToAccount(bidderAddress, redeemAmount);
+                                setCouponBidderStateRedeemed(couponExpiryEpoch, bidderAddress);
+                            } else {
+                                // mark as redeemd if couponBalance is zero
+                                setCouponBidderStateRedeemed(couponExpiryEpoch, bidderAddress);
+                                totalCurrentlyTriedRedeemed++;
+                                continue;
+                            }
+
                             
-                            uint burnAmount = Market.couponRedemptionPenalty(couponExpiryEpoch, bidder.couponAmount);
-                            uint256 redeemAmount = bidder.couponAmount.sub(burnAmount);
-                            
-                            redeemToAccount(bidderAddress, redeemAmount);
                         } else {
                             // no point in trying to redeem more if quota for epoch is done;
                             break;

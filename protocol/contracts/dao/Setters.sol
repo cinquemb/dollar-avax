@@ -200,7 +200,7 @@ contract Setters is State, Getters {
         _state.epochs[epoch].auction.couponBidderState[bidder].dead = true;
     }
 
-    function setCouponBidderStateRedeemed(uint256 epoch, uint256 index, address bidder) internal {
+    function setCouponBidderStateRedeemed(uint256 epoch, address bidder) internal {
         _state.epochs[epoch].auction.couponBidderState[bidder].redeemed = true;
     }
 
