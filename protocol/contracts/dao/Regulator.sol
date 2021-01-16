@@ -308,7 +308,7 @@ contract Regulator is Comptroller {
         while (totalRedeemable() > 0) {
             bool willRedeemableOverflow = false;
             // loop over past epochs from the latest `dead` epoch to the current
-            for (uint256 d_idx = getLatestDeadAuctionEpoch(); d_idx < uint256(epoch()); d_idx++) {
+            for (uint256 d_idx = getEarliestDeadAuctionEpoch(); d_idx < uint256(epoch()); d_idx++) {
                 uint256 temp_coupon_auction_epoch = d_idx;
                 Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(temp_coupon_auction_epoch);
 
@@ -385,7 +385,7 @@ contract Regulator is Comptroller {
                         // if all have been tried to be redeemd or expired, mark auction as `dead`
                     
                         if (totalCurrentlyTriedRedeemed == getTotalFilled(temp_coupon_auction_epoch)) {
-                            setLatestDeadAuctionEpoch(temp_coupon_auction_epoch);
+                            setEarliestDeadAuctionEpoch(temp_coupon_auction_epoch);
                             setCouponAuctionStateDead(temp_coupon_auction_epoch);
                         }
                     }
@@ -393,7 +393,7 @@ contract Regulator is Comptroller {
             }
 
             if (willRedeemableOverflow) {
-                // stop trying to redeem accross auctions
+                // stop trying to redeem across auctions
                 break;
             }
         }
