@@ -72,11 +72,13 @@ library Constants {
     uint256 private constant COUPON_SUPPLY_CHANGE_DIVISOR = 1666e16; // 16.66 > Max expansion at ~1.5
     uint256 private constant NEGATIVE_SUPPLY_CHANGE_DIVISOR = 5e18; // 5 > Max negative expansion at 0.9
     uint256 private constant ORACLE_POOL_RATIO = 40; // 40%
+    uint256 private constant TREASURY_RATIO = 3; // 3%
 
     /* Deployed */
     address private constant DAO_ADDRESS = address(0x6Bf977ED1A09214E6209F4EA5f525261f1A2690a);
     address private constant DOLLAR_ADDRESS = address(0xBD2F0Cd039E0BFcf88901C98c0bFAc5ab27566e3);
     address private constant PAIR_ADDRESS = address(0x66e33d2605c5fB25eBb7cd7528E7997b0afA55E8);
+    address private constant TREASURY_ADDRESS = address(0xC7DA8087b8BA11f0892f1B0BFacfD44C116B303e);
 
     /**
      * Getters
@@ -181,6 +183,10 @@ library Constants {
         return ORACLE_POOL_RATIO;
     }
 
+    function getTreasuryRatio() internal pure returns (uint256) {
+        return TREASURY_RATIO;
+    }
+
     function getChainId() internal pure returns (uint256) {
         return CHAIN_ID;
     }
@@ -195,5 +201,9 @@ library Constants {
 
     function getPairAddress() internal pure returns (address) {
         return PAIR_ADDRESS;
+    }
+
+    function getTreasuryAddress() internal pure returns (address) {
+        return TREASURY_ADDRESS;
     }
 }
