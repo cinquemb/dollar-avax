@@ -97,7 +97,7 @@ contract Regulator is Comptroller {
             supplyChangeDivisor = Constants.getCouponSupplyChangeDivisor();
         }
 
-        Decimal.D256 memory delta = Decimal.ratio(Decimal.one(), getAvgAvgYieldAcrossCouponAuctions());
+        Decimal.D256 memory delta = Decimal.ratio(1, getAvgAvgYieldAcrossCouponAuctions());
         uint256 newSupply = delta.mul(dollar().totalSupply()).asUint256();
         (uint256 newRedeemable, uint256 lessDebt, uint256 newBonded) = increaseSupply(newSupply);
         emit SupplyIncrease(epoch(), price.value, newRedeemable, lessDebt, newBonded);
