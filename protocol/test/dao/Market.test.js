@@ -142,12 +142,6 @@ describe('Market', function () {
       });
     });
 
-    describe('no debt', function () {
-      it('reverts', async function () {
-        await expectRevert(this.market.placeCouponAuctionBid(1, 100000, 100000000), "Market: Not enough debt");
-      });
-    });
-
     describe('not enough dollars', function () {
       beforeEach(async function () {
         await this.market.incrementTotalDebtE(100000);

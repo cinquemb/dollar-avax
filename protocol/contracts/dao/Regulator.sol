@@ -71,7 +71,8 @@ contract Regulator is Comptroller {
                 finishCouponAuctionAtEpoch(epoch() - 1);
             }
             initCouponAuction();
-            
+
+            shrinkSupply(price);
             return;
         }
 
@@ -97,7 +98,7 @@ contract Regulator is Comptroller {
         }
 
         Decimal.D256 memory delta = Decimal.ratio(Decimal.one(), getAvgAvgYieldAcrossCouponAuctions());
-        uint256 newSupply = delta.mul(totalNet()).asUint256();
+        uint256 newSupply = delta.mul(dollar().totalSupply()).asUint256();
         (uint256 newRedeemable, uint256 lessDebt, uint256 newBonded) = increaseSupply(newSupply);
         emit SupplyIncrease(epoch(), price.value, newRedeemable, lessDebt, newBonded);
     }
@@ -239,7 +240,7 @@ contract Regulator is Comptroller {
                         totalBurned += bids[i].dollarAmount;
                         
                         uint256 epochExpiry = epoch().add(bids[i].couponExpiryEpoch);
-                        burnFromAccount(bids[i].bidder, bids[i].dollarAmount);
+                        burnFromAccountSansDebt(bids[i].bidder, bids[i].dollarAmount);
                         incrementBalanceOfCoupons(bids[i].bidder, epochExpiry, bids[i].couponAmount);
                         setCouponBidderStateSelected(settlementEpoch, bids[i].bidder, i);
                         totalFilled++;
