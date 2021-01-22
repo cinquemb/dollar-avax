@@ -80,8 +80,8 @@ contract Regulator is Comptroller {
     function growSupply(Decimal.D256 memory price) private {
         // supply growth is purly a function sum of the best outstanding bids amounts across auctions at any given time untill they get redeemed, split between pools
         uint256 newSupply = getSumofBestBidsAcrossCouponAuctions();
-        (uint256 newRedeemable, uint256 lessDebt, uint256 newBonded) = increaseSupply(newSupply);
-        emit SupplyIncrease(epoch(), price.value, newRedeemable, lessDebt, newBonded);
+        (uint256 newRedeemable, uint256 newBonded) = increaseSupply(newSupply);
+        emit SupplyIncrease(epoch(), price.value, newRedeemable, 0, newBonded);
     }
 
     function limit(Decimal.D256 memory delta, Decimal.D256 memory price) private view returns (Decimal.D256 memory) {
