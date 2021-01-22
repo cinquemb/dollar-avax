@@ -48,7 +48,7 @@ contract Market is Comptroller, Curve {
 
     function expireCouponsForEpoch(uint256 epoch) private {
         uint256 couponsForEpoch = outstandingCoupons(epoch);
-        (uint256 lessRedeemable, uint256 lessDebt, uint256 newBonded) = (0, 0, 0);
+        (uint256 lessRedeemable, uint256 newBonded) = (0, 0);
 
         eliminateOutstandingCoupons(epoch);
 
@@ -57,10 +57,10 @@ contract Market is Comptroller, Curve {
         if (totalRedeemable > totalCoupons) {
             lessRedeemable = totalRedeemable.sub(totalCoupons);
             burnRedeemable(lessRedeemable);
-            (, lessDebt, newBonded) = increaseSupply(lessRedeemable);
+            (, newBonded) = increaseSupply(lessRedeemable);
         }
 
-        emit CouponExpiration(epoch, couponsForEpoch, lessRedeemable, lessDebt, newBonded);
+        emit CouponExpiration(epoch, couponsForEpoch, lessRedeemable, 0, newBonded);
     }
 
     function couponPremium(uint256 amount) public view returns (uint256) {

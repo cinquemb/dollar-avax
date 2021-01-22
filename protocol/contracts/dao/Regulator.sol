@@ -60,7 +60,7 @@ contract Regulator is Comptroller {
                 cancelCouponAuctionAtEpoch(epoch() - 1);
             }
 
-            growSupply();
+            growSupply(price);
             return;
         }
 

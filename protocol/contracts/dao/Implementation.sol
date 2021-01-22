@@ -31,6 +31,8 @@ contract Implementation is State, Bonding, Market, Regulator, Govern {
     event Incentivization(address indexed account, uint256 amount);
 
     function initialize() initializer public {
+        // initial funding for the treasury:
+        mintToAccount(Constants.getTreasuryAddress(), 2000000e18); // 2 million DSD
         // committer reward:
         mintToAccount(msg.sender, 100e18); // 100 DSD to committer
         // contributor  rewards:
