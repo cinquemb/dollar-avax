@@ -87,6 +87,10 @@ contract Getters is State {
         return _state.balance.redeemable;
     }
 
+    function isRedeemable() public view returns (uint256) {
+        return _state.balance.redeemable;
+    }
+
     function totalCoupons() public view returns (uint256) {
         return _state.balance.coupons;
     }
@@ -296,21 +300,29 @@ contract Getters is State {
         return _state.epochs[epoch].auction.latestRedeemedSelectedBidderIndex;
     }
 
-    function getAvgAvgYieldAcrossCouponAuctions() public view returns (uint256) {
+    function getSumofBestBidsAcrossCouponAuctions() public view returns (uint256) {
         // loop over past epochs from the latest `dead` epoch to the current
-        uint256 sumYield = 0;
+        uint256 sumCoupons = 0;
         uint256 totalAvailableAuctions = 1;
         for (uint256 d_idx = getEarliestDeadAuctionEpoch(); d_idx < uint256(epoch()); d_idx++) {
             uint256 temp_coupon_auction_epoch = d_idx;
             Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(temp_coupon_auction_epoch);
+            
             // skip auctions that have been canceled, dead or not finished auction present?
             if (!auction.canceled && !auction.dead && auction.isInit && auction.finished) {
-                sumYield += getAvgYieldFilled(temp_coupon_auction_epoch);
-                totalAvailableAuctions++;
+                uint256 best_idx = getLatestCouponAuctionRedeemedSelectedBidderIndex(temp_coupon_auction_epoch);
+                address bidderAddress = getCouponBidderStateAssginedAtIndex(temp_coupon_auction_epoch, best_idx);
+                Epoch.CouponBidderState storage bidder = getCouponBidderState(temp_coupon_auction_epoch, bidderAddress);
+                
+                // skip over those bids that have already been redeemed
+                if (bidder.redeemed) {
+                    continue;
+                }
+                sumCoupons += bidder.couponAmount;
             }
         }
 
-        return sumYield.div(totalAvailableAuctions);
+        return sumCoupons;
     }
 
     /**

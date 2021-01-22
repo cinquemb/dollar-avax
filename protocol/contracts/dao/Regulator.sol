@@ -60,7 +60,7 @@ contract Regulator is Comptroller {
                 cancelCouponAuctionAtEpoch(epoch() - 1);
             }
 
-            growSupply(price);
+            growSupply();
             return;
         }
 
@@ -71,34 +71,15 @@ contract Regulator is Comptroller {
                 finishCouponAuctionAtEpoch(epoch() - 1);
             }
             initCouponAuction();
-
-            shrinkSupply(price);
             return;
         }
 
         emit SupplyNeutral(epoch());
     }
 
-    function shrinkSupply(Decimal.D256 memory price) private {
-        Decimal.D256 memory delta = limit(Decimal.one().sub(price).div(Constants.getNegativeSupplyChangeDivisor()), price);
-        uint256 newDebt = delta.mul(totalNet()).asUint256();
-        increaseDebt(newDebt);
-
-        emit SupplyDecrease(epoch(), price.value, newDebt);
-        return;
-    }
-
     function growSupply(Decimal.D256 memory price) private {
-        Decimal.D256 memory supplyChangeDivisor = Constants.getSupplyChangeDivisor();
-
-        uint256 totalRedeemable = totalRedeemable();
-        uint256 totalCoupons = totalCoupons();
-        if (totalRedeemable < totalCoupons) {
-            supplyChangeDivisor = Constants.getCouponSupplyChangeDivisor();
-        }
-
-        Decimal.D256 memory delta = Decimal.ratio(1, getAvgAvgYieldAcrossCouponAuctions());
-        uint256 newSupply = delta.mul(dollar().totalSupply()).asUint256();
+        // supply growth is purly a function sum of the best outstanding bids amounts across auctions at any given time untill they get redeemed, split between pools
+        uint256 newSupply = getSumofBestBidsAcrossCouponAuctions();
         (uint256 newRedeemable, uint256 lessDebt, uint256 newBonded) = increaseSupply(newSupply);
         emit SupplyIncrease(epoch(), price.value, newRedeemable, lessDebt, newBonded);
     }
