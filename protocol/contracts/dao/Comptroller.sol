@@ -35,6 +35,12 @@ contract Comptroller is Setters {
         balanceCheck();
     }
 
+    function burnFromAccountSansDebt(address account, uint256 amount) internal {
+        dollar().transferFrom(account, address(this), amount);
+        dollar().burn(amount);
+        balanceCheck();
+    }
+
     function burnFromAccount(address account, uint256 amount) internal {
         dollar().transferFrom(account, address(this), amount);
         dollar().burn(amount);
@@ -73,39 +79,23 @@ contract Comptroller is Setters {
     }
 
     function increaseSupply(uint256 newSupply) internal returns (uint256, uint256) {
-        // 0-a. Pay out to Pool
-        uint256 poolReward = newSupply.mul(Constants.getOraclePoolRatio()).div(100);
-        mintToPool(poolReward);
+        /* 
+            supply growth is purely a function of the best auction bids outstanding for coupons from below peg
+            - lps collect fees for incentive
+            - if lock times were removed, no need to incentivize dao, people can vote and leave any time they want as fast as they want
 
-        // 0-b. Pay out to Treasury
-        uint256 treasuryReward = newSupply.mul(Constants.getTreasuryRatio()).div(100);
-        mintToTreasury(treasuryReward);
-
-        uint256 rewards = poolReward.add(treasuryReward);
-        newSupply = newSupply > rewards ? newSupply.sub(rewards) : 0;
-
-        // 1. True up redeemable pool
+        */
         uint256 newRedeemable = 0;
         uint256 totalRedeemable = totalRedeemable();
-        uint256 totalCoupons = totalCoupons();
-        if (totalRedeemable < totalCoupons) {
-            newRedeemable = totalCoupons.sub(totalRedeemable);
+        uint256 totalBestCoupons = getSumofBestBidsAcrossCouponAuctions();
+        if (totalRedeemable < totalBestCoupons) {
+            newRedeemable = totalBestCoupons.sub(totalRedeemable);
             newRedeemable = newRedeemable > newSupply ? newSupply : newRedeemable;
             mintToRedeemable(newRedeemable);
-            newSupply = newSupply.sub(newRedeemable);
         }
-
-        // 2. Payout to DAO
-        if (totalBonded() == 0) {
-            newSupply = 0;
-        }
-        if (newSupply > 0) {
-            mintToDAO(newSupply);
-        }
-
         balanceCheck();
 
-        return (newRedeemable, newSupply.add(rewards));
+        return (newRedeemable, 0);
     }
 
     function resetDebt(Decimal.D256 memory targetDebtRatio) internal returns (uint256) {
@@ -120,6 +110,10 @@ contract Comptroller is Setters {
         }
 
         return 0;
+    }
+
+    function acceptableBidCheck(address account, uint256 dollarAmount) internal returns (bool) {
+        return (dollar().balanceOf(account) >= balanceOfBonded(account).add(dollarAmount));
     }
 
     function balanceCheck() private {

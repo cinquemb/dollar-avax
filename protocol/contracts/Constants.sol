@@ -54,16 +54,17 @@ library Constants {
 
     /* DAO */
     uint256 private constant ADVANCE_INCENTIVE = 150e18; // 150 DSD
-    uint256 private constant DAO_EXIT_LOCKUP_EPOCHS = 36; // 36 epochs fluid
+    uint256 private constant DAO_EXIT_LOCKUP_EPOCHS = 0; // 0 epochs fluid, can leave at any time
 
     /* Pool */
-    uint256 private constant POOL_EXIT_LOCKUP_EPOCHS = 12; // 12 epochs fluid
+    uint256 private constant POOL_EXIT_LOCKUP_EPOCHS = 0; // 12 epochs fluid, can leave at any time
 
     /* Market */
     uint256 private constant COUPON_EXPIRATION = 360;
     uint256 private constant DEBT_RATIO_CAP = 35e16; // 35%
     uint256 private constant INITIAL_COUPON_REDEMPTION_PENALTY = 50e16; // 50%
     uint256 private constant COUPON_REDEMPTION_PENALTY_DECAY = 3600; // 1 hour
+    uint256 private constant MAX_COUPON_YIELD_MULT = 10000000; //10MM coupouns per 1 dollar burn
 
     /* Regulator */
     uint256 private constant SUPPLY_CHANGE_LIMIT = 2e16; // 2%
@@ -157,6 +158,10 @@ library Constants {
 
     function getCouponRedemptionPenaltyDecay() internal pure returns (uint256) {
         return COUPON_REDEMPTION_PENALTY_DECAY;
+    }
+
+    function getCouponMaxYieldToBurn() internal pure returns (uint256) {
+        return MAX_COUPON_YIELD_MULT;
     }
 
     function getSupplyChangeLimit() internal pure returns (Decimal.D256 memory) {

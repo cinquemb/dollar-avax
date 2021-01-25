@@ -116,6 +116,80 @@ describe('Market', function () {
     });
   });
 
+  describe('placeCouponAuctionBid', function () {
+    describe('before call', function () {
+      beforeEach(async function () {
+        await this.market.incrementTotalDebtE(100000);
+
+      });
+    });
+
+    describe('zero expiry', function () {
+      it('reverts', async function () {
+        await expectRevert(this.market.placeCouponAuctionBid(0, 100, 500, {from: userAddress}), "Market: Must have non-zero expiry");
+      });
+    });
+
+    describe('no dollar amount', function () {
+      it('reverts', async function () {
+        await expectRevert(this.market.placeCouponAuctionBid(1, 0, 500, {from: userAddress}), "Market: Must bid non-zero amount");
+      });
+    });
+
+    describe('no coupon amount', function () {
+      it('reverts', async function () {
+        await expectRevert(this.market.placeCouponAuctionBid(1, 1, 0, {from: userAddress}), "Market: Must bid on non-zero amount");
+      });
+    });
+
+    describe('not enough dollars', function () {
+      beforeEach(async function () {
+        await this.market.incrementTotalDebtE(100000);
+        await this.market.mintToE(userAddress, 0);
+        await this.dollar.approve(this.market.address, 0, {from: userAddress});
+      });
+      it('reverts', async function () {
+        await expectRevert(this.market.placeCouponAuctionBid(1, 100000, 100000000), "Market: Must have enough in account");
+      });
+    });
+
+    describe('on single call', function () {
+      beforeEach(async function () {
+        await this.market.incrementTotalDebtE(100000);
+        this.result = await this.market.placeCouponAuctionBid(1, 100, 500, {from: userAddress});
+      });
+
+      it('emits CouponBidPlaced event', async function () {
+        const event = await expectEvent(this.result, 'CouponBidPlaced', {
+          account: userAddress,
+        });
+        expect(event.args.epoch).to.be.bignumber.equal(new BN(2));
+        expect(event.args.dollarAmount).to.be.bignumber.equal(new BN(100));
+        expect(event.args.maxCouponAmount).to.be.bignumber.equal(new BN(500));
+      });
+    });
+
+    describe('multiple calls', function () {
+      beforeEach(async function () {
+        await this.market.incrementTotalDebtE(1000000);
+        await this.market.placeCouponAuctionBid(1, 1000, 50000, {from: userAddress});
+        await this.market.placeCouponAuctionBid(1, 2000, 50000, {from: userAddress});
+        this.result = await this.market.placeCouponAuctionBid(2, 1000, 50000, {from: userAddress});
+      });
+
+
+      it('emits CouponBidPlaced event', async function () {
+        const event = await expectEvent(this.result, 'CouponBidPlaced', {
+          account: userAddress,
+        });
+
+        expect(event.args.epoch).to.be.bignumber.equal(new BN(3));
+        expect(event.args.dollarAmount).to.be.bignumber.equal(new BN(1000));
+        expect(event.args.maxCouponAmount).to.be.bignumber.equal(new BN(50000));
+      });
+    });
+  });
+
   describe('redeemCoupons', function () {
     beforeEach(async function () {
       await this.market.incrementTotalDebtE(100000);
