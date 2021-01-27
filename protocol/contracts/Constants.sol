@@ -53,11 +53,11 @@ library Constants {
     uint256 private constant GOVERNANCE_EMERGENCY_DELAY = 6; // 6 epochs
 
     /* DAO */
-    uint256 private constant ADVANCE_INCENTIVE = 50e18; // 50 DSD
-    uint256 private constant DAO_EXIT_LOCKUP_EPOCHS = 36; // 36 epochs fluid
+    uint256 private constant ADVANCE_INCENTIVE = 150e18; // 150 DSD
+    uint256 private constant DAO_EXIT_LOCKUP_EPOCHS = 0; // 0 epochs fluid, can leave at any time
 
     /* Pool */
-    uint256 private constant POOL_EXIT_LOCKUP_EPOCHS = 12; // 12 epochs fluid
+    uint256 private constant POOL_EXIT_LOCKUP_EPOCHS = 0; // 12 epochs fluid, can leave at any time
 
     /* Market */
     uint256 private constant COUPON_EXPIRATION = 360;

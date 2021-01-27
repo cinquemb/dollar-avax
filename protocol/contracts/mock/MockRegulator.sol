@@ -90,7 +90,13 @@ contract MockRegulator is MockComptroller, Regulator {
             FILE,
             "Must have non-zero expiry"
         );
-        
+
+        Require.that(
+            epoch().add(couponEpochExpiry) > 0,
+            FILE,
+            "Must have non-zero expiry"
+        );
+                
         Require.that(
             dollarAmount > 0,
             FILE,
