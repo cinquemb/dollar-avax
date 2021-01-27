@@ -23,6 +23,7 @@ import "../oracle/Oracle.sol";
 import "../oracle/Pool.sol";
 import "./Upgradeable.sol";
 import "./Permission.sol";
+import "../mock/MockOracle.sol";
 
 
 contract Deployer1 is State, Permission, Upgradeable {
@@ -36,9 +37,17 @@ contract Deployer1 is State, Permission, Upgradeable {
 }
 
 contract Deployer2 is State, Permission, Upgradeable {
-    function initialize() initializer public {
+    /*function initialize() initializer public {
         _state.provider.oracle = new Oracle(address(dollar()));
         oracle().setup();
+    }*/
+
+    function initialize() initializer public {
+        // Make an oracle with no info in it except the dollar. We can call
+        // set() on it from a contract that actually can have state, or from a
+        // deployment, to fill in the other fields
+        _state.provider.oracle = new MockOracle(address(0), address(dollar()), address(0));
+        // And don't do oracle setup
     }
 
     function implement(address implementation) external {

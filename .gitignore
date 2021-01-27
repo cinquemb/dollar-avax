@@ -1,0 +1,5 @@
+*.json
+env/*
+node_modules/*
+model/node_modules/*
+model/chain/node_modules/*
