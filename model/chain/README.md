@@ -17,7 +17,7 @@ npm install
 Then, you need Ganache running. Note that you may need to `npm install -g` it first. You also need to raise its default gas limit.
 
 ```
-ganache-cli -p 7545 --gasLimit 8000000
+ganache-cli -p 7545 --gasLimit 8000000 --accounts 2000 --deultBalanceEther 1000000
 ```
 
 Then, you can deploy into Ganache with Truffle (which you also may need to `npm install -g`).

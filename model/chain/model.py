@@ -17,6 +17,41 @@ logger = logging.getLogger(__name__)
 
 w3 = Web3(Web3.HTTPProvider('http://localhost:7545'))
 
+# from (Uniswap pair is at:)
+UNI = {
+  "addr": '0x5A055657217Bc89636CddE882641D93e7C1A4027',
+  "decimals": 18,
+  "symbol": 'UNI',
+}
+
+
+# Deploy fake USDC
+USDC = {
+  "addr": '0x021F7F4D0dBaa9799D6cC8cC798376256F8968C0',
+  "decimals": 6,
+  "symbol": 'USDC',
+}
+
+
+# token (from Deploy current Implementation on testnet)
+xSD = {
+  "addr": '0x18018B7E3C98915CBf3a7472A58cd90879e4b20B',
+  "decimals": 18,
+  "symbol": 'xSD',
+}
+
+# dao (from Deploy Root on testnet)
+xSDS = {
+  "addr": '0xc594404F4F0A6a8F1A4676B601D587733f05e6f8',
+  "decimals": 18,
+  "symbol": 'xSDS',
+}
+
+
+UniswapPairContract = json.loads(open('./build/contracts/IUniswapV2Pair.json', 'r+').read())
+DaoContract = json.loads(open('./build/contracts/Implementation.json', 'r+').read())
+USDCContract = json.loads(open('./build/contracts/TestnetUSDC.json', 'r+').read())
+
 class Agent:
     """
     Represents an agent. Tracks all the agent's balances.
@@ -47,6 +82,9 @@ class Agent:
         
         # What ESD is coming to us in future epochs?
         self.future_esd = collections.defaultdict(float)
+
+        # add wallet addr
+        self.address = kwargs.get("wallet_address", '0x0000000000000000000000000000000000000000')
         
     def __str__(self):
         """
@@ -68,14 +106,18 @@ class Agent:
         
         # People are slow to coupon
         strategy["coupon"] = 0.1
+
+        # People are slow to coupon bid
+        strategy["coupon_bid"] = 0.1
+
         # And to unbond because of the delay
         strategy["unbond"] = 0.1
         
         if price > 1.0:
-            # Expansion so we want to bond
+            # No rewards for expansion by itself
             strategy["bond"] = 2.0
             # And not unbond
-            strategy["unbond"] = 0.5
+            strategy["unbond"] = 2.0
             # Or redeem if possible
             strategy["redeem"] = 100
         else:
@@ -122,7 +164,8 @@ class UniswapPool:
     Represents the Uniswap pool. Tracks ESD and USDC balances of pool, and total outstanding LP shares.
     """
     
-    def __init__(self, **kwargs):
+    def __init__(self, uniswap, **kwargs):
+        self.contract = uniswap
         # ESD balance
         self.esd = 0.0
         # USDC balance
@@ -134,8 +177,26 @@ class UniswapPool:
         """
         Return true if buying and selling is possible.
         """
-        
-        return self.esd > 0 and self.usdc > 0
+        reserve, token0 = self.getReserves()
+        token0Balance = reserve[0]
+        token1Balance = reserve[1]
+        return token0Balance > 0 and token1Balance > 0
+    
+    def getToken0(self):
+        exchange = self.contract
+        return exchange.functions.token0().call()
+
+    def getReserves(self):
+        exchange = self.contract
+        return exchange.functions.getReserves().call()
+
+    def getInstantaneousPrice(self):
+      reserve, token0 = self.getReserves(), self.getToken0()
+      token0Balance = reserve[0]
+      token1Balance = reserve[1]
+      if (token0.lower() == USDC["addr"].lower()):
+        return int(token0Balance) * pow(10, 12) / float(int(token1Balance)) if int(token1Balance) != 0 else 0
+      return int(token1Balance) * pow(10, 12) / float(int(token0Balance)) if int(token0Balance) != 0 else 0
     
     def esd_price(self):
         """
@@ -143,7 +204,7 @@ class UniswapPool:
         """
         
         if self.operational():
-            return self.usdc / self.esd
+            return self.getInstantaneousPrice()
         else:
             return 1.0
         
@@ -227,10 +288,11 @@ class DAO:
     Represents the ESD DAO. Tracks ESD balance of DAO and total outstanding ESDS.
     """
     
-    def __init__(self, **kwargs):
+    def __init__(self, contract, **kwargs):
         """
         Take keyword arguments to nspecify experimental parameters.
         """
+        self.contract = contract
         
         # How many ESD are bonded
         self.esd = 0.0
@@ -333,6 +395,14 @@ class DAO:
             return self.debt / self.esd_supply
         else:
             return 0
+
+    def coupon_balance(self, wallet):
+        current_epoch = self.contract.functions.epoch().call()
+        print(current_epoch)
+        total_coupons = 0
+        for i in range(0, current_epoch):
+            total_coupons += self.contract.functions.balanceOfCoupons(a.address, i)
+        return total_coupons
         
     def couponable(self, esd):
         """
@@ -344,7 +414,7 @@ class DAO:
         else:
             return min(esd, self.debt)
        
-    def coupon(self, esd):
+    def coupon_bid(self, esd):
         """
         Spend the given number of ESD on coupons.
         Returns (issued_at, underlying_coupons, premium_coupons)
@@ -479,62 +549,9 @@ class DAO:
         
         # TODO: Use real parameter
         return block - self.epoch_block >= 10 or self.epoch == -1
-        
-    def advance(self, block: int, eth: float, uniswap: UniswapPool) -> float:
-        """
-        Advance the ESD epoch, at the given block, spending the given amount of
-        ETH. Returns the ESD advance reward.
-        
-        Needs access to Uniswap to get the proce
-        """
-        
-        assert(self.can_advance(block))
-        self.epoch_block = block
-        assert(eth == self.fee())
-        
-        # Ignore the consumed eth
-        
-        self.epoch += 1
-        
-        if uniswap.esd_price() >= 1.0:
-            if not self.expanding:
-                self.phase_epoch = self.epoch
-            self.expanding = True
-        else:
-            if self.expanding:
-                self.phase_epoch = self.epoch
-            self.expanding = False
-            
-        if self.expanding:
-            # How much total new ESD can we make?
-            new_esd = min(0.03, self.interest * (self.epoch - self.phase_epoch + 1)) * self.esd
-            
-            total_coupons = self.total_coupons()
-            if self.total_redeemable < total_coupons:
-                # Fill the redeemable bucket first
-                new_redeemable = total_coupons - self.total_redeemable
-                new_redeemable = min(new_redeemable, new_esd)
-                self.total_redeemable += new_redeemable 
-                new_esd -= new_redeemable
-                
-            # Then make the rest rewards
-            self.esd += new_esd
-            self.esd_supply += new_esd
-            
-            # And clear the debt
-            self.debt = 0
-        else:
-            # TODO: real debt model, debt cap
-            self.debt += self.esd_supply * 0.01
-        
-        reward = 1000
-        self.esd_supply += reward
-        
-        return reward
-        
-    # TODO: model LP rewards
     
-    
+
+
 def portion_dedusted(total, fraction):
     """
     Compute the amount of an asset to use, given that you have
@@ -562,15 +579,24 @@ class Model:
     Full model of the economy.
     """
     
-    def __init__(self, **kwargs):
+    def __init__(self, dao, uniswap, usdc, agents, **kwargs):
         """
         Takes in experiment parameters and forwards them on to all components.
         """
-        self.uniswap = UniswapPool(**kwargs)
-        self.dao = DAO(**kwargs)
+        self.uniswap = UniswapPool(uniswap, **kwargs)
+        self.dao = DAO(dao, **kwargs)
         self.agents = []
-        for i in range(20):
-            agent = Agent(**kwargs)
+        self.max_eth = 100000
+        self.max_usdc = 100000
+        for i in range(len(agents)):
+            start_eth = round(random.random() * self.max_eth, UNI["decimals"]) 
+            start_usdc = round(random.random() * self.max_usdc, USDC["decimals"])
+            start_usdc_formatted = int(start_usdc * pow(10, USDC["decimals"]))
+            address = agents[i]
+            self.dao.coupon_balance(address)
+            # need to mint USDC to the wallets for each agent
+            usdc.functions.mint(address, start_usdc_formatted).call()
+            agent = Agent(starting_eth=start_eth, starting_usdc=start_usdc, wallet_address=address, **kwargs)
             self.agents.append(agent)
         
         # Track time in blocks
@@ -607,7 +633,7 @@ class Model:
         self.block += 1
         
         # Clean up coupon expiry on the DAO side
-        self.dao.expire_coupons()
+        # self.dao.expire_coupons()
         
         logger.info("Block {}, epoch {}, price {:.2f}, supply {:.2f}, faith: {:.2f}, bonded {:2.1f}%, coupons: {:.2f}, liquidity {:.2f} ESD / {:.2f} USDC".format(
             self.block, self.dao.epoch, self.uniswap.esd_price(), self.dao.esd_supply,
@@ -617,34 +643,21 @@ class Model:
         anyone_acted = False
         for agent_num, a in enumerate(self.agents):
             # TODO: real strategy
-            
-            # Clean up expired coupon records on the agent side
-            self.dao.filter_expired(a.underlying_coupons, a.premium_coupons)
-            
-            # Process unbonded ESD
-            a.esd += a.future_esd[self.dao.epoch]
-            del a.future_esd[self.dao.epoch]
-            
             options = []
             if a.usdc > 0 and self.uniswap.operational():
                 options.append("buy")
             if a.esd > 0 and self.uniswap.operational():
                 options.append("sell")
-            if a.eth >= self.dao.fee() and self.dao.can_advance(self.block):
+            if a.eth >= self.dao.fee():
                 options.append("advance")
             if a.esd > 0:
                 options.append("bond")
             if a.esds > 0:
                 options.append("unbond")
-            if a.esd > 0 and self.dao.couponable(a.esd) > 0:
-                options.append("coupon")
-            if len(a.underlying_coupons) > 0:
-                # Get the oldest coupons
-                issued_at, underlying = next(iter(a.underlying_coupons.items()))
-                premium = a.premium_coupons[issued_at]
-                (redeem_underlying, redeem_premium) = self.dao.redeemable(issued_at, underlying, premium)
-                if redeem_underlying > 0 or redeem_premium > 0:
-                    options.append("redeem")
+            if a.esd > 0 and self.dao.esd_price() <= 1.0:
+                options.append("coupon_bid")
+            if self.dao.coupon_balance(a.address) > 0:
+                options.append("redeem")
             if a.usdc > 0 and a.esd > 0:
                 options.append("deposit")
             if a.lp > 0:
@@ -697,36 +710,10 @@ class Model:
                     esds = portion_dedusted(a.esds, commitment)
                     esd, when = self.dao.unbond(esds)
                     a.esds -= esds
-                    a.future_esd[when] += esd
                     logger.debug("Unbond {:.2f} ESD".format(esd))
-                elif action == "coupon":
-                    esd = self.dao.couponable(portion_dedusted(a.esd, commitment))
-                    (issued_at, underlying_coupons, premium_coupons) = self.dao.coupon(esd)
-                    a.esd = max(0, a.esd - esd)
-                    a.underlying_coupons[issued_at] += underlying_coupons
-                    a.premium_coupons[issued_at] += premium_coupons
-                    logger.debug("Burn {:.2f} ESD for {:.2f} coupons".format(esd, underlying_coupons + premium_coupons))
+                elif action == "coupon_bid":
+                    logger.debug("Bid to burn {:.2f} ESD for {:.2f} coupons".format(esd, underlying_coupons + premium_coupons))
                 elif action == "redeem":
-                    total_redeemed = 0
-                    total_esd = 0
-                    # We just redeem everything we can, in dict order, and ignore commitment
-                    for issued_at, underlying_coupons in a.underlying_coupons.items():
-                        premium_coupons = a.premium_coupons[issued_at]
-                        
-                        (underlying_redeemed, premium_redeemed) = self.dao.redeemable(issued_at, underlying_coupons, premium_coupons)
-                        esd = self.dao.redeem(issued_at, underlying_redeemed, premium_redeemed)
-                        
-                        a.underlying_coupons[issued_at] = max(0, a.underlying_coupons[issued_at] - underlying_redeemed)
-                        a.premium_coupons[issued_at] = max(0, a.premium_coupons[issued_at] - premium_redeemed)
-                            
-                        a.esd += esd
-                        
-                        total_esd += esd
-                        total_redeemed += underlying_redeemed + premium_redeemed
-                        
-                    drop_zeroes(a.underlying_coupons)
-                    drop_zeroes(a.premium_coupons)
-                        
                     logger.debug("Redeem {:.2f} coupons for {:.2f} ESD".format(total_redeemed, total_esd))
                 elif action == "deposit":
                     price = self.uniswap.esd_price()
@@ -758,79 +745,45 @@ class Model:
                 pass
         return anyone_acted
 
+'''
+tx = web3.eth.sendTransaction({
+    'to': '0xd3CdA913deB6f67967B99D67aCDFa1712C293601',
+    'from': web3.eth.coinbase,
+    'value': 1000
+})
+'''
 
-UNI = {
-  "addr": '0xFD33C5E52899A5dC4866b2588109a8A23d403d21',
-  "decimals": 18,
-  "symbol": 'UNI',
-}
-
-USDC = {
-  "addr": '0x1DB2139B63EC76749f76434E402B0F274090a615',
-  "decimals": 6,
-  "symbol": 'USDC',
-}
-
-
-# token (from Deploy current Implementation on testnet)
-xSD = {
-  "addr": '0x9B5C9737f5f1eB12E061D342128E56545dfEC7F0',
-  "decimals": 18,
-  "symbol": 'xSD',
-}
-
-# dao (from Deploy Root on testnet)
-xSDS = {
-  "addr": '0xc594404F4F0A6a8F1A4676B601D587733f05e6f8',
-  "decimals": 18,
-  "symbol": 'xSDS',
-}
-
-
-UniswapPairContract = json.loads(open('./build/contracts/IUniswapV2Pair.json', 'r+').read())
-
-imp_addr = xSDS["addr"]
-ImplementationContract = json.loads(open('./build/contracts/Implementation.json', 'r+').read())
-
-mock_oracle_addr = '0x170F08CD648Eb52CcEfecefcBF97Bd01c162a2E5'
-MockOracleContract = json.loads(open('./build/contracts/MockOracle.json', 'r+').read())
-
-        
-def getToken0():
-    exchange = w3.eth.contract(abi=UniswapPairContract['abi'], address=UNI["addr"])
-    return exchange.functions.token0().call();
-
-def getReserves():
-    exchange = w3.eth.contract(abi=UniswapPairContract['abi'], address=UNI["addr"])
-    return exchange.functions.getReserves().call();
-
-def getInstantaneousPrice():
-  reserve, token0 = getReserves(), getToken0()
-  token0Balance = reserve[0]
-  token1Balance = reserve[1]
-  print(token0.lower(), USDC["addr"].lower())
-  if (token0.lower() == USDC["addr"].lower()):
-    return int(token0Balance) * pow(10, 12) / int(token1Balance)
-  return int(token1Balance) * pow(10, 12) / int(token0Balance)
+def pretty(d, indent=0):
+   for key, value in d.items():
+      print('\t' * indent + str(key))
+      if isinstance(value, dict):
+         pretty(value, indent+1)
+      elif isinstance(value, list):
+        for v in value:
+            pretty(v, indent+1)
+      else:
+         print('\t' * (indent+1) + str(value))
 
 def main():
     """
     Main function: run the simulation.
     """
 
-    
+    print('Total Agents:',len(w3.eth.accounts))
+    dao = w3.eth.contract(abi=DaoContract['abi'], address=xSDS["addr"])
+    uniswap = w3.eth.contract(abi=UniswapPairContract['abi'], address=UNI["addr"])
+    usdc = w3.eth.contract(abi=USDCContract['abi'], address=USDC["addr"])
 
-    Implementation = w3.eth.contract(abi=ImplementationContract['abi'], address=imp_addr)
-    MockOracle = w3.eth.contract(abi=MockOracleContract['abi'], address=mock_oracle_addr)
+    #pretty(uniswap.functions.__dict__, indent=4)
+    #pretty(dao.functions.__dict__, indent=4)
 
-    # TODO: NEED TO HAVE FAKE ACCOUNT PROIVDE ON UNISWAP TO INIT
-    print(getInstantaneousPrice())
+    logging.basicConfig(level=logging.INFO)
+
+    # Make a model of the economy
+    model = Model(dao, uniswap, usdc, w3.eth.accounts, min_faith=0.5E6, max_faith=1E6, use_faith=True, expire_all=True)
 
     '''
-    logging.basicConfig(level=logging.INFO)
     
-    # Make a model of the economy
-    model = Model(starting_eth=10.0, starting_usdc=1E5, min_faith=0.5E6, max_faith=1E6, use_faith=True, expire_all=True)
     
     # Make a log file for system parameters, for analysis
     stream = open("log.tsv", "w")
