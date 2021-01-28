@@ -14,8 +14,8 @@ from typing import List, Iterable
 from web3 import Web3
 
 logger = logging.getLogger(__name__)
-
-w3 = Web3(Web3.HTTPProvider('http://localhost:7545'))
+provider = Web3.HTTPProvider('http://localhost:7545')
+w3 = Web3(provider)
 
 # from (Uniswap pair is at:)
 UNI = {
@@ -35,7 +35,7 @@ USDC = {
 
 # token (from Deploy current Implementation on testnet)
 xSD = {
-  "addr": '0x18018B7E3C98915CBf3a7472A58cd90879e4b20B',
+  "addr": '0x1aB22000906234557e3f1D5AddCE882f144B5857',
   "decimals": 18,
   "symbol": 'xSD',
 }
@@ -776,11 +776,15 @@ def main():
 
     #pretty(uniswap.functions.__dict__, indent=4)
     #pretty(dao.functions.__dict__, indent=4)
+    pretty(provider.make_request("evm_increaseTime", [60 * 1]))
+    #pretty(w3.isConnected())
+    #enode = w3.geth.admin.nodeInfo['enode']
+    #pretty(w3.clientVersion)
 
     logging.basicConfig(level=logging.INFO)
 
     # Make a model of the economy
-    model = Model(dao, uniswap, usdc, w3.eth.accounts, min_faith=0.5E6, max_faith=1E6, use_faith=True, expire_all=True)
+    #model = Model(dao, uniswap, usdc, w3.eth.accounts, min_faith=0.5E6, max_faith=1E6, use_faith=True, expire_all=True)
 
     '''
     
