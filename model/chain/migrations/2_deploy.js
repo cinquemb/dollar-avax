@@ -39,20 +39,16 @@ async function deployTestnet(deployer, network, accounts) {
   const wETHAddress = (await web3.eth.sendTransaction({from: accounts[0], gas: 8000000, data: WETH9Bytecode})).contractAddress;
 
   console.log('Deploy fake UniswapV2 Router');
-  const uniswapRouterAddress = (await web3.eth.sendTransaction({
+  console.log(uniswapFactoryAddress.substr(2));
+  console.log(wETHAddress.substr(2));
+  console.log(web3.eth.abi.encodeParameters(['address', 'address'],[uniswapFactoryAddress, wETHAddress]).slice(2));
+  const UniswapV2RouterAddress = (await web3.eth.sendTransaction({
     from: accounts[0],
     gas: 8000000,
-    data: UniswapV2Router02Bytecode
+    data: UniswapV2Router02Bytecode + web3.eth.abi.encodeParameters(['address', 'address'],[uniswapFactoryAddress, wETHAddress]).slice(2)
   })).contractAddress;
 
-  /*
-  const uniswapRouterInstance = new web3.eth.Contract(UniswapV2Router02.abi.stringify(), uniswapRouterAddress.contractAddress);
-  const uV2 = await uniswapRouterInstance.deploy({
-      data: UniswapV2Router02.bytecode,
-      arguments: [uniswapFactoryAddress, wETHAddress]
-  });*/
-
-  console.log('UniswapV2Router is at: ' + uniswapRouterAddress);
+  console.log('UniswapV2Router is at: ' + UniswapV2RouterAddress);
   
   console.log('Deploy Deployer2');
   const d2 = await deployer.deploy(Deployer2);
