@@ -8,6 +8,8 @@ const Root = artifacts.require("Root");
 const TestnetUSDC = artifacts.require("TestnetUSDC");
 
 const UniswapV2FactoryBytecode = require('@uniswap/v2-core/build/UniswapV2Factory.json').bytecode
+const UniswapV2Router02Bytecode = require('@uniswap/v2-periphery/build/UniswapV2Router02.json').bytecode;
+const WETH9Bytecode = require('@uniswap/v2-periphery/build/WETH9.json').bytecode;
 
 
 async function deployTestnetUSDC(deployer) {
@@ -32,6 +34,25 @@ async function deployTestnet(deployer, network, accounts) {
     uniswapArg += '00';
   }
   const uniswapFactoryAddress = (await web3.eth.sendTransaction({from: accounts[0], gas: 8000000, data: UniswapV2FactoryBytecode + uniswapArg})).contractAddress;
+
+  console.log('Deploy fake wETH');
+  const wETHAddress = (await web3.eth.sendTransaction({from: accounts[0], gas: 8000000, data: WETH9Bytecode})).contractAddress;
+
+  console.log('Deploy fake UniswapV2 Router');
+  const uniswapRouterAddress = (await web3.eth.sendTransaction({
+    from: accounts[0],
+    gas: 8000000,
+    data: UniswapV2Router02Bytecode
+  })).contractAddress;
+
+  /*
+  const uniswapRouterInstance = new web3.eth.Contract(UniswapV2Router02.abi.stringify(), uniswapRouterAddress.contractAddress);
+  const uV2 = await uniswapRouterInstance.deploy({
+      data: UniswapV2Router02.bytecode,
+      arguments: [uniswapFactoryAddress, wETHAddress]
+  });*/
+
+  console.log('UniswapV2Router is at: ' + uniswapRouterAddress);
   
   console.log('Deploy Deployer2');
   const d2 = await deployer.deploy(Deployer2);
@@ -57,12 +78,8 @@ async function deployTestnet(deployer, network, accounts) {
   console.log('View root as Deployer3');
   const rootAsD3 = await Deployer3.at(root.address);
 
-  /*
-  // Set up the fields of the pool that we can't pass through a Deployer
-  const pool = await Pool.at(await rootAsD3.pool.call())
-  console.log('Pool is at: ' + pool.address)
-  await pool.set(rootAsD3.address, await rootAsD3.dollar.call(), pair);
-  */
+  const pool = await Pool.at(await rootAsD3.pool.call());
+  console.log('Pool is at: ' + pool.address);
 
   console.log('Deploy current Implementation');
   const implementation = await deployer.deploy(Implementation);

@@ -33,16 +33,16 @@ USDC = {
 }
 
 
-# token (from Deploy current Implementation on testnet)
+# dao (from Deploy current Implementation on testnet)
 xSD = {
-  "addr": '0x1aB22000906234557e3f1D5AddCE882f144B5857',
+  "addr": '',
   "decimals": 18,
   "symbol": 'xSD',
 }
 
-# dao (from Deploy Root on testnet)
+# token (from Deploy Root on testnet)
 xSDS = {
-  "addr": '0xc594404F4F0A6a8F1A4676B601D587733f05e6f8',
+  "addr": '',
   "decimals": 18,
   "symbol": 'xSDS',
 }
@@ -51,6 +51,24 @@ xSDS = {
 UniswapPairContract = json.loads(open('./build/contracts/IUniswapV2Pair.json', 'r+').read())
 DaoContract = json.loads(open('./build/contracts/Implementation.json', 'r+').read())
 USDCContract = json.loads(open('./build/contracts/TestnetUSDC.json', 'r+').read())
+TokenContract = json.loads(open('./build/contracts/Root.json', 'r+').read())
+
+def get_addr_from_contract(contract):
+    return contract["networks"][str(sorted(map(int,contract["networks"].keys()))[-1])]["address"]
+
+xSD['addr'] = get_addr_from_contract(DaoContract)
+xSDS['addr'] = get_addr_from_contract(TokenContract)
+
+def pretty(d, indent=0):
+   for key, value in d.items():
+      print('\t' * indent + str(key))
+      if isinstance(value, dict):
+         pretty(value, indent+1)
+      elif isinstance(value, list):
+        for v in value:
+            pretty(v, indent+1)
+      else:
+         print('\t' * (indent+1) + str(value))
 
 class Agent:
     """
@@ -397,8 +415,11 @@ class DAO:
             return 0
 
     def coupon_balance(self, wallet):
+        ''' 
+            TODO: IS SLOWWWWWWWW, how can i speed this up
+            returns the coupon balance for an address
+        '''
         current_epoch = self.contract.functions.epoch().call()
-        print(current_epoch)
         total_coupons = 0
         for i in range(0, current_epoch):
             total_coupons += self.contract.functions.balanceOfCoupons(a.address, i)
@@ -593,7 +614,8 @@ class Model:
             start_usdc = round(random.random() * self.max_usdc, USDC["decimals"])
             start_usdc_formatted = int(start_usdc * pow(10, USDC["decimals"]))
             address = agents[i]
-            self.dao.coupon_balance(address)
+            print('here', address)
+
             # need to mint USDC to the wallets for each agent
             usdc.functions.mint(address, start_usdc_formatted).call()
             agent = Agent(starting_eth=start_eth, starting_usdc=start_usdc, wallet_address=address, **kwargs)
@@ -631,6 +653,7 @@ class Model:
         """
         
         self.block += 1
+        provider.make_request("evm_increaseTime", [7201])
         
         # Clean up coupon expiry on the DAO side
         # self.dao.expire_coupons()
@@ -656,15 +679,13 @@ class Model:
                 options.append("unbond")
             if a.esd > 0 and self.dao.esd_price() <= 1.0:
                 options.append("coupon_bid")
-            if self.dao.coupon_balance(a.address) > 0:
+            if self.dao.esd_price() >= 1.0 and self.dao.coupon_balance(a.address) > 0:
                 options.append("redeem")
             if a.usdc > 0 and a.esd > 0:
                 options.append("deposit")
             if a.lp > 0:
                 options.append("withdraw")
-                
-            # TODO: coupons
-                
+                                
             if len(options) > 0:
                 # We can act
         
@@ -745,41 +766,19 @@ class Model:
                 pass
         return anyone_acted
 
-'''
-tx = web3.eth.sendTransaction({
-    'to': '0xd3CdA913deB6f67967B99D67aCDFa1712C293601',
-    'from': web3.eth.coinbase,
-    'value': 1000
-})
-'''
-
-def pretty(d, indent=0):
-   for key, value in d.items():
-      print('\t' * indent + str(key))
-      if isinstance(value, dict):
-         pretty(value, indent+1)
-      elif isinstance(value, list):
-        for v in value:
-            pretty(v, indent+1)
-      else:
-         print('\t' * (indent+1) + str(value))
-
 def main():
     """
     Main function: run the simulation.
     """
 
     print('Total Agents:',len(w3.eth.accounts))
-    dao = w3.eth.contract(abi=DaoContract['abi'], address=xSDS["addr"])
+    dao = w3.eth.contract(abi=DaoContract['abi'], address=xSD["addr"])
     uniswap = w3.eth.contract(abi=UniswapPairContract['abi'], address=UNI["addr"])
     usdc = w3.eth.contract(abi=USDCContract['abi'], address=USDC["addr"])
+    xsds = w3.eth.contract(abi=TokenContract['abi'], address=xSDS["addr"]) 
 
-    #pretty(uniswap.functions.__dict__, indent=4)
-    #pretty(dao.functions.__dict__, indent=4)
-    pretty(provider.make_request("evm_increaseTime", [60 * 1]))
-    #pretty(w3.isConnected())
-    #enode = w3.geth.admin.nodeInfo['enode']
-    #pretty(w3.clientVersion)
+    pretty(uniswap.functions.__dict__, indent=4)
+    #pretty(xsds.functions.__dict__, indent=4)
 
     logging.basicConfig(level=logging.INFO)
 
