@@ -9,6 +9,7 @@ import collections
 import random
 import math
 import logging
+import time
 from typing import List, Iterable
 
 from web3 import Web3
@@ -19,7 +20,7 @@ w3 = Web3(provider)
 
 # from (Uniswap pair is at:)
 UNI = {
-  "addr": '0x5A055657217Bc89636CddE882641D93e7C1A4027',
+  "addr": '0xd3e29865124e0477940C29312871f6d86246Ef26',
   "decimals": 18,
   "symbol": 'UNI',
 }
@@ -27,9 +28,19 @@ UNI = {
 
 # Deploy fake USDC
 USDC = {
-  "addr": '0x021F7F4D0dBaa9799D6cC8cC798376256F8968C0',
+  "addr": '0x30a176059472931D0e4329DcF098AC05EF42BD85',
   "decimals": 6,
   "symbol": 'USDC',
+}
+
+UNIV2LP = {
+    "addr": '0x33103aED70784d58D7aE2E7750CD457eEFDDf006',
+    "decimals": 18,
+}
+
+UNIV2Router = {
+    "addr": "0x981462f226f5D83a511F38da7B06AD673852BF6E",
+    "decimals": 18,
 }
 
 
@@ -47,11 +58,15 @@ xSDS = {
   "symbol": 'xSDS',
 }
 
+DEADLINE_FROM_NOW = 60 * 15
 
-UniswapPairContract = json.loads(open('./build/contracts/IUniswapV2Pair.json', 'r+').read())
 DaoContract = json.loads(open('./build/contracts/Implementation.json', 'r+').read())
 USDCContract = json.loads(open('./build/contracts/TestnetUSDC.json', 'r+').read())
+
+UniswapPairContract = json.loads(open('./build/contracts/IUniswapV2Pair.json', 'r+').read())
+UniswapRouterAbiContract = json.loads(open('./node_modules/@uniswap/v2-periphery/build/UniswapV2Router02.json', 'r+').read())
 TokenContract = json.loads(open('./build/contracts/Root.json', 'r+').read())
+PoolContract = json.loads(open('./build/contracts/Pool.json', 'r+').read())
 
 def get_addr_from_contract(contract):
     return contract["networks"][str(sorted(map(int,contract["networks"].keys()))[-1])]["address"]
@@ -182,8 +197,10 @@ class UniswapPool:
     Represents the Uniswap pool. Tracks ESD and USDC balances of pool, and total outstanding LP shares.
     """
     
-    def __init__(self, uniswap, **kwargs):
-        self.contract = uniswap
+    def __init__(self, uniswap, uniswap_router, uniswap_lp, **kwargs):
+        self.uniswap_pair = uniswap
+        self.uniswap_router = uniswap_router
+        self.uniswap_lp = uniswap_lp
         # ESD balance
         self.esd = 0.0
         # USDC balance
@@ -201,11 +218,11 @@ class UniswapPool:
         return token0Balance > 0 and token1Balance > 0
     
     def getToken0(self):
-        exchange = self.contract
+        exchange = self.uniswap_pair
         return exchange.functions.token0().call()
 
     def getReserves(self):
-        exchange = self.contract
+        exchange = self.uniswap_pair
         return exchange.functions.getReserves().call()
 
     def getInstantaneousPrice(self):
@@ -267,39 +284,38 @@ class UniswapPool:
         
         return (esd, usdc)
         
-    def buy(self, usdc):
+    def buy(self, account, usdc, max_esd_amount):
         """
-        Spend the given number of USDC to buy ESD. Returns the ESD bought.
+        Spend the given number of USDC to buy xSD. Returns the xSD bought.
+        ['swapTokensForExactTokens(uint256,uint256,address[],address,uint256)']
+        """  
+        print (usdc, max_esd_amount, [USDC['addr'], xSD['addr']], account, int(time.time()) + DEADLINE_FROM_NOW)      
+        amount_bought = self.uniswap_router.functions.swapTokensForExactTokens(
+            int(round(usdc, 6) * pow(10, USDC["decimals"])),
+            int(round(max_esd_amount, xSD["decimals"]) * pow(10, xSD["decimals"])),
+            [USDC['addr'], xSD['addr']],
+            account,
+            (int(time.time()) + DEADLINE_FROM_NOW) * pow(10, UNI["decimals"])
+        ).call()
+        print(amount_bought)
+        
+        
+        
+        return (amount_bought)
+        
+    def sell(self, account, esd, min_usdc_amount):
         """
-        
-        # TODO: get real uniswap logic
-        
-        k = self.esd * self.usdc
-        
-        new_esd = k / (self.usdc + usdc)
-        esd = self.esd - new_esd
-        
-        self.usdc += usdc
-        self.esd = new_esd
-        
-        return esd
-        
-    def sell(self, esd):
-        """
-        Sell the given number of ESD for USDC. Returns the USDC received.
-        """
-        
-        # TODO: get real uniswap logic
-        
-        k = self.esd * self.usdc
-        
-        new_usdc = k / (self.esd + esd)
-        usdc = self.usdc - new_usdc
-        
-        self.esd += esd
-        self.usdc = new_usdc
-        
-        return usdc
+        Sell the given number of xSD for USDC. Returns the xSDC received.
+        """        
+        amount_sold = self.uniswap_router.functions.swapExactTokensForTokens(
+            int(round(esd, xSD["decimals"]) * pow(10, xSD["decimals"])),
+            int(round(min_usdc_amount, 6) * pow(10, USDC["decimals"])),
+            [xSD['addr'], USDC['addr']],
+            account,
+            (int(time.time()) + DEADLINE_FROM_NOW) * pow(10, UNI["decimals"])
+        ).call()
+        print (amount_sold)
+        return (amount_sold)
         
 class DAO:
     """
@@ -310,8 +326,7 @@ class DAO:
         """
         Take keyword arguments to nspecify experimental parameters.
         """
-        self.contract = contract
-        
+        self.contract = contract        
         # How many ESD are bonded
         self.esd = 0.0
         # How many ESD exist?
@@ -562,15 +577,12 @@ class DAO:
         """
         
         return 0.001
-        
-    def can_advance(self, block: int):
-        """
-        Return True if we can advance at the given block, and False otherwise.
-        """
-        
-        # TODO: Use real parameter
-        return block - self.epoch_block >= 10 or self.epoch == -1
-    
+
+    def advance(self, address):
+        txnHash = self.contract.functions.advance().call(
+          {'from' : address, 'gas': 8000000}
+        )
+        return (txnHash)
 
 
 def portion_dedusted(total, fraction):
@@ -600,11 +612,12 @@ class Model:
     Full model of the economy.
     """
     
-    def __init__(self, dao, uniswap, usdc, agents, **kwargs):
+    def __init__(self, dao, uniswap, usdc, uniswap_router, uniswap_lp, agents, **kwargs):
         """
         Takes in experiment parameters and forwards them on to all components.
         """
-        self.uniswap = UniswapPool(uniswap, **kwargs)
+        #pretty(dao.functions.__dict__)
+        self.uniswap = UniswapPool(uniswap, uniswap_router, uniswap_lp, **kwargs)
         self.dao = DAO(dao, **kwargs)
         self.agents = []
         self.max_eth = 100000
@@ -615,6 +628,15 @@ class Model:
             start_usdc_formatted = int(start_usdc * pow(10, USDC["decimals"]))
             address = agents[i]
             print('here', address)
+
+            provider.make_request("evm_increaseTime", [7201])
+            self.dao.advance(address)
+
+            '''
+            commitment = random.random() * 0.1
+            to_use_usdc = portion_dedusted(start_usdc, commitment)
+            self.uniswap.buy(address, to_use_usdc, 100)
+            '''
 
             # need to mint USDC to the wallets for each agent
             usdc.functions.mint(address, start_usdc_formatted).call()
@@ -679,7 +701,9 @@ class Model:
                 options.append("unbond")
             if a.esd > 0 and self.dao.esd_price() <= 1.0:
                 options.append("coupon_bid")
-            if self.dao.esd_price() >= 1.0 and self.dao.coupon_balance(a.address) > 0:
+
+            # try any ways but handle traceback, faster than looping over all the epocks
+            if self.dao.esd_price() >= 1.0:
                 options.append("redeem")
             if a.usdc > 0 and a.esd > 0:
                 options.append("deposit")
@@ -704,14 +728,16 @@ class Model:
                 if action == "buy":
                     usdc = portion_dedusted(a.usdc, commitment)
                     price = self.uniswap.esd_price()
-                    esd = self.uniswap.buy(usdc)
+                    max_amount = usdc / price
+                    esd = self.uniswap.buy(a.address, usdc, max_amount)
                     a.usdc -= usdc
                     a.esd += esd
                     logger.debug("Buy {:.2f} ESD @ {:.2f} for {:.2f} USDC".format(esd, price, usdc))
                 elif action == "sell":
                     esd = portion_dedusted(a.esd, commitment)
                     price = self.uniswap.esd_price()
-                    usdc = self.uniswap.sell(esd)
+                    max_amount = price / esd
+                    usdc = self.uniswap.sell(a.address, esd, max_amount)
                     a.esd -= esd
                     a.usdc += usdc
                     logger.debug("Sell {:.2f} ESD @ {:.2f} for {:.2f} USDC".format(esd, price, usdc))
@@ -776,14 +802,16 @@ def main():
     uniswap = w3.eth.contract(abi=UniswapPairContract['abi'], address=UNI["addr"])
     usdc = w3.eth.contract(abi=USDCContract['abi'], address=USDC["addr"])
     xsds = w3.eth.contract(abi=TokenContract['abi'], address=xSDS["addr"]) 
+    uniswap_router = w3.eth.contract(abi=UniswapRouterAbiContract['abi'], address=UNIV2Router["addr"])
+    uniswap_lp = w3.eth.contract(abi=PoolContract['abi'], address=UNIV2LP["addr"])
 
-    pretty(uniswap.functions.__dict__, indent=4)
-    #pretty(xsds.functions.__dict__, indent=4)
+    #pretty(uniswap_router.functions.__dict__, indent=4)
+    #pretty(dao.functions.__dict__, indent=4)
 
     logging.basicConfig(level=logging.INFO)
 
     # Make a model of the economy
-    #model = Model(dao, uniswap, usdc, w3.eth.accounts, min_faith=0.5E6, max_faith=1E6, use_faith=True, expire_all=True)
+    model = Model(dao, uniswap, usdc, uniswap_router, uniswap_lp, w3.eth.accounts, min_faith=0.5E6, max_faith=1E6, use_faith=True, expire_all=True)
 
     '''
     
