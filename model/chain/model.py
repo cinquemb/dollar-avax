@@ -10,9 +10,14 @@ import random
 import math
 import logging
 import time
-from typing import List, Iterable
+import sys
 
 from web3 import Web3
+
+deploy_data = None
+with open("deploy_output.txt", 'r+') as f:
+    deploy_data = f.read()
+
 
 logger = logging.getLogger(__name__)
 provider = Web3.HTTPProvider('http://localhost:7545')
@@ -20,28 +25,38 @@ w3 = Web3(provider)
 
 # from (Uniswap pair is at:)
 UNI = {
-  "addr": '0xd3e29865124e0477940C29312871f6d86246Ef26',
+  "addr": '',
   "decimals": 18,
   "symbol": 'UNI',
+  "deploy_slug": "Uniswap pair is at: "
 }
 
-
-# Deploy fake USDC
+# USDC is at: 
 USDC = {
-  "addr": '0x30a176059472931D0e4329DcF098AC05EF42BD85',
+  "addr": '',
   "decimals": 6,
   "symbol": 'USDC',
+  "deploy_slug": "USDC is at: "
 }
 
+#Pool is at: 
 UNIV2LP = {
-    "addr": '0x33103aED70784d58D7aE2E7750CD457eEFDDf006',
+    "addr": '',
     "decimals": 18,
+  "deploy_slug": "Pool is at: "
 }
 
+#UniswapV2Router is at: 
 UNIV2Router = {
-    "addr": "0x981462f226f5D83a511F38da7B06AD673852BF6E",
+    "addr": "",
     "decimals": 18,
+    "deploy_slug": "UniswapV2Router is at: "
 }
+
+for contract in [UNI, USDC, UNIV2LP, UNIV2Router]:
+    print(contract["deploy_slug"])
+    contract["addr"] = deploy_data.split(contract["deploy_slug"])[1].split('\n')[0]
+    print('\t'+contract["addr"])
 
 
 # dao (from Deploy current Implementation on testnet)
@@ -333,8 +348,6 @@ class DAO:
         self.esd_supply = 0.0
         # How many shares are outstanding
         self.total_shares = 0.0
-        # What epoch is it?
-        self.epoch = -1
         # What block did the epoch start
         self.epoch_block = 0
         # Are we expanding or contracting
@@ -415,41 +428,21 @@ class DAO:
         self.esd = max(0, self.esd - esd)
         
         return esd, self.epoch + 15
-        
-    def get_coupon_rate(self):
-        """
-        Return the rate of return on coupons (as a percentage that is the
-        premium), if the premium doesn't expire.
-        """
-        
-        # TODO: real logic here
-        
-        if self.esd_supply > 0:
-            return self.debt / self.esd_supply
-        else:
-            return 0
 
     def coupon_balance(self, wallet):
         ''' 
             TODO: IS SLOWWWWWWWW, how can i speed this up
             returns the coupon balance for an address
         '''
-        current_epoch = self.contract.functions.epoch().call()
+        current_epoch = self.epoch(wallet)
         total_coupons = 0
         for i in range(0, current_epoch):
-            total_coupons += self.contract.functions.balanceOfCoupons(a.address, i)
+            total_coupons += self.contract.caller({'from' : wallet, 'gas': 8000000}).balanceOfCoupons(wallet, i)
         return total_coupons
+
+    def epoch(self, wallet):
+        return self.contract.caller({'from' : wallet, 'gas': 8000000}).epoch()
         
-    def couponable(self, esd):
-        """
-        Return the amount of ESD that can be couponed, up to the given value.
-        """
-       
-        if self.expanding:
-            return 0
-        else:
-            return min(esd, self.debt)
-       
     def coupon_bid(self, esd):
         """
         Spend the given number of ESD on coupons.
@@ -579,11 +572,27 @@ class DAO:
         return 0.001
 
     def advance(self, address):
-        txnHash = self.contract.functions.advance().call(
-          {'from' : address, 'gas': 8000000}
-        )
-        return (txnHash)
+        print(self.epoch(address))
+        '''
+        tx = self.contract.functions.advance().buildTransaction({
+            'nonce': w3.eth.getTransactionCount(address),
+            'from': address,
+            'gas': 8000000,
+            'gasPrice': 1,
+        })
+        print(tx)
+        signed_tx = w3.eth.account.signTransaction(tx, private_key='0xbcc21bcb2168e415067967842967b6553fd91ce683041ef78a4064115142f13d')
+        print(signed_tx)
+        raw_tx = w3.eth.sendRawTransaction(signed_tx.rawTransaction)
+        print(raw_tx)
+        '''
 
+        print(self.contract.functions.advance().transact({'from' : address, 'gas': 8000000}))
+
+        print(self.contract.caller({'from' : address, 'gas': 8000000}).advance())
+        print(self.epoch(address))
+        sys.exit()
+        return self.contract.caller({'from' : address, 'gas': 8000000}).balanceOf(address)
 
 def portion_dedusted(total, fraction):
     """
@@ -629,8 +638,9 @@ class Model:
             address = agents[i]
             print('here', address)
 
-            provider.make_request("evm_increaseTime", [7201])
-            self.dao.advance(address)
+            print(provider.make_request("evm_increaseTime", [1]))
+            total_esd = self.dao.advance(address)
+            print(total_esd)
 
             '''
             commitment = random.random() * 0.1
@@ -681,7 +691,7 @@ class Model:
         # self.dao.expire_coupons()
         
         logger.info("Block {}, epoch {}, price {:.2f}, supply {:.2f}, faith: {:.2f}, bonded {:2.1f}%, coupons: {:.2f}, liquidity {:.2f} ESD / {:.2f} USDC".format(
-            self.block, self.dao.epoch, self.uniswap.esd_price(), self.dao.esd_supply,
+            self.block, self.dao.epoch(), self.uniswap.esd_price(), self.dao.esd_supply,
             self.get_overall_faith(), self.dao.esd / max(self.dao.esd_supply, 1E-9) * 100, self.dao.total_coupons(),
             self.uniswap.esd, self.uniswap.usdc))
         
@@ -742,10 +752,8 @@ class Model:
                     a.usdc += usdc
                     logger.debug("Sell {:.2f} ESD @ {:.2f} for {:.2f} USDC".format(esd, price, usdc))
                 elif action == "advance":
-                    fee = self.dao.fee()
-                    esd = self.dao.advance(self.block, fee, self.uniswap)
-                    a.eth -= fee
-                    a.esd += esd
+                    esd = self.dao.advance(a.address)
+                    a.esd = esd
                     logger.debug("Advance for {:.2f} ESD".format(esd))
                 elif action == "bond":
                     esd = portion_dedusted(a.esd, commitment)

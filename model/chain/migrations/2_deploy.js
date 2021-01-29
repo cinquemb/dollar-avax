@@ -20,6 +20,9 @@ async function deployTestnet(deployer, network, accounts) {
   console.log('Deploy fake USDC');
   const usdc = await deployTestnetUSDC(deployer);
 
+  
+  console.log('USDC is at: ' + usdc.address);
+
   console.log('Deploy Deployer1');
   const d1 = await deployer.deploy(Deployer1);
   console.log('Deploy Root');

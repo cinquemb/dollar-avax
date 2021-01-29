@@ -23,7 +23,7 @@ ganache-cli -p 7545 --gasLimit 8000000 --accounts 2000 --deultBalanceEther 10000
 Then, you can deploy into Ganache with Truffle (which you also may need to `npm install -g`).
 
 ```
-truffle migrate --network=development
+truffle migrate --network=development > deploy_output.txt
 ```
 
 Then, you can run a model against the chain. For that, you probably want a Python virtual environment:
