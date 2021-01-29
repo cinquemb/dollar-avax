@@ -475,32 +475,12 @@ class DAO:
         return total_after_coupons - total_before_coupons
 
     def advance(self, address):
-        print(self.epoch(address))
-        '''
-        tx = self.contract.functions.advance().buildTransaction({
+        self.contract.functions.advance().transact({
             'nonce': w3.eth.getTransactionCount(address),
-            'from': address,
+            'from' : address,
             'gas': 8000000,
             'gasPrice': 1,
         })
-        print(tx)
-        signed_tx = w3.eth.account.signTransaction(tx, private_key='0x99a249cb26e8a41b737d5c7b7e633df0999993b0a73702ee22de0cbc872f3026')
-        print(signed_tx)
-        raw_tx = w3.eth.sendRawTransaction(signed_tx.rawTransaction)
-        print(raw_tx)
-        '''
-        print(
-            self.contract.functions.advance().transact({
-                'nonce': w3.eth.getTransactionCount(address),
-                'from' : address,
-                'gas': 8000000,
-                'gasPrice': 1,
-            })
-        )
-        #'''
-
-        print(self.epoch(address))
-        sys.exit()
         return self.contract.caller({'from' : address, 'gas': 8000000}).balanceOf(address)
 
 def portion_dedusted(total, fraction):
@@ -752,7 +732,7 @@ def main():
     """
 
     print('Total Agents:',len(w3.eth.accounts))
-    dao = w3.eth.contract(abi=DaoContract['abi'], address=xSD["addr"])
+    dao = w3.eth.contract(abi=DaoContract['abi'], address=xSDS["addr"])
     uniswap = w3.eth.contract(abi=UniswapPairContract['abi'], address=UNI["addr"])
     usdc = w3.eth.contract(abi=USDCContract['abi'], address=USDC["addr"])
     xsds = w3.eth.contract(abi=TokenContract['abi'], address=xSDS["addr"]) 
