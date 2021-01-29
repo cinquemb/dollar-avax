@@ -50,14 +50,20 @@ contract Regulator is Comptroller {
         Decimal.D256 memory price = oracleCapture();
 
         //need to check previous epoch because by the time the Regulator.step function is fired, Bonding.step may have already incremented the epoch
-        Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(epoch() - 1);
+
+        uint256 prev_epoch = epoch();
+        if (epoch() > 0) {
+            prev_epoch = epoch() - 1;
+        }
+        
+        Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(prev_epoch);
 
         if (price.greaterThan(Decimal.one())) {
             setDebtToZero();
 
             //check for outstanding auction, if exists cancel it
             if (auction.isInit == true){
-                cancelCouponAuctionAtEpoch(epoch() - 1);
+                cancelCouponAuctionAtEpoch(prev_epoch);
             }
 
             growSupply(price);
@@ -67,8 +73,8 @@ contract Regulator is Comptroller {
         if (price.lessThan(Decimal.one())) {
             //check for outstanding auction, if exists settle it and start a new one
             if (auction.isInit == true){
-                bool isAuctionSettled = settleCouponAuction(epoch() - 1);
-                finishCouponAuctionAtEpoch(epoch() - 1);
+                bool isAuctionSettled = settleCouponAuction(prev_epoch);
+                finishCouponAuctionAtEpoch(prev_epoch);
             }
             initCouponAuction();
             return;
