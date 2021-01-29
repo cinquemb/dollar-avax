@@ -484,12 +484,11 @@ class DAO:
             'gasPrice': 1,
         })
         print(tx)
-        signed_tx = w3.eth.account.signTransaction(tx, private_key='0x81c366eed543e811a16dbdbdef4750323a1ca57999f153d08b6896fdcd270476')
+        signed_tx = w3.eth.account.signTransaction(tx, private_key='0x99a249cb26e8a41b737d5c7b7e633df0999993b0a73702ee22de0cbc872f3026')
         print(signed_tx)
         raw_tx = w3.eth.sendRawTransaction(signed_tx.rawTransaction)
         print(raw_tx)
         '''
-
         print(
             self.contract.functions.advance().transact({
                 'nonce': w3.eth.getTransactionCount(address),
@@ -498,8 +497,8 @@ class DAO:
                 'gasPrice': 1,
             })
         )
+        #'''
 
-        print(self.contract.caller({'from' : address, 'gas': 8000000}).advance())
         print(self.epoch(address))
         sys.exit()
         return self.contract.caller({'from' : address, 'gas': 8000000}).balanceOf(address)
