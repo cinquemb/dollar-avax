@@ -133,6 +133,9 @@ class Agent:
 
         # add wallet addr
         self.address = kwargs.get("wallet_address", '0x0000000000000000000000000000000000000000')
+
+        # total coupons bid
+        self.total_coupons_bid = 0
         
     def __str__(self):
         """
@@ -311,7 +314,7 @@ class UniswapPool:
             [USDC['addr'], xSD['addr']],
             account,
             (int(time.time()) + DEADLINE_FROM_NOW) * pow(10, UNI["decimals"])
-        ).call()
+        ).transact({'from' : address, 'gas': 8000000})
         print(amount_bought)
         
         
@@ -324,11 +327,11 @@ class UniswapPool:
         """        
         amount_sold = self.uniswap_router.functions.swapExactTokensForTokens(
             int(round(esd, xSD["decimals"]) * pow(10, xSD["decimals"])),
-            int(round(min_usdc_amount, 6) * pow(10, USDC["decimals"])),
+            int(round(min_usdc_amount, USDC["decimals"]) * pow(10, USDC["decimals"])),
             [xSD['addr'], USDC['addr']],
             account,
             (int(time.time()) + DEADLINE_FROM_NOW) * pow(10, UNI["decimals"])
-        ).call()
+        ).transact({'from' : address, 'gas': 8000000})
         print (amount_sold)
         return (amount_sold)
         
@@ -376,23 +379,15 @@ class DAO:
         # Should all coupon parts expire?
         self.param_expire_all = kwargs.get("expire_all", False)
         
-    def total_coupons(self):
+    def total_coupons(self, address):
         """
         Get all outstanding unexpired coupons.
         """
         
-        total = 0.0
-        for epoch, amount in self.underlying_coupon_supply.items():
-            if epoch + self.expiry_delay >= self.epoch or not self.param_expire_all:
-                # Underlying isn't expired
-                total += amount
-        for epoch, amount in self.premium_coupon_supply.items():
-            if epoch + self.expiry_delay >= self.epoch:
-                # Premium isn't expired
-                total += amount
+        total = self.contract.caller({'from' : address, 'gas': 8000000}).totalCoupons()
         return total
         
-    def bond(self, esd):
+    def bond(self, address, esd):
         """
         Deposit and bond the given amount of ESD.
         Returns the number of ESDS minted.
@@ -400,134 +395,56 @@ class DAO:
     
         # TODO: model lockups
         
-        if self.esd > 0:
-            new_shares = self.total_shares / self.esd * esd
-        else:
-            new_shares = 1.0
+        self.contract.caller({'from' : address, 'gas': 8000000}).bond(
+            int(round(max_esd_amount, xSD["decimals"]) * pow(10, xSD["decimals"]))
+        )
         
-        self.esd += esd
-        self.total_shares += new_shares
+        return esd
+
         
-        return new_shares
-        
-    def unbond(self, shares):
+    def unbond(self, address, shares):
         """
         Unbond and withdraw the given number of shares.
         Returns the amount of ESD received, and the epoch it will be available.
         """
+        #get overall bonded
+        start_total = self.contract.caller({'from' : address, 'gas': 8000000}).totalBonded()
+        self.contract.caller({'from' : address, 'gas': 8000000}).unbond(
+            int(round(shares, xSD["decimals"]) * pow(10, xSD["decimals"]))
+        )
+        end_total = self.contract.caller({'from' : address, 'gas': 8000000}).totalBonded()
         
-        
-        if self.total_shares == 0:
-            return 0, self.epoch + 1
-        
-        portion = shares / self.total_shares
-        
-        esd = self.esd * portion
-        
-        self.total_shares = max(0, self.total_shares - shares)
-        self.esd = max(0, self.esd - esd)
-        
-        return esd, self.epoch + 15
+        return start_total-end_total, self.epoch()
 
-    def coupon_balance(self, wallet):
+    def coupon_balance(self, address):
         ''' 
             TODO: IS SLOWWWWWWWW, how can i speed this up
             returns the coupon balance for an address
         '''
-        current_epoch = self.epoch(wallet)
+        current_epoch = self.epoch(address)
         total_coupons = 0
         for i in range(0, current_epoch):
-            total_coupons += self.contract.caller({'from' : wallet, 'gas': 8000000}).balanceOfCoupons(wallet, i)
+            total_coupons += self.contract.caller({'from' : address, 'gas': 8000000}).balanceOfCoupons(address, i)
         return total_coupons
 
-    def epoch(self, wallet):
-        return self.contract.caller({'from' : wallet, 'gas': 8000000}).epoch()
+    def epoch(self, address):
+        return self.contract.caller({'from' : address, 'gas': 8000000}).epoch()
         
-    def coupon_bid(self, esd):
+    def coupon_bid(self, address, coupon_expiry, esd_amount, max_coupon_amount):
         """
         Spend the given number of ESD on coupons.
         Returns (issued_at, underlying_coupons, premium_coupons)
         """
+
+        # placeCouponAuctionBid(uint256 couponEpochExpiry, uint256 dollarAmount, uint256 maxCouponAmount)
+
+        self.contract.caller({'from' : address, 'gas': 8000000}).placeCouponAuctionBid(
+            int(coupon_expiry) * pow(10, xSD["decimals"])),
+            int(round(esd_amount, xSD["decimals"]) * pow(10, xSD["decimals"])),
+            int(round(max_coupon_amount, xSD["decimals"]) * pow(10, xSD["decimals"])),
+        )
         
-        rate = self.get_coupon_rate()
-        
-        underlying_coupons = esd
-        premium_coupons = esd * rate
-        issued_at = self.epoch
-        
-        self.esd_supply = max(0, self.esd_supply - esd)
-        self.debt = max(0, self.debt - esd)
-        self.underlying_coupon_supply[issued_at] += underlying_coupons
-        self.premium_coupon_supply[issued_at] += premium_coupons
-        
-        return (issued_at, underlying_coupons, premium_coupons)
-        
-    def filter_expired(self, underlying, premium):
-        """
-        Given a dict of underlying coupon balances by creation epoch, and
-        premium coupon balances by epoch, drop all the coupons that are
-        expired.
-        
-        Return the total value expired.
-        """
-        
-        total = 0
-        
-        expired = set()
-        unexpired = set()
-        for epoch in premium.keys():
-            if epoch + self.expiry_delay < self.epoch:
-                expired.add(epoch)
-        for to_drop in expired:
-            total += premium[to_drop]
-            del premium[to_drop]
-            
-        if self.param_expire_all:
-            # Also do the underlying
-            for epoch in underlying.keys():
-                if epoch + self.expiry_delay < self.epoch:
-                    expired.add(epoch)
-            for to_drop in expired:
-                total += underlying[to_drop]
-                del underlying[to_drop]
-                
-        return total
-        
-    def expire_coupons(self):
-        """
-        Expire all expired coupons in the total supplies.
-        """
-        
-        self.expired_coupons += self.filter_expired(self.underlying_coupon_supply,
-                                                    self.premium_coupon_supply)
-        
-    def redeemable(self, issued_at, underlying_coupons, premium_coupons):
-        """
-        Return the maximum (underlying, premium) coupons currently redeemable
-        from those issued at the given epoch, up to the given limits.
-        
-        Redeemable coupons may actually be expired, in which case they redeem to 0.
-        
-        Premium coupons will always be redeemed even if expired; they just
-        redeem for no money.
-        """
-        
-        # TODO: real redemption cap logic
-        
-        if self.expanding and issued_at + 2 >= self.epoch:
-            # Coupons are only redeemable at all 2 epochs after issuance, and during expansions
-            if underlying_coupons >= self.total_redeemable:
-                return (self.total_redeemable, 0)
-            elif underlying_coupons + premium_coupons >= self.total_redeemable:
-                return (underlying_coupons, self.total_redeemable - underlying_coupons)
-            else:
-                return (underlying_coupons, premium_coupons)
-        else:   
-            # Don't let people redeem anything when not expanding, even the
-            # underlying.
-            return (0.0, 0.0)
-    
-    def redeem(self, issued_at, underlying_coupons, premium_coupons):
+    def redeem(self, address, epoch_expired, coupons_to_redeem):
         """
         Redeem the given number of coupons. Expired coupons redeem to 0.
         
@@ -536,40 +453,14 @@ class DAO:
         
         Assumes everything is actually redeemable.
         """
-        
-        # TODO: real redeem logic
-        
-        self.underlying_coupon_supply[issued_at] = max(0, self.underlying_coupon_supply[issued_at] - underlying_coupons)
-        self.premium_coupon_supply[issued_at] = max(0, self.premium_coupon_supply[issued_at] - premium_coupons)
-        
-        if self.epoch <= issued_at + self.expiry_delay:
-            # Not expired
-            esd = underlying_coupons + premium_coupons
-        else:
-            # Expired
-            if self.param_expire_all:
-                # Destroy underlying ESD
-                esd = 0
-            else:
-                # Return underlying ESD
-                esd = underlying_coupons
+        total_before_coupons = self.total_coupons()
+        self.contract.caller({'from' : address, 'gas': 8000000}).redeemCoupons(
+            int(epoch_expired),
+            int(round(coupons_to_redeem, xSD["decimals"]) * pow(10, xSD["decimals"]))
+        )
+        total_after_coupons = self.total_coupons()
             
-        self.esd_supply += esd
-        self.total_redeemable -= esd
-            
-        return esd
-        
-    def expire(self, issued_at, underlying_coupons, premium_coupons):
-        """
-        Handle expiration of coupons.
-        """
-        
-    def fee(self):
-        """
-        How much does it cost in ETH to advance, probably.
-        """
-        
-        return 0.001
+        return total_after_coupons - total_before_coupons
 
     def advance(self, address):
         print(self.epoch(address))
@@ -581,7 +472,7 @@ class DAO:
             'gasPrice': 1,
         })
         print(tx)
-        signed_tx = w3.eth.account.signTransaction(tx, private_key='0xbcc21bcb2168e415067967842967b6553fd91ce683041ef78a4064115142f13d')
+        signed_tx = w3.eth.account.signTransaction(tx, private_key='0x81c366eed543e811a16dbdbdef4750323a1ca57999f153d08b6896fdcd270476')
         print(signed_tx)
         raw_tx = w3.eth.sendRawTransaction(signed_tx.rawTransaction)
         print(raw_tx)
@@ -687,12 +578,9 @@ class Model:
         self.block += 1
         provider.make_request("evm_increaseTime", [7201])
         
-        # Clean up coupon expiry on the DAO side
-        # self.dao.expire_coupons()
-        
         logger.info("Block {}, epoch {}, price {:.2f}, supply {:.2f}, faith: {:.2f}, bonded {:2.1f}%, coupons: {:.2f}, liquidity {:.2f} ESD / {:.2f} USDC".format(
             self.block, self.dao.epoch(), self.uniswap.esd_price(), self.dao.esd_supply,
-            self.get_overall_faith(), self.dao.esd / max(self.dao.esd_supply, 1E-9) * 100, self.dao.total_coupons(),
+            self.get_overall_faith(), self.dao.esd / max(self.dao.esd_supply, 1E-9) * 100, self.dao.total_coupons(self.agents[int(random.random() * (len(self.agents)- 1))]),
             self.uniswap.esd, self.uniswap.usdc))
         
         anyone_acted = False
@@ -722,6 +610,13 @@ class Model:
                                 
             if len(options) > 0:
                 # We can act
+
+                '''
+                    TODO:
+                        deposit, withdraw
+                    TOTEST:
+                        buy, sell, advance, bond, unbond, coupon_bid, redeem
+                '''
         
                 strategy = a.get_strategy(self.block, self.uniswap.esd_price(), self.dao.esd_supply)
                 
@@ -757,19 +652,30 @@ class Model:
                     logger.debug("Advance for {:.2f} ESD".format(esd))
                 elif action == "bond":
                     esd = portion_dedusted(a.esd, commitment)
-                    esds = self.dao.bond(esd)
+                    esds = self.dao.bond(a.address, esd)
                     a.esd -= esd
                     a.esds += esds
                     logger.debug("Bond {:.2f} ESD".format(esd))
                 elif action == "unbond":
                     esds = portion_dedusted(a.esds, commitment)
-                    esd, when = self.dao.unbond(esds)
+                    esd, when = self.dao.unbond(a.address, esds)
                     a.esds -= esds
                     logger.debug("Unbond {:.2f} ESD".format(esd))
                 elif action == "coupon_bid":
-                    logger.debug("Bid to burn {:.2f} ESD for {:.2f} coupons".format(esd, underlying_coupons + premium_coupons))
+                    esd_at_risk = portion_dedusted(a.esd, commitment)
+                    rand_epoch_expiry = random.random() * 10000000
+                    rand_max_coupons = random.random() * 10000000 * esd_at_risk
+                    self.dao.coupon_bid(a.address, rand_epoch_expiry, esd_at_risk, rand_max_coupons)
+                    a.total_coupons_bid += rand_max_coupons
+                    logger.debug("Bid to burn {:.2f} ESD for {:.2f} coupons with expiry {:.2f}".format(esd_at_risk, underlying_coupons + (rand_max_coupons / esd_at_risk, rand_epoch_expiry)))
                 elif action == "redeem":
-                    logger.debug("Redeem {:.2f} coupons for {:.2f} ESD".format(total_redeemed, total_esd))
+                    # just try to redeem all avail coupons?
+                    total_redeemed = 0
+                    for c_idx in range(0, self.dao.epoch()):
+                        total_redeemed += self.dao.redeem(a.address, c_idx, a.total_coupons_bid)
+
+                    a.total_coupons_bid -= total_redeemed
+                    logger.debug("Redeem {:.2f} coupons for {:.2f} ESD".format(total_redeemed, total_redeemed))
                 elif action == "deposit":
                     price = self.uniswap.esd_price()
                     
