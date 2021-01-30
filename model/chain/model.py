@@ -74,6 +74,7 @@ xSDS = {
 }
 
 DEADLINE_FROM_NOW = 60 * 15
+UINT256_MAX = 2**256 - 1
 
 DaoContract = json.loads(open('./build/contracts/Implementation.json', 'r+').read())
 USDCContract = json.loads(open('./build/contracts/TestnetUSDC.json', 'r+').read())
@@ -234,7 +235,7 @@ class UniswapPool:
         """
         Return true if buying and selling is possible.
         """
-        reserve, token0 = self.getReserves()
+        reserve = self.getReserves()
         token0Balance = reserve[0]
         token1Balance = reserve[1]
         return token0Balance > 0 and token1Balance > 0
@@ -276,7 +277,23 @@ class UniswapPool:
     def provide_liquidity(self, dao, address, esd, usdc):
         """
         Provide liquidity. Returns the number of new LP shares minted.
+
+        TODO: NEED TO DEPOSIT INTO LP, THEN "APPROVE" UNI addr for the POOL ADDR
+
+        APPROVE == 
+            approve = async (tokenAddr, spender, amt = UINT256_MAX) => {
+              const account = await checkConnectedAndGetAddress();
+              const oToken = new window.web3.eth.Contract(testnetUSDCAbi, tokenAddr);
+              await oToken.methods
+                .approve(spender, amt)
+                .send({ from: account })
+                .on('transactionHash', (hash) => {
+                  notify.hash(hash);
+                });
+            };
         """
+
+
 
         slippage = 0.02
         slippageBN = int(round(slippage, UNI["decimals"]) * pow(10, UNI["decimals"]))
@@ -478,7 +495,7 @@ class DAO:
             
         return total_after_coupons - total_before_coupons
 
-    def balance_of(self, address):
+    def token_balance_of(self, address):
         return reg_int(self.dollar.caller({'from' : address, 'gas': 8000000}).balanceOf(address), xSD["decimals"])
     def advance(self, address):
         self.contract.functions.advance().transact({
@@ -487,7 +504,7 @@ class DAO:
             'gas': 8000000,
             'gasPrice': 1,
         })
-        return self.balance_of(address)
+        return self.token_balance_of(address)
 
 def portion_dedusted(total, fraction):
     """
@@ -533,16 +550,28 @@ class Model:
             address = agents[i]
             print('here', address)
 
-            # need to mint USDC to the wallets for each agent
-            usdc.functions.mint(address, start_usdc_formatted).call()
+            commitment = random.random() * 0.1
+            to_use_esd = portion_dedusted(self.dao.token_balance_of(address), commitment)
 
-            print(provider.make_request("evm_increaseTime", [1606348800]))
-            print (self.dao.balance_of(address))
+            price = self.uniswap.esd_price()
+            to_use_usdc = to_use_esd / price
+
+            (lp, lp_esd, lp_usdc) = self.uniswap.provide_liquidity(self.dao.contract, address, to_use_esd, to_use_usdc)
+
+            usdc_b, esd_b = self.uniswap.getTokenBalance()
+
+            print (usdc_b, esd_b)
+
+            # need to mint USDC to the wallets for each agent
+            #usdc.functions.mint(address, start_usdc_formatted).call()
+
+            #print(provider.make_request("evm_increaseTime", [1606348800]))
+            #print (self.dao.token_balance_of(address))
 
             #'''
-            commitment = random.random() * 0.1
-            to_use_usdc = portion_dedusted(start_usdc, commitment)
-            self.uniswap.buy(address, to_use_usdc, 100)
+            
+            
+            #self.uniswap.buy(address, to_use_usdc, 100)
             #'''
 
             sys.exit()
