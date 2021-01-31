@@ -615,8 +615,12 @@ class Model:
             address = agents[i]
             print('here', address)
             # need to mint USDC to the wallets for each agent
-            print(usdc.caller({"from": USDC["addr"], "gas": 8000000}).mint(address, start_usdc_formatted))
-            print(usdc.caller({"from": address, "gas": 8000000}).balanceOf(address))
+            print(usdc.functions.mint(address, int(start_usdc)).transact({
+                'nonce': w3.eth.getTransactionCount(address),
+                'from' : address,
+                'gas': 8000000,
+                'gasPrice': 1,
+            }))
 
             commitment = random.random() * 0.1
             to_use_esd = portion_dedusted(self.dao.token_balance_of(address), commitment)
