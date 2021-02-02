@@ -18,6 +18,7 @@ deploy_data = None
 with open("deploy_output.txt", 'r+') as f:
     deploy_data = f.read()
 
+IS_DEBUG = True
 
 logger = logging.getLogger(__name__)
 provider = Web3.HTTPProvider('http://localhost:7545')
@@ -49,7 +50,7 @@ UNIV2LP = {
 #UniswapV2Router is at: 
 UNIV2Router = {
     "addr": "",
-    "decimals": 18,
+    "decimals": 12,
     "deploy_slug": "UniswapV2Router is at: "
 }
 
@@ -268,8 +269,8 @@ class UniswapPool:
       token0Balance = reserve[0]
       token1Balance = reserve[1]
       if (token0.lower() == USDC["addr"].lower()):
-        return int(token0Balance) * pow(10, 12) / float(int(token1Balance)) if int(token1Balance) != 0 else 0
-      return int(token1Balance) * pow(10, 12) / float(int(token0Balance)) if int(token0Balance) != 0 else 0
+        return int(token0Balance) * pow(10, UNIV2Router['decimals']) / float(int(token1Balance)) if int(token1Balance) != 0 else 0
+      return int(token1Balance) * pow(10, UNIV2Router['decimals']) / float(int(token0Balance)) if int(token0Balance) != 0 else 0
     
     def esd_price(self):
         """
@@ -284,69 +285,55 @@ class UniswapPool:
     def provide_liquidity(self, dao, address, esd, usdc):
         """
         Provide liquidity. Returns the number of new LP shares minted.
+        """        
+        is_usdc_approved = self.usdc_lp.caller({'from' : address, 'gas': 8000000}).allowance(address, UNIV2Router["addr"])
 
-        TODO: NEED TO DEPOSIT INTO LP, THEN "APPROVE" UNI addr for the POOL ADDR
+        if IS_DEBUG:
+            print('allowance (usdc)', is_usdc_approved)
 
-        """
-        print(self.uniswap_pair.caller().token0(), self.uniswap_pair.caller().token1())
-        print(self
-            .xsd.address, self.usdc_lp.address)
+        if not (is_usdc_approved > 0):
+            self.usdc_lp.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
+                'nonce': w3.eth.getTransactionCount(address),
+                'from' : address,
+                'gas': 8000000,
+                'gasPrice': 1,
+            })      
 
+        is_xsd_approved = self.xsd.caller({'from' : address, 'gas': 8000000}).allowance(address, UNIV2Router["addr"])
 
-        self.usdc_lp.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
-            'nonce': w3.eth.getTransactionCount(address),
-            'from' : address,
-            'gas': 8000000,
-            'gasPrice': 1,
-        })        
+        if IS_DEBUG:
+            print('allowance (xsd)',  is_xsd_approved)
 
-        print('allowance (usdc)', self.usdc_lp.caller({'from' : address, 'gas': 8000000}).allowance(address, UNIV2Router["addr"]))
+        if not (is_xsd_approved > 0):
+            self.xsd.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
+                'nonce': w3.eth.getTransactionCount(address),
+                'from' : address,
+                'gas': 8000000,
+                'gasPrice': 1,
+            })
 
-        self.xsd.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
-            'nonce': w3.eth.getTransactionCount(address),
-            'from' : address,
-            'gas': 8000000,
-            'gasPrice': 1,
-        })
+        if IS_DEBUG:
+            print(int(esd), 'xSD xsd address', reg_int(self.xsd.caller({"from": address, "gas": 8000000}).balanceOf(address), xSD['decimals']))
 
-        print('allowance (xsd)', self.xsd.caller({'from' : address, 'gas': 8000000}).allowance(address, UNIV2Router["addr"]))
-
-        
-        '''
-        # transfer xSD into dollar pool
-        #THIS WORKS
-        self.xsd.functions.transfer(self.xsd.address, int(esd)).transact({
-            'nonce': w3.eth.getTransactionCount(address),
-            'from' : address,
-            'gas': 8000000,
-            'gasPrice': 1,
-        })
-        
-        # transfer USDC into USDC pool
-        #THIS WORKS
-        self.usdc_lp.functions.transfer(self.usdc_lp.address, int(usdc)).transact({
-            'nonce': w3.eth.getTransactionCount(address),
-            'from' : address,
-            'gas': 8000000,
-            'gasPrice': 1,
-        })
-       '''
-        print(int(esd), 'xSD xsd address', reg_int(self.xsd.caller({"from": address, "gas": 8000000}).balanceOf(address), xSD['decimals']))
-
-        print('Total xSD Supply', reg_int(self.xsd.caller({"from": address, "gas": 8000000}).totalSupply(), xSD['decimals']))
-        print(int(usdc), 'USDC usd address', reg_int(self.usdc_lp.caller({"from": address, "gas": 8000000}).balanceOf(address), USDC['decimals']))
-        print('Total usdc Supply', reg_int(self.usdc_lp.caller({"from": address, "gas": 8000000}).totalSupply(), USDC['decimals']))
+            print('Total xSD Supply', reg_int(self.xsd.caller({"from": address, "gas": 8000000}).totalSupply(), xSD['decimals']))
+            print(int(usdc), 'USDC usd address', reg_int(self.usdc_lp.caller({"from": address, "gas": 8000000}).balanceOf(address), USDC['decimals']))
+            print('Total usdc Supply', reg_int(self.usdc_lp.caller({"from": address, "gas": 8000000}).totalSupply(), USDC['decimals']))
 
         slippage = 0.02
-        minAmountESD = int(esd * (1 - slippage))
-        minAmountUSDC = int(usdc * (1 - slippage))
-        xsd, usdc, liqudidty = self.uniswap_router.functions.addLiquidity(
+        min_esd_amount = (esd * (1 - slippage))
+        min_usdc_amount = (usdc * (1 - slippage))
+
+        if IS_DEBUG:
+            print(unreg_int(esd, xSD['decimals']), unreg_int(usdc, USDC['decimals']), unreg_int(min_esd_amount, xSD['decimals']), unreg_int(min_usdc_amount, USDC['decimals']))
+            print(esd, usdc, min_esd_amount, min_usdc_amount)
+
+        rv = self.uniswap_router.functions.addLiquidity(
             self.xsd.address,
             self.usdc_lp.address,
-            int(esd),
-            int(usdc),
-            minAmountESD,
-            minAmountUSDC,
+            unreg_int(esd, xSD['decimals']),
+            unreg_int(usdc, USDC['decimals']),
+            unreg_int(min_esd_amount, xSD['decimals']),
+            unreg_int(min_usdc_amount, USDC['decimals']),
             address,
             (int(w3.eth.get_block('latest')['timestamp']) + DEADLINE_FROM_NOW)
         ).transact({
@@ -355,8 +342,13 @@ class UniswapPool:
             'gas': 8000000,
             'gasPrice': 1,
         })
+
+        lp_shares = reg_int(self.uniswap_pair.caller({'from' : address, 'gas': 8000000}).balanceOf(address), UNIV2Router['decimals'])
+
+        if IS_DEBUG:
+            print("lp_shares:", lp_shares)
         
-        return liqudidty, xsd, usdc
+        return lp_shares
         
     def remove_liquidity(self, dao, address, shares, min_esd_amount, min_usdc_amount):
         """
@@ -626,7 +618,6 @@ class Model:
             print('here', address)
             # need to mint USDC to the wallets for each agent
             usdc_b, esd_b = self.uniswap.getTokenBalance()
-
             print (usdc_b, esd_b)
             '''
             usdc.functions.mint(address, int(start_usdc_formatted)).transact({
@@ -643,6 +634,7 @@ class Model:
             to_use_esd = portion_dedusted(self.dao.token_balance_of(address), commitment)
 
             price = self.uniswap.esd_price()
+            print(price)
             to_use_usdc = to_use_esd / price
 
             (lp, lp_esd, lp_usdc) = self.uniswap.provide_liquidity(self.dao.contract, address, to_use_esd, to_use_usdc)
@@ -741,10 +733,10 @@ class Model:
                     TODO:
                         
                     TOTEST:
-                        buy, sell, coupon_bid, redeem, provide_liquidity, remove_liquidity, bond, unbond
+                        buy, sell, coupon_bid, redeem, remove_liquidity, bond, unbond
 
                     WORKS:
-                        advance
+                        advance, provide_liquidity
                 '''
         
                 strategy = a.get_strategy(self.block, self.uniswap.esd_price(), self.dao.esd_supply)
