@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-model.py: agent-based model of ESD system behavior, against a testnet
+model.py: agent-based model of xSD system behavior, against a testnet
 """
 
 import json
@@ -117,12 +117,12 @@ class Agent:
     """
     
     def __init__(self, **kwargs):
-        # ESD balance
-        self.esd = 0.0
+        # xSD balance
+        self.xsd = 0.0
         # USDC balance
         self.usdc = kwargs.get("starting_usdc", 0.0)
-        # ESDS (Dao share) balance
-        self.esds = 0.0
+        # xSDS (Dao share) balance
+        self.xsds = 0.0
         # Eth balance
         self.eth = kwargs.get("starting_eth", 0.0)
         # Uniswap LP share balance
@@ -139,8 +139,8 @@ class Agent:
         # Should we even use faith?
         self.use_faith = kwargs.get("use_faith", True)
         
-        # What ESD is coming to us in future epochs?
-        self.future_esd = collections.defaultdict(float)
+        # What xSD is coming to us in future epochs?
+        self.future_xsd = collections.defaultdict(float)
 
         # add wallet addr
         self.address = kwargs.get("wallet_address", '0x0000000000000000000000000000000000000000')
@@ -152,8 +152,8 @@ class Agent:
         """
         Turn into a readable string summary.
         """
-        return "Agent(esd={:.2f}, usdc={:.2f}, esds={}, eth={}, lp={}, coupons={:.2f})".format(
-            self.esd, self.usdc, self.esds, self.eth, self.lp,
+        return "Agent(xSD={:.2f}, usdc={:.2f}, xSDs={}, eth={}, lp={}, coupons={:.2f})".format(
+            self.xsd, self.usdc, self.xsds, self.eth, self.lp,
             sum(self.underlying_coupons.values()) + sum(self.premium_coupons.values()))
         
     def get_strategy(self, block, price, total_supply):
@@ -189,9 +189,9 @@ class Agent:
             strategy["bond"] = 0
        
         if self.use_faith:
-            # Vary our strategy based on how much ESD we think ought to exist
+            # Vary our strategy based on how much xSD we think ought to exist
             if price * total_supply > self.get_faith(block, price, total_supply):
-                # There is too much ESD, so we want to sell
+                # There is too much xSD, so we want to sell
                 strategy["unbond"] *= 2
                 strategy["sell"] = 4.0
             else:
@@ -202,7 +202,7 @@ class Agent:
         
     def get_faith(self, block, price, total_supply):
         """
-        Get the total faith in ESD that this agent has, in USDC.
+        Get the total faith in xSD that this agent has, in USDC.
         
         If the market cap is over the faith, the agent thinks the system is
         over-valued. If the market cap is under the faith, the agent thinks the
@@ -210,7 +210,7 @@ class Agent:
         """
         
         # TODO: model the real economy as bidding on utility in
-        # mutually-beneficial exchanges conducted in ESD, for which a velocity
+        # mutually-beneficial exchanges conducted in xSD, for which a velocity
         # is needed, instead of an abstract faith?
         
         # TODO: different faith for different people
@@ -223,7 +223,7 @@ class Agent:
 
 class UniswapPool:
     """
-    Represents the Uniswap pool. Tracks ESD and USDC balances of pool, and total outstanding LP shares.
+    Represents the Uniswap pool. Tracks xSD and USDC balances of pool, and total outstanding LP shares.
     """
     
     def __init__(self, uniswap, uniswap_router, uniswap_lp, usdc_lp, xsd, **kwargs):
@@ -232,13 +232,7 @@ class UniswapPool:
         self.uniswap_lp = uniswap_lp
         self.usdc_lp = usdc_lp
         self.xsd = xsd
-        # ESD balance
-        self.esd = 0.0
-        # USDC balance
-        self.usdc = 0.0
-        # Total shares
-        self.total_shares = 0.0
-        
+    
     def operational(self):
         """
         Return true if buying and selling is possible.
@@ -272,9 +266,9 @@ class UniswapPool:
         return int(token0Balance) * pow(10, UNIV2Router['decimals']) / float(int(token1Balance)) if int(token1Balance) != 0 else 0
       return int(token1Balance) * pow(10, UNIV2Router['decimals']) / float(int(token0Balance)) if int(token0Balance) != 0 else 0
     
-    def esd_price(self):
+    def xsd_price(self):
         """
-        Get the current ESD price in USDC.
+        Get the current xSD price in USDC.
         """
         
         if self.operational():
@@ -282,7 +276,7 @@ class UniswapPool:
         else:
             return 1.0
         
-    def provide_liquidity(self, address, esd, usdc):
+    def provide_liquidity(self, address, xsd, usdc):
         """
         Provide liquidity. Returns the number of new LP shares minted.
         """        
@@ -313,26 +307,26 @@ class UniswapPool:
             })
 
         if IS_DEBUG:
-            print(int(esd), 'xSD xsd address', reg_int(self.xsd.caller({"from": address, "gas": 8000000}).balanceOf(address), xSD['decimals']))
+            print(int(xsd), 'xSD xsd address', reg_int(self.xsd.caller({"from": address, "gas": 8000000}).balanceOf(address), xSD['decimals']))
 
             print('Total xSD Supply', reg_int(self.xsd.caller({"from": address, "gas": 8000000}).totalSupply(), xSD['decimals']))
             print(int(usdc), 'USDC usd address', reg_int(self.usdc_lp.caller({"from": address, "gas": 8000000}).balanceOf(address), USDC['decimals']))
             print('Total usdc Supply', reg_int(self.usdc_lp.caller({"from": address, "gas": 8000000}).totalSupply(), USDC['decimals']))
 
         slippage = 0.02
-        min_esd_amount = (esd * (1 - slippage))
+        min_xsd_amount = (xsd * (1 - slippage))
         min_usdc_amount = (usdc * (1 - slippage))
 
         if IS_DEBUG:
-            print(unreg_int(esd, xSD['decimals']), unreg_int(usdc, USDC['decimals']), unreg_int(min_esd_amount, xSD['decimals']), unreg_int(min_usdc_amount, USDC['decimals']))
-            print(esd, usdc, min_esd_amount, min_usdc_amount)
+            print(unreg_int(xsd, xSD['decimals']), unreg_int(usdc, USDC['decimals']), unreg_int(min_xsd_amount, xSD['decimals']), unreg_int(min_usdc_amount, USDC['decimals']))
+            print(xsd, usdc, min_xsd_amount, min_usdc_amount)
 
         rv = self.uniswap_router.functions.addLiquidity(
             self.xsd.address,
             self.usdc_lp.address,
-            unreg_int(esd, xSD['decimals']),
+            unreg_int(xsd, xSD['decimals']),
             unreg_int(usdc, USDC['decimals']),
-            unreg_int(min_esd_amount, xSD['decimals']),
+            unreg_int(min_xsd_amount, xSD['decimals']),
             unreg_int(min_usdc_amount, USDC['decimals']),
             address,
             (int(w3.eth.get_block('latest')['timestamp']) + DEADLINE_FROM_NOW)
@@ -350,7 +344,7 @@ class UniswapPool:
         
         return lp_shares
         
-    def remove_liquidity(self, address, shares, min_esd_amount, min_usdc_amount):
+    def remove_liquidity(self, address, shares, min_xsd_amount, min_usdc_amount):
         """
         Remove liquidity for the given number of shares.
 
@@ -359,7 +353,7 @@ class UniswapPool:
             self.xsd.address,
             self.usdc_lp.address,
             unreg_int(shares, UNIV2Router['decimals']),
-            unreg_int(min_esd_amount, xSD['decimals']),
+            unreg_int(min_xsd_amount, xSD['decimals']),
             unreg_int(min_usdc_amount, USDC['decimals']),
             address,
             int(w3.eth.get_block('latest')['timestamp'] + DEADLINE_FROM_NOW)
@@ -374,16 +368,16 @@ class UniswapPool:
         lp_shares = reg_int(self.uniswap_pair.caller({'from' : address, 'gas': 8000000}).balanceOf(address), UNIV2Router['decimals'])
         return lp_shares
         
-    def buy(self, address, usdc, max_esd_amount):
+    def buy(self, address, usdc, max_xsd_amount):
         """
         Spend the given number of USDC to buy xSD. Returns the xSD bought.
         ['swapTokensForExactTokens(uint256,uint256,address[],address,uint256)']
         """  
-        # get balance of esd before and after
+        # get balance of xSD before and after
         balance_before = self.xsd.caller({"from": address, 'gas': 8000000}).balanceOf(address)
         self.uniswap_router.functions.swapTokensForExactTokens(
             unreg_int(usdc, USDC["decimals"]),
-            unreg_int(max_esd_amount, xSD["decimals"]),
+            unreg_int(max_xsd_amount, xSD["decimals"]),
             [self.usdc_lp.address, self.xsd.address],
             address,
             int(w3.eth.get_block('latest')['timestamp'] + DEADLINE_FROM_NOW)
@@ -397,14 +391,14 @@ class UniswapPool:
         amount_bought = reg_int(balance_before - balance_after, xSD["decimals"])
         return amount_bought
         
-    def sell(self, address, esd, min_usdc_amount):
+    def sell(self, address, xsd, min_usdc_amount):
         """
-        Sell the given number of xSD for USDC. Returns the xSDC received.
+        Sell the given number of xSD for USDC. Returns the xSD received.
         """
-        # get balance of esd before and after
+        # get balance of xsd before and after
         balance_before = self.xsd.caller({"from": address, 'gas': 8000000}).balanceOf(address)
         self.uniswap_router.functions.swapExactTokensForTokens(
-            unreg_int(esd, xSD["decimals"]),
+            unreg_int(xsd, xSD["decimals"]),
             unreg_int(min_usdc_amount, USDC["decimals"]),
             [self.xsd.address, self.usdc_lp.address],
             address,
@@ -421,7 +415,7 @@ class UniswapPool:
         
 class DAO:
     """
-    Represents the ESD DAO. Tracks ESD balance of DAO and total outstanding ESDS.
+    Represents the xSD DAO. Tracks xSD balance of DAO and total outstanding xSDS.
     """
     
     def __init__(self, contract, dollar_contract, **kwargs):
@@ -430,10 +424,10 @@ class DAO:
         """
         self.contract = contract  
         self.dollar = dollar_contract    
-        # How many ESD are bonded
-        self.esd = 0.0
-        # How many ESD exist?
-        self.esd_supply = 0.0
+        # How many xSD are bonded
+        self.xsd = 0.0
+        # How many xSD exist?
+        self.xsd_supply = 0.0
         # How many shares are outstanding
         self.total_shares = 0.0
         # What block did the epoch start
@@ -445,9 +439,9 @@ class DAO:
         
         # TODO: add real interest/debt/coupon model
         self.interest = 1E-4
-        # How many ESD can be issued in coupons?
+        # How many xSD can be issued in coupons?
         self.debt = 0.0
-        # How many ESD can be redeemed from coupons?
+        # How many xSD can be redeemed from coupons?
         self.total_redeemable = 0.0
         
         # How many epochs do coupons take to expire?
@@ -471,35 +465,6 @@ class DAO:
         
         total = self.contract.caller({'from' : address, 'gas': 8000000}).totalCoupons()
         return reg_int(total, xSD['decimals'])
-        
-    def bond(self, address, esd):
-        """
-        Deposit and bond the given amount of ESD.
-        Returns the number of ESDS minted.
-        """
-    
-        # TODO: model lockups
-        
-        self.contract.caller({'from' : address, 'gas': 8000000}).bond(
-            int(round(max_esd_amount, xSD["decimals"]) * pow(10, xSD["decimals"]))
-        )
-        
-        return esd
-
-        
-    def unbond(self, address, shares):
-        """
-        Unbond and withdraw the given number of shares.
-        Returns the amount of ESD received, and the epoch it will be available.
-        """
-        #get overall bonded
-        start_total = self.contract.caller({'from' : address, 'gas': 8000000}).totalBonded()
-        self.contract.caller({'from' : address, 'gas': 8000000}).unbond(
-            int(round(shares, xSD["decimals"]) * pow(10, xSD["decimals"]))
-        )
-        end_total = self.contract.caller({'from' : address, 'gas': 8000000}).totalBonded()
-        
-        return start_total-end_total, self.epoch()
 
     def coupon_balance(self, address):
         ''' 
@@ -511,16 +476,16 @@ class DAO:
     def epoch(self, address):
         return self.contract.caller({'from' : address, 'gas': 8000000}).epoch()
         
-    def coupon_bid(self, address, coupon_expiry, esd_amount, max_coupon_amount):
+    def coupon_bid(self, address, coupon_expiry, xsd_amount, max_coupon_amount):
         """
-        Spend the given number of ESD on coupons.
+        Spend the given number of xSD on coupons.
         Returns (issued_at, underlying_coupons, premium_coupons)
         """
         # placeCouponAuctionBid(uint256 couponEpochExpiry, uint256 dollarAmount, uint256 maxCouponAmount)
 
         self.contract.caller({'from' : address, 'gas': 8000000}).placeCouponAuctionBid(
             reg_int(coupon_expiry, xSD["decimals"]),
-            reg_int(esd_amount, xSD["decimals"]),
+            reg_int(xsd_amount, xSD["decimals"]),
             reg_int(xSD["decimals"], xSD["decimals"]))
         )
         
@@ -595,68 +560,34 @@ class Model:
             start_usdc = round(random.random() * self.max_usdc, USDC["decimals"])
             start_usdc_formatted = unreg_int(start_usdc, USDC["decimals"])
             address = agents[i]
-            print('here', address)
+            print('account address:', address)
             # need to mint USDC to the wallets for each agent
-            usdc_b, esd_b = self.uniswap.getTokenBalance()
-            print (usdc_b, esd_b)
-            '''
-
-            '''
+            usdc_b, xsd_b = self.uniswap.getTokenBalance()
+            print (usdc_b, xsd_b)
             #print(self.dao.advance(address))
 
             commitment = random.random() * 0.1
-            to_use_esd = portion_dedusted(self.dao.token_balance_of(address), commitment)
+            to_use_xsd = portion_dedusted(self.dao.token_balance_of(address), commitment)
 
-            price = self.uniswap.esd_price()
+            price = self.uniswap.xsd_price()
             print("price", price)
 
             revs = self.uniswap.getReserves()
 
-            min_esd_needed = reg_int(self.uniswap.uniswap_router.caller({'from' : address, 'gas': 8000000}).quote(unreg_int(start_usdc, xSD['decimals']), revs[0], revs[1]), xSD['decimals'])
-            print ("min_esd_needed", min_esd_needed)
+            min_xsd_needed = reg_int(self.uniswap.uniswap_router.caller({'from' : address, 'gas': 8000000}).quote(unreg_int(start_usdc, xSD['decimals']), revs[0], revs[1]), xSD['decimals'])
+            print ("min_xsd_needed", min_xsd_needed)
 
             usdc = portion_dedusted(start_usdc, commitment)
             max_amount = price / usdc
-            print("esd available", reg_int(revs[1],xSD['decimals']))
-            esd = self.uniswap.sell(address, reg_int(revs[1],xSD['decimals']) , max_amount)
+            print("xSD available", reg_int(revs[1],xSD['decimals']))
+            xsd = self.uniswap.sell(address, reg_int(revs[1],xSD['decimals']) , max_amount)
 
-            print("esd sold", esd)
+            print("xSD sold", xsd)
+            print("price", self.uniswap.xsd_price())
 
-            print("price", self.uniswap.esd_price())
+            usdc_b, xsd_b = self.uniswap.getTokenBalance()
 
-            #lp = self.uniswap.provide_liquidity(address, to_use_esd, to_use_esd)
-            '''
-            lp = reg_int(self.uniswap.uniswap_pair.caller({'from' : address, 'gas': 8000000}).balanceOf(address), UNIV2Router['decimals'])
-            print('total lp before', lp)
-            min_esd_amount = esd_b / usdc_b * lp
-            min_usdc_amount = usdc_b / esd_b * lp
-            lp = self.uniswap.remove_liquidity(address, lp, min_esd_amount, min_usdc_amount)
-            print('total lp after', lp)
-            '''
-            print('total lp after', lp)
-
-            usdc_b, esd_b = self.uniswap.getTokenBalance()
-
-            print (usdc_b, esd_b)
-            sys.exit()
-
-            '''
-            usdc = portion_dedusted(a.usdc, commitment)
-            price = self.uniswap.esd_price()
-            max_amount = usdc / price
-            esd = self.uniswap.buy(a.address, usdc, max_amount)
-            '''
-
-        
-            #
-            #print (self.dao.token_balance_of(address))
-
-            #'''
-            
-            
-            #self.uniswap.buy(address, to_use_usdc, 100)
-            #'''
-
+            print (usdc_b, xsd_b)
             sys.exit()
 
             # need to mint USDC to the wallets for each agent
@@ -683,14 +614,14 @@ class Model:
             stream.write("#block\tprice\tsupply\tcoupons\tfaith\n")
         
         stream.write('{}\t{:.2f}\t{:.2f}\t{}\t{:.2f}\t{:.2f}\t{:.2f}\n'.format(
-            self.block, self.uniswap.esd_price(), self.dao.esd_supply, self.dao.total_coupons(), self.get_overall_faith()))
+            self.block, self.uniswap.xsd_price(), self.dao.xsd_supply, self.dao.total_coupons(), self.get_overall_faith()))
        
     def get_overall_faith(self):
         """
-        What target should the system be trying to hit in ESD market cap?
+        What target should the system be trying to hit in xSD market cap?
         """
         
-        return self.agents[0].get_faith(self.block, self.uniswap.esd_price(), self.dao.esd_supply)
+        return self.agents[0].get_faith(self.block, self.uniswap.xsd_price(), self.dao.xsd_supply)
        
     def step(self):
         """
@@ -702,10 +633,10 @@ class Model:
         self.block += 1
         provider.make_request("evm_increaseTime", [7201])
         
-        logger.info("Block {}, epoch {}, price {:.2f}, supply {:.2f}, faith: {:.2f}, bonded {:2.1f}%, coupons: {:.2f}, liquidity {:.2f} ESD / {:.2f} USDC".format(
-            self.block, self.dao.epoch(), self.uniswap.esd_price(), self.dao.esd_supply,
-            self.get_overall_faith(), self.dao.esd / max(self.dao.esd_supply, 1E-9) * 100, self.dao.total_coupons(self.agents[int(random.random() * (len(self.agents)- 1))]),
-            self.uniswap.esd, self.uniswap.usdc))
+        logger.info("Block {}, epoch {}, price {:.2f}, supply {:.2f}, faith: {:.2f}, bonded {:2.1f}%, coupons: {:.2f}, liquidity {:.2f} xSD / {:.2f} USDC".format(
+            self.block, self.dao.epoch(), self.uniswap.xsd_price(), self.dao.xsd_supply,
+            self.get_overall_faith(), self.dao.xsd / max(self.dao.xsd_supply, 1E-9) * 100, self.dao.total_coupons(self.agents[int(random.random() * (len(self.agents)- 1))]),
+            self.uniswap.xsd, self.uniswap.usdc))
         
         anyone_acted = False
 
@@ -714,24 +645,24 @@ class Model:
             options = []
             if a.usdc > 0 and self.uniswap.operational():
                 options.append("buy")
-            if a.esd > 0 and self.uniswap.operational():
+            if a.xsd > 0 and self.uniswap.operational():
                 options.append("sell")
             if a.eth >= self.dao.fee():
                 options.append("advance")
             '''
             TODO: CURRENTLY NO INCENTIVE TO BOND INTO LP OR DAO (EXCEPT FOR VOTING)
-            if a.esd > 0:
+            if a.xsd > 0:
                 options.append("bond")
-            if a.esds > 0:
+            if a.xsds > 0:
                 options.append("unbond")
             '''
-            if a.esd > 0 and self.dao.esd_price() <= 1.0:
+            if a.xsd > 0 and self.dao.xsd_price() <= 1.0:
                 options.append("coupon_bid")
 
             # try any ways but handle traceback, faster than looping over all the epocks
-            if self.dao.esd_price() >= 1.0:
+            if self.dao.xsd_price() >= 1.0:
                 options.append("redeem")
-            if a.usdc > 0 and a.esd > 0:
+            if a.usdc > 0 and a.xsd > 0:
                 options.append("provide_liquidity")
             if a.lp > 0:
                 options.append("remove_liquidity")
@@ -741,15 +672,16 @@ class Model:
 
                 '''
                     TODO:
+                        bond, unbond
                         
                     TOTEST:
-                        coupon_bid, redeem, bond, unbond
+                        bond, unbond
 
                     WORKS:
-                        advance, provide_liquidity, remove_liquidity, buy, sell
+                        advance, provide_liquidity, remove_liquidity, buy, sell, coupon_bid, redeem
                 '''
         
-                strategy = a.get_strategy(self.block, self.uniswap.esd_price(), self.dao.esd_supply)
+                strategy = a.get_strategy(self.block, self.uniswap.xsd_price(), self.dao.xsd_supply)
                 
                 weights = [strategy[o] for o in options]
                 
@@ -762,101 +694,105 @@ class Model:
                 logger.debug("Agent {}: {}".format(agent_num, action))
                 
                 if action == "buy":
-                    usdc = portion_dedusted(a.usdc, commitment)
-                    price = self.uniswap.esd_price()
+                    # this will limit the size of orders avaialble
+                    revs = self.uniswap.getReserves()
+                    usdc_b, xsd_b = revs
+                    
+                    usdc_b = reg_int(usdc_b, USDC["decimals"])
+                    xsd_b = reg_int(xsd_b, xSD["decimals"])
+
+                    usdc = min(portion_dedusted(a.usdc, commitment), usdc_b)
+                    price = self.uniswap.xsd_price()
                     max_amount = usdc / price
-                    esd = self.uniswap.buy(a.address, usdc, max_amount)
+                    xsd = self.uniswap.buy(a.address, usdc, max_amount)
                     a.usdc -= usdc
-                    a.esd += esd
-                    logger.debug("Buy {:.2f} ESD @ {:.2f} for {:.2f} USDC".format(esd, price, usdc))
+                    a.xsd += xsd
+                    logger.debug("Buy {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd, price, usdc))
                 elif action == "sell":
-                    esd = portion_dedusted(a.esd, commitment)
-                    price = self.uniswap.esd_price()
-                    max_amount = price / esd
-                    usdc = self.uniswap.sell(a.address, esd, max_amount)
-                    a.esd -= esd
+                    # this will limit the size of orders avaialble
+                    revs = self.uniswap.getReserves()
+                    usdc_b, xsd_b = revs
+                    
+                    usdc_b = reg_int(usdc_b, USDC["decimals"])
+                    xsd_b = reg_int(xsd_b, xSD["decimals"])
+
+                    xsd = min(portion_dedusted(a.xsd, commitment), xsd_b)
+                    price = self.uniswap.xsd_price()
+                    max_amount = price / xsd
+                    usdc = self.uniswap.sell(a.address, xsd, max_amount)
+                    a.xsd -= xsd
                     a.usdc += usdc
-                    logger.debug("Sell {:.2f} ESD @ {:.2f} for {:.2f} USDC".format(esd, price, usdc))
+                    logger.debug("Sell {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd, price, usdc))
                 elif action == "advance":
-                    esd = self.dao.advance(a.address)
-                    a.esd = esd
-                    logger.debug("Advance for {:.2f} ESD".format(esd))
-                elif action == "bond":
-                    esd = portion_dedusted(a.esd, commitment)
-                    esds = self.dao.bond(a.address, esd)
-                    a.esd -= esd
-                    a.esds += esds
-                    logger.debug("Bond {:.2f} ESD".format(esd))
-                elif action == "unbond":
-                    esds = portion_dedusted(a.esds, commitment)
-                    esd, when = self.dao.unbond(a.address, esds)
-                    a.esds -= esds
-                    logger.debug("Unbond {:.2f} ESD".format(esd))
+                    xsd = self.dao.advance(a.address)
+                    a.xsd = xsd
+                    logger.debug("Advance for {:.2f} xSD".format(xsd))
                 elif action == "coupon_bid":
-                    esd_at_risk = portion_dedusted(a.esd, commitment)
+                    xsd_at_risk = portion_dedusted(a.xsd, commitment)
                     rand_epoch_expiry = random.random() * 10000000
-                    rand_max_coupons = random.random() * 10000000 * esd_at_risk
-                    self.dao.coupon_bid(a.address, rand_epoch_expiry, esd_at_risk, rand_max_coupons)
+                    rand_max_coupons = random.random() * 10000000 * xsd_at_risk
+                    self.dao.coupon_bid(a.address, rand_epoch_expiry, xsd_at_risk, rand_max_coupons)
                     a.total_coupons_bid += rand_max_coupons
-                    logger.debug("Bid to burn {:.2f} ESD for {:.2f} coupons with expiry {:.2f}".format(esd_at_risk, underlying_coupons + (rand_max_coupons / esd_at_risk, rand_epoch_expiry)))
+                    logger.debug("Bid to burn {:.2f} xSD for {:.2f} coupons with expiry {:.2f}".format(xsd_at_risk, underlying_coupons + (rand_max_coupons / xsd_at_risk, rand_epoch_expiry)))
                 elif action == "redeem":
                     # just try to redeem all avail coupons?
+                    # need to replace this with redeem all?
                     total_redeemed = 0
                     for c_idx in range(0, self.dao.epoch()):
                         total_redeemed += self.dao.redeem(a.address, c_idx, a.total_coupons_bid)
 
                     a.total_coupons_bid -= total_redeemed
-                    logger.debug("Redeem {:.2f} coupons for {:.2f} ESD".format(total_redeemed, total_redeemed))
+                    logger.debug("Redeem {:.2f} coupons for {:.2f} xSD".format(total_redeemed, total_redeemed))
                 elif action == "provide_liquidity":
-                    price = self.uniswap.esd_price()
+                    price = self.uniswap.xsd_price()
 
-                    usdc_b, esd_b = self.uniswap.getTokenBalance()
+                    usdc_b, xsd_b = self.uniswap.getTokenBalance()
 
-                    min_esd_amount = esd_b / usdc_b * lp
-                    min_usdc_amount = usdc_b / esd_b * lp
+                    min_xsd_amount = xsd_b / usdc_b * lp
+                    min_usdc_amount = usdc_b / xsd_b * lp
                     
-                    if a.esd * price < a.usdc:
-                        esd = portion_dedusted(a.esd, commitment)
-                        usdc = esd * price
+                    if a.xsd * price < a.usdc:
+                        xsd = portion_dedusted(a.xsd, commitment)
+                        usdc = xsd * price
                     else:
                         usdc = portion_dedusted(a.usdc, commitment)
-                        esd = usdc / price
-                    after_lp = self.uniswap.provide_liquidity(p.address, esd, usdc)
+                        xsd = usdc / price
+                    after_lp = self.uniswap.provide_liquidity(p.address, xsd, usdc)
 
-                    min_esd_amount_after = esd_b / usdc_b * after_lp
-                    min_usdc_amount_after = usdc_b / esd_b * after_lp
+                    min_xsd_amount_after = xsd_b / usdc_b * after_lp
+                    min_usdc_amount_after = usdc_b / xsd_b * after_lp
 
-                    diff_esd = (min_esd_amount_after - esd_b)
+                    diff_xsd = (min_xsd_amount_after - xsd_b)
                     diff_usdc = (min_usdc_amount_after - usdc_b)
                     
-                    a.esd = max(0, a.esd - diff_esd)
+                    a.xsd = max(0, a.xsd - diff_xsd)
                     a.usdc = max(0, a.usdc - diff_usdc)
-                    a.lp_esd = max(0, a.lp_esd + diff_usdc)
+                    a.lp_xsd = max(0, a.lp_xsd + diff_usdc)
                     a.lp_usdc = max(0, a.lp_usdc + diff_usdc)
                     a.lp += after_lp
-                    logger.debug("Provide {:.2f} ESD and {:.2f} USDC".format(esd, usdc))
+                    logger.debug("Provide {:.2f} xSD and {:.2f} USDC".format(xsd, usdc))
                 elif action == "remove_liquidity":
                     lp = portion_dedusted(a.lp, commitment)
                     
-                    usdc_b, esd_b = self.uniswap.getTokenBalance()
+                    usdc_b, xsd_b = self.uniswap.getTokenBalance()
 
-                    min_esd_amount = esd_b / usdc_b * lp
-                    min_usdc_amount = usdc_b / esd_b * lp
+                    min_xsd_amount = xsd_b / usdc_b * lp
+                    min_usdc_amount = usdc_b / xsd_b * lp
 
-                    after_lp = self.uniswap.remove_liquidity(p.address, lp, min_esd_amount, min_usdc_amount)
+                    after_lp = self.uniswap.remove_liquidity(p.address, lp, min_xsd_amount, min_usdc_amount)
 
-                    min_esd_amount_after = esd_b / usdc_b * after_lp
-                    min_usdc_amount_after = usdc_b / esd_b * after_lp
+                    min_xsd_amount_after = xsd_b / usdc_b * after_lp
+                    min_usdc_amount_after = usdc_b / xsd_b * after_lp
 
-                    diff_esd = (min_esd_amount - min_esd_amount_after)
+                    diff_xsd = (min_xsd_amount - min_xsd_amount_after)
                     diff_usdc = (min_usdc_amount - min_usdc_amount_after)
                     
                     a.lp -= after_lp
-                    a.esd += diff_esd
+                    a.xsd += diff_xsd
                     a.usdc += diff_usdc
-                    a.lp_esd = max(0, a.lp_esd - diff_esd)
+                    a.lp_xsd = max(0, a.lp_xsd - diff_xsd)
                     a.lp_usdc = max(0, a.lp_usdc - diff_usdc)
-                    logger.debug("Stop providing {:.2f} ESD and {:.2f} USDC".format(min_esd_amount, min_usdc_amount))
+                    logger.debug("Stop providing {:.2f} xSD and {:.2f} USDC".format(min_xsd_amount, min_usdc_amount))
                 else:
                     raise RuntimeError("Bad action: " + action)
                     
