@@ -470,7 +470,7 @@ class DAO:
         """
         
         total = self.contract.caller({'from' : address, 'gas': 8000000}).totalCoupons()
-        return total
+        return reg_int(total, xSD['decimals'])
         
     def bond(self, address, esd):
         """
@@ -503,13 +503,9 @@ class DAO:
 
     def coupon_balance(self, address):
         ''' 
-            TODO: IS SLOWWWWWWWW, how can i speed this up
-            returns the coupon balance for an address
+            returns the total coupon balance for an address
         '''
-        current_epoch = self.epoch(address)
-        total_coupons = 0
-        for i in range(0, current_epoch):
-            total_coupons += self.contract.caller({'from' : address, 'gas': 8000000}).balanceOfCoupons(address, i)
+        total_coupons = self.contract.caller({'from' : address, 'gas': 8000000}).balanceOfCouponsTotal(address)
         return total_coupons
 
     def epoch(self, address):
@@ -520,13 +516,12 @@ class DAO:
         Spend the given number of ESD on coupons.
         Returns (issued_at, underlying_coupons, premium_coupons)
         """
-
         # placeCouponAuctionBid(uint256 couponEpochExpiry, uint256 dollarAmount, uint256 maxCouponAmount)
 
         self.contract.caller({'from' : address, 'gas': 8000000}).placeCouponAuctionBid(
-            int(coupon_expiry * pow(10, xSD["decimals"])),
-            int(round(esd_amount, xSD["decimals"]) * pow(10, xSD["decimals"])),
-            int(round(max_coupon_amount, xSD["decimals"]) * pow(10, xSD["decimals"]))
+            reg_int(coupon_expiry, xSD["decimals"]),
+            reg_int(esd_amount, xSD["decimals"]),
+            reg_int(xSD["decimals"], xSD["decimals"]))
         )
         
     def redeem(self, address, epoch_expired, coupons_to_redeem):
@@ -538,12 +533,12 @@ class DAO:
         
         Assumes everything is actually redeemable.
         """
-        total_before_coupons = self.total_coupons()
+        total_before_coupons = self.coupon_balance(address)
         self.contract.caller({'from' : address, 'gas': 8000000}).redeemCoupons(
-            int(epoch_expired),
-            int(round(coupons_to_redeem, xSD["decimals"]) * pow(10, xSD["decimals"]))
+            reg_int(epoch_expired, xSD["decimals"]),
+            reg_int(coupons_to_redeem, xSD["decimals"])
         )
-        total_after_coupons = self.total_coupons()
+        total_after_coupons = self.coupon_balance(address)
             
         return total_after_coupons - total_before_coupons
 
