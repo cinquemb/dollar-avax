@@ -81,7 +81,8 @@ USDCContract = json.loads(open('./build/contracts/TestnetUSDC.json', 'r+').read(
 DollarContract = json.loads(open('./build/contracts/IDollar.json', 'r+').read())
 
 UniswapPairContract = json.loads(open('./build/contracts/IUniswapV2Pair.json', 'r+').read())
-UniswapRouterAbiContract = json.loads(open('./node_modules/@uniswap/v2-periphery/build/UniswapV2Router02.json', 'r+').read())
+UniswapRouterAbiContract = json.loads(open('./node_modules/@uniswap/v2-periphery/build/IUniswapV2Router02.json', 'r+').read())
+UniswapClientAbiContract = json.loads(open('./node_modules/@uniswap/v2-core/build/IUniswapV2ERC20.json', 'r+').read())
 TokenContract = json.loads(open('./build/contracts/Root.json', 'r+').read())
 PoolContract = json.loads(open('./build/contracts/Pool.json', 'r+').read())
 
@@ -92,7 +93,7 @@ xSD['addr'] = get_addr_from_contract(DaoContract)
 xSDS['addr'] = get_addr_from_contract(TokenContract)
 
 def reg_int(value, scale):
-    return value / int(pow(10,scale))
+    return value / float(int(pow(10,scale)))
 
 def unreg_int(value, scale):
     scaled = int(round(value, scale) * pow(10, scale))
@@ -224,11 +225,12 @@ class UniswapPool:
     Represents the Uniswap pool. Tracks ESD and USDC balances of pool, and total outstanding LP shares.
     """
     
-    def __init__(self, uniswap, uniswap_router, uniswap_lp, usdc_lp, **kwargs):
+    def __init__(self, uniswap, uniswap_router, uniswap_lp, usdc_lp, xsd, **kwargs):
         self.uniswap_pair = uniswap
         self.uniswap_router = uniswap_router
         self.uniswap_lp = uniswap_lp
         self.usdc_lp = usdc_lp
+        self.xsd = xsd
         # ESD balance
         self.esd = 0.0
         # USDC balance
@@ -286,70 +288,73 @@ class UniswapPool:
         TODO: NEED TO DEPOSIT INTO LP, THEN "APPROVE" UNI addr for the POOL ADDR
 
         """
-        # deposit into USDC pool
-        # unreg_int(usdc, UNI["decimals"])
+        print(self.uniswap_pair.caller().token0(), self.uniswap_pair.caller().token1())
+        print(self
+            .xsd.address, self.usdc_lp.address)
 
-        # Approve Uniswap Router to spend UNI
-        _usdc_uni = w3.eth.contract(abi=USDCContract['abi'], address=UNI["addr"])
-        _usdc_uni.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
+
+        self.usdc_lp.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
+            'nonce': w3.eth.getTransactionCount(address),
+            'from' : address,
+            'gas': 8000000,
+            'gasPrice': 1,
+        })        
+
+        print('allowance (usdc)', self.usdc_lp.caller({'from' : address, 'gas': 8000000}).allowance(address, UNIV2Router["addr"]))
+
+        self.xsd.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
             'nonce': w3.eth.getTransactionCount(address),
             'from' : address,
             'gas': 8000000,
             'gasPrice': 1,
         })
-        # Approve Pool to spend USDC
-        _usdc_usdc = w3.eth.contract(abi=USDCContract['abi'], address=USDC["addr"])
-        _usdc_usdc.functions.approve(UNIV2LP["addr"], UINT256_MAX).transact({
-            'nonce': w3.eth.getTransactionCount(address),
-            'from' : address,
-            'gas': 8000000,
-            'gasPrice': 1,
-        })
 
+        print('allowance (xsd)', self.xsd.caller({'from' : address, 'gas': 8000000}).allowance(address, UNIV2Router["addr"]))
+
+        
+        '''
         # transfer xSD into dollar pool
-        '''
-        THIS WORKS
-        dao.functions.transfer(UNIV2LP["addr"], int(esd)).transact({
+        #THIS WORKS
+        self.xsd.functions.transfer(self.xsd.address, int(esd)).transact({
             'nonce': w3.eth.getTransactionCount(address),
             'from' : address,
             'gas': 8000000,
             'gasPrice': 1,
         })
-        '''
-
-        # transfer USD into USDC pool
-        self.usdc_lp.functions.transfer(USDC["addr"], int(usdc)).transact({
+        
+        # transfer USDC into USDC pool
+        #THIS WORKS
+        self.usdc_lp.functions.transfer(self.usdc_lp.address, int(usdc)).transact({
             'nonce': w3.eth.getTransactionCount(address),
             'from' : address,
             'gas': 8000000,
             'gasPrice': 1,
         })
+       '''
+        print(int(esd), 'xSD xsd address', reg_int(self.xsd.caller({"from": address, "gas": 8000000}).balanceOf(address), xSD['decimals']))
 
-        
-        #self.uniswap_lp.functions.deposit(unreg_int(usdc, USDC["decimals"])).transact({'from' : address, 'gas': 8000000})
-        # deposit into xSD pool
-        
-
-        
-
-
+        print('Total xSD Supply', reg_int(self.xsd.caller({"from": address, "gas": 8000000}).totalSupply(), xSD['decimals']))
+        print(int(usdc), 'USDC usd address', reg_int(self.usdc_lp.caller({"from": address, "gas": 8000000}).balanceOf(address), USDC['decimals']))
+        print('Total usdc Supply', reg_int(self.usdc_lp.caller({"from": address, "gas": 8000000}).totalSupply(), USDC['decimals']))
 
         slippage = 0.02
-        slippageBN = unreg_int(slippage, UNI["decimals"])
-        oneBN = unreg_int(1.0, UNI["decimals"])
-        minAmountESD = unreg_int(esd, UNI["decimals"]) * (oneBN - slippageBN)
-        minAmountUSDC = unreg_int(usdc, UNI["decimals"]) * (oneBN - slippageBN)
-        
+        minAmountESD = int(esd * (1 - slippage))
+        minAmountUSDC = int(usdc * (1 - slippage))
         xsd, usdc, liqudidty = self.uniswap_router.functions.addLiquidity(
-            xSD["addr"],
-            USDC["addr"],
-            unreg_int(esd, xSD["decimals"]),
-            unreg_int(usdc, USDC["decimals"]),
+            self.xsd.address,
+            self.usdc_lp.address,
+            int(esd),
+            int(usdc),
             minAmountESD,
             minAmountUSDC,
             address,
-            (int(time.time()) + DEADLINE_FROM_NOW) * pow(10, UNI["decimals"])
-        ).transact({'from' : address, 'gas': 8000000})
+            (int(w3.eth.get_block('latest')['timestamp']) + DEADLINE_FROM_NOW)
+        ).transact({
+            'nonce': w3.eth.getTransactionCount(address),
+            'from' : address,
+            'gas': 8000000,
+            'gasPrice': 1,
+        })
         
         return liqudidty, xsd, usdc
         
@@ -362,13 +367,18 @@ class UniswapPool:
         xsd, usdc, liqudidty = self.uniswap_router.functions.removeLiquidity(
             xSD["addr"],
             USDC["addr"],
-            int(round(shares, UNI["decimals"]) * pow(10, UNI["decimals"])),
-            int(round(min_esd_amount, UNI["decimals"]) * pow(10, UNI["decimals"])),
-            int(round(min_usdc_amount, UNI["decimals"]) * pow(10, UNI["decimals"])),
+            int(shares),
+            int(min_esd_amount),
+            int(min_usdc_amount),
             address,
-            (int(time.time()) + DEADLINE_FROM_NOW) * pow(10, UNI["decimals"])
+            int(w3.eth.get_block('latest')['timestamp'] + DEADLINE_FROM_NOW)
             
-        ).transact({'from' : address, 'gas': 8000000})
+        ).transact({
+            'nonce': w3.eth.getTransactionCount(address),
+            'from' : address,
+            'gas': 8000000,
+            'gasPrice': 1,
+        })
 
         dao.functions.withdraw(
             int(round(xsd, UNI["decimals"]) * pow(10, UNI["decimals"]))
@@ -603,7 +613,7 @@ class Model:
         Takes in experiment parameters and forwards them on to all components.
         """
         #pretty(dao.functions.__dict__)
-        self.uniswap = UniswapPool(uniswap, uniswap_router, uniswap_lp, usdc, **kwargs)
+        self.uniswap = UniswapPool(uniswap, uniswap_router, uniswap_lp, usdc, xsd, **kwargs)
         self.dao = DAO(dao, xsd, **kwargs)
         self.agents = []
         self.max_eth = 100000
@@ -615,12 +625,19 @@ class Model:
             address = agents[i]
             print('here', address)
             # need to mint USDC to the wallets for each agent
-            print(usdc.functions.mint(address, int(start_usdc)).transact({
+            usdc_b, esd_b = self.uniswap.getTokenBalance()
+
+            print (usdc_b, esd_b)
+            '''
+            usdc.functions.mint(address, int(start_usdc_formatted)).transact({
                 'nonce': w3.eth.getTransactionCount(address),
                 'from' : address,
                 'gas': 8000000,
                 'gasPrice': 1,
-            }))
+            })
+            '''
+            #print(self.dao.advance(address))
+            print(usdc.caller({"from": address, "gas": 8000000}).balanceOf(address))
 
             commitment = random.random() * 0.1
             to_use_esd = portion_dedusted(self.dao.token_balance_of(address), commitment)
@@ -847,10 +864,8 @@ def main():
     uniswap_router = w3.eth.contract(abi=UniswapRouterAbiContract['abi'], address=UNIV2Router["addr"])
     uniswap_lp = w3.eth.contract(abi=PoolContract['abi'], address=UNIV2LP["addr"])
 
-    #pretty(usdc.functions.__dict__, indent=4)
-    #sys.exit()
-
-    xsd = w3.eth.contract(abi=DollarContract['abi'], address=dao.caller.dollar()) 
+    xsd = w3.eth.contract(abi=DollarContract['abi'], address=dao.caller().dollar())
+    print (dao.caller().dollar())
 
     logging.basicConfig(level=logging.INFO)
 
