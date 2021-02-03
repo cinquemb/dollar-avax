@@ -411,7 +411,7 @@ class UniswapPool:
         slippage = 0.02
         max_usdc_amount = (max_usdc_amount * (1 + slippage))
 
-        self.uniswap_router.functions.swapTokensForExactTokens(
+        self.uniswap_router.functions.swapExactTokensForTokens(
             unreg_int(usdc, USDC["decimals"]),
             unreg_int(max_usdc_amount, xSD["decimals"]),
             [self.usdc_lp.address, self.xsd.address],
@@ -754,6 +754,8 @@ class Model:
 
                     WORKS:
                         advance, provide_liquidity, remove_liquidity, buy, sell, coupon_bid, redeem
+
+
                 '''
         
                 strategy = a.get_strategy(w3.eth.get_block('latest')["number"], self.uniswap.xsd_price(), self.dao.xsd_supply())
@@ -773,13 +775,13 @@ class Model:
                     (usdc_b, xsd_b) = self.uniswap.getTokenBalance()
                     print("usdc_b:", usdc_b, "xsd_b:", xsd_b)
 
-                    if xsd_b > 0:
-                        usdc = portion_dedusted(a.usdc, commitment)
+                    if xsd_b > 0 and usdc_b > 0:
+                        usdc = min(portion_dedusted(a.usdc, commitment), usdc_b)
                     else:
                         continue
                     
                     price = self.uniswap.xsd_price()
-                    usdc_in = usdc#min(usdc,usdc_b)
+                    usdc_in = min(usdc,usdc_b)
                     (max_amount, _) = self.uniswap_router.caller({'from' : a.address, 'gas': 8000000}).getAmountsIn(
                         unreg_int(usdc_in, xSD['decimals']), 
                         [self.usdc_lp.address, self.xsd_lp.address]
