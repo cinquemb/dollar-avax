@@ -674,17 +674,23 @@ class Model:
             agent = Agent(self.dao, uniswap, xsd, usdc, starting_eth=start_eth, starting_usdc=start_usdc, wallet_address=address, **kwargs)
             self.agents.append(agent)
         
-    def log(self, stream, header=False):
+    def log(self, stream, seleted_advancer, header=False):
         """
         Log model statistics a TSV line.
         If header is True, include a header.
         """
         
         if header:
-            stream.write("#block\tprice\tsupply\tcoupons\tfaith\n")
+            stream.write("#block\tepoch\tprice\tsupply\tcoupons\tfaith\n")
         
-        stream.write('{}\t{:.2f}\t{:.2f}\t{:.2f}\t{:.2f}\n'.format(
-            w3.eth.get_block('latest')["number"], self.uniswap.xsd_price(), self.dao.xsd_supply(), self.dao.total_coupons(), self.get_overall_faith()))
+        stream.write('{}\t{}\t{:.2f}\t{:.2f}\t{:.2f}\t{:.2f}\n'.format(
+            w3.eth.get_block('latest')["number"],
+            self.dao.epoch(seleted_advancer.address),
+            self.uniswap.xsd_price(),
+            self.dao.xsd_supply(),
+            self.dao.total_coupons(),
+            self.get_overall_faith())
+        )
        
     def get_overall_faith(self):
         """
@@ -706,7 +712,7 @@ class Model:
         seleted_advancer = self.agents[int(random.random() * (len(self.agents) - 1))]
         xsd = self.dao.advance(seleted_advancer.address)
         seleted_advancer.xsd += xsd
-        logger.debug("Advance for {:.2f} xSD".format(xsd))
+        logger.info("Advance for {:.2f} xSD".format(xsd))
 
         (usdc_b, xsd_b) = self.uniswap.getTokenBalance()
         
@@ -754,8 +760,6 @@ class Model:
 
                     WORKS:
                         advance, provide_liquidity, remove_liquidity, buy, sell, coupon_bid, redeem
-
-
                 '''
         
                 strategy = a.get_strategy(w3.eth.get_block('latest')["number"], self.uniswap.xsd_price(), self.dao.xsd_supply())
@@ -768,7 +772,7 @@ class Model:
                 # action will the agent do?
                 commitment = random.random() * 0.1
                 
-                logger.debug("Agent {}: {}".format(agent_num, action))
+                logger.debug("Agent {}: {}".format(a.address, action))
                 
                 if action == "buy":
                     # this will limit the size of orders avaialble
@@ -782,13 +786,24 @@ class Model:
                     
                     price = self.uniswap.xsd_price()
                     usdc_in = min(usdc,usdc_b)
-                    (max_amount, _) = self.uniswap_router.caller({'from' : a.address, 'gas': 8000000}).getAmountsIn(
-                        unreg_int(usdc_in, xSD['decimals']), 
-                        [self.usdc_lp.address, self.xsd_lp.address]
-                    )
-                    max_amount = reg_int(max_amount, USDC['decimals'])
+
+                    try:
+                        (max_amount, _) = self.uniswap_router.caller({'from' : a.address, 'gas': 8000000}).getAmountsIn(
+                            unreg_int(usdc_in, xSD['decimals']), 
+                            [self.usdc_lp.address, self.xsd_lp.address]
+                        )
+                        max_amount = reg_int(max_amount, USDC['decimals'])
+                    except Exception as inst:
+                        print({"agent": a.address, "error": inst, "action": "buy", "amount_in": usdc_in})
+                        continue
                     
-                    try:                        
+                    
+                    try:
+                        (max_amount, _) = self.uniswap_router.caller({'from' : a.address, 'gas': 8000000}).getAmountsIn(
+                            unreg_int(usdc_in, xSD['decimals']), 
+                            [self.usdc_lp.address, self.xsd_lp.address]
+                        )
+                        max_amount = reg_int(max_amount, USDC['decimals'])                      
                         logger.info("Buy init {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(usdc_in, price, max_amount))
 
                         xsd = self.uniswap.buy(a.address, usdc_in, max_amount)
@@ -808,11 +823,15 @@ class Model:
                         continue
                     price = self.uniswap.xsd_price()
                     xsd_out = min(xsd, xsd_b)
-                    (_, max_amount) = self.uniswap_router.caller({'from' : a.address, 'gas': 8000000}).getAmountsOut(
-                        unreg_int(xsd_out, xSD['decimals']), 
-                        [self.xsd_lp.address, self.usdc_lp.address]
-                    )
-                    max_amount = reg_int(max_amount, USDC['decimals'])
+                    try:
+                        (_, max_amount) = self.uniswap_router.caller({'from' : a.address, 'gas': 8000000}).getAmountsOut(
+                            unreg_int(xsd_out, xSD['decimals']), 
+                            [self.xsd_lp.address, self.usdc_lp.address]
+                        )
+                        max_amount = reg_int(max_amount, USDC['decimals'])
+                    except Exception as inst:
+                        print({"agent": a.address, "error": inst, "action": "sell", "amount_out": xsd_out})
+                        continue
 
                     try:
                         logger.info("Sell init {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd_out, price, max_amount))
@@ -825,15 +844,16 @@ class Model:
                 elif action == "advance":
                     xsd = self.dao.advance(a.address)
                     a.xsd = xsd
-                    logger.debug("Advance for {:.2f} xSD".format(xsd))
+                    logger.info("Advance for {:.2f} xSD".format(xsd))
                 elif action == "coupon_bid":
                     xsd_at_risk = portion_dedusted(a.xsd, commitment)
                     rand_epoch_expiry = int(random.random() * 10000000)
-                    rand_max_coupons = random.random() * 10000000 * xsd_at_risk
+                    rand_max_coupons = int(random.random() * 10000000) * xsd_at_risk
+                    logger.info("Bid to burn init {:.2f} xSD for {:.2f} coupons with expiry {:.2f}".format(xsd_at_risk, rand_max_coupons, rand_epoch_expiry))
                     self.dao.coupon_bid(a.address, rand_epoch_expiry, xsd_at_risk, rand_max_coupons)
                     a.total_coupons_bid += rand_max_coupons
                     a.coupon_expirys.append(rand_epoch_expiry)
-                    logger.debug("Bid to burn {:.2f} xSD for {:.2f} coupons with expiry {:.2f}".format(xsd_at_risk, rand_max_coupons, rand_epoch_expiry))
+                    logger.info("Bid to burn end {:.2f} xSD for {:.2f} coupons with expiry {:.2f}".format(xsd_at_risk, rand_max_coupons, rand_epoch_expiry))
                 elif action == "redeem":
                     total_redeemed = 0
                     for c_idx in a.coupon_expirys:
@@ -844,7 +864,7 @@ class Model:
 
                     if total_redeemed > 0:
                         a.total_coupons_bid -= total_redeemed
-                        logger.debug("Redeem {:.2f} coupons for {:.2f} xSD".format(total_redeemed, total_redeemed))
+                        logger.info("Redeem {:.2f} coupons for {:.2f} xSD".format(total_redeemed, total_redeemed))
                 elif action == "provide_liquidity":
                     price = self.uniswap.xsd_price()
                     min_xsd_needed = 0                   
@@ -900,7 +920,7 @@ class Model:
                     #print(min_xsd_amount * min_reduction, min_usdc_amount * min_reduction, lp)
 
                     try:
-                        logger.debug("Stop providing {:.2f} xSD and {:.2f} USDC".format(min_xsd_amount, min_usdc_amount))
+                        logger.info("Stop providing {:.2f} xSD and {:.2f} USDC".format(min_xsd_amount, min_usdc_amount))
                         after_lp = self.uniswap.remove_liquidity(a.address, lp, min_xsd_amount, min_usdc_amount)
 
                         min_xsd_amount_after = xsd_b / usdc_b * after_lp
@@ -922,7 +942,7 @@ class Model:
             else:
                 # It's normal for agents other then the first to advance to not be able to act on block 0.
                 pass
-        return anyone_acted
+        return anyone_acted, seleted_advancer
 
 def main():
     """
@@ -961,14 +981,16 @@ def main():
         # Every block
         # Try and tick the model
         start_iter = time.time()
-        if not model.step():
+
+        (anyone_acted, seleted_advancer) = model.step()
+        if not anyone_acted:
             # Nobody could act
             print("Nobody could act")
             break
         end_iter = time.time()
         print('iter: %s, sys time %s' % (i, end_iter-start_iter))
         # Log system state
-        model.log(stream, header=(i == 0))
+        model.log(stream, seleted_advancer, header=(i == 0))
         
 if __name__ == "__main__":
     main()
