@@ -122,17 +122,6 @@ contract Getters is State {
         return _state.accounts[account].coupons[epoch];
     }
 
-    function balanceOfCouponsTotal(address account) public view returns (uint256) {
-        uint256 totalCouponsOutstanding = 0;
-        for (uint256 i = 0; i < epoch(); i++) {
-            if (outstandingCoupons(i) == 0) {
-                continue;
-            }
-            totalCouponsOutstanding += _state.accounts[account].coupons[i];
-        }
-        return totalCouponsOutstanding;
-    }
-
     function statusOf(address account) public view returns (Account.Status) {
         if (_state.accounts[account].lockedUntil > epoch()) {
             return Account.Status.Locked;
