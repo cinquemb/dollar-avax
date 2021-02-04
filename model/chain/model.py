@@ -1023,7 +1023,7 @@ def main():
     # Make a model of the economy
     start_init = time.time()
     print ('INIT STARTED')
-    model = Model(dao, uniswap, usdc, uniswap_router, uniswap_lp, xsd, w3.eth.accounts[:max_accounts], min_faith=0.5E6, max_faith=1E6, use_faith=True, expire_all=True)
+    model = Model(dao, uniswap, usdc, uniswap_router, uniswap_lp, xsd, w3.eth.accounts[:max_accounts], min_faith=0.5E6, max_faith=1E6, use_faith=False)
     end_init = time.time()
     print ('INIT FINISHED', end_init - start_init, '(s)')
 
