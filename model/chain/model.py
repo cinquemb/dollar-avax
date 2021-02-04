@@ -21,7 +21,8 @@ with open("deploy_output.txt", 'r+') as f:
 IS_DEBUG = False
 
 logger = logging.getLogger(__name__)
-provider = Web3.WebsocketProvider('ws://localhost:7545')
+provider = Web3.WebsocketProvider('ws://localhost:7546', websocket_timeout=60)
+#provider = Web3.IPCProvider("./development.ipc")
 w3 = Web3(provider)
 
 # from (Uniswap pair is at:)
@@ -86,6 +87,7 @@ UniswapRouterAbiContract = json.loads(open('./node_modules/@uniswap/v2-periphery
 UniswapClientAbiContract = json.loads(open('./node_modules/@uniswap/v2-core/build/IUniswapV2ERC20.json', 'r+').read())
 TokenContract = json.loads(open('./build/contracts/Root.json', 'r+').read())
 PoolContract = json.loads(open('./build/contracts/Pool.json', 'r+').read())
+OracleContract = json.loads(open('./build/contracts/MockOracle.json', 'r+').read())
 
 def get_addr_from_contract(contract):
     return contract["networks"][str(sorted(map(int,contract["networks"].keys()))[-1])]["address"]
@@ -318,12 +320,12 @@ class UniswapPool:
                 'gasPrice': 1,
             })
 
-        slippage = 0.02
+        slippage = 0.01
         min_xsd_amount = (xsd * (1 - slippage))
         min_usdc_amount = (usdc * (1 - slippage))
 
         logger.debug(
-            'Balanace for {}: {:.2f} xSD, {:.2f} USDC'.format(
+            'Balance for {}: {:.2f} xSD, {:.2f} USDC'.format(
                 address,
                 reg_int(self.xsd.caller({'from' : address, 'gas': 8000000}).balanceOf(address), xSD['decimals']),
                 reg_int(self.usdc_lp.caller({'from' : address, 'gas': 8000000}).balanceOf(address), USDC['decimals'])
@@ -363,8 +365,10 @@ class UniswapPool:
                 'gasPrice': 1,
             })  
 
+        slippage = 0.01
+        min_xsd_amount = (min_xsd_amount * (1 - slippage))
+        min_usdc_amount = (min_usdc_amount * (1 - slippage))
 
-        print(unreg_int(shares, UNIV2Router['decimals']))
         self.uniswap_router.functions.removeLiquidity(
             self.xsd.address,
             self.usdc_lp.address,
@@ -411,15 +415,15 @@ class UniswapPool:
                 'gasPrice': 1,
             })
 
-        logger.info(
-            'Balanace for {}: {:.2f} xSD, {:.2f} USDC'.format(
+        logger.debug(
+            'Balance for {}: {:.2f} xSD, {:.2f} USDC'.format(
                 address,
                 reg_int(self.xsd.caller({'from' : address, 'gas': 8000000}).balanceOf(address), xSD['decimals']),
                 reg_int(self.usdc_lp.caller({'from' : address, 'gas': 8000000}).balanceOf(address), USDC['decimals'])
             )
         )
 
-        slippage = 0.02
+        slippage = 0.01
         max_usdc_amount = (max_usdc_amount * (1 + slippage))
 
         self.uniswap_router.functions.swapExactTokensForTokens(
@@ -562,7 +566,7 @@ class DAO:
             'gas': 8000000,
             'gasPrice': 1,
         })
-        total_after_coupons = self.coupon_balance_at_epoch(address, epoch_list)
+        total_after_coupons = self.coupon_balance_at_epoch(address, epoch_expired)
             
         return total_before_coupons - total_after_coupons
 
@@ -622,6 +626,7 @@ class Model:
         self.max_eth = 100000
         self.max_usdc = 100000
         self.bootstrap_epoch = 20
+        self.min_usdc_balance = 10000
 
         is_mint = False
         if w3.eth.get_block('latest')["number"] == 16:
@@ -730,6 +735,7 @@ class Model:
         """
         
         provider.make_request("evm_increaseTime", [7201])
+        #provider.make_request("debug_increaseTime", [7201])
 
         #randomly have an agent advance the epoch
         seleted_advancer = self.agents[int(random.random() * (len(self.agents) - 1))]
@@ -738,20 +744,29 @@ class Model:
         logger.info("Advance for {:.2f} xSD".format(xsd))
 
         (usdc_b, xsd_b) = self.uniswap.getTokenBalance()
+
+        current_epoch = self.dao.epoch(seleted_advancer.address)
         
         logger.info("Block {}, epoch {}, price {:.2f}, supply {:.2f}, faith: {:.2f}, bonded {:2.1f}%, coupons: {:.2f}, liquidity {:.2f} xSD / {:.2f} USDC".format(
-            w3.eth.get_block('latest')["number"], self.dao.epoch(seleted_advancer.address), self.uniswap.xsd_price(), self.dao.xsd_supply(),
+            w3.eth.get_block('latest')["number"], current_epoch, self.uniswap.xsd_price(), self.dao.xsd_supply(),
             self.get_overall_faith(), 0, self.dao.total_coupons(),
             xsd_b, usdc_b))
         
         anyone_acted = False
 
+        '''
+        if self.dao.epoch(seleted_advancer.address) < self.bootstrap_epoch:
+            anyone_acted = True
+            return anyone_acted, seleted_advancer
+
+        '''
+
         for agent_num, a in enumerate(self.agents):
             # TODO: real strategy
             options = []
-            if a.usdc > 0 and self.uniswap.operational() and (a.lp == 0):
+            if a.usdc > 0 and self.uniswap.operational():
                 options.append("buy")
-            if a.xsd > 0 and self.uniswap.operational() and (a.lp == 0):
+            if a.xsd > 0 and self.uniswap.operational():
                 options.append("sell")
             '''
             TODO: CURRENTLY NO INCENTIVE TO BOND INTO LP OR DAO (EXCEPT FOR VOTING, MAY USE THIS TO DISTRUBTION EXPANSIONARY PROFITS)
@@ -760,7 +775,8 @@ class Model:
             if a.xsds > 0:
                 options.append("unbond")
             '''
-            if a.xsd > 0 and self.uniswap.xsd_price() <= 1.0 and self.dao.epoch(a.address) > self.bootstrap_epoch:
+            # no point in buying coupons untill theres at least 10k usdc in the pool (so like 80-100 epoch effective warmup)
+            if a.xsd > 0 and self.uniswap.xsd_price() <= 1.0 and self.dao.epoch(a.address) > self.bootstrap_epoch and self.min_usdc_balance <= usdc_b:
                 options.append("coupon_bid")
             # try any ways but handle traceback, faster than looping over all the epocks
             if self.uniswap.xsd_price() >= 1.0 and len(a.coupon_expirys) > 0:
@@ -861,7 +877,7 @@ class Model:
                         a.usdc += usdc
                         logger.debug("Sell end {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd, price, usdc))
                     except Exception as inst:
-                        print({"agent": a.address, "error": inst, "action": "sell"})
+                        print({"agent": a.address, "error": inst, "action": "sell", "xsd_out": xsd_out, "max_amount": max_amount})
                 elif action == "advance":
                     xsd = self.dao.advance(a.address)
                     a.xsd = xsd
@@ -870,11 +886,16 @@ class Model:
                     xsd_at_risk = portion_dedusted(a.xsd, commitment)
                     rand_epoch_expiry = int(random.random() * 10000000)
                     rand_max_coupons = int(random.random() * 10000000) * xsd_at_risk
-                    logger.info("Bid to burn init {:.2f} xSD for {:.2f} coupons with expiry {:.2f}".format(xsd_at_risk, rand_max_coupons, rand_epoch_expiry))
-                    self.dao.coupon_bid(a.address, rand_epoch_expiry, xsd_at_risk, rand_max_coupons)
-                    a.total_coupons_bid += rand_max_coupons
-                    a.coupon_expirys.append(rand_epoch_expiry)
-                    logger.info("Bid to burn end {:.2f} xSD for {:.2f} coupons with expiry {:.2f}".format(xsd_at_risk, rand_max_coupons, rand_epoch_expiry))
+                    try:
+                        exact_expiry = rand_epoch_expiry+ current_epoch
+                        logger.info("Addr {} Bid to burn init {:.2f} xSD for {:.2f} coupons with expiry at epoch {:.2f}".format(a.address, xsd_at_risk, rand_max_coupons, exact_expiry))
+                        self.dao.coupon_bid(a.address, rand_epoch_expiry, xsd_at_risk, rand_max_coupons)
+                        a.total_coupons_bid += rand_max_coupons
+                        a.coupon_expirys.append(exact_expiry)
+                        logger.info("Addr {} Bid to burn end {:.2f} xSD for {:.2f} coupons with expiry at epoch {:.2f}".format(a.address, xsd_at_risk, rand_max_coupons, exact_expiry))
+                    except Exception as inst:
+                        print({"agent": a.address, "error": inst, "action": "coupon_bid", "exact_expiry": exact_expiry, "xsd_at_risk": xsd_at_risk})
+
                 elif action == "redeem":
                     total_redeemed = 0
                     for c_idx in a.coupon_expirys:
@@ -888,27 +909,24 @@ class Model:
                         logger.info("Redeem {:.2f} coupons for {:.2f} xSD".format(total_redeemed, total_redeemed))
                 elif action == "provide_liquidity":
                     price = self.uniswap.xsd_price()
-                    min_xsd_needed = 0                   
-                    if a.xsd * price < a.usdc:
-                        xsd = portion_dedusted(a.xsd, commitment)
-                        usdc = xsd * price
+                    min_xsd_needed = 0
+                    usdc = 0
+                    if a.xsd < a.usdc:
+                        usdc = portion_dedusted(a.xsd, commitment)
                     else:
                         usdc = portion_dedusted(a.usdc, commitment)
-                        xsd = usdc / price
 
                     revs = self.uniswap.getReserves()
-                    if revs[0] > 0:
-                        min_xsd_needed = reg_int(self.uniswap_router.caller({'from' : a.address, 'gas': 8000000}).quote(unreg_int(usdc, xSD['decimals']), revs[0], revs[1]), xSD['decimals'])
 
-                        print("min_xsd_needed", min_xsd_needed)
-                        if min_xsd_needed < xsd:
-                            min_xsd_needed = xsd
-                            print("min_xsd_needed_adj", min_xsd_needed)
+                    if revs[1] > 0:
+                        min_xsd_needed = reg_int(self.uniswap_router.caller({'from' : a.address, 'gas': 8000000}).quote(unreg_int(usdc, USDC['decimals']), revs[0], revs[1]), xSD['decimals'])
+
+                        if round(min_xsd_needed, 2) == 0:
+                            min_xsd_needed = usdc / float(price)
                     else:
-                        min_xsd_needed = xsd
+                        min_xsd_needed = usdc
 
-
-                    if int(min_xsd_needed) <= 0:
+                    if round(min_xsd_needed, 2) == 0:
                         continue
 
                     try:
@@ -926,7 +944,9 @@ class Model:
                         a.usdc = max(0, a.usdc - diff_usdc)
                         a.lp += after_lp
                     except Exception as inst:
-                        print({"agent": a.address, "error": inst, "action": "provide_liquidity"})
+                        # usually fails for c: VM Exception while processing transaction: revert TransferHelper: TRANSFER_FROM_FAILED, prob because of slippage?
+                        #print({"agent": a.address, "error": inst, "action": "provide_liquidity", "min_xsd_needed": min_xsd_needed, "usdc": usdc})
+                        continue
                 elif action == "remove_liquidity":
                     lp = portion_dedusted(a.lp, commitment)
                     total_lp = self.uniswap.total_lp(a.address)
@@ -935,7 +955,7 @@ class Model:
 
                     
 
-                    slippage = 0.5 #50% slippiage?
+                    slippage = 0.01 #01% slippiage?
                     min_reduction = 1.0 - slippage
 
                     min_xsd_amount = max(0,xsd_b * (lp / float(total_lp)) * min_reduction)
@@ -959,7 +979,7 @@ class Model:
                         a.usdc += diff_usdc
                         
                     except Exception as inst:
-                        print({"agent": a.address, "error": inst, "action": "remove_liquidity"})
+                        print({"agent": a.address, "error": inst, "action": "remove_liquidity", "min_xsd_needed": min_xsd_amount, "usdc": min_usdc_amount})
                 else:
                     raise RuntimeError("Bad action: " + action)
                     
@@ -981,6 +1001,14 @@ def main():
 
     print('Total Agents:',len(w3.eth.accounts[:max_accounts]))
     dao = w3.eth.contract(abi=DaoContract['abi'], address=xSDS["addr"])
+
+    #oracle = w3.eth.contract(abi=OracleContract['abi'], address=dao.caller({'from' : dao.address, 'gas': 8000000}).oracle())
+
+    #print(oracle.caller({'from' : "0xd3cF224C0E9d0eDE59920aC1874f8BE07c92821B", 'gas': 8000000}).latestValid())
+
+    #print(dao.caller({'from' : "0xd3cF224C0E9d0eDE59920aC1874f8BE07c92821B", 'gas': 8000000}).getMinExpiryFilled(unreg_int(6570126, xSD['decimals'])))
+    #print(dao.caller({'from' : 0xd3cF224C0E9d0eDE59920aC1874f8BE07c92821B, 'gas': 8000000}).balanceOfCoupons(address, 611556))
+    #sys.exit()
     uniswap = w3.eth.contract(abi=UniswapPairContract['abi'], address=UNI["addr"])
     usdc = w3.eth.contract(abi=USDCContract['abi'], address=USDC["addr"])
     
