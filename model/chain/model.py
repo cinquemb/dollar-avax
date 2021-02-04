@@ -156,7 +156,7 @@ class Agent:
 
         # Uniswap LP share balance
         self.lp = 0
-        is_seeded = True
+        is_seeded = False
 
         if is_seeded:
             self.lp = reg_int(self.uniswap_pair.caller({'from' : self.address, 'gas': 8000000}).balanceOf(self.address), UNIV2Router['decimals'])
@@ -353,7 +353,18 @@ class UniswapPool:
         """
         Remove liquidity for the given number of shares.
 
-        """
+        """        
+        is_uniswap_approved = self.uniswap_pair.caller({'from' : address, 'gas': 8000000}).allowance(address, UNIV2Router["addr"])
+        if not (is_uniswap_approved > 0):
+            self.uniswap_pair.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
+                'nonce': w3.eth.getTransactionCount(address),
+                'from' : address,
+                'gas': 8000000,
+                'gasPrice': 1,
+            })  
+
+
+        print(unreg_int(shares, UNIV2Router['decimals']))
         self.uniswap_router.functions.removeLiquidity(
             self.xsd.address,
             self.usdc_lp.address,
@@ -452,7 +463,7 @@ class UniswapPool:
                 'gasPrice': 1,
             })
 
-        logger.info(
+        logger.debug(
             'Balance for {}: {:.2f} xSD, {:.2f} USDC'.format(
                 address,
                 reg_int(self.xsd.caller({'from' : address, 'gas': 8000000}).balanceOf(address), xSD['decimals']),
@@ -521,11 +532,16 @@ class DAO:
         """
         # placeCouponAuctionBid(uint256 couponEpochExpiry, uint256 dollarAmount, uint256 maxCouponAmount)
 
-        self.contract.caller({'from' : address, 'gas': 8000000}).placeCouponAuctionBid(
+        self.contract.functions.placeCouponAuctionBid(
             unreg_int(coupon_expiry, xSD["decimals"]),
             unreg_int(xsd_amount, xSD["decimals"]),
             unreg_int(xSD["decimals"], xSD["decimals"])
-        )
+        ).transact({
+            'nonce': w3.eth.getTransactionCount(address),
+            'from' : address,
+            'gas': 8000000,
+            'gasPrice': 1,
+        })
         
     def redeem(self, address, epoch_expired, coupons_to_redeem):
         """
@@ -537,16 +553,22 @@ class DAO:
         Assumes everything is actually redeemable.
         """
         total_before_coupons = self.coupon_balance_at_epoch(address, epoch_expired)
-        self.contract.caller({'from' : address, 'gas': 8000000}).redeemCoupons(
+        self.contract.functions.redeemCoupons(
             unreg_int(epoch_expired, xSD["decimals"]),
             unreg_int(coupons_to_redeem, xSD["decimals"])
-        )
+        ).transact({
+            'nonce': w3.eth.getTransactionCount(address),
+            'from' : address,
+            'gas': 8000000,
+            'gasPrice': 1,
+        })
         total_after_coupons = self.coupon_balance_at_epoch(address, epoch_list)
             
         return total_before_coupons - total_after_coupons
 
     def token_balance_of(self, address):
         return reg_int(self.dollar.caller({'from' : address, 'gas': 8000000}).balanceOf(address), xSD["decimals"])
+    
     def advance(self, address):
         before_advance = self.token_balance_of(address)
         self.contract.functions.advance().transact({
@@ -599,6 +621,7 @@ class Model:
         self.xsd_lp = xsd
         self.max_eth = 100000
         self.max_usdc = 100000
+        self.bootstrap_epoch = 20
 
         is_mint = False
         if w3.eth.get_block('latest')["number"] == 16:
@@ -731,17 +754,16 @@ class Model:
             if a.xsd > 0 and self.uniswap.operational() and (a.lp == 0):
                 options.append("sell")
             '''
-            TODO: CURRENTLY NO INCENTIVE TO BOND INTO LP OR DAO (EXCEPT FOR VOTING)
+            TODO: CURRENTLY NO INCENTIVE TO BOND INTO LP OR DAO (EXCEPT FOR VOTING, MAY USE THIS TO DISTRUBTION EXPANSIONARY PROFITS)
             if a.xsd > 0:
                 options.append("bond")
             if a.xsds > 0:
                 options.append("unbond")
             '''
-            if a.xsd > 0 and self.uniswap.xsd_price() <= 1.0:
+            if a.xsd > 0 and self.uniswap.xsd_price() <= 1.0 and self.dao.epoch(a.address) > self.bootstrap_epoch:
                 options.append("coupon_bid")
-
             # try any ways but handle traceback, faster than looping over all the epocks
-            if self.uniswap.xsd_price() >= 1.0:
+            if self.uniswap.xsd_price() >= 1.0 and len(a.coupon_expirys) > 0:
                 options.append("redeem")
             if a.usdc > 0 and a.xsd > 0:
                 options.append("provide_liquidity")
@@ -758,8 +780,11 @@ class Model:
                     TOTEST:
                         bond, unbond
 
+                        - coupons outstanding not working?
+                            - play around with bootstrapping price/period?
+
                     WORKS:
-                        advance, provide_liquidity, remove_liquidity, buy, sell, coupon_bid, redeem
+                        advance, provide_liquidity, remove_liquidity, buy, sell, coupon_bid, redeem, 
                 '''
         
                 strategy = a.get_strategy(w3.eth.get_block('latest')["number"], self.uniswap.xsd_price(), self.dao.xsd_supply())
@@ -777,10 +802,10 @@ class Model:
                 if action == "buy":
                     # this will limit the size of orders avaialble
                     (usdc_b, xsd_b) = self.uniswap.getTokenBalance()
-                    print("usdc_b:", usdc_b, "xsd_b:", xsd_b)
+                    #print("usdc_b:", usdc_b, "xsd_b:", xsd_b)
 
                     if xsd_b > 0 and usdc_b > 0:
-                        usdc = min(portion_dedusted(a.usdc, commitment), usdc_b)
+                        usdc = portion_dedusted(min(a.usdc,usdc_b), commitment)
                     else:
                         continue
                     
@@ -794,29 +819,25 @@ class Model:
                         )
                         max_amount = reg_int(max_amount, USDC['decimals'])
                     except Exception as inst:
-                        print({"agent": a.address, "error": inst, "action": "buy", "amount_in": usdc_in})
+                        # not enough on market to fill bid
+                        #print({"agent": a.address, "error": inst, "action": "buy", "amount_in": usdc_in})
                         continue
                     
-                    
                     try:
-                        (max_amount, _) = self.uniswap_router.caller({'from' : a.address, 'gas': 8000000}).getAmountsIn(
-                            unreg_int(usdc_in, xSD['decimals']), 
-                            [self.usdc_lp.address, self.xsd_lp.address]
-                        )
-                        max_amount = reg_int(max_amount, USDC['decimals'])                      
-                        logger.info("Buy init {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(usdc_in, price, max_amount))
-
+                        logger.debug("Buy init {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(usdc_in, price, max_amount))
                         xsd = self.uniswap.buy(a.address, usdc_in, max_amount)
                         a.usdc -= usdc
                         a.xsd += xsd
-                        logger.info("Buy end {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd, price, usdc))
+                        logger.debug("Buy end {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd, price, usdc))
                         
                     except Exception as inst:
-                        print({"agent": a.address, "error": inst, "action": "buy"})
+                        # buy order too big
+                        continue
+                        #print({"agent": a.address, "error": inst, "action": "buy"})
                 elif action == "sell":
                     # this will limit the size of orders avaialble
                     (usdc_b, xsd_b) = self.uniswap.getTokenBalance()
-                    print("usdc_b:", usdc_b, "xsd_b:", xsd_b)
+                    #print("usdc_b:", usdc_b, "xsd_b:", xsd_b)
                     if xsd_b > 0 and usdc_b > 0:
                         xsd = min(portion_dedusted(a.xsd, commitment), xsd_b)
                     else:
@@ -834,17 +855,17 @@ class Model:
                         continue
 
                     try:
-                        logger.info("Sell init {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd_out, price, max_amount))
+                        logger.debug("Sell init {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd_out, price, max_amount))
                         usdc = self.uniswap.sell(a.address, xsd_out, max_amount)
                         a.xsd -= xsd
                         a.usdc += usdc
-                        logger.info("Sell end {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd, price, usdc))
+                        logger.debug("Sell end {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd, price, usdc))
                     except Exception as inst:
                         print({"agent": a.address, "error": inst, "action": "sell"})
                 elif action == "advance":
                     xsd = self.dao.advance(a.address)
                     a.xsd = xsd
-                    logger.info("Advance for {:.2f} xSD".format(xsd))
+                    logger.debug("Advance for {:.2f} xSD".format(xsd))
                 elif action == "coupon_bid":
                     xsd_at_risk = portion_dedusted(a.xsd, commitment)
                     rand_epoch_expiry = int(random.random() * 10000000)
@@ -890,19 +911,22 @@ class Model:
                     if int(min_xsd_needed) <= 0:
                         continue
 
-                    logger.info("Provide {:.2f} xSD (of {:.2f} xSD) and {:.2f} USDC".format(min_xsd_needed, a.xsd, usdc))
-                    after_lp = self.uniswap.provide_liquidity(a.address, min_xsd_needed, usdc)
+                    try:
+                        logger.debug("Provide {:.2f} xSD (of {:.2f} xSD) and {:.2f} USDC".format(min_xsd_needed, a.xsd, usdc))
+                        after_lp = self.uniswap.provide_liquidity(a.address, min_xsd_needed, usdc)
 
-                    usdc_b, xsd_b = self.uniswap.getTokenBalance()
-                    min_xsd_amount_after = xsd_b / usdc_b * after_lp
-                    min_usdc_amount_after = usdc_b / xsd_b * after_lp
+                        usdc_b, xsd_b = self.uniswap.getTokenBalance()
+                        min_xsd_amount_after = xsd_b / usdc_b * after_lp
+                        min_usdc_amount_after = usdc_b / xsd_b * after_lp
 
-                    diff_xsd = (min_xsd_amount_after - xsd_b)
-                    diff_usdc = (min_usdc_amount_after - usdc_b)
-                    
-                    a.xsd = max(0, a.xsd - diff_xsd)
-                    a.usdc = max(0, a.usdc - diff_usdc)
-                    a.lp += after_lp
+                        diff_xsd = (min_xsd_amount_after - xsd_b)
+                        diff_usdc = (min_usdc_amount_after - usdc_b)
+                        
+                        a.xsd = max(0, a.xsd - diff_xsd)
+                        a.usdc = max(0, a.usdc - diff_usdc)
+                        a.lp += after_lp
+                    except Exception as inst:
+                        print({"agent": a.address, "error": inst, "action": "provide_liquidity"})
                 elif action == "remove_liquidity":
                     lp = portion_dedusted(a.lp, commitment)
                     total_lp = self.uniswap.total_lp(a.address)
@@ -911,16 +935,17 @@ class Model:
 
                     
 
-                    slippage = 0.1
+                    slippage = 0.5 #50% slippiage?
                     min_reduction = 1.0 - slippage
 
-                    min_xsd_amount = xsd_b * (lp / float(total_lp)) * min_reduction
-                    min_usdc_amount = usdc_b * (lp / float(total_lp)) * min_reduction
+                    min_xsd_amount = max(0,xsd_b * (lp / float(total_lp)) * min_reduction)
+                    min_usdc_amount = max(0, usdc_b * (lp / float(total_lp)) * min_reduction)
 
-                    #print(min_xsd_amount * min_reduction, min_usdc_amount * min_reduction, lp)
+                    if not (min_xsd_amount > 0 and min_usdc_amount > 0):
+                        continue
 
                     try:
-                        logger.info("Stop providing {:.2f} xSD and {:.2f} USDC".format(min_xsd_amount, min_usdc_amount))
+                        logger.debug("Stop providing {:.2f} xSD and {:.2f} USDC".format(min_xsd_amount, min_usdc_amount))
                         after_lp = self.uniswap.remove_liquidity(a.address, lp, min_xsd_amount, min_usdc_amount)
 
                         min_xsd_amount_after = xsd_b / usdc_b * after_lp
