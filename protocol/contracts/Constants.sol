@@ -24,7 +24,7 @@ library Constants {
     uint256 private constant CHAIN_ID = 1; // Mainnet
 
     /* Bootstrapping */
-    uint256 private constant BOOTSTRAPPING_PERIOD = 150; // 150 epochs
+    uint256 private constant BOOTSTRAPPING_PERIOD = 20; // 20 epochs
     uint256 private constant BOOTSTRAPPING_PRICE = 154e16; // 1.54 USDC (targeting 4.5% inflation)
 
     /* Oracle */
@@ -57,7 +57,7 @@ library Constants {
     uint256 private constant DAO_EXIT_LOCKUP_EPOCHS = 0; // 0 epochs fluid, can leave at any time
 
     /* Pool */
-    uint256 private constant POOL_EXIT_LOCKUP_EPOCHS = 0; // 12 epochs fluid, can leave at any time
+    uint256 private constant POOL_EXIT_LOCKUP_EPOCHS = 0; // 0 epochs fluid, can leave at any time
 
     /* Market */
     uint256 private constant COUPON_EXPIRATION = 360;

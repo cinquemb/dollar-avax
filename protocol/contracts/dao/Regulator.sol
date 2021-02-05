@@ -27,8 +27,8 @@ contract Regulator is Comptroller {
     using SafeMath for uint256;
     using Decimal for Decimal.D256;
 
-    bytes32 private constant FILE = "Regulator";
-    Epoch.CouponBidderState[] private bids;
+    bytes32 private constant FILE = "Regulator";    
+
     uint256 private totalFilled = 0;
     uint256 private totalBurned = 0;
     uint256 private yieldRelNorm = 1;
@@ -38,6 +38,8 @@ contract Regulator is Comptroller {
     uint256 private maxExpiryFilled = 0;
     uint256 private sumExpiryFilled = 0;
     uint256 private sumYieldFilled = 0;
+    //need to cap bids per epoch, this may not be  the best way
+    Epoch.CouponBidderState[20000] private bids;
     uint256 private minExpiryFilled = 2**256 - 1;
     Decimal.D256 private maxYieldFilled = Decimal.zero();
     Decimal.D256 private minYieldFilled = Decimal.D256(2**256 - 1);
@@ -115,12 +117,12 @@ contract Regulator is Comptroller {
         return price;
     }    
 
-    function sortBidsByDistance(Epoch.CouponBidderState[] storage bids) internal returns(Epoch.CouponBidderState[] storage) {
-       quickSort(bids, int(0), int(bids.length - 1));
+    function sortBidsByDistance(Epoch.CouponBidderState[20000] storage bids, uint256 maxBidsLen) internal view returns (Epoch.CouponBidderState[20000] storage) {
+       quickSort(bids, int(0), int(maxBidsLen- 1));
        return bids;
     }
     
-    function quickSort(Epoch.CouponBidderState[] memory arr, int left, int right) internal {
+    function quickSort(Epoch.CouponBidderState[20000] memory arr, int left, int right) internal view {
         int i = left;
         int j = right;
         if(i==j) return;
@@ -151,10 +153,14 @@ contract Regulator is Comptroller {
     }
 
     function settleCouponAuction(uint256 settlementEpoch) internal returns (bool success) {
-        if (!isCouponAuctionFinished(settlementEpoch) && !isCouponAuctionCanceled(settlementEpoch)) {
+        if (!isCouponAuctionFinished(settlementEpoch) && !isCouponAuctionCanceled(settlementEpoch)) {            
             yieldRelNorm = getCouponAuctionMaxYield(settlementEpoch) - getCouponAuctionMinYield(settlementEpoch);
             expiryRelNorm = getCouponAuctionMaxExpiry(settlementEpoch) - getCouponAuctionMinExpiry(settlementEpoch);    
             dollarRelNorm = getCouponAuctionMaxDollarAmount(settlementEpoch) - getCouponAuctionMinDollarAmount(settlementEpoch);
+
+            uint256 maxBidLen = getCouponAuctionBids(settlementEpoch);
+            if (maxBidLen > 20000)
+                maxBidLen = 20000;
             
             // loop over bids and compute distance
             for (uint256 i = 0; i < getCouponAuctionBids(settlementEpoch); i++) {
@@ -189,21 +195,22 @@ contract Regulator is Comptroller {
                 } else {
                     distance = Decimal.zero();
                 }
-
-                setCouponBidderStateDistance(settlementEpoch, getCouponBidderStateIndex(settlementEpoch, i), distance);
-                bidder = getCouponBidderState(settlementEpoch, getCouponBidderStateIndex(settlementEpoch, i));
-                bids.push(bidder);
+                bidder.distance = distance;
+                if (i < bids.length) {
+                    bids[i] = bidder;
+                }
             }
 
             
             // sort bids
-            bids = sortBidsByDistance(bids);
+            bids = sortBidsByDistance(bids, maxBidLen);
 
             // assign coupons in order of bid preference
             for (uint256 i = 0; i < bids.length; i++) {
                 // reject bids implicit greater than the getCouponRejectBidPtile threshold
                 if (Decimal.ratio(i, bids.length).lessThan(Constants.getCouponRejectBidPtile())) {
-                    if (!getCouponBidderStateRejected(settlementEpoch, bids[i].bidder) && !getCouponBidderStateRejected(settlementEpoch, bids[i].bidder)) {
+                    // only assgin bids that have not been explicitly selected already? may not need this if settleCouponAuction can only be called once per epoch passed
+                    if (!getCouponBidderStateSelected(settlementEpoch, bids[i].bidder)) {
                         Decimal.D256 memory yield = Decimal.ratio(
                             bids[i].couponAmount,
                             bids[i].dollarAmount
@@ -233,9 +240,6 @@ contract Regulator is Comptroller {
                             incrementBalanceOfCoupons(bids[i].bidder, epochExpiry, bids[i].couponAmount);
                             setCouponBidderStateSelected(settlementEpoch, bids[i].bidder, i);
                             totalFilled++;
-                        } else {
-                            // reject bids explicit
-                            setCouponBidderStateRejected(settlementEpoch, bids[i].bidder);
                         }
                     }
                 } else {

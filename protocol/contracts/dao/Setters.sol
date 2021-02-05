@@ -191,11 +191,7 @@ contract Setters is State, Getters {
         _state.epochs[epoch].auction.couponBidderState[bidder].selected = true;
         _state.epochs[epoch].auction.seletedCouponBidder[index] = bidder;
     }
-
-    function setCouponBidderStateRejected(uint256 epoch, address bidder) internal {
-        _state.epochs[epoch].auction.couponBidderState[bidder].rejected = true;
-    }
-
+    
     function setCouponBidderStateRedeemed(uint256 epoch, address bidder) internal {
         _state.epochs[epoch].auction.couponBidderState[bidder].redeemed = true;
     }

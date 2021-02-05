@@ -423,6 +423,7 @@ class UniswapPool:
             )
         )
 
+        # explore this more?
         slippage = 0.01
         max_usdc_amount = (max_usdc_amount * (1 + slippage))
 
@@ -474,6 +475,7 @@ class UniswapPool:
                 reg_int(self.usdc_lp.caller({'from' : address, 'gas': 8000000}).balanceOf(address), USDC['decimals'])
             )
         )
+        # explore this more?
         slippage = 0.01
         min_usdc_amount = (min_usdc_amount * (1 - slippage))
 
@@ -578,8 +580,8 @@ class DAO:
         self.contract.functions.advance().transact({
             'nonce': w3.eth.getTransactionCount(address),
             'from' : address,
-            'gas': 8000000,
-            'gasPrice': 1,
+            'gas': 80000000,
+            'gasPrice': Web3.toWei(1, 'gwei'),
         })
         after_advance = self.token_balance_of(address)
         return after_advance - before_advance
@@ -625,7 +627,7 @@ class Model:
         self.xsd_lp = xsd
         self.max_eth = 100000
         self.max_usdc = 100000
-        self.bootstrap_epoch = 20
+        self.bootstrap_epoch = 100
         self.min_usdc_balance = 10000
 
         is_mint = False
@@ -754,12 +756,12 @@ class Model:
         
         anyone_acted = False
 
-        '''
+        #'''
         if self.dao.epoch(seleted_advancer.address) < self.bootstrap_epoch:
             anyone_acted = True
             return anyone_acted, seleted_advancer
 
-        '''
+        #'''
 
         for agent_num, a in enumerate(self.agents):
             # TODO: real strategy
@@ -842,7 +844,7 @@ class Model:
                     try:
                         logger.debug("Buy init {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(usdc_in, price, max_amount))
                         xsd = self.uniswap.buy(a.address, usdc_in, max_amount)
-                        a.usdc -= usdc
+                        a.usdc -= usdc_in
                         a.xsd += xsd
                         logger.debug("Buy end {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd, price, usdc))
                         
@@ -873,11 +875,11 @@ class Model:
                     try:
                         logger.debug("Sell init {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd_out, price, max_amount))
                         usdc = self.uniswap.sell(a.address, xsd_out, max_amount)
-                        a.xsd -= xsd
+                        a.xsd -= xsd_out
                         a.usdc += usdc
                         logger.debug("Sell end {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd, price, usdc))
                     except Exception as inst:
-                        print({"agent": a.address, "error": inst, "action": "sell", "xsd_out": xsd_out, "max_amount": max_amount})
+                        print({"agent": a.address, "error": inst, "action": "sell", "xsd_out": xsd_out, "max_amount": max_amount, "account_xsd": a.xsd})
                 elif action == "advance":
                     xsd = self.dao.advance(a.address)
                     a.xsd = xsd
@@ -933,16 +935,14 @@ class Model:
                         logger.debug("Provide {:.2f} xSD (of {:.2f} xSD) and {:.2f} USDC".format(min_xsd_needed, a.xsd, usdc))
                         after_lp = self.uniswap.provide_liquidity(a.address, min_xsd_needed, usdc)
 
-                        usdc_b, xsd_b = self.uniswap.getTokenBalance()
-                        min_xsd_amount_after = xsd_b / usdc_b * after_lp
-                        min_usdc_amount_after = usdc_b / xsd_b * after_lp
+                        usdc_a, xsd_a = self.uniswap.getTokenBalance()
 
-                        diff_xsd = (min_xsd_amount_after - xsd_b)
-                        diff_usdc = (min_usdc_amount_after - usdc_b)
+                        diff_xsd = (xsd_a - xsd_b)
+                        diff_usdc = (usdc_a - usdc_b)
                         
                         a.xsd = max(0, a.xsd - diff_xsd)
                         a.usdc = max(0, a.usdc - diff_usdc)
-                        a.lp += after_lp
+                        a.lp = after_lp
                     except Exception as inst:
                         # usually fails for c: VM Exception while processing transaction: revert TransferHelper: TRANSFER_FROM_FAILED, prob because of slippage?
                         #print({"agent": a.address, "error": inst, "action": "provide_liquidity", "min_xsd_needed": min_xsd_needed, "usdc": usdc})
@@ -952,8 +952,6 @@ class Model:
                     total_lp = self.uniswap.total_lp(a.address)
                     
                     usdc_b, xsd_b = self.uniswap.getTokenBalance()
-
-                    
 
                     slippage = 0.01 #01% slippiage?
                     min_reduction = 1.0 - slippage
@@ -968,13 +966,12 @@ class Model:
                         logger.debug("Stop providing {:.2f} xSD and {:.2f} USDC".format(min_xsd_amount, min_usdc_amount))
                         after_lp = self.uniswap.remove_liquidity(a.address, lp, min_xsd_amount, min_usdc_amount)
 
-                        min_xsd_amount_after = xsd_b / usdc_b * after_lp
-                        min_usdc_amount_after = usdc_b / xsd_b * after_lp
+                        usdc_a, xsd_a = self.uniswap.getTokenBalance()
 
-                        diff_xsd = (min_xsd_amount - min_xsd_amount_after)
-                        diff_usdc = (min_usdc_amount - min_usdc_amount_after)
+                        diff_xsd = (xsd_b - xsd_a)
+                        diff_usdc = (usdc_b - usdc_a)
                         
-                        a.lp -= after_lp
+                        a.lp = after_lp
                         a.xsd += diff_xsd
                         a.usdc += diff_usdc
                         
@@ -1002,11 +999,11 @@ def main():
     print('Total Agents:',len(w3.eth.accounts[:max_accounts]))
     dao = w3.eth.contract(abi=DaoContract['abi'], address=xSDS["addr"])
 
-    #oracle = w3.eth.contract(abi=OracleContract['abi'], address=dao.caller({'from' : dao.address, 'gas': 8000000}).oracle())
+    oracle = w3.eth.contract(abi=OracleContract['abi'], address=dao.caller({'from' : dao.address, 'gas': 8000000}).oracle())
 
     #print(oracle.caller({'from' : "0xd3cF224C0E9d0eDE59920aC1874f8BE07c92821B", 'gas': 8000000}).latestValid())
 
-    #print(dao.caller({'from' : "0xd3cF224C0E9d0eDE59920aC1874f8BE07c92821B", 'gas': 8000000}).getMinExpiryFilled(unreg_int(6570126, xSD['decimals'])))
+    #print(dao.caller({'from' : "0xd3cF224C0E9d0eDE59920aC1874f8BE07c92821B", 'gas': 8000000}).getMinExpiryFilled(unreg_int(2301866, xSD['decimals'])))
     #print(dao.caller({'from' : 0xd3cF224C0E9d0eDE59920aC1874f8BE07c92821B, 'gas': 8000000}).balanceOfCoupons(address, 611556))
     #sys.exit()
     uniswap = w3.eth.contract(abi=UniswapPairContract['abi'], address=UNI["addr"])
