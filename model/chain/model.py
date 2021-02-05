@@ -21,7 +21,7 @@ with open("deploy_output.txt", 'r+') as f:
 IS_DEBUG = False
 
 logger = logging.getLogger(__name__)
-provider = Web3.WebsocketProvider('ws://localhost:7546', websocket_timeout=60)
+provider = Web3.WebsocketProvider('ws://localhost:7545', websocket_timeout=60)
 #provider = Web3.IPCProvider("./development.ipc")
 w3 = Web3(provider)
 
