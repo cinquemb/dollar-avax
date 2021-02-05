@@ -95,6 +95,92 @@ def get_addr_from_contract(contract):
 xSD['addr'] = get_addr_from_contract(DaoContract)
 xSDS['addr'] = get_addr_from_contract(TokenContract)
 
+# Because token balances need to be accuaate to the atomic unit, we can't store
+# them as floats. Otherwise we might turn our float back into a token balance
+# different from the balance we actually had, and try to spend more than we
+# have. But also, it's ugly to throw around total counts of atomic units. So we
+# use this class that represents a fixed-point token balance.
+class Balance:
+    def __init__(self, wei=0, decimals=0):
+        self._wei = int(wei)
+        self._decimals = int(decimals)
+
+    def __add__(self, other):
+        if isinstance(other, Balance):
+            if other._decimals != self._decimals:
+                raise ValueError("Cannot add balances with different decimals: {}, {}", self, other)
+            return Balance(self._wei + other._wei, self._decimals)
+        else:
+            return Balance(self._wei + other * 10**self._decimals, self._decimals)
+
+    def __iadd__(self, other):
+        if isinstance(other, Balance):
+            if other._decimals != self._decimals:
+                raise ValueError("Cannot add balances with different decimals: {}, {}", self, other)
+            self._wei += other._wei
+        else:
+            self._wei += other * 10**self._decimals
+        return self
+        
+    def __radd__(self, other):
+        return self + other
+        
+    def __sub__(self, other):
+        if isinstance(other, Balance):
+            if other._decimals != self._decimals:
+                raise ValueError("Cannot subtract balances with different decimals: {}, {}", self, other)
+            return Balance(self._wei - other._wei, self._decimals)
+        else:
+            return Balance(self._wei - other * 10**self._decimals, self._decimals)
+
+    def __isub__(self, other):
+        if isinstance(other, Balance):
+            if other._decimals != self._decimals:
+                raise ValueError("Cannot subtract balances with different decimals: {}, {}", self, other)
+            self._wei -= other._wei
+        else:
+            self._wei -= other * 10**self._decimals
+        return self
+        
+    def __rsub__(self, other):
+        return Balance(other * 10**self._decimals, self._decimals) - self
+        
+    def __mul__(self, other):
+        if isinstance(other, Balance):
+            raise TypeError("Cannot multiply two balances")
+        return Balance(self._wei * other, self._decimals)
+        
+    def __imul__(self, other):
+        if isinstance(other, Balance):
+            raise TypeError("Cannot multiply two balances")
+        self._wei = int(self._wei * other)
+        
+    def __rmul__(self, other):
+        return self * other
+        
+    def __truediv__(self, other):
+        if isinstance(other, Balance):
+            raise TypeError("Cannot divide two balances")
+        return Balance(self._wei // other, self._decimals)
+        
+    def __itruediv__(self, other):
+        if isinstance(other, Balance):
+            raise TypeError("Cannot divide two balances")
+        self._wei = int(self._wei // other)
+        
+    # No rtruediv because dividing by a balance is silly.
+    
+    # Todo: floordiv? divmod?
+
+    def __str__(self):
+        base = 10**self._decimals
+        ipart = self._wei // base
+        fpart = self._wei - base * ipart
+        return ('{}.{:0' + str(self._decimals) + 'd}').format(ipart, fpart)
+
+    def __repr__(self):
+        return 'Balance({}, {})'.format(self._wei, self._decimals)
+        
 def reg_int(value, scale):
     """
     Convert from atomic token units with the given number of decimals, to a
