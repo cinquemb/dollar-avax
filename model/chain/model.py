@@ -96,13 +96,28 @@ xSD['addr'] = get_addr_from_contract(DaoContract)
 xSDS['addr'] = get_addr_from_contract(TokenContract)
 
 def reg_int(value, scale):
+    """
+    Convert from atomic token units with the given number of decimals, to a
+    float with the right number of decimals.
+    
+    Note that floats may not be able to represent all possible token balances.
+    """
     return round(value / float(int(pow(10,scale))), scale)
 
 def unreg_int(value, scale):
+    """
+    Convert from a float with the right number of decimals to atomic token
+    units with the given number of decimals.
+    
+    Note that floats may not be able to represent all possible token balances.
+    """
     scaled = int(round(value, scale) * pow(10, scale))
     return scaled
 
 def pretty(d, indent=0):
+   """
+   Pretty-print a value.
+   """
    for key, value in d.items():
       print('\t' * indent + str(key))
       if isinstance(value, dict):
@@ -118,12 +133,12 @@ class Agent:
     Represents an agent. Tracks all the agent's balances.
     """
     
-    def __init__(self, dao, uniswap_pair, xsd_lp, usdc_lp, **kwargs):
+    def __init__(self, dao, uniswap_pair, xsd_token, usdc_token, **kwargs):
  
         # xSD contract
-        self.xsd_lp = xsd_lp
+        self.xsd_token = xsd_token
         # USDC contract 
-        self.usdc_lp = usdc_lp
+        self.usdc_token = usdc_token
         # xSD balance
         self.xsd = 0.0
         # USDC balance
@@ -163,9 +178,9 @@ class Agent:
         if is_seeded:
             self.lp = reg_int(self.uniswap_pair.caller({'from' : self.address, 'gas': 8000000}).balanceOf(self.address), UNIV2Router['decimals'])
 
-            self.xsd = reg_int(self.xsd_lp.caller({'from' : self.address, 'gas': 8000000}).balanceOf(self.address), xSD['decimals'])
+            self.xsd = reg_int(self.xsd_token.caller({'from' : self.address, 'gas': 8000000}).balanceOf(self.address), xSD['decimals'])
 
-            self.usdc = reg_int(self.usdc_lp.caller({'from' : self.address, 'gas': 8000000}).balanceOf(self.address), USDC['decimals'])
+            self.usdc = reg_int(self.usdc_token.caller({'from' : self.address, 'gas': 8000000}).balanceOf(self.address), USDC['decimals'])
         
     def __str__(self):
         """
@@ -245,11 +260,11 @@ class UniswapPool:
     Represents the Uniswap pool. Tracks xSD and USDC balances of pool, and total outstanding LP shares.
     """
     
-    def __init__(self, uniswap, uniswap_router, uniswap_lp, usdc_lp, xsd, **kwargs):
+    def __init__(self, uniswap, uniswap_router, uniswap_token, usdc_token, xsd, **kwargs):
         self.uniswap_pair = uniswap
         self.uniswap_router = uniswap_router
-        self.uniswap_lp = uniswap_lp
-        self.usdc_lp = usdc_lp
+        self.uniswap_token = uniswap_token
+        self.usdc_token = usdc_token
         self.xsd = xsd
     
     def operational(self):
@@ -302,9 +317,9 @@ class UniswapPool:
         """
         Provide liquidity. Returns the number of new LP shares minted.
         """        
-        is_usdc_approved = self.usdc_lp.caller({'from' : address, 'gas': 8000000}).allowance(address, UNIV2Router["addr"])
+        is_usdc_approved = self.usdc_token.caller({'from' : address, 'gas': 8000000}).allowance(address, UNIV2Router["addr"])
         if not (is_usdc_approved > 0):
-            self.usdc_lp.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
+            self.usdc_token.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
                 'nonce': w3.eth.getTransactionCount(address),
                 'from' : address,
                 'gas': 8000000,
@@ -328,13 +343,13 @@ class UniswapPool:
             'Balance for {}: {:.2f} xSD, {:.2f} USDC'.format(
                 address,
                 reg_int(self.xsd.caller({'from' : address, 'gas': 8000000}).balanceOf(address), xSD['decimals']),
-                reg_int(self.usdc_lp.caller({'from' : address, 'gas': 8000000}).balanceOf(address), USDC['decimals'])
+                reg_int(self.usdc_token.caller({'from' : address, 'gas': 8000000}).balanceOf(address), USDC['decimals'])
             )
         )
 
         rv = self.uniswap_router.functions.addLiquidity(
             self.xsd.address,
-            self.usdc_lp.address,
+            self.usdc_token.address,
             unreg_int(xsd, xSD['decimals']),
             unreg_int(usdc, USDC['decimals']),
             unreg_int(min_xsd_amount, xSD['decimals']),
@@ -371,7 +386,7 @@ class UniswapPool:
 
         self.uniswap_router.functions.removeLiquidity(
             self.xsd.address,
-            self.usdc_lp.address,
+            self.usdc_token.address,
             unreg_int(shares, UNIV2Router['decimals']),
             unreg_int(min_xsd_amount, xSD['decimals']),
             unreg_int(min_usdc_amount, USDC['decimals']),
@@ -397,9 +412,9 @@ class UniswapPool:
         balance_before = self.xsd.caller({"from": address, 'gas': 8000000}).balanceOf(address)
 
 
-        is_usdc_approved = self.usdc_lp.caller({'from' : address, 'gas': 8000000}).allowance(UNIV2Router["addr"], address)
+        is_usdc_approved = self.usdc_token.caller({'from' : address, 'gas': 8000000}).allowance(UNIV2Router["addr"], address)
         if not (is_usdc_approved > 0):
-            self.usdc_lp.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
+            self.usdc_token.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
                 'nonce': w3.eth.getTransactionCount(address),
                 'from' : address,
                 'gas': 8000000,
@@ -419,7 +434,7 @@ class UniswapPool:
             'Balance for {}: {:.2f} xSD, {:.2f} USDC'.format(
                 address,
                 reg_int(self.xsd.caller({'from' : address, 'gas': 8000000}).balanceOf(address), xSD['decimals']),
-                reg_int(self.usdc_lp.caller({'from' : address, 'gas': 8000000}).balanceOf(address), USDC['decimals'])
+                reg_int(self.usdc_token.caller({'from' : address, 'gas': 8000000}).balanceOf(address), USDC['decimals'])
             )
         )
 
@@ -429,7 +444,7 @@ class UniswapPool:
         self.uniswap_router.functions.swapExactTokensForTokens(
             unreg_int(usdc, USDC["decimals"]),
             unreg_int(max_usdc_amount, xSD["decimals"]),
-            [self.usdc_lp.address, self.xsd.address],
+            [self.usdc_token.address, self.xsd.address],
             address,
             int(w3.eth.get_block('latest')['timestamp'] + DEADLINE_FROM_NOW)
         ).transact({
@@ -449,9 +464,9 @@ class UniswapPool:
         # get balance of xsd before and after
         balance_before = self.xsd.caller({"from": address, 'gas': 8000000}).balanceOf(address)
 
-        is_usdc_approved = self.usdc_lp.caller({'from' : address, 'gas': 8000000}).allowance(address, UNIV2Router["addr"])
+        is_usdc_approved = self.usdc_token.caller({'from' : address, 'gas': 8000000}).allowance(address, UNIV2Router["addr"])
         if not (is_usdc_approved > 0):
-            self.usdc_lp.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
+            self.usdc_token.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
                 'nonce': w3.eth.getTransactionCount(address),
                 'from' : address,
                 'gas': 8000000,
@@ -471,7 +486,7 @@ class UniswapPool:
             'Balance for {}: {:.2f} xSD, {:.2f} USDC'.format(
                 address,
                 reg_int(self.xsd.caller({'from' : address, 'gas': 8000000}).balanceOf(address), xSD['decimals']),
-                reg_int(self.usdc_lp.caller({'from' : address, 'gas': 8000000}).balanceOf(address), USDC['decimals'])
+                reg_int(self.usdc_token.caller({'from' : address, 'gas': 8000000}).balanceOf(address), USDC['decimals'])
             )
         )
         slippage = 0.01
@@ -480,7 +495,7 @@ class UniswapPool:
         self.uniswap_router.functions.swapExactTokensForTokens(
             unreg_int(xsd, xSD["decimals"]),
             unreg_int(min_usdc_amount, USDC["decimals"]),
-            [self.xsd.address, self.usdc_lp.address],
+            [self.xsd.address, self.usdc_token.address],
             address,
             int(w3.eth.get_block('latest')['timestamp'] + DEADLINE_FROM_NOW)
         ).transact({
@@ -611,18 +626,18 @@ class Model:
     Full model of the economy.
     """
     
-    def __init__(self, dao, uniswap, usdc, uniswap_router, uniswap_lp, xsd, agents, **kwargs):
+    def __init__(self, dao, uniswap, usdc, uniswap_router, uniswap_token, xsd, agents, **kwargs):
         """
         Takes in experiment parameters and forwards them on to all components.
         """
         #pretty(dao.functions.__dict__)
         #sys.exit()
-        self.uniswap = UniswapPool(uniswap, uniswap_router, uniswap_lp, usdc, xsd, **kwargs)
+        self.uniswap = UniswapPool(uniswap, uniswap_router, uniswap_token, usdc, xsd, **kwargs)
         self.dao = DAO(dao, xsd, **kwargs)
         self.agents = []
-        self.usdc_lp = usdc
+        self.usdc_token = usdc
         self.uniswap_router = uniswap_router
-        self.xsd_lp = xsd
+        self.xsd_token = xsd
         self.max_eth = 100000
         self.max_usdc = 100000
         self.bootstrap_epoch = 20
@@ -643,14 +658,14 @@ class Model:
                 '''
                 (max_amount, _) = self.uniswap.uniswap_router.caller({'from' : address, 'gas': 8000000}).getAmountsIn(
                     unreg_int(30, xSD['decimals']), 
-                    [self.usdc_lp.address, self.xsd_lp.address]
+                    [self.usdc_token.address, self.xsd_token.address]
                 )
 
                 max_amount = reg_int(max_amount, USDC['decimals'])
                 '''
                 (_, max_amount) = self.uniswap.uniswap_router.caller({'from' : address, 'gas': 8000000}).getAmountsOut(
                     unreg_int(10, xSD['decimals']), 
-                    [self.xsd_lp.address, self.usdc_lp.address]
+                    [self.xsd_token.address, self.usdc_token.address]
                 )
 
                 max_amount = reg_int(max_amount, USDC['decimals'])
@@ -831,7 +846,7 @@ class Model:
                     try:
                         (max_amount, _) = self.uniswap_router.caller({'from' : a.address, 'gas': 8000000}).getAmountsIn(
                             unreg_int(usdc_in, xSD['decimals']), 
-                            [self.usdc_lp.address, self.xsd_lp.address]
+                            [self.usdc_token.address, self.xsd_token.address]
                         )
                         max_amount = reg_int(max_amount, USDC['decimals'])
                     except Exception as inst:
@@ -863,7 +878,7 @@ class Model:
                     try:
                         (_, max_amount) = self.uniswap_router.caller({'from' : a.address, 'gas': 8000000}).getAmountsOut(
                             unreg_int(xsd_out, xSD['decimals']), 
-                            [self.xsd_lp.address, self.usdc_lp.address]
+                            [self.xsd_token.address, self.usdc_token.address]
                         )
                         max_amount = reg_int(max_amount, USDC['decimals'])
                     except Exception as inst:
@@ -1013,7 +1028,7 @@ def main():
     usdc = w3.eth.contract(abi=USDCContract['abi'], address=USDC["addr"])
     
     uniswap_router = w3.eth.contract(abi=UniswapRouterAbiContract['abi'], address=UNIV2Router["addr"])
-    uniswap_lp = w3.eth.contract(abi=PoolContract['abi'], address=UNIV2LP["addr"])
+    uniswap_token = w3.eth.contract(abi=PoolContract['abi'], address=UNIV2LP["addr"])
 
     xsd = w3.eth.contract(abi=DollarContract['abi'], address=dao.caller().dollar())
     print (dao.caller().dollar())
@@ -1023,7 +1038,7 @@ def main():
     # Make a model of the economy
     start_init = time.time()
     print ('INIT STARTED')
-    model = Model(dao, uniswap, usdc, uniswap_router, uniswap_lp, xsd, w3.eth.accounts[:max_accounts], min_faith=0.5E6, max_faith=1E6, use_faith=False)
+    model = Model(dao, uniswap, usdc, uniswap_router, uniswap_token, xsd, w3.eth.accounts[:max_accounts], min_faith=0.5E6, max_faith=1E6, use_faith=False)
     end_init = time.time()
     print ('INIT FINISHED', end_init - start_init, '(s)')
 
