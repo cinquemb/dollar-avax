@@ -216,6 +216,10 @@ contract Getters is State {
         return _state.epochs[epoch].auction.couponBidder[index];
     }
 
+    function getCouponBidderStateIndexMap(uint256 epoch) internal view returns (mapping(uint256 => address) storage) {
+        return _state.epochs[epoch].auction.couponBidder;
+    }
+
     function isCouponAuctionFinished(uint256 epoch) internal view returns (bool){
         return _state.epochs[epoch].auction.finished;
     }

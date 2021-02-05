@@ -156,6 +156,10 @@ class Agent:
         self.dao = dao
         self.uniswap_pair = uniswap_pair
 
+        self.is_uniswap_approved = False
+        self.is_usdc_approved = False
+        self.is_xsd_approved = False
+
         # Uniswap LP share balance
         self.lp = 0
         is_seeded = False
@@ -298,27 +302,29 @@ class UniswapPool:
     def total_lp(self, address):
         return reg_int(self.uniswap_pair.caller({'from' : address, 'gas': 8000000}).totalSupply(), UNIV2Router['decimals'])
         
-    def provide_liquidity(self, address, xsd, usdc):
+    def provide_liquidity(self, address, xsd, usdc, agent):
         """
         Provide liquidity. Returns the number of new LP shares minted.
-        """        
-        is_usdc_approved = self.usdc_lp.caller({'from' : address, 'gas': 8000000}).allowance(address, UNIV2Router["addr"])
-        if not (is_usdc_approved > 0):
+        """
+
+        if not agent.is_usdc_approved:
             self.usdc_lp.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
                 'nonce': w3.eth.getTransactionCount(address),
                 'from' : address,
                 'gas': 8000000,
                 'gasPrice': 1,
-            })      
+            })
+            agent.is_usdc_approved = True
 
         is_xsd_approved = self.xsd.caller({'from' : address, 'gas': 8000000}).allowance(address, UNIV2Router["addr"])
-        if not (is_xsd_approved > 0):
+        if not agent.is_xsd_approved:
             self.xsd.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
                 'nonce': w3.eth.getTransactionCount(address),
                 'from' : address,
                 'gas': 8000000,
                 'gasPrice': 1,
             })
+            agent.is_xsd_approved = True
 
         slippage = 0.01
         min_xsd_amount = (xsd * (1 - slippage))
@@ -351,19 +357,20 @@ class UniswapPool:
         lp_shares = reg_int(self.uniswap_pair.caller({'from' : address, 'gas': 8000000}).balanceOf(address), UNIV2Router['decimals'])
         return lp_shares
         
-    def remove_liquidity(self, address, shares, min_xsd_amount, min_usdc_amount):
+    def remove_liquidity(self, address, shares, min_xsd_amount, min_usdc_amount, agent):
         """
         Remove liquidity for the given number of shares.
 
         """        
-        is_uniswap_approved = self.uniswap_pair.caller({'from' : address, 'gas': 8000000}).allowance(address, UNIV2Router["addr"])
-        if not (is_uniswap_approved > 0):
+        #is_uniswap_approved = self.uniswap_pair.caller({'from' : address, 'gas': 8000000}).allowance(address, UNIV2Router["addr"])
+        if not agent.is_uniswap_approved:
             self.uniswap_pair.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
                 'nonce': w3.eth.getTransactionCount(address),
                 'from' : address,
                 'gas': 8000000,
                 'gasPrice': 1,
-            })  
+            }) 
+            agent.is_uniswap_approved = True 
 
         slippage = 0.01
         min_xsd_amount = (min_xsd_amount * (1 - slippage))
@@ -388,7 +395,7 @@ class UniswapPool:
         lp_shares = reg_int(self.uniswap_pair.caller({'from' : address, 'gas': 8000000}).balanceOf(address), UNIV2Router['decimals'])
         return lp_shares
         
-    def buy(self, address, usdc, max_usdc_amount):
+    def buy(self, address, usdc, max_usdc_amount, agent):
         """
         Spend the given number of USDC to buy xSD. Returns the xSD bought.
         ['swapTokensForExactTokens(uint256,uint256,address[],address,uint256)']
@@ -397,23 +404,25 @@ class UniswapPool:
         balance_before = self.xsd.caller({"from": address, 'gas': 8000000}).balanceOf(address)
 
 
-        is_usdc_approved = self.usdc_lp.caller({'from' : address, 'gas': 8000000}).allowance(UNIV2Router["addr"], address)
-        if not (is_usdc_approved > 0):
+        #is_usdc_approved = self.usdc_lp.caller({'from' : address, 'gas': 8000000}).allowance(UNIV2Router["addr"], address)
+        if not agent.is_usdc_approved:
             self.usdc_lp.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
                 'nonce': w3.eth.getTransactionCount(address),
                 'from' : address,
                 'gas': 8000000,
                 'gasPrice': 1,
-            })      
+            }) 
+            agent.is_usdc_approved = True     
 
-        is_xsd_approved = self.xsd.caller({'from' : address, 'gas': 8000000}).allowance(UNIV2Router["addr"], address)
-        if not (is_xsd_approved > 0):
+        #is_xsd_approved = self.xsd.caller({'from' : address, 'gas': 8000000}).allowance(UNIV2Router["addr"], address)
+        if not agent.is_xsd_approved:
             self.xsd.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
                 'nonce': w3.eth.getTransactionCount(address),
                 'from' : address,
                 'gas': 8000000,
                 'gasPrice': 1,
             })
+            agent.is_xsd_approved = True
 
         logger.debug(
             'Balance for {}: {:.2f} xSD, {:.2f} USDC'.format(
@@ -443,30 +452,32 @@ class UniswapPool:
         amount_bought = reg_int(balance_after - balance_before, xSD["decimals"])
         return amount_bought
         
-    def sell(self, address, xsd, min_usdc_amount):
+    def sell(self, address, xsd, min_usdc_amount, agent):
         """
         Sell the given number of xSD for USDC. Returns the xSD received.
         """
         # get balance of xsd before and after
         balance_before = self.xsd.caller({"from": address, 'gas': 8000000}).balanceOf(address)
 
-        is_usdc_approved = self.usdc_lp.caller({'from' : address, 'gas': 8000000}).allowance(address, UNIV2Router["addr"])
-        if not (is_usdc_approved > 0):
+        #is_usdc_approved = self.usdc_lp.caller({'from' : address, 'gas': 8000000}).allowance(address, UNIV2Router["addr"])
+        if not agent.is_usdc_approved:
             self.usdc_lp.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
                 'nonce': w3.eth.getTransactionCount(address),
                 'from' : address,
                 'gas': 8000000,
                 'gasPrice': 1,
-            })      
+            })
+            agent.is_usdc_approved = True      
 
-        is_xsd_approved = self.xsd.caller({'from' : address, 'gas': 8000000}).allowance(address, UNIV2Router["addr"])
-        if not (is_xsd_approved > 0):
+        #is_xsd_approved = self.xsd.caller({'from' : address, 'gas': 8000000}).allowance(address, UNIV2Router["addr"])
+        if not agent.is_xsd_approved:
             self.xsd.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
                 'nonce': w3.eth.getTransactionCount(address),
                 'from' : address,
                 'gas': 8000000,
                 'gasPrice': 1,
             })
+            agent.is_xsd_approved = True
 
         logger.debug(
             'Balance for {}: {:.2f} xSD, {:.2f} USDC'.format(
@@ -627,7 +638,7 @@ class Model:
         self.xsd_lp = xsd
         self.max_eth = 100000
         self.max_usdc = 100000
-        self.bootstrap_epoch = 100
+        self.bootstrap_epoch = 150
         self.min_usdc_balance = 10000
 
         is_mint = False
@@ -820,16 +831,13 @@ class Model:
                 if action == "buy":
                     # this will limit the size of orders avaialble
                     (usdc_b, xsd_b) = self.uniswap.getTokenBalance()
-                    #print("usdc_b:", usdc_b, "xsd_b:", xsd_b)
-
                     if xsd_b > 0 and usdc_b > 0:
                         usdc = portion_dedusted(min(a.usdc,usdc_b), commitment)
                     else:
                         continue
                     
-                    price = self.uniswap.xsd_price()
+                    
                     usdc_in = min(usdc,usdc_b)
-
                     try:
                         (max_amount, _) = self.uniswap_router.caller({'from' : a.address, 'gas': 8000000}).getAmountsIn(
                             unreg_int(usdc_in, xSD['decimals']), 
@@ -842,8 +850,9 @@ class Model:
                         continue
                     
                     try:
+                        price = self.uniswap.xsd_price()
                         logger.debug("Buy init {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(usdc_in, price, max_amount))
-                        xsd = self.uniswap.buy(a.address, usdc_in, max_amount)
+                        xsd = self.uniswap.buy(a.address, usdc_in, max_amount, a)
                         a.usdc -= usdc_in
                         a.xsd += xsd
                         logger.debug("Buy end {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd, price, usdc))
@@ -855,12 +864,11 @@ class Model:
                 elif action == "sell":
                     # this will limit the size of orders avaialble
                     (usdc_b, xsd_b) = self.uniswap.getTokenBalance()
-                    #print("usdc_b:", usdc_b, "xsd_b:", xsd_b)
                     if xsd_b > 0 and usdc_b > 0:
                         xsd = min(portion_dedusted(a.xsd, commitment), xsd_b)
                     else:
                         continue
-                    price = self.uniswap.xsd_price()
+                    
                     xsd_out = min(xsd, xsd_b)
                     try:
                         (_, max_amount) = self.uniswap_router.caller({'from' : a.address, 'gas': 8000000}).getAmountsOut(
@@ -873,8 +881,9 @@ class Model:
                         continue
 
                     try:
+                        price = self.uniswap.xsd_price()
                         logger.debug("Sell init {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd_out, price, max_amount))
-                        usdc = self.uniswap.sell(a.address, xsd_out, max_amount)
+                        usdc = self.uniswap.sell(a.address, xsd_out, max_amount, a)
                         a.xsd -= xsd_out
                         a.usdc += usdc
                         logger.debug("Sell end {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd, price, usdc))
@@ -910,7 +919,6 @@ class Model:
                         a.total_coupons_bid -= total_redeemed
                         logger.info("Redeem {:.2f} coupons for {:.2f} xSD".format(total_redeemed, total_redeemed))
                 elif action == "provide_liquidity":
-                    price = self.uniswap.xsd_price()
                     min_xsd_needed = 0
                     usdc = 0
                     if a.xsd < a.usdc:
@@ -919,11 +927,10 @@ class Model:
                         usdc = portion_dedusted(a.usdc, commitment)
 
                     revs = self.uniswap.getReserves()
-
                     if revs[1] > 0:
                         min_xsd_needed = reg_int(self.uniswap_router.caller({'from' : a.address, 'gas': 8000000}).quote(unreg_int(usdc, USDC['decimals']), revs[0], revs[1]), xSD['decimals'])
-
                         if round(min_xsd_needed, 2) == 0:
+                            price = self.uniswap.xsd_price()
                             min_xsd_needed = usdc / float(price)
                     else:
                         min_xsd_needed = usdc
@@ -933,7 +940,7 @@ class Model:
 
                     try:
                         logger.debug("Provide {:.2f} xSD (of {:.2f} xSD) and {:.2f} USDC".format(min_xsd_needed, a.xsd, usdc))
-                        after_lp = self.uniswap.provide_liquidity(a.address, min_xsd_needed, usdc)
+                        after_lp = self.uniswap.provide_liquidity(a.address, min_xsd_needed, usdc, a)
 
                         usdc_a, xsd_a = self.uniswap.getTokenBalance()
 
@@ -944,7 +951,6 @@ class Model:
                         a.usdc = max(0, a.usdc - diff_usdc)
                         a.lp = after_lp
                     except Exception as inst:
-                        # usually fails for c: VM Exception while processing transaction: revert TransferHelper: TRANSFER_FROM_FAILED, prob because of slippage?
                         #print({"agent": a.address, "error": inst, "action": "provide_liquidity", "min_xsd_needed": min_xsd_needed, "usdc": usdc})
                         continue
                 elif action == "remove_liquidity":
@@ -964,8 +970,7 @@ class Model:
 
                     try:
                         logger.debug("Stop providing {:.2f} xSD and {:.2f} USDC".format(min_xsd_amount, min_usdc_amount))
-                        after_lp = self.uniswap.remove_liquidity(a.address, lp, min_xsd_amount, min_usdc_amount)
-
+                        after_lp = self.uniswap.remove_liquidity(a.address, lp, min_xsd_amount, min_usdc_amount, a)
                         usdc_a, xsd_a = self.uniswap.getTokenBalance()
 
                         diff_xsd = (xsd_b - xsd_a)
