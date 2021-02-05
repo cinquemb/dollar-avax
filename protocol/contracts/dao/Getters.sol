@@ -303,7 +303,6 @@ contract Getters is State {
     function getSumofBestBidsAcrossCouponAuctions() public view returns (uint256) {
         // loop over past epochs from the latest `dead` epoch to the current
         uint256 sumCoupons = 0;
-        uint256 totalAvailableAuctions = 1;
         for (uint256 d_idx = getEarliestDeadAuctionEpoch(); d_idx < uint256(epoch()); d_idx++) {
             uint256 temp_coupon_auction_epoch = d_idx;
             Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(temp_coupon_auction_epoch);

@@ -495,7 +495,7 @@ class UniswapPool:
             })
             agent.is_xsd_approved = True
 
-        slippage = 0.5
+        slippage = 0.01
         min_xsd_amount = (xsd * (1 - slippage))
         min_usdc_amount = (usdc * (1 - slippage))
         
@@ -538,7 +538,7 @@ class UniswapPool:
             }) 
             agent.is_uniswap_approved = True 
 
-        slippage = 0.5
+        slippage = 0.01
         min_xsd_amount = (min_xsd_amount * (1 - slippage))
         min_usdc_amount = (min_usdc_amount * (1 - slippage))
 
@@ -588,7 +588,7 @@ class UniswapPool:
             agent.is_xsd_approved = True
 
         # explore this more?
-        slippage = 0.5
+        slippage = 0.01
         max_usdc_amount = (max_usdc_amount * (1 + slippage))
 
         self.uniswap_router.functions.swapExactTokensForTokens(
@@ -633,7 +633,7 @@ class UniswapPool:
             agent.is_xsd_approved = True
 
         # explore this more?
-        slippage = 0.5
+        slippage = 0.01
         min_usdc_amount = (min_usdc_amount * (1 - slippage))
 
         self.uniswap_router.functions.swapExactTokensForTokens(
@@ -994,22 +994,21 @@ class Model:
                         usdc = min(portion_dedusted(a.usdc, commitment), usdc_b)
                     else:
                         continue
-                    
-                    
-                    usdc_in = min(usdc,usdc_b)
+
+                    price = self.uniswap.xsd_price()
+                    usdc_in = (min(usdc,usdc_b) / float(price)).to_decimals(USDC['decimals'])
                     try:
                         (max_amount, _) = self.uniswap_router.caller({'from' : a.address, 'gas': 8000000}).getAmountsIn(
-                            unreg_int(usdc_in, xSD['decimals']), 
+                            unreg_int(usdc_in, USDC['decimals']), 
                             [self.usdc_token.address, self.xsd_token.address]
                         )
-                        max_amount = reg_int(max_amount, USDC['decimals'])
+                        max_amount = reg_int(max_amount, xSD['decimals'])
                     except Exception as inst:
                         # not enough on market to fill bid
-                        #print({"agent": a.address, "error": inst, "action": "buy", "amount_in": usdc_in})
+                        print({"agent": a.address, "error": inst, "action": "buy", "amount_in": usdc_in})
                         continue
                     
                     try:
-                        price = self.uniswap.xsd_price()
                         logger.debug("Buy init {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(usdc_in, price, max_amount))
                         xsd = self.uniswap.buy(a.address, usdc_in, max_amount, a)
                         a.usdc -= usdc_in
@@ -1017,9 +1016,8 @@ class Model:
                         logger.debug("Buy end {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd, price, usdc))
                         
                     except Exception as inst:
-                        # buy order too big
+                        print({"agent": a.address, "error": inst, "action": "buy", "usdc_in": usdc_in, "max_amount": max_amount})
                         continue
-                        #print({"agent": a.address, "error": inst, "action": "buy"})
                 elif action == "sell":
                     # this will limit the size of orders avaialble
                     (usdc_b, xsd_b) = self.uniswap.getTokenBalance()
@@ -1083,7 +1081,7 @@ class Model:
                     if float(a.xsd) < float(a.usdc):
                         usdc = portion_dedusted(a.xsd.to_decimals(USDC['decimals']), commitment)
                     else:
-                        usdc = portion_dedusted(a.usdc.to_decimals(USDC['decimals']), commitment)
+                        usdc = portion_dedusted(a.usdc, commitment)
                         
                     revs = self.uniswap.getReserves()
                     if revs[1] > 0:
@@ -1119,7 +1117,7 @@ class Model:
                     
                     usdc_b, xsd_b = self.uniswap.getTokenBalance()
 
-                    slippage = 0.5 #1% slippiage?
+                    slippage = 0.01 #1% slippiage?
                     min_reduction = 1.0 - slippage
 
                     min_xsd_amount = max(Balance(0, xSD['decimals']), Balance(float(xsd_b) * float(lp / float(total_lp)) * min_reduction, xSD['decimals']))
