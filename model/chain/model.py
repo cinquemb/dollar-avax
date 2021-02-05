@@ -334,7 +334,7 @@ class Agent:
 
         # Uniswap LP share balance
         self.lp = 0
-        is_seeded = False
+        is_seeded = True
 
         if is_seeded:
             self.lp = reg_int(self.uniswap_pair.caller({'from' : self.address, 'gas': 8000000}).balanceOf(self.address), UNIV2Router['decimals'])
@@ -991,7 +991,10 @@ class Model:
                     # this will limit the size of orders avaialble
                     (usdc_b, xsd_b) = self.uniswap.getTokenBalance()
                     if xsd_b > 0 and usdc_b > 0:
-                        usdc_in = portion_dedusted(min(a.usdc, usdc_b), commitment)
+                        usdc_in = portion_dedusted(
+                            min(a.usdc, xsd_b.to_decimals(USDC['decimals'])),
+                            commitment
+                        )
                     else:
                         continue
 
@@ -1012,7 +1015,7 @@ class Model:
                         xsd = self.uniswap.buy(a.address, usdc_in, max_amount, a)
                         a.usdc -= usdc_in
                         a.xsd += xsd
-                        logger.debug("Buy end {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd, price, usdc))
+                        logger.debug("Buy end {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd, price, usdc_in))
                         
                     except Exception as inst:
                         print({"agent": a.address, "error": inst, "action": "buy", "usdc_in": usdc_in, "max_amount": max_amount})
@@ -1021,7 +1024,10 @@ class Model:
                     # this will limit the size of orders avaialble
                     (usdc_b, xsd_b) = self.uniswap.getTokenBalance()
                     if xsd_b > 0 and usdc_b > 0:
-                        xsd_out = portion_dedusted(min(a.xsd,xsd_b) , commitment)
+                        xsd_out = portion_dedusted(
+                            min(a.xsd, usdc_b.to_decimals(xSD['decimals'])),
+                            commitment
+                        )
                     else:
                         continue
                     
