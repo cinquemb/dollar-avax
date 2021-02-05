@@ -212,12 +212,12 @@ contract Getters is State {
         return _state.epochs[epoch].auction.seletedCouponBidder[index];
     }
 
-    function getCouponBidderStateRejected(uint256 epoch, address bidder) internal view returns (bool) {
-        return _state.epochs[epoch].auction.couponBidderState[bidder].rejected;
-    }
-
     function getCouponBidderStateIndex(uint256 epoch, uint256 index) internal view returns (address) {
         return _state.epochs[epoch].auction.couponBidder[index];
+    }
+
+    function getCouponBidderStateIndexMap(uint256 epoch) internal view returns (mapping(uint256 => address) storage) {
+        return _state.epochs[epoch].auction.couponBidder;
     }
 
     function isCouponAuctionFinished(uint256 epoch) internal view returns (bool){
@@ -292,7 +292,7 @@ contract Getters is State {
         return _state.epochs[epoch].auction.totalBurned;
     }
 
-        function getEarliestDeadAuctionEpoch() public view returns (uint256) {
+    function getEarliestDeadAuctionEpoch() public view returns (uint256) {
         return _state.epoch.earliestDeadAuction;
     }
 

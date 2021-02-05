@@ -56,7 +56,6 @@ contract Epoch {
     struct CouponBidderState {
         bool dead;
         bool selected;
-        bool rejected;
         bool redeemed;
         address bidder;
         uint256 dollarAmount;
