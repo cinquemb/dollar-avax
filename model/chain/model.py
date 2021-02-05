@@ -104,6 +104,17 @@ class Balance:
     def __init__(self, wei=0, decimals=0):
         self._wei = int(wei)
         self._decimals = int(decimals)
+        
+    def to_decimals(self, new_decimals):
+        """
+        Get a similar balance with a different number of decimals.
+        """
+        
+        return Balance(self._wei * 10**new_decimals // 10**self._decimals, new_decimals)
+        
+    @classmethod
+    def from_float(cls, n, decimals=0):
+        return cls(n * 10**decimals, decimals)
 
     def __add__(self, other):
         if isinstance(other, Balance):
@@ -171,6 +182,54 @@ class Balance:
     # No rtruediv because dividing by a balance is silly.
     
     # Todo: floordiv? divmod?
+    
+    def __lt__(self, other):
+        if isinstance(other, Balance):
+            if other._decimals != self._decimals:
+                raise ValueError("Cannot compare balances with different decimals: {}, {}", self, other)
+            return self._wei < other._wei
+        else:
+            return float(self) < other
+            
+    def __le__(self, other):
+        if isinstance(other, Balance):
+            if other._decimals != self._decimals:
+                raise ValueError("Cannot compare balances with different decimals: {}, {}", self, other)
+            return self._wei <= other._wei
+        else:
+            return float(self) <= other
+            
+    def __gt__(self, other):
+        if isinstance(other, Balance):
+            if other._decimals != self._decimals:
+                raise ValueError("Cannot compare balances with different decimals: {}, {}", self, other)
+            return self._wei > other._wei
+        else:
+            return float(self) > other
+            
+    def __ge__(self, other):
+        if isinstance(other, Balance):
+            if other._decimals != self._decimals:
+                raise ValueError("Cannot compare balances with different decimals: {}, {}", self, other)
+            return self._wei >= other._wei
+        else:
+            return float(self) >= other
+            
+    def __eq__(self, other):
+        if isinstance(other, Balance):
+            if other._decimals != self._decimals:
+                raise ValueError("Cannot compare balances with different decimals: {}, {}", self, other)
+            return self._wei == other._wei
+        else:
+            return float(self) == other
+            
+    def __ne__(self, other):
+        if isinstance(other, Balance):
+            if other._decimals != self._decimals:
+                raise ValueError("Cannot compare balances with different decimals: {}, {}", self, other)
+            return self._wei != other._wei
+        else:
+            return float(self) != other
 
     def __str__(self):
         base = 10**self._decimals
@@ -181,24 +240,35 @@ class Balance:
     def __repr__(self):
         return 'Balance({}, {})'.format(self._wei, self._decimals)
         
+    def __float__(self):
+        return self._wei / 10**self._decimals
+        
+    def __format__(self, s):
+        if s == '':
+            return str(self)
+        return float(self).__format__(s)
+        
+    def to_wei(self):
+        return self._wei
+        
+    def decimals(self):
+        return self._decimals
+        
 def reg_int(value, scale):
     """
     Convert from atomic token units with the given number of decimals, to a
-    float with the right number of decimals.
-    
-    Note that floats may not be able to represent all possible token balances.
+    Balance with the right number of decimals.
     """
-    return round(value / float(int(pow(10,scale))), scale)
+    return Balance(value, scale)
 
 def unreg_int(value, scale):
     """
-    Convert from a float with the right number of decimals to atomic token
+    Convert from a Balance with the right number of decimals to atomic token
     units with the given number of decimals.
-    
-    Note that floats may not be able to represent all possible token balances.
     """
-    scaled = int(round(value, scale) * pow(10, scale))
-    return scaled
+    
+    assert(value.decimals() == scale)
+    return value.to_wei()
 
 def pretty(d, indent=0):
    """
@@ -226,13 +296,13 @@ class Agent:
         # USDC contract 
         self.usdc_token = usdc_token
         # xSD balance
-        self.xsd = 0.0
+        self.xsd = Balance(0, xSD["decimals"])
         # USDC balance
-        self.usdc = kwargs.get("starting_usdc", 0.0)
+        self.usdc = kwargs.get("starting_usdc", Balance(0, USDC["decimals"]))
         # xSDS (Dao share) balance
-        self.xsds = 0.0
+        self.xsds = Balance(0, xSDS["decimals"])
         # Eth balance
-        self.eth = kwargs.get("starting_eth", 0.0)
+        self.eth = kwargs.get("starting_eth", Balance(0, 18))
         
         # Coupon underlying part by expiration epoch
         self.underlying_coupons = collections.defaultdict(float)
@@ -249,7 +319,7 @@ class Agent:
         # add wallet addr
         self.address = kwargs.get("wallet_address", '0x0000000000000000000000000000000000000000')
         # total coupons bid
-        self.total_coupons_bid = 0
+        self.total_coupons_bid = Balance(0, xSD["decimals"])
 
         #coupon expirys
         self.coupon_expirys = []
@@ -272,9 +342,8 @@ class Agent:
         """
         Turn into a readable string summary.
         """
-        return "Agent(xSD={:.2f}, usdc={:.2f}, eth={}, lp={}, coupons={:.2f})".format(
-            self.xsd, self.usdc, self.eth, self.lp,
-            self.dao.total_coupons(self.address))
+        return "Agent(xSD={:.2f}, usdc={:.2f}, eth={}, lp={})".format(
+            self.xsd, self.usdc, self.eth, self.lp)
         
     def get_strategy(self, block, price, total_supply):
         """
@@ -424,14 +493,27 @@ class UniswapPool:
         slippage = 0.01
         min_xsd_amount = (xsd * (1 - slippage))
         min_usdc_amount = (usdc * (1 - slippage))
+        
+        print(xsd)
+        print(usdc)
+        print(min_xsd_amount)
+        print(min_usdc_amount)
+        
+        print(unreg_int(xsd, xSD['decimals']))
+        print(unreg_int(usdc, USDC['decimals']))
+        print(unreg_int(min_xsd_amount, xSD['decimals']))
+        print(unreg_int(min_usdc_amount, USDC['decimals']))
 
-        logger.debug(
-            'Balance for {}: {:.2f} xSD, {:.2f} USDC'.format(
-                address,
-                reg_int(self.xsd.caller({'from' : address, 'gas': 8000000}).balanceOf(address), xSD['decimals']),
-                reg_int(self.usdc_token.caller({'from' : address, 'gas': 8000000}).balanceOf(address), USDC['decimals'])
-            )
-        )
+        xsd_wei = self.xsd.caller({'from' : address, 'gas': 8000000}).balanceOf(address)
+        usdc_wei = self.usdc_token.caller({'from' : address, 'gas': 8000000}).balanceOf(address)
+
+        print(xsd_wei)
+        print(usdc_wei)
+        print(xsd.to_wei())
+        print(usdc.to_wei())
+
+        assert xsd_wei >= xsd.to_wei()
+        assert usdc_wei >= usdc.to_wei()
 
         rv = self.uniswap_router.functions.addLiquidity(
             self.xsd.address,
@@ -448,7 +530,7 @@ class UniswapPool:
             'gas': 8000000,
             'gasPrice': 1,
         })
-
+        
         lp_shares = reg_int(self.uniswap_pair.caller({'from' : address, 'gas': 8000000}).balanceOf(address), UNIV2Router['decimals'])
         return lp_shares
         
@@ -724,19 +806,20 @@ class Model:
         self.usdc_token = usdc
         self.uniswap_router = uniswap_router
         self.xsd_token = xsd
-        self.max_eth = 100000
-        self.max_usdc = 100000
+        self.max_eth = Balance.from_float(100000, 18)
+        self.max_usdc = Balance.from_float(100000, USDC["decimals"])
         self.bootstrap_epoch = 20
-        self.min_usdc_balance = 10000
+        self.min_usdc_balance = Balance.from_float(10000, USDC["decimals"])
 
         is_mint = False
         if w3.eth.get_block('latest')["number"] == 16:
             # THIS ONLY NEEDS TO BE RUN ON NEW CONTRACTS
+            # TODO: tolerate redeployment or time-based generation
             is_mint = True
         
         for i in range(len(agents)):
-            start_eth = round(random.random() * self.max_eth, UNI["decimals"]) 
-            start_usdc = round(random.random() * self.max_usdc, USDC["decimals"])
+            start_eth = random.random() * self.max_eth
+            start_usdc = random.random() * self.max_usdc
             start_usdc_formatted = unreg_int(start_usdc, USDC["decimals"])
             address = agents[i]
             
@@ -1010,44 +1093,39 @@ class Model:
                         logger.info("Redeem {:.2f} coupons for {:.2f} xSD".format(total_redeemed, total_redeemed))
                 elif action == "provide_liquidity":
                     price = self.uniswap.xsd_price()
-                    min_xsd_needed = 0
-                    usdc = 0
-                    if a.xsd < a.usdc:
-                        usdc = portion_dedusted(a.xsd, commitment)
+                    min_xsd_needed = Balance(0, xSD['decimals'])
+                    usdc = Balance(0, USDC['decimals'])
+                    if float(a.xsd) < float(a.usdc):
+                        usdc = portion_dedusted(a.xsd.to_decimals(USDC['decimals']), commitment)
                     else:
                         usdc = portion_dedusted(a.usdc, commitment)
-
+                        
                     revs = self.uniswap.getReserves()
 
                     if revs[1] > 0:
                         min_xsd_needed = reg_int(self.uniswap_router.caller({'from' : a.address, 'gas': 8000000}).quote(unreg_int(usdc, USDC['decimals']), revs[0], revs[1]), xSD['decimals'])
 
-                        if round(min_xsd_needed, 2) == 0:
-                            min_xsd_needed = usdc / float(price)
+                        if round(float(min_xsd_needed), 2) == 0:
+                            min_xsd_needed = (usdc / float(price)).to_decimals(xSD['decimals'])
                     else:
-                        min_xsd_needed = usdc
-
-                    if round(min_xsd_needed, 2) == 0:
-                        continue
-
-                    try:
-                        logger.debug("Provide {:.2f} xSD (of {:.2f} xSD) and {:.2f} USDC".format(min_xsd_needed, a.xsd, usdc))
-                        after_lp = self.uniswap.provide_liquidity(a.address, min_xsd_needed, usdc)
-
-                        usdc_b, xsd_b = self.uniswap.getTokenBalance()
-                        min_xsd_amount_after = xsd_b / usdc_b * after_lp
-                        min_usdc_amount_after = usdc_b / xsd_b * after_lp
-
-                        diff_xsd = (min_xsd_amount_after - xsd_b)
-                        diff_usdc = (min_usdc_amount_after - usdc_b)
+                        min_xsd_needed = usdc.to_decimals(xSD['decimals'])
                         
-                        a.xsd = max(0, a.xsd - diff_xsd)
-                        a.usdc = max(0, a.usdc - diff_usdc)
-                        a.lp += after_lp
-                    except Exception as inst:
-                        # usually fails for c: VM Exception while processing transaction: revert TransferHelper: TRANSFER_FROM_FAILED, prob because of slippage?
-                        #print({"agent": a.address, "error": inst, "action": "provide_liquidity", "min_xsd_needed": min_xsd_needed, "usdc": usdc})
+                    if round(float(min_xsd_needed), 2) == 0:
                         continue
+
+                    logger.info("Provide {:.2f} xSD (of {:.2f} xSD) and {:.2f} USDC".format(min_xsd_needed, a.xsd, usdc))
+                    after_lp = self.uniswap.provide_liquidity(a.address, min_xsd_needed, usdc)
+
+                    usdc_b, xsd_b = self.uniswap.getTokenBalance()
+                    min_xsd_amount_after = xsd_b / float(usdc_b * after_lp)
+                    min_usdc_amount_after = usdc_b / float(xsd_b * after_lp)
+
+                    diff_xsd = (min_xsd_amount_after - xsd_b)
+                    diff_usdc = (min_usdc_amount_after - usdc_b)
+                    
+                    a.xsd = max(Balance(0, xSD['decimals']), a.xsd - diff_xsd)
+                    a.usdc = max(Balance(0, USDC['decimals']), a.usdc - diff_usdc)
+                    a.lp += after_lp
                 elif action == "remove_liquidity":
                     lp = portion_dedusted(a.lp, commitment)
                     total_lp = self.uniswap.total_lp(a.address)
@@ -1059,8 +1137,8 @@ class Model:
                     slippage = 0.01 #01% slippiage?
                     min_reduction = 1.0 - slippage
 
-                    min_xsd_amount = max(0,xsd_b * (lp / float(total_lp)) * min_reduction)
-                    min_usdc_amount = max(0, usdc_b * (lp / float(total_lp)) * min_reduction)
+                    min_xsd_amount = max(Balance(0, xSD['decimals']), xsd_b * (lp / float(total_lp)) * min_reduction)
+                    min_usdc_amount = max(Balance(0, USDC['decimals']), usdc_b * (lp / float(total_lp)) * min_reduction)
 
                     if not (min_xsd_amount > 0 and min_usdc_amount > 0):
                         continue
@@ -1069,8 +1147,8 @@ class Model:
                         logger.debug("Stop providing {:.2f} xSD and {:.2f} USDC".format(min_xsd_amount, min_usdc_amount))
                         after_lp = self.uniswap.remove_liquidity(a.address, lp, min_xsd_amount, min_usdc_amount)
 
-                        min_xsd_amount_after = xsd_b / usdc_b * after_lp
-                        min_usdc_amount_after = usdc_b / xsd_b * after_lp
+                        min_xsd_amount_after = xsd_b / float(usdc_b * after_lp)
+                        min_usdc_amount_after = usdc_b / float(xsd_b * after_lp)
 
                         diff_xsd = (min_xsd_amount - min_xsd_amount_after)
                         diff_usdc = (min_usdc_amount - min_usdc_amount_after)
