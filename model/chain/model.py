@@ -330,10 +330,11 @@ class Agent:
         self.is_uniswap_approved = False
         self.is_usdc_approved = False
         self.is_xsd_approved = False
+        self.is_dao_approved = False
 
         # Uniswap LP share balance
         self.lp = 0
-        is_seeded = True
+        is_seeded = False
 
         if is_seeded:
             self.lp = reg_int(self.uniswap_pair.caller({'from' : self.address, 'gas': 8000000}).balanceOf(self.address), UNIV2Router['decimals'])
@@ -494,7 +495,7 @@ class UniswapPool:
             })
             agent.is_xsd_approved = True
 
-        slippage = 0.01
+        slippage = 0.5
         min_xsd_amount = (xsd * (1 - slippage))
         min_usdc_amount = (usdc * (1 - slippage))
         
@@ -537,7 +538,7 @@ class UniswapPool:
             }) 
             agent.is_uniswap_approved = True 
 
-        slippage = 0.01
+        slippage = 0.5
         min_xsd_amount = (min_xsd_amount * (1 - slippage))
         min_usdc_amount = (min_usdc_amount * (1 - slippage))
 
@@ -587,7 +588,7 @@ class UniswapPool:
             agent.is_xsd_approved = True
 
         # explore this more?
-        slippage = 0.01
+        slippage = 0.5
         max_usdc_amount = (max_usdc_amount * (1 + slippage))
 
         self.uniswap_router.functions.swapExactTokensForTokens(
@@ -632,7 +633,7 @@ class UniswapPool:
             agent.is_xsd_approved = True
 
         # explore this more?
-        slippage = 0.01
+        slippage = 0.5
         min_usdc_amount = (min_usdc_amount * (1 - slippage))
 
         self.uniswap_router.functions.swapExactTokensForTokens(
@@ -688,11 +689,20 @@ class DAO:
     def epoch(self, address):
         return self.contract.caller({'from' : address, 'gas': 8000000}).epoch()
         
-    def coupon_bid(self, address, coupon_expiry, xsd_amount, max_coupon_amount):
+    def coupon_bid(self, address, coupon_expiry, xsd_amount, max_coupon_amount, agent):
         """
         Place a coupon bid
         """
         # placeCouponAuctionBid(uint256 couponEpochExpiry, uint256 dollarAmount, uint256 maxCouponAmount)
+
+        if not agent.is_dao_approved:
+            self.contract.functions.approve(self.contract.address, UINT256_MAX).transact({
+                'nonce': w3.eth.getTransactionCount(address),
+                'from' : address,
+                'gas': 8000000,
+                'gasPrice': 1,
+            })
+            agent.is_dao_approved = True
 
         self.contract.functions.placeCouponAuctionBid(
             unreg_int(coupon_expiry, xSD["decimals"]),
@@ -783,7 +793,7 @@ class Model:
         self.xsd_token = xsd
         self.max_eth = Balance.from_float(100000, 18)
         self.max_usdc = Balance.from_float(100000, USDC["decimals"])
-        self.bootstrap_epoch = 150
+        self.bootstrap_epoch = 0
         self.min_usdc_balance = Balance.from_float(10000, USDC["decimals"])
 
 
@@ -981,7 +991,7 @@ class Model:
                     # this will limit the size of orders avaialble
                     (usdc_b, xsd_b) = self.uniswap.getTokenBalance()
                     if xsd_b > 0 and usdc_b > 0:
-                        usdc = portion_dedusted(min(a.usdc,usdc_b), commitment)
+                        usdc = min(portion_dedusted(a.usdc, commitment), usdc_b)
                     else:
                         continue
                     
@@ -1109,7 +1119,7 @@ class Model:
                     
                     usdc_b, xsd_b = self.uniswap.getTokenBalance()
 
-                    slippage = 0.01 #01% slippiage?
+                    slippage = 0.5 #1% slippiage?
                     min_reduction = 1.0 - slippage
 
                     min_xsd_amount = max(Balance(0, xSD['decimals']), Balance(float(xsd_b) * float(lp / float(total_lp)) * min_reduction, xSD['decimals']))
