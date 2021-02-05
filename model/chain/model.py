@@ -991,12 +991,10 @@ class Model:
                     # this will limit the size of orders avaialble
                     (usdc_b, xsd_b) = self.uniswap.getTokenBalance()
                     if xsd_b > 0 and usdc_b > 0:
-                        usdc = min(portion_dedusted(a.usdc, commitment), usdc_b)
+                        usdc_in = portion_dedusted(min(a.usdc, usdc_b), commitment)
                     else:
                         continue
 
-                    price = self.uniswap.xsd_price()
-                    usdc_in = (min(usdc,usdc_b) / float(price)).to_decimals(USDC['decimals'])
                     try:
                         (max_amount, _) = self.uniswap_router.caller({'from' : a.address, 'gas': 8000000}).getAmountsIn(
                             unreg_int(usdc_in, USDC['decimals']), 
@@ -1009,6 +1007,7 @@ class Model:
                         continue
                     
                     try:
+                        price = self.uniswap.xsd_price()
                         logger.debug("Buy init {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(usdc_in, price, max_amount))
                         xsd = self.uniswap.buy(a.address, usdc_in, max_amount, a)
                         a.usdc -= usdc_in
@@ -1022,11 +1021,10 @@ class Model:
                     # this will limit the size of orders avaialble
                     (usdc_b, xsd_b) = self.uniswap.getTokenBalance()
                     if xsd_b > 0 and usdc_b > 0:
-                        xsd = min(portion_dedusted(a.xsd, commitment), xsd_b)
+                        xsd_out = portion_dedusted(min(a.xsd,xsd_b) , commitment)
                     else:
                         continue
                     
-                    xsd_out = min(xsd, xsd_b)
                     try:
                         (_, max_amount) = self.uniswap_router.caller({'from' : a.address, 'gas': 8000000}).getAmountsOut(
                             unreg_int(xsd_out, xSD['decimals']), 
