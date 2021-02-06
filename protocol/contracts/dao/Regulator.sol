@@ -122,27 +122,38 @@ contract Regulator is Comptroller {
     }
 
     function quickSort(mapping(uint256 => address) storage map, int left, int right, uint256 epoch) internal {
-        // this swaps map values
-        int i = left;
-        int j = right;
-        if(i==j) return;
-        Decimal.D256 memory pivot = getCouponBidderState(epoch, map[uint256(left + (right - left) / 2)]).distance;
-        while (i <= j) {
-            Epoch.CouponBidderState storage bidder_i = getCouponBidderState(epoch, map[uint256(i)]);
-            Epoch.CouponBidderState storage bidder_j = getCouponBidderState(epoch, map[uint256(j)]);
-            while (bidder_i.distance.lessThan(pivot)) i++;
-            while (pivot.lessThan(bidder_j.distance)) j--;
-            if (i <= j) {
-                map[uint256(i)] = bidder_j.bidder;
-                map[uint256(j)] = bidder_i.bidder;
-                i++;
-                j--;
-            }
-        }
+        (int i, int j) = partitionQuickSort(map, left, right, epoch);
         if (left < j)
             quickSort(map, left, j, epoch);
         if (i < right)
             quickSort(map, i, right, epoch);
+    }
+
+    function partitionQuickSort (
+        mapping(uint256 => address) storage map,
+        int left,
+        int right, 
+        uint256 epoch
+    ) internal returns (int, int) {
+        // this swaps map values
+        int i = left;
+        int j = right;
+
+        Decimal.D256 memory pivot = getCouponBidderState(epoch, map[uint256(left + (right - left) / 2)]).distance;
+        while (i <= j) {
+            Epoch.CouponBidderState storage bidder_i = getCouponBidderState(epoch, map[uint256(i)]);
+            Epoch.CouponBidderState storage bidder_j = getCouponBidderState(epoch, map[uint256(j)]);
+            while (pivot.lessThan(bidder_j.distance)) j--;
+            while (bidder_i.distance.lessThan(pivot)) i++;
+            if (i <= j) {
+                address tmp = bidder_j.bidder;
+                map[uint256(j)] = bidder_i.bidder;
+                map[uint256(i)] = tmp;
+                i++;
+                j--;
+            }
+        }
+        return (i , j);
     }
 
     function sqrt(Decimal.D256 memory x) internal pure returns (Decimal.D256 memory y) {
