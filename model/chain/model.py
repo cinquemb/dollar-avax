@@ -801,6 +801,8 @@ class Model:
         self.max_eth = Balance.from_float(100000, 18)
         self.max_usdc = Balance.from_float(100000, USDC["decimals"])
         self.bootstrap_epoch = 20
+        self.max_coupon_exp = 10000000
+        self.max_coupon_premium = 10000000
         self.min_usdc_balance = Balance.from_float(200, USDC["decimals"])
 
 
@@ -1005,8 +1007,8 @@ class Model:
                         print({"agent": a.address, "error": inst, "action": "sell", "xsd_out": xsd_out, "max_amount": max_amount, "account_xsd": a.xsd})
                 elif action == "coupon_bid":
                     xsd_at_risk = portion_dedusted(a.xsd, commitment)
-                    rand_epoch_expiry = reg_int(int(random.random() * 10000000) * (pow(10, xSD['decimals'])), xSD['decimals'])
-                    rand_max_coupons = int(random.random() * 10000000) * xsd_at_risk
+                    rand_epoch_expiry = Balance.from_float(int(random.random() * self.max_coupon_exp), xSD['decimals'])
+                    rand_max_coupons = random.random() * self.max_coupon_premium * xsd_at_risk
                     try:
                         exact_expiry = rand_epoch_expiry + Balance(current_epoch, xSD['decimals'])
                         logger.info("Addr {} Bid to burn init {:.2f} xSD for {:.2f} coupons with expiry at epoch {}".format(a.address, xsd_at_risk, rand_max_coupons, exact_expiry))
