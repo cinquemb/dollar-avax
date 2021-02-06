@@ -397,9 +397,8 @@ class Agent:
                 strategy["unbond"] *= 2
                 strategy["sell"] = 4.0
             else:
-                if price < 1.0:
-                    # We prefer to buy
-                    strategy["buy"] = 4.0
+                # no faith based buying, just selling
+                pass
         
         return strategy
         
