@@ -19,6 +19,7 @@ with open("deploy_output.txt", 'r+') as f:
     deploy_data = f.read()
 
 IS_DEBUG = False
+block_offset = 16
 
 logger = logging.getLogger(__name__)
 provider = Web3.WebsocketProvider('ws://localhost:7545', websocket_timeout=60)
@@ -94,6 +95,9 @@ def get_addr_from_contract(contract):
 
 xSD['addr'] = get_addr_from_contract(DaoContract)
 xSDS['addr'] = get_addr_from_contract(TokenContract)
+
+def get_nonce(address):
+    return w3.eth.getTransactionCount(address)
 
 # Because token balances need to be accuaate to the atomic unit, we can't store
 # them as floats. Otherwise we might turn our float back into a token balance
@@ -479,7 +483,7 @@ class UniswapPool:
         """        
         if not agent.is_usdc_approved:
             self.usdc_token.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
-                'nonce': w3.eth.getTransactionCount(address),
+                'nonce': get_nonce(address),
                 'from' : address,
                 'gas': 8000000,
                 'gasPrice': 1,
@@ -488,7 +492,7 @@ class UniswapPool:
 
         if not agent.is_xsd_approved:
             self.xsd.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
-                'nonce': w3.eth.getTransactionCount(address),
+                'nonce': get_nonce(address),
                 'from' : address,
                 'gas': 8000000,
                 'gasPrice': 1,
@@ -515,7 +519,7 @@ class UniswapPool:
             address,
             (int(w3.eth.get_block('latest')['timestamp']) + DEADLINE_FROM_NOW)
         ).transact({
-            'nonce': w3.eth.getTransactionCount(address),
+            'nonce': get_nonce(address),
             'from' : address,
             'gas': 8000000,
             'gasPrice': 1,
@@ -531,7 +535,7 @@ class UniswapPool:
         """        
         if not agent.is_uniswap_approved:
             self.uniswap_pair.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
-                'nonce': w3.eth.getTransactionCount(address),
+                'nonce': get_nonce(address),
                 'from' : address,
                 'gas': 8000000,
                 'gasPrice': 1,
@@ -552,7 +556,7 @@ class UniswapPool:
             int(w3.eth.get_block('latest')['timestamp'] + DEADLINE_FROM_NOW)
             
         ).transact({
-            'nonce': w3.eth.getTransactionCount(address),
+            'nonce': get_nonce(address),
             'from' : address,
             'gas': 8000000,
             'gasPrice': 1,
@@ -571,7 +575,7 @@ class UniswapPool:
 
         if not agent.is_usdc_approved:
             self.usdc_token.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
-                'nonce': w3.eth.getTransactionCount(address),
+                'nonce': get_nonce(address),
                 'from' : address,
                 'gas': 8000000,
                 'gasPrice': 1,
@@ -580,7 +584,7 @@ class UniswapPool:
 
         if not agent.is_xsd_approved:
             self.xsd.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
-                'nonce': w3.eth.getTransactionCount(address),
+                'nonce': get_nonce(address),
                 'from' : address,
                 'gas': 8000000,
                 'gasPrice': 1,
@@ -598,7 +602,7 @@ class UniswapPool:
             address,
             int(w3.eth.get_block('latest')['timestamp'] + DEADLINE_FROM_NOW)
         ).transact({
-            'nonce': w3.eth.getTransactionCount(address),
+            'nonce': get_nonce(address),
             'from' : address,
             'gas': 8000000,
             'gasPrice': 1,
@@ -616,7 +620,7 @@ class UniswapPool:
 
         if not agent.is_usdc_approved:
             self.usdc_token.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
-                'nonce': w3.eth.getTransactionCount(address),
+                'nonce': get_nonce(address),
                 'from' : address,
                 'gas': 8000000,
                 'gasPrice': 1,
@@ -625,7 +629,7 @@ class UniswapPool:
 
         if not agent.is_xsd_approved:
             self.xsd.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
-                'nonce': w3.eth.getTransactionCount(address),
+                'nonce': get_nonce(address),
                 'from' : address,
                 'gas': 8000000,
                 'gasPrice': 1,
@@ -643,7 +647,7 @@ class UniswapPool:
             address,
             int(w3.eth.get_block('latest')['timestamp'] + DEADLINE_FROM_NOW)
         ).transact({
-            'nonce': w3.eth.getTransactionCount(address),
+            'nonce': get_nonce(address),
             'from' : address,
             'gas': 8000000,
             'gasPrice': 1,
@@ -697,7 +701,7 @@ class DAO:
 
         if not agent.is_dao_approved:
             self.contract.functions.approve(self.contract.address, UINT256_MAX).transact({
-                'nonce': w3.eth.getTransactionCount(address),
+                'nonce': get_nonce(address),
                 'from' : address,
                 'gas': 8000000,
                 'gasPrice': 1,
@@ -709,7 +713,7 @@ class DAO:
             unreg_int(xsd_amount, xSD["decimals"]),
             unreg_int(xSD["decimals"], xSD["decimals"])
         ).transact({
-            'nonce': w3.eth.getTransactionCount(address),
+            'nonce': get_nonce(address),
             'from' : address,
             'gas': 8000000,
             'gasPrice': 1,
@@ -729,7 +733,7 @@ class DAO:
             unreg_int(epoch_expired, xSD["decimals"]),
             unreg_int(coupons_to_redeem, xSD["decimals"])
         ).transact({
-            'nonce': w3.eth.getTransactionCount(address),
+            'nonce': get_nonce(address),
             'from' : address,
             'gas': 8000000,
             'gasPrice': 1,
@@ -744,7 +748,7 @@ class DAO:
     def advance(self, address):
         before_advance = self.token_balance_of(address)
         self.contract.functions.advance().transact({
-            'nonce': w3.eth.getTransactionCount(address),
+            'nonce': get_nonce(address),
             'from' : address,
             'gas': 80000000,
             'gasPrice': Web3.toWei(1, 'gwei'),
@@ -798,7 +802,7 @@ class Model:
 
 
         is_mint = False
-        if w3.eth.get_block('latest')["number"] == 16:
+        if w3.eth.get_block('latest')["number"] == block_offset:
             # THIS ONLY NEEDS TO BE RUN ON NEW CONTRACTS
             # TODO: tolerate redeployment or time-based generation
             is_mint = True
@@ -863,7 +867,7 @@ class Model:
             if is_mint:
                 # need to mint USDC to the wallets for each agent
                 usdc.functions.mint(address, int(start_usdc_formatted)).transact({
-                    'nonce': w3.eth.getTransactionCount(address),
+                    'nonce': get_nonce(address),
                     'from' : address,
                     'gas': 8000000,
                     'gasPrice': 1,
@@ -1024,9 +1028,12 @@ class Model:
                     # this will limit the size of orders avaialble
                     (usdc_b, xsd_b) = self.uniswap.getTokenBalance()
                     if xsd_b > 0 and usdc_b > 0:
-                        xsd_out = portion_dedusted(
-                            min(a.xsd, usdc_b.to_decimals(xSD['decimals'])),
-                            commitment
+                        xsd_out = min(
+                            portion_dedusted(
+                                a.xsd,
+                                commitment
+                            ),
+                            usdc_b.to_decimals(xSD['decimals'])
                         )
                     else:
                         continue
@@ -1043,11 +1050,11 @@ class Model:
 
                     try:
                         price = self.uniswap.xsd_price()
-                        logger.debug("Sell init {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd_out, price, max_amount))
+                        #logger.debug("Sell init {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd_out, price, max_amount))
                         usdc = self.uniswap.sell(a.address, xsd_out, max_amount, a)
                         a.xsd -= xsd_out
                         a.usdc += usdc
-                        logger.debug("Sell end {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd, price, usdc))
+                        #logger.debug("Sell end {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd, price, usdc))
                     except Exception as inst:
                         print({"agent": a.address, "error": inst, "action": "sell", "xsd_out": xsd_out, "max_amount": max_amount, "account_xsd": a.xsd})
                 elif action == "advance":
@@ -1100,7 +1107,7 @@ class Model:
                         continue
 
                     try:
-                        logger.debug("Provide {:.2f} xSD (of {:.2f} xSD) and {:.2f} USDC".format(min_xsd_needed, a.xsd, usdc))
+                        #logger.debug("Provide {:.2f} xSD (of {:.2f} xSD) and {:.2f} USDC".format(min_xsd_needed, a.xsd, usdc))
                         after_lp = self.uniswap.provide_liquidity(a.address, min_xsd_needed, usdc, a)
 
                         usdc_a, xsd_a = self.uniswap.getTokenBalance()
@@ -1121,17 +1128,14 @@ class Model:
                     
                     usdc_b, xsd_b = self.uniswap.getTokenBalance()
 
-                    slippage = 0.01 #1% slippiage?
-                    min_reduction = 1.0 - slippage
-
-                    min_xsd_amount = max(Balance(0, xSD['decimals']), Balance(float(xsd_b) * float(lp / float(total_lp)) * min_reduction, xSD['decimals']))
-                    min_usdc_amount = max(Balance(0, USDC['decimals']), Balance(float(usdc_b) * float(lp / float(total_lp)) * min_reduction, USDC['decimals']))
+                    min_xsd_amount = max(Balance(0, xSD['decimals']), Balance(float(xsd_b) * float(lp / float(total_lp)), xSD['decimals']))
+                    min_usdc_amount = max(Balance(0, USDC['decimals']), Balance(float(usdc_b) * float(lp / float(total_lp)), USDC['decimals']))
 
                     if not (min_xsd_amount > 0 and min_usdc_amount > 0):
                         continue
 
                     try:
-                        logger.debug("Stop providing {:.2f} xSD and {:.2f} USDC".format(min_xsd_amount, min_usdc_amount))
+                        #logger.debug("Stop providing {:.2f} xSD and {:.2f} USDC".format(min_xsd_amount, min_usdc_amount))
                         after_lp = self.uniswap.remove_liquidity(a.address, lp, min_xsd_amount, min_usdc_amount, a)
                         usdc_a, xsd_a = self.uniswap.getTokenBalance()
 
@@ -1159,7 +1163,7 @@ def main():
     """
     max_accounts = 20
     print(w3.eth.get_block('latest')["number"])
-    if w3.eth.get_block('latest')["number"] == 16:
+    if w3.eth.get_block('latest')["number"] == block_offset:
         # THIS ONLY NEEDS TO BE RUN ON NEW CONTRACTS
         print(provider.make_request("evm_increaseTime", [1606348800]))
 
