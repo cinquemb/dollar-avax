@@ -1042,6 +1042,8 @@ class Model:
                             else:
                                 continue
 
+                    a.xsd = self.dao.token_balance_of(agent.address)
+
                     if total_redeemed > 0:
                         a.total_coupons_bid -= total_redeemed
                         logger.info("Redeem {:.2f} coupons for {:.2f} xSD".format(total_redeemed, total_redeemed))
