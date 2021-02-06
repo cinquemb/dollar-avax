@@ -688,6 +688,15 @@ class DAO:
         total = self.contract.caller().totalCoupons()
         return reg_int(total, xSD['decimals'])
 
+    def total_coupons_for_agent(self, agent):
+        total_redeemed = 0
+        for c_idx, c_exp in enumerate(agent.coupon_expirys):
+            total_redeemed += self.coupon_balance_at_epoch(agent.address, c_exp, agent.coupon_expiry_coupons[c_idx])
+        if total_coupons == 0:
+            agent.coupon_expirys = []
+            agent.coupon_expiry_coupons = []
+        return total_redeemed
+
     def coupon_balance_at_epoch(self, address, epoch):
         ''' 
             returns the total coupon balance for an address
@@ -876,10 +885,12 @@ class Model:
         current_epoch = self.dao.epoch(seleted_advancer.address)
 
         epoch_start_price = self.uniswap.xsd_price()
+
+        total_coupons = self.dao.total_coupons()
         
         logger.info("Block {}, epoch {}, price {:.2f}, supply {:.2f}, faith: {:.2f}, bonded {:2.1f}%, coupons: {:.2f}, liquidity {:.2f} xSD / {:.2f} USDC".format(
             w3.eth.get_block('latest')["number"], current_epoch, self.uniswap.xsd_price(), self.dao.xsd_supply(),
-            self.get_overall_faith(), 0, self.dao.total_coupons(),
+            self.get_overall_faith(), 0, total_coupons,
             xsd_b, usdc_b))
         
         anyone_acted = False
@@ -909,7 +920,7 @@ class Model:
             if a.xsd > 0 and epoch_start_price < 1.0 and self.dao.epoch(a.address) > self.bootstrap_epoch and self.min_usdc_balance <= usdc_b:
                 options.append("coupon_bid")
             # try any ways but handle traceback, faster than looping over all the epocks
-            if epoch_start_price > 1.0 and len(a.coupon_expirys) > 0:
+            if epoch_start_price > 1.0 and total_coupons > 0 and self.dao.total_coupons_for_agent(a):
                 options.append("redeem")
             if a.usdc > 0 and a.xsd > 0:
                 options.append("provide_liquidity")
@@ -1026,7 +1037,10 @@ class Model:
                         try:
                             total_redeemed += self.dao.redeem(a, c_exp, a.coupon_expiry_coupons[c_idx])
                         except Exception as inst:
-                            print({"agent": a.address, "error": inst, "action": "redeem", "exact_expiry": c_exp, "coupons_tried": a.coupon_expiry_coupons[c_idx]})
+                            if 'revert SafeMath: subtraction overflow' not in str(inst):
+                                print({"agent": a.address, "error": inst, "action": "redeem", "exact_expiry": c_exp, "coupons_tried": a.coupon_expiry_coupons[c_idx]})
+                            else:
+                                continue
 
                     if total_redeemed > 0:
                         a.total_coupons_bid -= total_redeemed

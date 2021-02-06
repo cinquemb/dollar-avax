@@ -68,6 +68,8 @@ contract Regulator is Comptroller {
                 cancelCouponAuctionAtEpoch(prev_epoch);
             }
 
+            /* gas costs error */
+            // autoRedeemFromCouponAuction();
             growSupply(price);
             return;
         }
