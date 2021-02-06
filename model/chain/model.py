@@ -874,6 +874,8 @@ class Model:
         (usdc_b, xsd_b) = self.uniswap.getTokenBalance()
 
         current_epoch = self.dao.epoch(seleted_advancer.address)
+
+        epoch_start_price = self.uniswap.xsd_price()
         
         logger.info("Block {}, epoch {}, price {:.2f}, supply {:.2f}, faith: {:.2f}, bonded {:2.1f}%, coupons: {:.2f}, liquidity {:.2f} xSD / {:.2f} USDC".format(
             w3.eth.get_block('latest')["number"], current_epoch, self.uniswap.xsd_price(), self.dao.xsd_supply(),
@@ -904,10 +906,10 @@ class Model:
                 options.append("unbond")
             '''
             # no point in buying coupons untill theres at least 10k usdc in the pool (so like 80-100 epoch effective warmup)
-            if a.xsd > 0 and self.uniswap.xsd_price() <= 1.0 and self.dao.epoch(a.address) > self.bootstrap_epoch and self.min_usdc_balance <= usdc_b:
+            if a.xsd > 0 and epoch_start_price < 1.0 and self.dao.epoch(a.address) > self.bootstrap_epoch and self.min_usdc_balance <= usdc_b:
                 options.append("coupon_bid")
             # try any ways but handle traceback, faster than looping over all the epocks
-            if self.uniswap.xsd_price() >= 1.0 and len(a.coupon_expirys) > 0:
+            if epoch_start_price > 1.0 and len(a.coupon_expirys) > 0:
                 options.append("redeem")
             if a.usdc > 0 and a.xsd > 0:
                 options.append("provide_liquidity")
@@ -1010,7 +1012,7 @@ class Model:
                     rand_epoch_expiry = Balance.from_float(int(random.random() * self.max_coupon_exp), xSD['decimals'])
                     rand_max_coupons = random.random() * self.max_coupon_premium * xsd_at_risk
                     try:
-                        exact_expiry = rand_epoch_expiry + Balance(current_epoch, xSD['decimals'])
+                        exact_expiry = rand_epoch_expiry + Balance.from_float(current_epoch, xSD['decimals'])
                         logger.info("Addr {} Bid to burn init {:.2f} xSD for {:.2f} coupons with expiry at epoch {}".format(a.address, xsd_at_risk, rand_max_coupons, exact_expiry))
                         self.dao.coupon_bid(a, rand_epoch_expiry, xsd_at_risk, rand_max_coupons)
                         a.total_coupons_bid += rand_max_coupons
