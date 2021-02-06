@@ -380,6 +380,8 @@ class Agent:
             strategy["unbond"] = 0
             # Or redeem if possible
             strategy["redeem"] = 100
+            # no incetive to buy above 1
+            strategy["buy"] = 0.1
         else:
             # We probably want to unbond due to no returns
             strategy["unbond"] = 0
