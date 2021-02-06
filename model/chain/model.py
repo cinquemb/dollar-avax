@@ -375,13 +375,13 @@ class Agent:
         # And to unbond because of the delay
         strategy["unbond"] = 0.1
         
-        if price > 1.0:
+        if price >= 1.0:
             # No rewards for expansion by itself
             strategy["bond"] = 0
             # And not unbond
             strategy["unbond"] = 0
             # Or redeem if possible
-            strategy["redeem"] = 100
+            strategy["redeem"] = 100.0
             # no incetive to buy above 1
             strategy["buy"] = 0.0
         else:
@@ -692,7 +692,7 @@ class DAO:
         ''' 
             returns the total coupon balance for an address
         '''
-        total_coupons = self.contract.caller({'from' : address, 'gas': 8000000}).balanceOfCoupons(address, epoch)
+        total_coupons = self.contract.caller({'from' : address, 'gas': 8000000}).balanceOfCoupons(address, unreg_int(epoch, xSD["decimals"]))
         return total_coupons
 
     def epoch(self, address):
@@ -996,7 +996,6 @@ class Model:
                         max_amount = reg_int(max_amount, USDC['decimals'])
                     except Exception as inst:
                         print({"agent": a.address, "error": inst, "action": "sell", "amount_out": xsd_out})
-                        continue
 
                     try:
                         price = self.uniswap.xsd_price()
@@ -1026,8 +1025,8 @@ class Model:
                     for c_idx, c_exp in enumerate(a.coupon_expirys):
                         try:
                             total_redeemed += self.dao.redeem(a, c_exp, a.coupon_expiry_coupons[c_idx])
-                        except:
-                            pass
+                        except Exception as inst:
+                            print({"agent": a.address, "error": inst, "action": "redeem", "exact_expiry": c_exp, "coupons_tried": a.coupon_expiry_coupons[c_idx]})
 
                     if total_redeemed > 0:
                         a.total_coupons_bid -= total_redeemed
