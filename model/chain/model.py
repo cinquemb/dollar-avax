@@ -397,8 +397,9 @@ class Agent:
                 strategy["unbond"] *= 2
                 strategy["sell"] = 4.0
             else:
-                # We prefer to buy
-                strategy["buy"] = 4.0
+                if price < 1.0:
+                    # We prefer to buy
+                    strategy["buy"] = 4.0
         
         return strategy
         
@@ -1131,7 +1132,7 @@ def main():
     # Make a model of the economy
     start_init = time.time()
     print ('INIT STARTED')
-    model = Model(dao, uniswap, usdc, uniswap_router, uniswap_token, xsd, w3.eth.accounts[:max_accounts], min_faith=0.5E6, max_faith=1E6, use_faith=False)
+    model = Model(dao, uniswap, usdc, uniswap_router, uniswap_token, xsd, w3.eth.accounts[:max_accounts], min_faith=0.5E6, max_faith=1E6, use_faith=True)
     end_init = time.time()
     print ('INIT FINISHED', end_init - start_init, '(s)')
 
