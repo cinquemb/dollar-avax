@@ -689,13 +689,13 @@ class DAO:
         return reg_int(total, xSD['decimals'])
 
     def total_coupons_for_agent(self, agent):
-        total_redeemed = 0
+        total_coupons = 0
         for c_idx, c_exp in enumerate(agent.coupon_expirys):
-            total_redeemed += self.coupon_balance_at_epoch(agent.address, c_exp, agent.coupon_expiry_coupons[c_idx])
+            total_coupons += self.coupon_balance_at_epoch(agent.address, c_exp)
         if total_coupons == 0:
             agent.coupon_expirys = []
             agent.coupon_expiry_coupons = []
-        return total_redeemed
+        return total_coupons
 
     def coupon_balance_at_epoch(self, address, epoch):
         ''' 
