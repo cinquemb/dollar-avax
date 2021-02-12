@@ -494,16 +494,13 @@ class Agent:
         self.coupon_expiry_coupons = []
 
         self.dao = dao
-        self.uniswap_pair = uniswap_pair
 
-        self.is_uniswap_approved = False
+        # Uniswap Pair TokenProxy
+        self.uniswap_pair_token = uniswap_pair
 
         # keeps track of latest block seen for nonce tracking/tx
         self.seen_block = {}
         self.next_tx_count
-
-        # Uniswap LP share balance
-        self.lp = 0
 
         if kwargs.get("is_mint", False):
             # need to mint USDC to the wallets for each agent
@@ -528,6 +525,13 @@ class Agent:
         Get the current balance in USDC from the TokenProxy.
         """
         return self.usdc_token[self]
+
+    @property
+    def lp(self):
+        """
+        Get the current balance in Uniswap LP Shares from the TokenProxy.
+        """
+        return self.uniswap_pair_token[self]
     
     def __str__(self):
         """
@@ -536,8 +540,6 @@ class Agent:
         return "Agent(xSD={:.2f}, usdc={:.2f}, eth={}, lp={}, coupons={:.2f})".format(
             self.xsd, self.usdc, self.eth, self.lp, self.dao.total_coupons(self.address))
 
-    def refresh_balances(self):
-        self.lp = reg_int(self.uniswap_pair.caller({'from' : self.address, 'gas': 8000000}).balanceOf(self.address), UNIV2Router['decimals'])
         
     def get_strategy(self, block, price, total_supply):
         """
@@ -612,7 +614,7 @@ class UniswapPool:
     """
     
     def __init__(self, uniswap, uniswap_router, uniswap_token, usdc_token, xsd_token, **kwargs):
-        self.uniswap_pair = uniswap
+        self.uniswap_pair_token = uniswap
         self.uniswap_router = uniswap_router
         self.uniswap_token = uniswap_token
         self.usdc_token = usdc_token
@@ -628,11 +630,11 @@ class UniswapPool:
         return token0Balance > 0 and token1Balance > 0
     
     def getToken0(self):
-        exchange = self.uniswap_pair
+        exchange = self.uniswap_pair_token.contract
         return exchange.functions.token0().call()
 
     def getReserves(self):
-        exchange = self.uniswap_pair
+        exchange = self.uniswap_pair_token.contract
         return exchange.functions.getReserves().call()
 
     def getTokenBalance(self):
@@ -673,8 +675,8 @@ class UniswapPool:
         else:
             return 1.0
 
-    def total_lp(self, address):
-        return reg_int(self.uniswap_pair.caller({'from' : address, 'gas': 8000000}).totalSupply(), UNIV2Router['decimals'])
+    def total_lp(self):
+        return reg_int(self.uniswap_pair_token.contract.functions.totalSupply().call(), UNIV2Router['decimals'])
         
     def provide_liquidity(self, agent, xsd, usdc):
         """
@@ -716,15 +718,8 @@ class UniswapPool:
         """
         Remove liquidity for the given number of shares.
 
-        """        
-        if not agent.is_uniswap_approved:
-            self.uniswap_pair.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
-                'nonce': get_nonce(agent),
-                'from' : agent.address,
-                'gas': 8000000,
-                'gasPrice': 1,
-            }) 
-            agent.is_uniswap_approved = True 
+        """
+        self.uniswap_pair_token.ensure_approved(agent, UNIV2Router["addr"])
 
         slippage = 0.01
         min_xsd_amount = (min_xsd_amount * (1 - slippage))
@@ -1039,10 +1034,7 @@ class Model:
 
         #'''
 
-        for agent_num, a in enumerate(self.agents):
-            # need to refresh all balances (lp, xsd, usdc, etc) for each agent before they act
-            a.refresh_balances()
-            
+        for agent_num, a in enumerate(self.agents):            
             # TODO: real strategy
             
             options = []
@@ -1210,7 +1202,7 @@ class Model:
                         continue
                 elif action == "remove_liquidity":
                     lp = portion_dedusted(a.lp, commitment)
-                    total_lp = self.uniswap.total_lp(a.address)
+                    total_lp = self.uniswap.total_lp()
                     
                     usdc_b, xsd_b = self.uniswap.getTokenBalance()
 
@@ -1256,7 +1248,7 @@ def main():
 
     oracle = w3.eth.contract(abi=OracleContract['abi'], address=dao.caller({'from' : dao.address, 'gas': 8000000}).oracle())
 
-    uniswap = w3.eth.contract(abi=UniswapPairContract['abi'], address=UNI["addr"])
+    uniswap = TokenProxy(w3.eth.contract(abi=UniswapPairContract['abi'], address=UNI["addr"]))
     usdc = TokenProxy(w3.eth.contract(abi=USDCContract['abi'], address=USDC["addr"]))
     
     uniswap_router = w3.eth.contract(abi=UniswapRouterAbiContract['abi'], address=UNIV2Router["addr"])
