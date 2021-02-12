@@ -99,20 +99,18 @@ xSD['addr'] = get_addr_from_contract(DaoContract)
 xSDS['addr'] = get_addr_from_contract(TokenContract)
 
 def get_nonce(agent):
-    '''
-        TODO: This will need to increment block nonce count for address or reset depening on the latest block
-    '''
-    #return w3.eth.getTransactionCount(agent.address), 
-
     current_block = int(w3.eth.get_block('latest')["number"])
-
-    if current_block in agent.seen_block:
-        agent.next_tx_count += 1
+    
+    if current_block not in agent.seen_block:
+        if (agent.current_block == 0):
+            agent.current_block += 1
+        else:
+            agent.next_tx_count += 1
     else:
-        # reset agent.seen_block and add block to it
-        agent.next_tx_count = 0
+        agent.next_tx_count += 1
         agent.seen_block[current_block] = True
 
+    print(agent.address, agent.next_tx_count)
 
     return agent.next_tx_count 
 
@@ -425,15 +423,12 @@ class TokenProxy:
         
         Owner and spender may be addresses or things with addresses.
         """
-        
-        owner = getattr(owner, 'address', owner)
         spender = getattr(spender, 'address', spender)
-        
-        if spender not in self.__approved[owner]:
+        if spender not in self.__approved[getattr(owner, 'address', owner)]:
             # Issue an approval
             self.__contract.functions.approve(spender, UINT256_MAX).transact({
                 'nonce': get_nonce(owner),
-                'from' : owner,
+                'from' : getattr(owner, 'address', owner),
                 'gas': 8000000,
                 'gasPrice': 1,
             })
@@ -501,11 +496,12 @@ class Agent:
         # keeps track of latest block seen for nonce tracking/tx
         self.seen_block = {}
         self.next_tx_count = w3.eth.getTransactionCount(self.address, block_identifier=int(w3.eth.get_block('latest')["number"]))
+        self.current_block = 0
 
         if kwargs.get("is_mint", False):
             # need to mint USDC to the wallets for each agent
             start_usdc_formatted = kwargs.get("starting_usdc", Balance(0, USDC["decimals"]))
-            self.usdc_token.contract.functions.mint(self.address, int(start_usdc_formatted)).transact({
+            self.usdc_token.contract.functions.mint(self.address, unreg_int(start_usdc_formatted, USDC['decimals'])).transact({
                 'nonce': get_nonce(self),
                 'from' : self.address,
                 'gas': 8000000,
@@ -538,7 +534,7 @@ class Agent:
         Turn into a readable string summary.
         """
         return "Agent(xSD={:.2f}, usdc={:.2f}, eth={}, lp={}, coupons={:.2f})".format(
-            self.xsd, self.usdc, self.eth, self.lp, self.dao.total_coupons(self.address))
+            self.xsd, self.usdc, self.eth, self.lp, self.dao.total_coupons_for_agent(self))
 
         
     def get_strategy(self, block, price, total_supply):
@@ -960,7 +956,7 @@ class Model:
         self.min_usdc_balance = self.usdc_token.from_tokens(200)
 
 
-        is_mint = False
+        is_mint = True
         if w3.eth.get_block('latest')["number"] == block_offset:
             # THIS ONLY NEEDS TO BE RUN ON NEW CONTRACTS
             # TODO: tolerate redeployment or time-based generation
@@ -973,6 +969,7 @@ class Model:
             address = agents[i]
             agent = Agent(self.dao, uniswap, xsd, usdc, starting_eth=start_eth, wallet_address=address, is_mint=is_mint, **kwargs)            
             self.agents.append(agent)
+        provider.make_request("evm_mine", [])
         
     def log(self, stream, seleted_advancer, header=False):
         """
@@ -1027,7 +1024,8 @@ class Model:
         logger.info("Block {}, epoch {}, price {:.2f}, supply {:.2f}, faith: {:.2f}, bonded {:2.1f}%, coupons: {:.2f}, liquidity {:.2f} xSD / {:.2f} USDC".format(
             w3.eth.get_block('latest')["number"], current_epoch, self.uniswap.xsd_price(), self.dao.xsd_supply(),
             self.get_overall_faith(), 0, total_coupons,
-            xsd_b, usdc_b))
+            xsd_b, usdc_b)
+        )
         
         anyone_acted = False
 
@@ -1040,6 +1038,8 @@ class Model:
 
         for agent_num, a in enumerate(self.agents):            
             # TODO: real strategy
+
+            print(a)
             
             options = []
             if a.usdc > 0 and self.uniswap.operational():
