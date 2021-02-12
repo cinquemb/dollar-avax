@@ -65,7 +65,7 @@ library Constants {
     uint256 private constant INITIAL_COUPON_REDEMPTION_PENALTY = 50e16; // 50%
     uint256 private constant COUPON_REDEMPTION_PENALTY_DECAY = 3600; // 1 hour
     uint256 private constant MAX_COUPON_YIELD_MULT = 10000000; //10MM coupouns per 1 dollar burn
-    uint256 private constant REJECT_COUPON_BID_PERCENTILE = 10; //reject the last 10% of bids
+    uint256 private constant REJECT_COUPON_BID_PERCENTILE = 90; //reject the last 90% of bids
 
     /* Regulator */
     uint256 private constant SUPPLY_CHANGE_LIMIT = 2e16; // 2%
