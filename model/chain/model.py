@@ -825,6 +825,12 @@ class DAO:
     def epoch(self, address):
         return self.contract.caller({'from' : address, 'gas': 8000000}).epoch()
         
+    def has_coupon_bid(self):
+        """
+        Return True if the DAO implements coupon bidding.
+        """
+        return hasattr(self.contract.functions, 'placeCouponAuctionBid')
+        
     def coupon_bid(self, agent, coupon_expiry, xsd_amount, max_coupon_amount):
         """
         Place a coupon bid
@@ -1039,7 +1045,7 @@ class Model:
                 options.append("unbond")
             '''
             # no point in buying coupons untill theres at least 10k usdc in the pool (so like 80-100 epoch effective warmup)
-            if a.xsd > 0 and epoch_start_price < 1.0 and self.dao.epoch(a.address) > self.bootstrap_epoch and self.min_usdc_balance <= usdc_b:
+            if a.xsd > 0 and epoch_start_price < 1.0 and self.dao.epoch(a.address) > self.bootstrap_epoch and self.min_usdc_balance <= usdc_b and self.dao.has_coupon_bid():
                 options.append("coupon_bid")
             # try any ways but handle traceback, faster than looping over all the epocks
             if epoch_start_price > 1.0 and total_coupons > 0 and self.dao.total_coupons_for_agent(a):
