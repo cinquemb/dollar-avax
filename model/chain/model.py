@@ -110,7 +110,7 @@ def get_nonce(agent):
         agent.next_tx_count += 1
     else:
         # reset agent.seen_block and add block to it
-        agent.next_tx_count = 1
+        agent.next_tx_count = 0
         agent.seen_block[current_block] = True
 
 
@@ -500,7 +500,7 @@ class Agent:
 
         # keeps track of latest block seen for nonce tracking/tx
         self.seen_block = {}
-        self.next_tx_count
+        self.next_tx_count = w3.eth.getTransactionCount(self.address, block_identifier=int(w3.eth.get_block('latest')["number"]))
 
         if kwargs.get("is_mint", False):
             # need to mint USDC to the wallets for each agent
@@ -889,7 +889,7 @@ class DAO:
             
         return total_before_coupons - total_after_coupons
 
-    def advance(self, address):
+    def advance(self, agent):
         """
         Advance the epoch. Return the balance of XSD created.
         
@@ -897,11 +897,11 @@ class DAO:
         operations, the reported reward may be affected by those transfers.
         """
         self.xsd_token.update()
-        before_advance = self.xsd_token[address]
+        before_advance = self.xsd_token[agent.address]
         
         self.contract.functions.advance().transact({
             'nonce': get_nonce(agent),
-            'from' : address,
+            'from' : agent.address,
             'gas': 8000000,
             'gasPrice': Web3.toWei(1, 'gwei'),
         })
@@ -910,7 +910,7 @@ class DAO:
         provider.make_request("evm_mine", [])
         provider.make_request("evm_increaseTime", [7201])
         self.xsd_token.update()
-        after_advance = self.xsd_token[address]
+        after_advance = self.xsd_token[agent.address]
         return after_advance - before_advance
 
 def portion_dedusted(total, fraction):
