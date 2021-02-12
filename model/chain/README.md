@@ -27,5 +27,13 @@ Finally, you can run the wrapper script, which will start Ganache, deploy the co
 ./run.sh
 ```
 
+If you are editing the model, you can run:
+
+```
+RUN_SHELL=1 ./run.sh
+```
+
+Then you can run `./model.py` in that shell multiple times, against the same prepared chain. To tear down the chain, just `exit`.
+
 
 
