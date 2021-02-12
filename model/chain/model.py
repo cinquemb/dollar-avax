@@ -538,9 +538,6 @@ class Agent:
 
     def refresh_balances(self):
         self.lp = reg_int(self.uniswap_pair.caller({'from' : self.address, 'gas': 8000000}).balanceOf(self.address), UNIV2Router['decimals'])
-        self.xsd = reg_int(self.xsd_token.caller({'from' : self.address, 'gas': 8000000}).balanceOf(self.address), xSD['decimals'])
-
-        self.usdc = reg_int(self.usdc_token.caller({'from' : self.address, 'gas': 8000000}).balanceOf(self.address), USDC['decimals'])
         
     def get_strategy(self, block, price, total_supply):
         """
