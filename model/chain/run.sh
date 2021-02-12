@@ -51,6 +51,10 @@ else
     . venv/bin/activate
 fi
 
+
+sleep infinity
+exit
+
 # Run the model
 echo "Running Model..."
 ./model.py

@@ -78,6 +78,7 @@ xSDS = {
 
 DEADLINE_FROM_NOW = 60 * 15
 UINT256_MAX = 2**256 - 1
+ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 DaoContract = json.loads(open('./build/contracts/Implementation.json', 'r+').read())
 USDCContract = json.loads(open('./build/contracts/TestnetUSDC.json', 'r+').read())
@@ -287,7 +288,134 @@ def pretty(d, indent=0):
             pretty(v, indent+1)
       else:
          print('\t' * (indent+1) + str(value))
-
+         
+         
+class TokenProxy:
+    """
+    A proxy for an ERC20 token. Monitors events, processes them when update()
+    is called, and fulfils balance requests from memory.
+    """
+    
+    def __init__(self, contract):
+        """
+        Set up a proxy around a Web3py contract object that implements ERC20.
+        """
+        
+        self.__contract = contract
+        self.__transfer_filter = self.__contract.events.Transfer.createFilter(fromBlock='latest')
+        # This maps from string address to Balance balance
+        self.__balances = {}
+        # This records who we approved for who
+        self.__approved = collections.defaultdict(set)
+        
+        
+        # Load initial parameters from the chain.
+        # Assumes no events are happening to change the supply while we are doing this.
+        self.__decimals = self.__contract.functions.decimals().call()
+        self.__symbol = self.__contract.functions.symbol().call()
+        self.__supply = Balance(self.__contract.functions.totalSupply().call(), self.__decimals)
+        
+    # Expose some properties to make us easy to use in place of the contract
+        
+    @property
+    def decimals(self):
+        return self.__decimals
+        
+    @property
+    def symbol(self):
+        return self.__symbol
+        
+    @property
+    def totalSupply(self):
+        return self.__supply
+        
+    @property
+    def address(self):
+        return self.__contract.address
+        
+    @property
+    def contract(self):
+        return self.__contract
+        
+    def update(self):
+        """
+        Process pending events and update state to match chain.
+        Assumes no transactions are still in flight.
+        """
+        
+        # These addresses need to be polled because we have no balance from
+        # before all these events.
+        new_addresses = set()
+        
+        for transfer in self.__transfer_filter.get_new_entries():
+            # For every transfer event since we last updated...
+            
+            # Each loooks something like:
+            # AttributeDict({'args': AttributeDict({'from': '0x0000000000000000000000000000000000000000', 
+            # 'to': '0x20042A784Bf0743fcD81136422e12297f52959a0', 'value': 19060347313}), 
+            # 'event': 'Transfer', 'logIndex': 0, 'transactionIndex': 0,
+            # 'transactionHash': HexBytes('0xa6f4ca515b28301b224f24b7ee14b8911d783e2bf965dbcda5784b4296c84c23'), 
+            # 'address': '0xa2Ff73731Ee46aBb6766087CE33216aee5a30d5e', 
+            # 'blockHash': HexBytes('0xb5ffd135318581fcd5cd2463cf3eef8aaf238bef545e460c284ad6283928ed08'),
+            # 'blockNumber': 17})
+            args = transfer['args']
+            
+            moved = Balance(args['value'], self.__decimals)
+            if args['from'] in self.__balances:
+                self.__balances[args['from']] -= moved
+            elif args['from'] == ZERO_ADDRESS:
+                # This is a mint
+                self.__supply += moved
+            else:
+                new_addresses.add(args['from'])
+            if args['to'] in self.__balances:
+                self.__balances[args['to']] += moved
+            elif args['to'] == ZERO_ADDRESS:
+                # This is a burn
+                self.__supply -= moved
+            else:
+                new_addresses.add(args['to'])
+        
+        for address in new_addresses:
+            # TODO: can we get a return value and a correct-as-of block in the same call?
+            self.__balances[address] = Balance(self.__contract.functions.balanceOf(address).call(), self.__decimals)
+            
+    def __getitem__(self, address):
+        """
+        Get the balance of the given address as a Balance, with the given number of decimals.
+        
+        Address can be a string or any object with an .address field.
+        """
+        
+        address = getattr(address, 'address', address)
+        
+        if address not in self.__balances:
+            # Don't actually cache here; wait for a transfer.
+            # Transactions may still be in flight
+            return Balance(self.__contract.functions.balanceOf(address).call(), self.__decimals)
+        else:
+            return self.__balances[address]
+            
+    def ensure_approved(self, owner, spender):
+        """
+        Approve the given spender to spend all the owner's tokens on their behalf.
+        
+        Owner and spender may be addresses or things with addresses.
+        """
+        
+        owner = getattr(owner, 'address', owner)
+        spender = getattr(spender, 'address', spender)
+        
+        if spender not in self.__approved[owner]:
+            # Issue an approval
+            self.__contract.functions.approve(spender, UINT256_MAX).transact({
+                'nonce': get_nonce(owner),
+                'from' : owner,
+                'gas': 8000000,
+                'gasPrice': 1,
+            })
+            self.__approved[owner].add(spender)
+        
 class Agent:
     """
     Represents an agent. Tracks all the agent's balances.
@@ -297,7 +425,7 @@ class Agent:
  
         # xSD contract
         self.xsd_token = xsd_token
-        # USDC contract 
+        # USDC TokenProxy 
         self.usdc_token = usdc_token
         # xSD balance
         self.xsd = Balance(0, xSD["decimals"])
@@ -334,7 +462,6 @@ class Agent:
         self.uniswap_pair = uniswap_pair
 
         self.is_uniswap_approved = False
-        self.is_usdc_approved = False
         self.is_xsd_approved = False
         self.is_dao_approved = False
 
@@ -347,8 +474,8 @@ class Agent:
 
             self.xsd = reg_int(self.xsd_token.caller({'from' : self.address, 'gas': 8000000}).balanceOf(self.address), xSD['decimals'])
 
-            self.usdc = reg_int(self.usdc_token.caller({'from' : self.address, 'gas': 8000000}).balanceOf(self.address), USDC['decimals'])
-        
+            self.usdc = self.usdc_token[self]
+            
     def __str__(self):
         """
         Turn into a readable string summary.
@@ -422,7 +549,7 @@ class Agent:
         faith = center_faith + swing_faith * math.sin(block * (2 * math.pi / 5000))
         
         return faith
-
+        
 class UniswapPool:
     """
     Represents the Uniswap pool. Tracks xSD and USDC balances of pool, and total outstanding LP shares.
@@ -485,15 +612,9 @@ class UniswapPool:
         """
         Provide liquidity. Returns the number of new LP shares minted.
         """        
-        if not agent.is_usdc_approved:
-            self.usdc_token.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
-                'nonce': get_nonce(agent.address),
-                'from' : agent.address,
-                'gas': 8000000,
-                'gasPrice': 1,
-            })
-            agent.is_usdc_approved = True
-
+        
+        self.usdc_token.ensure_approved(agent, UNIV2Router["addr"])
+        
         if not agent.is_xsd_approved:
             self.xsd.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
                 'nonce': get_nonce(agent.address),
@@ -509,7 +630,7 @@ class UniswapPool:
 
         if IS_DEBUG:
             xsd_wei = self.xsd.caller({'from' : agent.address, 'gas': 8000000}).balanceOf(address)
-            usdc_wei = self.usdc_token.caller({'from' : agent.address, 'gas': 8000000}).balanceOf(agent.address)
+            usdc_wei = self.usdc_token[agent].to_wei()
 
             assert xsd_wei >= xsd.to_wei()
             assert usdc_wei >= usdc.to_wei()
@@ -578,14 +699,8 @@ class UniswapPool:
         # get balance of xSD before and after
         balance_before = self.xsd.caller({"from": agent.address, 'gas': 8000000}).balanceOf(agent.address)
 
-        if not agent.is_usdc_approved:
-            self.usdc_token.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
-                'nonce': get_nonce(agent.address),
-                'from' : agent.address,
-                'gas': 8000000,
-                'gasPrice': 1,
-            }) 
-            agent.is_usdc_approved = True     
+        
+        self.usdc_token.ensure_approved(agent, UNIV2Router["addr"])
 
         if not agent.is_xsd_approved:
             self.xsd.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
@@ -623,14 +738,7 @@ class UniswapPool:
         # get balance of xsd before and after
         balance_before = self.xsd.caller({"from": agent.address, 'gas': 8000000}).balanceOf(agent.address)
 
-        if not agent.is_usdc_approved:
-            self.usdc_token.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
-                'nonce': get_nonce(agent.address),
-                'from' : agent.address,
-                'gas': 8000000,
-                'gasPrice': 1,
-            })
-            agent.is_usdc_approved = True      
+        self.usdc_token.ensure_approved(agent, UNIV2Router["addr"])
 
         if not agent.is_xsd_approved:
             self.xsd.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
@@ -657,7 +765,9 @@ class UniswapPool:
             'gas': 8000000,
             'gasPrice': 1,
         })
-        balance_after = self.usdc_token.caller({"from": agent.address, 'gas': 8000000}).balanceOf(agent.address)
+        # To get the balance after, we need to process events.
+        self.usdc_token.update()
+        balance_after = self.usdc_token[agent].to_wei()
         amount_sold = reg_int(abs(balance_after - balance_before), USDC["decimals"])
         return amount_sold
         
@@ -829,7 +939,7 @@ class Model:
 
             if is_mint:
                 # need to mint USDC to the wallets for each agent
-                usdc.functions.mint(address, int(start_usdc_formatted)).transact({
+                usdc.contract.functions.mint(address, int(start_usdc_formatted)).transact({
                     'nonce': get_nonce(address),
                     'from' : address,
                     'gas': 8000000,
@@ -873,6 +983,9 @@ class Model:
         
         provider.make_request("evm_increaseTime", [7201])
         #provider.make_request("debug_increaseTime", [7201])
+        
+        # Update caches to current chain state
+        self.usdc_token.update()
 
         #randomly have an agent advance the epoch
         seleted_advancer = self.agents[int(random.random() * (len(self.agents) - 1))]
@@ -1122,6 +1235,9 @@ def main():
     """
     Main function: run the simulation.
     """
+    
+    logging.basicConfig(level=logging.INFO)
+    
     max_accounts = 20
     print(w3.eth.get_block('latest')["number"])
     if w3.eth.get_block('latest')["number"] == block_offset:
@@ -1134,16 +1250,14 @@ def main():
     oracle = w3.eth.contract(abi=OracleContract['abi'], address=dao.caller({'from' : dao.address, 'gas': 8000000}).oracle())
 
     uniswap = w3.eth.contract(abi=UniswapPairContract['abi'], address=UNI["addr"])
-    usdc = w3.eth.contract(abi=USDCContract['abi'], address=USDC["addr"])
+    usdc = TokenProxy(w3.eth.contract(abi=USDCContract['abi'], address=USDC["addr"]))
     
     uniswap_router = w3.eth.contract(abi=UniswapRouterAbiContract['abi'], address=UNIV2Router["addr"])
     uniswap_token = w3.eth.contract(abi=PoolContract['abi'], address=UNIV2LP["addr"])
 
     xsd = w3.eth.contract(abi=DollarContract['abi'], address=dao.caller().dollar())
     print (dao.caller().dollar())
-
-    logging.basicConfig(level=logging.INFO)
-
+    
     # Make a model of the economy
     start_init = time.time()
     print ('INIT STARTED')
