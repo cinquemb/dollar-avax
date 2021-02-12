@@ -26,7 +26,7 @@ trap cleanup EXIT
 
 # Start the chain
 echo "Starting Ganache..."
-TMPDIR="$(pwd)" ganache-cli --p 7545 --gasLimit 8000000 --accounts 2000 --defaultBalanceEther 1000000 --blockTime 604800 --db ./db >ganache_output.txt &
+TMPDIR="$(pwd)" ganache-cli --p 7545 --gasLimit 8000000 --accounts 2000 --defaultBalanceEther 1000000 --blockTime 1 --db ./db >ganache_output.txt &
 GANACHE=$!
 
 # Wait for it to come up

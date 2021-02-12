@@ -76,7 +76,7 @@ contract Epoch {
         uint256 maxYield;
         uint256 minExpiry;
         uint256 maxExpiry;
-        address topBidder;
+        address initBidder;
         uint256 _totalBids;
         uint256 bidToCover;
         uint256 totalFilled;

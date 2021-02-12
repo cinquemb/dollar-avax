@@ -324,6 +324,49 @@ contract Getters is State {
         return sumCoupons;
     }
 
+    function getSumofBestBidsAcrossCouponAuctionsNew() public view returns (uint256) {
+        // loop over past epochs from the latest `dead` epoch to the current
+        uint256 sumCoupons = 0;
+        for (uint256 d_idx = getEarliestDeadAuctionEpoch(); d_idx < uint256(epoch()); d_idx++) {
+            uint256 temp_coupon_auction_epoch = d_idx;
+            Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(temp_coupon_auction_epoch);
+            
+            // skip auctions that have been canceled, dead or not finished auction present?
+            if (!auction.canceled && !auction.dead && auction.isInit && auction.finished) {
+                sumCoupons = getBestBidsInOrder(temp_coupon_auction_epoch, sumCoupons);
+            }
+        }
+
+        return sumCoupons;
+    }
+
+    function getBestBidsInOrder(uint256 epoch, uint256 couponAmount) internal view returns (uint256) {
+        Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(epoch);
+        Epoch.CouponBidderState storage bidder = getCouponBidderState(epoch, auction.initBidder);
+        return getBestBidsInOrder(epoch, bidder.leftBidder, couponAmount);
+    }
+
+    function getBestBidsInOrder(uint256 epoch, address curBidder, uint256 couponAmount) internal view returns (uint256) {
+        if (curBidder == address(0))
+            return couponAmount;
+
+        Epoch.CouponBidderState storage bidder = getCouponBidderState(epoch, curBidder);
+        
+        // iter left
+        getBestBidsInOrder(epoch, bidder.leftBidder, couponAmount);
+
+        // skip over those bids that have already been redeemed
+        if (bidder.redeemed) {
+            
+        } else {
+            couponAmount += bidder.couponAmount;
+        }
+        
+        // iter right
+        getBestBidsInOrder(epoch, bidder.rightBidder, couponAmount);
+        
+    }
+
     /**
      * Governance
      */

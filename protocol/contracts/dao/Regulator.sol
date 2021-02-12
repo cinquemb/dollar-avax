@@ -33,6 +33,7 @@ contract Regulator is Comptroller {
     uint256 private totalBurned = 0;
     uint256 private yieldRelNorm = 1;
     uint256 private expiryRelNorm = 1;
+    uint256 private currentBidIdx = 0;
     uint256 private dollarRelNorm = 1;
     uint256 private totalAuctioned = 0;
     uint256 private maxExpiryFilled = 0;
@@ -77,7 +78,7 @@ contract Regulator is Comptroller {
         if (price.lessThan(Decimal.one())) {
             //check for outstanding auction, if exists settle it and start a new one
             if (auction.isInit == true){
-                bool isAuctionSettled = settleCouponAuction(prev_epoch);
+                bool isAuctionSettled = settleCouponAuctionNew(prev_epoch);
                 finishCouponAuctionAtEpoch(prev_epoch);
             }
             initCouponAuction();
@@ -89,7 +90,7 @@ contract Regulator is Comptroller {
 
     function growSupply(Decimal.D256 memory price) private {
         // supply growth is purly a function sum of the best outstanding bids amounts across auctions at any given time untill they get redeemed, split between pools
-        uint256 newSupply = getSumofBestBidsAcrossCouponAuctions();
+        uint256 newSupply = getSumofBestBidsAcrossCouponAuctionsNew();
         (uint256 newRedeemable, uint256 newBonded) = increaseSupply(newSupply);
         emit SupplyIncrease(epoch(), price.value, newRedeemable, 0, newBonded);
     }
@@ -117,7 +118,7 @@ contract Regulator is Comptroller {
         }
 
         return price;
-    }    
+    }
 
     function sortBidsByDistance(mapping(uint256 => address) storage bids, uint256 maxBidsLen, uint256 epoch) internal {
        quickSort(bids, int(0), int(maxBidsLen- 1), epoch);
@@ -168,6 +169,41 @@ contract Regulator is Comptroller {
         return y;
     }
 
+    function computeRelBidDistance(Epoch.CouponBidderState memory bidder, uint256 yNorm, uint256 eNorm, uint256 dNorm) internal pure returns (Decimal.D256 memory) {
+        Decimal.D256 memory yieldRel = Decimal.ratio(
+            Decimal.ratio(
+                bidder.couponAmount,
+                bidder.dollarAmount
+            ).asUint256(),
+            yNorm
+        );
+        
+        Decimal.D256 memory expiryRel = Decimal.ratio(
+            bidder.couponExpiryEpoch,
+            eNorm
+        );
+        
+        Decimal.D256 memory dollarRelMax = Decimal.ratio(
+            bidder.dollarAmount,
+            dNorm
+        );
+        Decimal.D256 memory dollarRel = (Decimal.one().add(Decimal.one())).sub(dollarRelMax);
+
+        Decimal.D256 memory yieldRelSquared = yieldRel.pow(2);
+        Decimal.D256 memory expiryRelSquared = expiryRel.pow(2);
+        Decimal.D256 memory dollarRelSquared = dollarRel.pow(2);
+
+        Decimal.D256 memory sumOfSquared = yieldRelSquared.add(expiryRelSquared).add(dollarRelSquared);
+        Decimal.D256 memory distance;
+        if (sumOfSquared.greaterThan(Decimal.zero())) {
+            distance = sqrt(sumOfSquared);
+        } else {
+            distance = Decimal.zero();
+        }
+
+        return distance;
+    }
+
     function settleCouponAuction(uint256 settlementEpoch) internal returns (bool success) {
         if (!isCouponAuctionFinished(settlementEpoch) && !isCouponAuctionCanceled(settlementEpoch)) {            
             yieldRelNorm = getCouponAuctionMaxYield(settlementEpoch) - getCouponAuctionMinYield(settlementEpoch);
@@ -182,51 +218,20 @@ contract Regulator is Comptroller {
             for (uint256 i = 0; i < maxBidLen; i++) {
                 address bidder_addr = getCouponBidderStateIndex(settlementEpoch, i);
                 Epoch.CouponBidderState memory bidder = getCouponBidderState(settlementEpoch, bidder_addr);
-                Decimal.D256 memory yieldRel = Decimal.ratio(
-                    Decimal.ratio(
-                        bidder.couponAmount,
-                        bidder.dollarAmount
-                    ).asUint256(),
-                    yieldRelNorm
-                );
-                
-                Decimal.D256 memory expiryRel = Decimal.ratio(
-                    bidder.couponExpiryEpoch,
-                    expiryRelNorm
-                );
-                
-                Decimal.D256 memory dollarRelMax = Decimal.ratio(
-                    bidder.dollarAmount,
-                    dollarRelNorm
-                );
-                Decimal.D256 memory dollarRel = (Decimal.one().add(Decimal.one())).sub(dollarRelMax);
-
-                Decimal.D256 memory yieldRelSquared = yieldRel.pow(2);
-                Decimal.D256 memory expiryRelSquared = expiryRel.pow(2);
-                Decimal.D256 memory dollarRelSquared = dollarRel.pow(2);
-
-                Decimal.D256 memory sumOfSquared = yieldRelSquared.add(expiryRelSquared).add(dollarRelSquared);
-                Decimal.D256 memory distance;
-                if (sumOfSquared.greaterThan(Decimal.zero())) {
-                    distance = sqrt(sumOfSquared);
-                } else {
-                    distance = Decimal.zero();
-                }
-                bidder.distance = distance;
-
+                Decimal.D256 memory distance = computeRelBidDistance(bidder, yieldRelNorm, expiryRelNorm, dollarRelNorm);
                 bidMap[i] = bidder_addr;
             }
 
             
-            // sort bids
+            // sort bids (TODO: THIS WILL BE REPLACED BY INPLACE SORTING UPON BIDDING)
             sortBidsByDistance(bidMap, maxBidLen, settlementEpoch);
 
             // assign coupons in order of bid preference
             for (uint256 i = 0; i < maxBidLen; i++) {
-                Epoch.CouponBidderState memory bidder = getCouponBidderState(settlementEpoch, bidMap[i]);
-
                 // reject bids implicit greater than the getCouponRejectBidPtile threshold
                 if (Decimal.ratio(i, maxBidLen).lessThan(Constants.getCouponRejectBidPtile())) {
+                    Epoch.CouponBidderState memory bidder = getCouponBidderState(settlementEpoch, bidMap[i]);
+
                     // only assgin bids that have not been explicitly selected already? may not need this if settleCouponAuction can only be called once per epoch passed
                     if (!getCouponBidderStateSelected(settlementEpoch, bidder.bidder)) {
                         Decimal.D256 memory yield = Decimal.ratio(
@@ -253,7 +258,7 @@ contract Regulator is Comptroller {
                             totalAuctioned += bidder.couponAmount;
                             totalBurned += bidder.dollarAmount;
                             
-                            uint256 epochExpiry = epoch().add(bidder.couponExpiryEpoch);
+                            uint256 epochExpiry = settlementEpoch.add(bidder.couponExpiryEpoch);
                             burnFromAccountSansDebt(bidder.bidder, bidder.dollarAmount);
                             incrementBalanceOfCoupons(bidder.bidder, epochExpiry, bidder.couponAmount);
                             setCouponBidderStateSelected(settlementEpoch, bidder.bidder, i);
@@ -314,10 +319,128 @@ contract Regulator is Comptroller {
         }        
     }
 
+    function settleCouponAuctionNew(uint256 settlementEpoch) internal returns (bool success) {
+        if (!isCouponAuctionFinished(settlementEpoch) && !isCouponAuctionCanceled(settlementEpoch)) {
+
+            uint256 maxBidLen = getCouponAuctionBids(settlementEpoch);
+            iterBidsInOrder(settlementEpoch, maxBidLen);
+
+            // set auction internals
+            if (totalFilled > 0) {
+                Decimal.D256 memory avgYieldFilled = Decimal.ratio(
+                    sumYieldFilled,
+                    totalFilled
+                );
+                Decimal.D256 memory avgExpiryFilled = Decimal.ratio(
+                    sumExpiryFilled,
+                    totalFilled
+                );
+
+                //mul(100) to avoid sub 0 results
+                Decimal.D256 memory bidToCover = Decimal.ratio(
+                    maxBidLen,
+                    totalFilled
+                ).mul(100);
+
+                setMinExpiryFilled(settlementEpoch, minExpiryFilled);
+                setMaxExpiryFilled(settlementEpoch, maxExpiryFilled);
+                setAvgExpiryFilled(settlementEpoch, avgExpiryFilled.asUint256());
+                setMinYieldFilled(settlementEpoch, minYieldFilled.asUint256());
+                setMaxYieldFilled(settlementEpoch, maxYieldFilled.asUint256());
+                setAvgYieldFilled(settlementEpoch, avgYieldFilled.asUint256());
+                setBidToCover(settlementEpoch, bidToCover.asUint256());
+                setTotalFilled(settlementEpoch, totalFilled);
+                setTotalAuctioned(settlementEpoch, totalAuctioned);
+                setTotalBurned(settlementEpoch, totalBurned);
+            }
+
+            //reset vars
+            totalFilled = 0;
+            totalBurned = 0;
+            yieldRelNorm = 1;
+            expiryRelNorm = 1;
+            dollarRelNorm = 1;
+            currentBidIdx = 0;
+            totalAuctioned = 0;
+            maxExpiryFilled = 0;
+            sumExpiryFilled = 0;
+            sumYieldFilled = 0;
+            minExpiryFilled = 2**256 - 1;
+            maxYieldFilled = Decimal.zero();
+            minYieldFilled = Decimal.D256(2**256 - 1);
+
+            return true;
+        } else {
+            return false;
+        }        
+    }
+
+    function iterBidsInOrder(uint256 epoch, uint256 maxBidLen) internal returns (address) {
+        Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(epoch);
+        Epoch.CouponBidderState storage bidder = getCouponBidderState(epoch, auction.initBidder);
+        return settleCouponAuctionBidsInOrder(epoch, bidder.leftBidder, maxBidLen);
+    }
+
+    function settleCouponAuctionBidsInOrder(uint256 epoch, address curBidder, uint256 maxBidLen) internal returns (address) {
+        if (curBidder == address(0))
+            return address(0);
+
+        Epoch.CouponBidderState storage bidder = getCouponBidderState(epoch, curBidder);
+        
+        // iter left
+        settleCouponAuctionBidsInOrder(epoch, bidder.leftBidder, maxBidLen);
+        //current bidder
+        // reject bids implicit greater than the getCouponRejectBidPtile threshold
+        if (Decimal.ratio(currentBidIdx, maxBidLen).lessThan(Constants.getCouponRejectBidPtile())) {
+            // only assgin bids that have not been explicitly selected already? may not need this if settleCouponAuction can only be called once per epoch passed
+            if (!getCouponBidderStateSelected(epoch, bidder.bidder)) {
+                Decimal.D256 memory yield = Decimal.ratio(
+                    bidder.couponAmount,
+                    bidder.dollarAmount
+                );
+
+                //must check again if account is able to be assigned
+                if (acceptableBidCheck(bidder.bidder, bidder.dollarAmount)){
+                    if (yield.lessThan(minYieldFilled)) {
+                        minYieldFilled = yield;
+                    } else if (yield.greaterThan(maxYieldFilled)) {
+                        maxYieldFilled = yield;
+                    }
+
+                    if (bidder.couponExpiryEpoch < minExpiryFilled) {
+                        minExpiryFilled = bidder.couponExpiryEpoch;
+                    } else if (bidder.couponExpiryEpoch > maxExpiryFilled) {
+                        maxExpiryFilled = bidder.couponExpiryEpoch;
+                    }
+                    
+                    sumYieldFilled += yield.asUint256();
+                    sumExpiryFilled += bidder.couponExpiryEpoch;
+                    totalAuctioned += bidder.couponAmount;
+                    totalBurned += bidder.dollarAmount;
+                    
+                    uint256 epochExpiry = epoch.add(bidder.couponExpiryEpoch);
+                    burnFromAccountSansDebt(bidder.bidder, bidder.dollarAmount);
+                    incrementBalanceOfCoupons(bidder.bidder, epochExpiry, bidder.couponAmount);
+                    setCouponBidderStateSelected(epoch, bidder.bidder, currentBidIdx);
+                    totalFilled++;
+                }
+            }
+        } 
+
+        //increment bidder index
+        currentBidIdx += 1;
+        
+        // iter right
+        settleCouponAuctionBidsInOrder(epoch, bidder.rightBidder, maxBidLen);
+        
+    }
+
     function autoRedeemFromCouponAuction() internal returns (bool success) {
         /*
             WARNING: may need fundemental constraints in order to cap max run time as epocs grow? (i.e totalRedeemable needs to be a function of auction internals of non dead auctions when twap > 1)
         */
+
+        uint256 earliestDeadauction = 0;
 
         // this will allow us to reloop over best bidders in each auction
         while (totalRedeemable() > 0) {
@@ -334,7 +457,9 @@ contract Regulator is Comptroller {
                         uint256 totalCurrentlyTriedRedeemed = 0;
                         // loop over bidders in order of assigned per epoch and redeem automatically untill capp is filled for epoch, mark those bids as redeemed, 
 
-                        for (uint256 s_idx = getLatestCouponAuctionRedeemedSelectedBidderIndex(temp_coupon_auction_epoch); s_idx < getTotalFilled(temp_coupon_auction_epoch); s_idx++) {
+                        uint256 latestRedeemedIndex = getLatestCouponAuctionRedeemedSelectedBidderIndex(temp_coupon_auction_epoch);
+
+                        for (uint256 s_idx = latestRedeemedIndex; s_idx < getTotalFilled(temp_coupon_auction_epoch); s_idx++) {
                             address bidderAddress = getCouponBidderStateAssginedAtIndex(temp_coupon_auction_epoch, s_idx);
                             Epoch.CouponBidderState storage bidder = getCouponBidderState(temp_coupon_auction_epoch, bidderAddress);
 
@@ -374,8 +499,7 @@ contract Regulator is Comptroller {
                                     redeemToAccount(bidderAddress, minCouponAmount);
                                     
                                     setCouponBidderStateRedeemed(couponExpiryEpoch, bidderAddress);
-                                    // set the next bidder in line
-                                    setLatestCouponAuctionRedeemedSelectedBidderIndex(temp_coupon_auction_epoch, s_idx + 1);
+                                    latestRedeemedIndex++;
                                     totalCurrentlyTriedRedeemed++;
 
                                     // time to jump into next auctions bidders
@@ -383,8 +507,7 @@ contract Regulator is Comptroller {
                                 } else {
                                     // mark as redeemd if couponBalance is zero
                                     setCouponBidderStateRedeemed(couponExpiryEpoch, bidderAddress);
-                                    // set the next bidder in line
-                                    setLatestCouponAuctionRedeemedSelectedBidderIndex(temp_coupon_auction_epoch, s_idx + 1);
+                                    latestRedeemedIndex++;
                                     totalCurrentlyTriedRedeemed++;
 
                                     // time to jump into next auctions bidders
@@ -400,10 +523,19 @@ contract Regulator is Comptroller {
                         // if all have been tried to be redeemd or expired, mark auction as `dead`
                     
                         if (totalCurrentlyTriedRedeemed == getTotalFilled(temp_coupon_auction_epoch)) {
-                            setEarliestDeadAuctionEpoch(temp_coupon_auction_epoch);
-                            setCouponAuctionStateDead(temp_coupon_auction_epoch);
+                            earliestDeadauction = earliestDeadauction;
+                        }
+
+                        // set the next bidder in line for the next iteration
+                        setLatestCouponAuctionRedeemedSelectedBidderIndex(temp_coupon_auction_epoch, latestRedeemedIndex);
+
+                        if (willRedeemableOverflow) {
+                            // stop trying to redeem across auctions
+                            break;
                         }
                     }
+                } else {
+                    earliestDeadauction = temp_coupon_auction_epoch;
                 }
             }
 
@@ -412,5 +544,10 @@ contract Regulator is Comptroller {
                 break;
             }
         }
+
+        setEarliestDeadAuctionEpoch(earliestDeadauction);
+        setCouponAuctionStateDead(earliestDeadauction);
+
+        return true;
     }
 }

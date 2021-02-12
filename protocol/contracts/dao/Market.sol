@@ -117,6 +117,7 @@ contract Market is Comptroller, Curve {
         redeemToAccount(msg.sender, redeemAmount);
 
         if(burnAmount > 0){
+            setCouponBidderStateRedeemed(couponEpoch, msg.sender);
             emit CouponBurn(msg.sender, couponEpoch, burnAmount);
         }
 
@@ -139,6 +140,7 @@ contract Market is Comptroller, Curve {
         redeemToAccount(msg.sender, redeemAmount);
 
         if(burnAmount > 0){
+            setCouponBidderStateRedeemed(couponEpoch, msg.sender);
             emit CouponBurn(msg.sender, couponEpoch, burnAmount);
         }
 
@@ -207,14 +209,122 @@ contract Market is Comptroller, Curve {
             "Must be under maxYield"
         );
 
-        uint256 epochExpiry = epoch().add(couponEpochExpiry);
+        // insert bid onto chain
+        uint256 currentEpoch = uint256(epoch());
+        uint256 totalBids = getCouponAuctionBids(currentEpoch);
+        uint256 epochExpiry = currentEpoch.add(couponEpochExpiry);
         setCouponAuctionRelYield(maxCouponAmount.div(dollarAmount));
         setCouponAuctionRelDollarAmount(dollarAmount);
         setCouponAuctionRelExpiry(epochExpiry);
-        setCouponBidderState(uint256(epoch()), msg.sender, couponEpochExpiry, dollarAmount, maxCouponAmount);
-        setCouponBidderStateIndex(uint256(epoch()), getCouponAuctionBids(uint256(epoch())), msg.sender);
+        setCouponBidderState(currentEpoch, msg.sender, couponEpochExpiry, dollarAmount, maxCouponAmount);
+        setCouponBidderStateIndex(currentEpoch, totalBids, msg.sender);
+
+        // todo sort bid on chain via BST
+        sortBidBST(msg.sender, totalBids, currentEpoch);
+
         incrementCouponAuctionBids();
         emit CouponBidPlaced(msg.sender, epochExpiry, dollarAmount, maxCouponAmount);
         return true;
+    }
+
+    function sortBidBST(address bidAddr, uint256 totalBids, uint256 currentEpoch) internal returns (bool) {
+        Epoch.CouponBidderState storage bidder = getCouponBidderState(currentEpoch, bidAddr);
+        Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(currentEpoch);
+
+        if (totalBids == 0) {
+            // no need to sort, just set addr as best bidder
+            auction.initBidder = bidAddr;
+        } else {
+            // need a away to compare, use available internals boundaries;
+            uint256 yieldRelNorm = getCouponAuctionMaxYield(currentEpoch) - getCouponAuctionMinYield(currentEpoch);
+            uint256 expiryRelNorm = getCouponAuctionMaxExpiry(currentEpoch) - getCouponAuctionMinExpiry(currentEpoch);    
+            uint256 dollarRelNorm = getCouponAuctionMaxDollarAmount(currentEpoch) - getCouponAuctionMinDollarAmount(currentEpoch);
+
+            // sort bid
+            Epoch.CouponBidderState storage pnodeBidder = getCouponBidderState(currentEpoch, auction.initBidder);
+            Decimal.D256 memory bidAddrDistance = computeRelBidDistance(bidder, yieldRelNorm, expiryRelNorm, dollarRelNorm);
+
+            address pnode = pnodeBidder.bidder;
+            address node = pnodeBidder.leftBidder;
+            while(node != address(0)) {
+                //left or right subtree
+                Epoch.CouponBidderState storage nodeBidder = getCouponBidderState(currentEpoch, node);
+                Decimal.D256 memory nodeAddrDistance = computeRelBidDistance(nodeBidder, yieldRelNorm, expiryRelNorm, dollarRelNorm);
+                
+
+                if(nodeAddrDistance.greaterThan(bidAddrDistance)) {
+                    // if node distance is greater than current bid distance
+                    pnode = nodeBidder.bidder;
+                    node = nodeBidder.leftBidder;
+                } else if(nodeAddrDistance.lessThan(bidAddrDistance)) {
+                    // if node distance is less than current bid distance
+                    pnode = nodeBidder.bidder;
+                    node = nodeBidder.rightBidder;
+                } else if(nodeAddrDistance.equals(bidAddrDistance)) {
+                    // duplicate values, sort not needed
+                    return false;
+                }
+            }
+
+            Epoch.CouponBidderState storage pNodeBidder = getCouponBidderState(currentEpoch, pnode);
+            Decimal.D256 memory pNodeAddrDistance = computeRelBidDistance(pNodeBidder, yieldRelNorm, expiryRelNorm, dollarRelNorm);
+            
+            if(pNodeAddrDistance.greaterThan(bidAddrDistance)) {
+                // if current parent node distance is greater than current bid distance
+                pNodeBidder.leftBidder = bidAddr;
+            } else if(pNodeAddrDistance.lessThan(bidAddrDistance)) {
+                // if current parent node distance is less than than current bid distance
+                pNodeBidder.rightBidder = bidAddr;
+            } else if(pNodeAddrDistance.equals(bidAddrDistance)) {
+                // duplicate values, sort not needed
+                return false;
+            }
+            return true;
+        }
+    }
+
+    function sqrt(Decimal.D256 memory x) internal pure returns (Decimal.D256 memory y) {
+        Decimal.D256 memory z = x.add(1).div(2);
+        y = x;
+        while (z.lessThan(y)) {
+            y = z;
+            z = x.div(z.add(z)).div(2);
+        }
+        return y;
+    }
+
+    function computeRelBidDistance(Epoch.CouponBidderState memory bidder, uint256 yieldRelNorm, uint256 expiryRelNorm, uint256 dollarRelNorm) internal pure returns (Decimal.D256 memory) {
+        Decimal.D256 memory yieldRel = Decimal.ratio(
+            Decimal.ratio(
+                bidder.couponAmount,
+                bidder.dollarAmount
+            ).asUint256(),
+            yieldRelNorm
+        );
+        
+        Decimal.D256 memory expiryRel = Decimal.ratio(
+            bidder.couponExpiryEpoch,
+            expiryRelNorm
+        );
+        
+        Decimal.D256 memory dollarRelMax = Decimal.ratio(
+            bidder.dollarAmount,
+            dollarRelNorm
+        );
+        Decimal.D256 memory dollarRel = (Decimal.one().add(Decimal.one())).sub(dollarRelMax);
+
+        Decimal.D256 memory yieldRelSquared = yieldRel.pow(2);
+        Decimal.D256 memory expiryRelSquared = expiryRel.pow(2);
+        Decimal.D256 memory dollarRelSquared = dollarRel.pow(2);
+
+        Decimal.D256 memory sumOfSquared = yieldRelSquared.add(expiryRelSquared).add(dollarRelSquared);
+        Decimal.D256 memory distance;
+        if (sumOfSquared.greaterThan(Decimal.zero())) {
+            distance = sqrt(sumOfSquared);
+        } else {
+            distance = Decimal.zero();
+        }
+
+        return distance;
     }
 }
