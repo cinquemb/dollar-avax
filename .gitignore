@@ -3,3 +3,10 @@ env/*
 node_modules/*
 model/node_modules/*
 model/chain/node_modules/*
+model/chain/ganache_output.txt
+model/chain/deploy_output.txt
+model/chain/log.tsv
+model/chain/db
+model/chain/db/*
+model/chain/venv
+model/chain/venv/*
