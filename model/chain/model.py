@@ -96,8 +96,23 @@ def get_addr_from_contract(contract):
 xSD['addr'] = get_addr_from_contract(DaoContract)
 xSDS['addr'] = get_addr_from_contract(TokenContract)
 
-def get_nonce(address):
-    return w3.eth.getTransactionCount(address)
+def get_nonce(agent):
+    '''
+        TODO: This will need to increment block nonce count for address or reset depening on the latest block
+    '''
+    #return w3.eth.getTransactionCount(agent.address), 
+
+    current_block = int(w3.eth.get_block('latest')["number"])
+
+    if current_block in agent.seen_block:
+        agent.next_tx_count += 1
+    else:
+        # reset agent.seen_block and add block to it
+        agent.next_tx_count = 1
+        agent.seen_block[current_block] = True
+
+
+    return agent.next_tx_count 
 
 # Because token balances need to be accuaate to the atomic unit, we can't store
 # them as floats. Otherwise we might turn our float back into a token balance
@@ -338,16 +353,22 @@ class Agent:
         self.is_xsd_approved = False
         self.is_dao_approved = False
 
+        # keeps track of latest block seen for nonce tracking/tx
+        self.seen_block = {}
+        self.next_tx_count
+
         # Uniswap LP share balance
         self.lp = 0
-        is_seeded = True
 
-        if is_seeded:
-            self.lp = reg_int(self.uniswap_pair.caller({'from' : self.address, 'gas': 8000000}).balanceOf(self.address), UNIV2Router['decimals'])
-
-            self.xsd = reg_int(self.xsd_token.caller({'from' : self.address, 'gas': 8000000}).balanceOf(self.address), xSD['decimals'])
-
-            self.usdc = reg_int(self.usdc_token.caller({'from' : self.address, 'gas': 8000000}).balanceOf(self.address), USDC['decimals'])
+        if kwargs.get("is_mint", False):
+            # need to mint USDC to the wallets for each agent
+            start_usdc_formatted = kwargs.get("starting_usdc", Balance(0, USDC["decimals"]))
+            self.usdc_token.functions.mint(self.address, int(start_usdc_formatted)).transact({
+                'nonce': get_nonce(self),
+                'from' : self.address,
+                'gas': 8000000,
+                'gasPrice': 1,
+            })
         
     def __str__(self):
         """
@@ -355,6 +376,12 @@ class Agent:
         """
         return "Agent(xSD={:.2f}, usdc={:.2f}, eth={}, lp={}, coupons={:.2f})".format(
             self.xsd, self.usdc, self.eth, self.lp, self.dao.total_coupons(self.address))
+
+    def refresh_balances(self):
+        self.lp = reg_int(self.uniswap_pair.caller({'from' : self.address, 'gas': 8000000}).balanceOf(self.address), UNIV2Router['decimals'])
+        self.xsd = reg_int(self.xsd_token.caller({'from' : self.address, 'gas': 8000000}).balanceOf(self.address), xSD['decimals'])
+
+        self.usdc = reg_int(self.usdc_token.caller({'from' : self.address, 'gas': 8000000}).balanceOf(self.address), USDC['decimals'])
         
     def get_strategy(self, block, price, total_supply):
         """
@@ -474,7 +501,19 @@ class UniswapPool:
         """
         
         if self.operational():
-            return self.getInstantaneousPrice()
+            success = False
+            while not success:
+                try:
+                    price = self.getInstantaneousPrice()
+                    success = True
+                    return price
+                except Exception as inst:
+                    """
+                        Seen:
+                            raise ContractLogicError(f'execution reverted: {response["error"]["message"]}')
+                            web3.exceptions.ContractLogicError: execution reverted: Reverting to invalid state checkpoint failed
+                    """
+                    print({"function": "xsd_price", "error": inst })
         else:
             return 1.0
 
@@ -483,11 +522,11 @@ class UniswapPool:
         
     def provide_liquidity(self, agent, xsd, usdc):
         """
-        Provide liquidity. Returns the number of new LP shares minted.
+        Provide liquidity.
         """        
         if not agent.is_usdc_approved:
             self.usdc_token.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
-                'nonce': get_nonce(agent.address),
+                'nonce': get_nonce(agent),
                 'from' : agent.address,
                 'gas': 8000000,
                 'gasPrice': 1,
@@ -496,7 +535,7 @@ class UniswapPool:
 
         if not agent.is_xsd_approved:
             self.xsd.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
-                'nonce': get_nonce(agent.address),
+                'nonce': get_nonce(agent),
                 'from' : agent.address,
                 'gas': 8000000,
                 'gasPrice': 1,
@@ -524,14 +563,11 @@ class UniswapPool:
             agent.address,
             (int(w3.eth.get_block('latest')['timestamp']) + DEADLINE_FROM_NOW)
         ).transact({
-            'nonce': get_nonce(agent.address),
+            'nonce': get_nonce(agent),
             'from' : agent.address,
             'gas': 8000000,
             'gasPrice': 1,
         })
-        
-        lp_shares = reg_int(self.uniswap_pair.caller({'from' : agent.address, 'gas': 8000000}).balanceOf(agent.address), UNIV2Router['decimals'])
-        return lp_shares
         
     def remove_liquidity(self, agent, shares, min_xsd_amount, min_usdc_amount):
         """
@@ -540,7 +576,7 @@ class UniswapPool:
         """        
         if not agent.is_uniswap_approved:
             self.uniswap_pair.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
-                'nonce': get_nonce(agent.address),
+                'nonce': get_nonce(agent),
                 'from' : agent.address,
                 'gas': 8000000,
                 'gasPrice': 1,
@@ -561,26 +597,20 @@ class UniswapPool:
             int(w3.eth.get_block('latest')['timestamp'] + DEADLINE_FROM_NOW)
             
         ).transact({
-            'nonce': get_nonce(agent.address),
+            'nonce': get_nonce(agent),
             'from' : agent.address,
             'gas': 8000000,
             'gasPrice': 1,
         })
-
-        lp_shares = reg_int(self.uniswap_pair.caller({'from' : agent.address, 'gas': 8000000}).balanceOf(agent.address), UNIV2Router['decimals'])
-        return lp_shares
         
     def buy(self, agent, usdc, max_usdc_amount):
         """
-        Spend the given number of USDC to buy xSD. Returns the xSD bought.
+        Spend the given number of USDC to buy xSD.
         ['swapTokensForExactTokens(uint256,uint256,address[],address,uint256)']
         """  
-        # get balance of xSD before and after
-        balance_before = self.xsd.caller({"from": agent.address, 'gas': 8000000}).balanceOf(agent.address)
-
         if not agent.is_usdc_approved:
             self.usdc_token.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
-                'nonce': get_nonce(agent.address),
+                'nonce': get_nonce(agent),
                 'from' : agent.address,
                 'gas': 8000000,
                 'gasPrice': 1,
@@ -589,7 +619,7 @@ class UniswapPool:
 
         if not agent.is_xsd_approved:
             self.xsd.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
-                'nonce': get_nonce(agent.address),
+                'nonce': get_nonce(agent),
                 'from' : agent.address,
                 'gas': 8000000,
                 'gasPrice': 1,
@@ -607,25 +637,20 @@ class UniswapPool:
             agent.address,
             int(w3.eth.get_block('latest')['timestamp'] + DEADLINE_FROM_NOW)
         ).transact({
-            'nonce': get_nonce(agent.address),
+            'nonce': get_nonce(agent),
             'from' : agent.address,
             'gas': 8000000,
             'gasPrice': 1,
         })
-        balance_after = self.xsd.caller({"from": agent.address, 'gas': 8000000}).balanceOf(agent.address)
-        amount_bought = reg_int(balance_after - balance_before, xSD["decimals"])
-        return amount_bought
         
     def sell(self, agent, xsd, min_usdc_amount):
         """
-        Sell the given number of xSD for USDC. Returns the USDC received.
+        Sell the given number of xSD for USDC.
         """
-        # get balance of xsd before and after
-        balance_before = self.xsd.caller({"from": agent.address, 'gas': 8000000}).balanceOf(agent.address)
 
         if not agent.is_usdc_approved:
             self.usdc_token.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
-                'nonce': get_nonce(agent.address),
+                'nonce': get_nonce(agent),
                 'from' : agent.address,
                 'gas': 8000000,
                 'gasPrice': 1,
@@ -634,7 +659,7 @@ class UniswapPool:
 
         if not agent.is_xsd_approved:
             self.xsd.functions.approve(UNIV2Router["addr"], UINT256_MAX).transact({
-                'nonce': get_nonce(agent.address),
+                'nonce': get_nonce(agent),
                 'from' : agent.address,
                 'gas': 8000000,
                 'gasPrice': 1,
@@ -652,15 +677,12 @@ class UniswapPool:
             agent.address,
             int(w3.eth.get_block('latest')['timestamp'] + DEADLINE_FROM_NOW)
         ).transact({
-            'nonce': get_nonce(agent.address),
+            'nonce': get_nonce(agent),
             'from' : agent.address,
             'gas': 8000000,
             'gasPrice': 1,
         })
-        balance_after = self.usdc_token.caller({"from": agent.address, 'gas': 8000000}).balanceOf(agent.address)
-        amount_sold = reg_int(abs(balance_after - balance_before), USDC["decimals"])
-        return amount_sold
-        
+
 class DAO:
     """
     Represents the xSD DAO. Tracks xSD balance of DAO and total outstanding xSDS.
@@ -695,6 +717,8 @@ class DAO:
         if total_coupons == 0:
             agent.coupon_expirys = []
             agent.coupon_expiry_coupons = []
+
+        self.total_coupons_bid = Balance.from_float(total_coupons, xSD["decimals"])
         return total_coupons
 
     def coupon_balance_at_epoch(self, address, epoch):
@@ -713,7 +737,7 @@ class DAO:
         """
         if not agent.is_dao_approved:
             self.xsd_token.functions.approve(self.contract.address, UINT256_MAX).transact({
-                'nonce': get_nonce(agent.address),
+                'nonce': get_nonce(agent),
                 'from' : agent.address,
                 'gas': 8000000,
                 'gasPrice': 1,
@@ -725,7 +749,7 @@ class DAO:
             unreg_int(xsd_amount, xSD["decimals"]),
             unreg_int(max_coupon_amount, xSD["decimals"])
         ).transact({
-            'nonce': get_nonce(agent.address),
+            'nonce': get_nonce(agent),
             'from' : agent.address,
             'gas': 8000000,
             'gasPrice': 1,
@@ -745,7 +769,7 @@ class DAO:
             unreg_int(epoch_expired, xSD["decimals"]),
             unreg_int(coupons_to_redeem, xSD["decimals"])
         ).transact({
-            'nonce': get_nonce(agent.address),
+            'nonce': get_nonce(agent),
             'from' : agent.address,
             'gas': 8000000,
             'gasPrice': 1,
@@ -757,15 +781,18 @@ class DAO:
     def token_balance_of(self, address):
         return reg_int(self.xsd_token.caller({'from' : address, 'gas': 8000000}).balanceOf(address), xSD["decimals"])
     
-    def advance(self, address):
-        before_advance = self.token_balance_of(address)
+    def advance(self, agent):
+        before_advance = self.token_balance_of(agent.address)
         self.contract.functions.advance().transact({
-            'nonce': get_nonce(address),
+            'nonce': get_nonce(agent),
             'from' : address,
             'gas': 8000000,
             'gasPrice': Web3.toWei(1, 'gwei'),
         })
-        after_advance = self.token_balance_of(address)
+        # need to force mine block after every advance or the state wont change in token balance
+        provider.make_request("evm_mine", [])
+        provider.make_request("evm_increaseTime", [7201])
+        after_advance = self.token_balance_of(agent.address)
         return after_advance - before_advance
 
 def portion_dedusted(total, fraction):
@@ -824,19 +851,9 @@ class Model:
         for i in range(len(agents)):
             start_eth = random.random() * self.max_eth
             start_usdc = random.random() * self.max_usdc
-            start_usdc_formatted = unreg_int(start_usdc, USDC["decimals"])
+            
             address = agents[i]
-
-            if is_mint:
-                # need to mint USDC to the wallets for each agent
-                usdc.functions.mint(address, int(start_usdc_formatted)).transact({
-                    'nonce': get_nonce(address),
-                    'from' : address,
-                    'gas': 8000000,
-                    'gasPrice': 1,
-                })
-
-            agent = Agent(self.dao, uniswap, xsd, usdc, starting_eth=start_eth, starting_usdc=start_usdc, wallet_address=address, **kwargs)
+            agent = Agent(self.dao, uniswap, xsd, usdc, starting_eth=start_eth, starting_usdc=start_usdc, wallet_address=address, is_mint=is_mint, **kwargs)            
             self.agents.append(agent)
         
     def log(self, stream, seleted_advancer, header=False):
@@ -870,13 +887,10 @@ class Model:
         
         Returns True if anyone could act.
         """
-        
-        provider.make_request("evm_increaseTime", [7201])
-        #provider.make_request("debug_increaseTime", [7201])
 
         #randomly have an agent advance the epoch
         seleted_advancer = self.agents[int(random.random() * (len(self.agents) - 1))]
-        xsd = self.dao.advance(seleted_advancer.address)
+        xsd = self.dao.advance(seleted_advancer)
         seleted_advancer.xsd += xsd
         logger.info("Advance for {:.2f} xSD".format(xsd))
 
@@ -903,7 +917,11 @@ class Model:
         #'''
 
         for agent_num, a in enumerate(self.agents):
+            # need to refresh all balances (lp, xsd, usdc, etc) for each agent before they act
+            a.refresh_balances()
+            
             # TODO: real strategy
+            
             options = []
             if a.usdc > 0 and self.uniswap.operational():
                 options.append("buy")
@@ -977,10 +995,8 @@ class Model:
                     try:
                         price = self.uniswap.xsd_price()
                         logger.debug("Buy init {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(usdc_in, price, max_amount))
-                        xsd = self.uniswap.buy(a, usdc_in, max_amount)
-                        a.usdc -= usdc_in
-                        a.xsd += xsd
-                        logger.debug("Buy end {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd, price, usdc_in))
+                        self.uniswap.buy(a, usdc_in, max_amount)
+                        logger.debug("Buy end {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(max_amount, price, usdc_in))
                         
                     except Exception as inst:
                         print({"agent": a.address, "error": inst, "action": "buy", "usdc_in": usdc_in, "max_amount": max_amount})
@@ -1011,13 +1027,14 @@ class Model:
                     try:
                         price = self.uniswap.xsd_price()
                         #logger.debug("Sell init {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd_out, price, max_amount))
-                        usdc = self.uniswap.sell(a, xsd_out, max_amount)
-                        a.xsd -= xsd_out
-                        a.usdc += usdc
-                        #logger.debug("Sell end {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd, price, usdc))
+                        self.uniswap.sell(a, xsd_out, max_amount)
+                        #logger.debug("Sell end {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd_out, price, usdc))
                     except Exception as inst:
                         print({"agent": a.address, "error": inst, "action": "sell", "xsd_out": xsd_out, "max_amount": max_amount, "account_xsd": a.xsd})
                 elif action == "coupon_bid":
+                    '''
+                        TODO: NEED TO FIGURE OUT BETTER WAY TO TRACK THIS?
+                    '''
                     xsd_at_risk = portion_dedusted(a.xsd, commitment)
                     rand_epoch_expiry = Balance.from_float(int(random.random() * self.max_coupon_exp), xSD['decimals'])
                     rand_max_coupons = random.random() * self.max_coupon_premium * xsd_at_risk
@@ -1035,18 +1052,12 @@ class Model:
                     total_redeemed = 0
                     for c_idx, c_exp in enumerate(a.coupon_expirys):
                         try:
-                            total_redeemed += self.dao.redeem(a, c_exp, a.coupon_expiry_coupons[c_idx])
+                            self.dao.redeem(a, c_exp, a.coupon_expiry_coupons[c_idx])
                         except Exception as inst:
                             if 'revert SafeMath: subtraction overflow' not in str(inst):
                                 print({"agent": a.address, "error": inst, "action": "redeem", "exact_expiry": c_exp, "coupons_tried": a.coupon_expiry_coupons[c_idx]})
                             else:
                                 continue
-
-                    a.xsd = self.dao.token_balance_of(agent.address)
-
-                    if total_redeemed > 0:
-                        a.total_coupons_bid -= total_redeemed
-                        logger.info("Redeem {:.2f} coupons for {:.2f} xSD".format(total_redeemed, total_redeemed))
                 elif action == "provide_liquidity":
                     min_xsd_needed = Balance(0, xSD['decimals'])
                     usdc = Balance(0, USDC['decimals'])
@@ -1069,16 +1080,7 @@ class Model:
 
                     try:
                         #logger.debug("Provide {:.2f} xSD (of {:.2f} xSD) and {:.2f} USDC".format(min_xsd_needed, a.xsd, usdc))
-                        after_lp = self.uniswap.provide_liquidity(a, min_xsd_needed, usdc)
-
-                        usdc_a, xsd_a = self.uniswap.getTokenBalance()
-
-                        diff_xsd = (xsd_a - xsd_b)
-                        diff_usdc = (usdc_a - usdc_b)
-                        
-                        a.xsd = max(Balance(0, xSD['decimals']), a.xsd - diff_xsd)
-                        a.usdc = max(Balance(0, USDC['decimals']), a.usdc - diff_usdc)
-                        a.lp = after_lp
+                        self.uniswap.provide_liquidity(a, min_xsd_needed, usdc)
                     except Exception as inst:
                         # SLENCE TRANSFER_FROM_FAILED ISSUES
                         #print({"agent": a.address, "error": inst, "action": "provide_liquidity", "min_xsd_needed": min_xsd_needed, "usdc": usdc})
@@ -1097,16 +1099,7 @@ class Model:
 
                     try:
                         #logger.debug("Stop providing {:.2f} xSD and {:.2f} USDC".format(min_xsd_amount, min_usdc_amount))
-                        after_lp = self.uniswap.remove_liquidity(a, lp, min_xsd_amount, min_usdc_amount)
-                        usdc_a, xsd_a = self.uniswap.getTokenBalance()
-
-                        diff_xsd = (xsd_b - xsd_a)
-                        diff_usdc = (usdc_b - usdc_a)
-                        
-                        a.lp = after_lp
-                        a.xsd += diff_xsd
-                        a.usdc += diff_usdc
-                        
+                        self.uniswap.remove_liquidity(a, lp, min_xsd_amount, min_usdc_amount)
                     except Exception as inst:
                         print({"agent": a.address, "error": inst, "action": "remove_liquidity", "min_xsd_needed": min_xsd_amount, "usdc": min_usdc_amount})
                 else:
@@ -1116,6 +1109,10 @@ class Model:
             else:
                 # It's normal for agents other then the first to advance to not be able to act on block 0.
                 pass
+        
+
+        # mine a block after every iteration
+        provider.make_request("evm_mine", [])
         return anyone_acted, seleted_advancer
 
 def main():
