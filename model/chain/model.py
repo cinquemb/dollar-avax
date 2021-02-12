@@ -497,8 +497,6 @@ class Agent:
         self.uniswap_pair = uniswap_pair
 
         self.is_uniswap_approved = False
-        self.is_xsd_approved = False
-        self.is_dao_approved = False
 
         # keeps track of latest block seen for nonce tracking/tx
         self.seen_block = {}
