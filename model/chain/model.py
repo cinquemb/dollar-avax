@@ -429,8 +429,6 @@ class Agent:
         self.usdc_token = usdc_token
         # xSD balance
         self.xsd = Balance(0, xSD["decimals"])
-        # USDC balance
-        self.usdc = kwargs.get("starting_usdc", Balance(0, USDC["decimals"]))
         # xSDS (Dao share) balance
         self.xsds = Balance(0, xSDS["decimals"])
         # Eth balance
@@ -473,8 +471,13 @@ class Agent:
             self.lp = reg_int(self.uniswap_pair.caller({'from' : self.address, 'gas': 8000000}).balanceOf(self.address), UNIV2Router['decimals'])
 
             self.xsd = reg_int(self.xsd_token.caller({'from' : self.address, 'gas': 8000000}).balanceOf(self.address), xSD['decimals'])
-
-            self.usdc = self.usdc_token[self]
+            
+    @property
+    def usdc(self):
+        """
+        Get the current balance in USDC from the token.
+        """
+        return self.usdc_token[self]
             
     def __str__(self):
         """
@@ -946,7 +949,7 @@ class Model:
                     'gasPrice': 1,
                 })
 
-            agent = Agent(self.dao, uniswap, xsd, usdc, starting_eth=start_eth, starting_usdc=start_usdc, wallet_address=address, **kwargs)
+            agent = Agent(self.dao, uniswap, xsd, usdc, starting_eth=start_eth, wallet_address=address, **kwargs)
             self.agents.append(agent)
         
     def log(self, stream, seleted_advancer, header=False):
@@ -1091,7 +1094,6 @@ class Model:
                         price = self.uniswap.xsd_price()
                         logger.debug("Buy init {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(usdc_in, price, max_amount))
                         xsd = self.uniswap.buy(a, usdc_in, max_amount)
-                        a.usdc -= usdc_in
                         a.xsd += xsd
                         logger.debug("Buy end {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd, price, usdc_in))
                         
@@ -1126,7 +1128,6 @@ class Model:
                         #logger.debug("Sell init {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd_out, price, max_amount))
                         usdc = self.uniswap.sell(a, xsd_out, max_amount)
                         a.xsd -= xsd_out
-                        a.usdc += usdc
                         #logger.debug("Sell end {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd, price, usdc))
                     except Exception as inst:
                         print({"agent": a.address, "error": inst, "action": "sell", "xsd_out": xsd_out, "max_amount": max_amount, "account_xsd": a.xsd})
@@ -1190,7 +1191,6 @@ class Model:
                         diff_usdc = (usdc_a - usdc_b)
                         
                         a.xsd = max(Balance(0, xSD['decimals']), a.xsd - diff_xsd)
-                        a.usdc = max(Balance(0, USDC['decimals']), a.usdc - diff_usdc)
                         a.lp = after_lp
                     except Exception as inst:
                         # SLENCE TRANSFER_FROM_FAILED ISSUES
@@ -1218,7 +1218,6 @@ class Model:
                         
                         a.lp = after_lp
                         a.xsd += diff_xsd
-                        a.usdc += diff_usdc
                         
                     except Exception as inst:
                         print({"agent": a.address, "error": inst, "action": "remove_liquidity", "min_xsd_needed": min_xsd_amount, "usdc": min_usdc_amount})
