@@ -792,6 +792,9 @@ class UniswapPool:
             'gasPrice': 1,
         })
 
+    def update(self):
+        self.uniswap_pair_token.update()
+
 class DAO:
     """
     Represents the xSD DAO. Tracks xSD balance of DAO and total outstanding xSDS.
@@ -1006,6 +1009,7 @@ class Model:
         # Update caches to current chain state
         self.usdc_token.update()
         self.xsd_token.update()
+        self.uniswap.update()
 
         #randomly have an agent advance the epoch
         seleted_advancer = self.agents[int(random.random() * (len(self.agents) - 1))]
