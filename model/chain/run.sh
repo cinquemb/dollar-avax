@@ -51,13 +51,15 @@ else
     . venv/bin/activate
 fi
 
-
-sleep infinity
-exit
-
-# Run the model
-echo "Running Model..."
-./model.py
+if [[ "${RUN_SHELL}" == "1" ]] ; then
+    # Run a shell so that you can run the model several times
+    echo "Running Interactive Shell..."
+    bash
+else
+    # Run the model
+    echo "Running Model..."
+    ./model.py
+fi
 
 
 
