@@ -19,6 +19,7 @@ with open("deploy_output.txt", 'r+') as f:
     deploy_data = f.read()
 
 IS_DEBUG = False
+is_try_model_mine = False
 block_offset = 16
 
 logger = logging.getLogger(__name__)
@@ -99,20 +100,65 @@ xSD['addr'] = get_addr_from_contract(DaoContract)
 xSDS['addr'] = get_addr_from_contract(TokenContract)
 
 def get_nonce(agent):
-    current_block = int(w3.eth.get_block('latest')["number"])
-    
-    if current_block not in agent.seen_block:
-        if (agent.current_block == 0):
-            agent.current_block += 1
+
+    if is_try_model_mine:
+        current_block = int(w3.eth.get_block('latest')["number"])
+        
+        if current_block not in agent.seen_block:
+            if (agent.current_block == 0):
+                agent.current_block += 1
+            else:
+                agent.next_tx_count += 1
         else:
             agent.next_tx_count += 1
+            agent.seen_block[current_block] = True
+
+        print(agent.address, agent.next_tx_count)
+
+        return agent.next_tx_count 
     else:
-        agent.next_tx_count += 1
-        agent.seen_block[current_block] = True
+        return w3.eth.getTransactionCount(agent.address, block_identifier=int(w3.eth.get_block('latest')["number"]))
 
-    print(agent.address, agent.next_tx_count)
+def reg_int(value, scale):
+    """
+    Convert from atomic token units with the given number of decimals, to a
+    Balance with the right number of decimals.
+    """
+    return Balance(value, scale)
 
-    return agent.next_tx_count 
+def unreg_int(value, scale):
+    """
+    Convert from a Balance with the right number of decimals to atomic token
+    units with the given number of decimals.
+    """
+    
+    assert(value.decimals() == scale)
+    return value.to_wei()
+
+def pretty(d, indent=0):
+   """
+   Pretty-print a value.
+   """
+   for key, value in d.items():
+      print('\t' * indent + str(key))
+      if isinstance(value, dict):
+         pretty(value, indent+1)
+      elif isinstance(value, list):
+        for v in value:
+            pretty(v, indent+1)
+      else:
+         print('\t' * (indent+1) + str(value))
+
+def portion_dedusted(total, fraction):
+    """
+    Compute the amount of an asset to use, given that you have
+    total and you don't want to leave behind dust.
+    """
+    
+    if total - (fraction * total) <= 1:
+        return total
+    else:
+        return fraction * total
 
 # Because token balances need to be accuaate to the atomic unit, we can't store
 # them as floats. Otherwise we might turn our float back into a token balance
@@ -278,37 +324,6 @@ class Balance:
         
     def decimals(self):
         return self._decimals
-        
-def reg_int(value, scale):
-    """
-    Convert from atomic token units with the given number of decimals, to a
-    Balance with the right number of decimals.
-    """
-    return Balance(value, scale)
-
-def unreg_int(value, scale):
-    """
-    Convert from a Balance with the right number of decimals to atomic token
-    units with the given number of decimals.
-    """
-    
-    assert(value.decimals() == scale)
-    return value.to_wei()
-
-def pretty(d, indent=0):
-   """
-   Pretty-print a value.
-   """
-   for key, value in d.items():
-      print('\t' * indent + str(key))
-      if isinstance(value, dict):
-         pretty(value, indent+1)
-      elif isinstance(value, list):
-        for v in value:
-            pretty(v, indent+1)
-      else:
-         print('\t' * (indent+1) + str(value))
-         
          
 class TokenProxy:
     """
@@ -357,7 +372,7 @@ class TokenProxy:
     def contract(self):
         return self.__contract
         
-    def update(self):
+    def update(self, is_init_agents=[]):
         """
         Process pending events and update state to match chain.
         Assumes no transactions are still in flight.
@@ -399,6 +414,12 @@ class TokenProxy:
         for address in new_addresses:
             # TODO: can we get a return value and a correct-as-of block in the same call?
             self.__balances[address] = Balance(self.__contract.functions.balanceOf(address).call(), self.__decimals)
+
+        if is_init_agents:
+            for agent in is_init_agents:
+                # TODO: can we get a return value and a correct-as-of block in the same call?
+                self.__balances[agent.address] = Balance(self.__contract.functions.balanceOf(agent.address).call(), self.__decimals)
+
             
     def __getitem__(self, address):
         """
@@ -788,8 +809,8 @@ class UniswapPool:
             'gasPrice': 1,
         })
 
-    def update(self):
-        self.uniswap_pair_token.update()
+    def update(self, is_init_agents=[]):
+        self.uniswap_pair_token.update(is_init_agents=is_init_agents)
 
 class DAO:
     """
@@ -825,7 +846,7 @@ class DAO:
             agent.coupon_expirys = []
             agent.coupon_expiry_coupons = []
 
-        self.total_coupons_bid = Balance.from_float(total_coupons, xSD["decimals"])
+        self.total_coupons_bid = Balance.from_tokens(total_coupons, xSD["decimals"])
         return total_coupons
 
     def coupon_balance_at_epoch(self, address, epoch):
@@ -903,33 +924,12 @@ class DAO:
         })
         
         # need to force mine block after every advance or the state wont change in token balance
-        provider.make_request("evm_mine", [])
+        if is_try_model_mine:
+            provider.make_request("evm_mine", [])
         provider.make_request("evm_increaseTime", [7201])
         self.xsd_token.update()
         after_advance = self.xsd_token[agent.address]
         return after_advance - before_advance
-
-def portion_dedusted(total, fraction):
-    """
-    Compute the amount of an asset to use, given that you have
-    total and you don't want to leave behind dust.
-    """
-    
-    if total - (fraction * total) <= 1:
-        return total
-    else:
-        return fraction * total
-        
-
-def drop_zeroes(d):
-    """
-    Delete all items with zero value from the dict d, in place.
-    """
-    
-    to_remove = [k for k, v in d.items() if v == 0]
-    for k in to_remove:
-        del d[k]
-                        
                         
 class Model:
     """
@@ -956,7 +956,7 @@ class Model:
         self.min_usdc_balance = self.usdc_token.from_tokens(200)
 
 
-        is_mint = True
+        is_mint = is_try_model_mine
         if w3.eth.get_block('latest')["number"] == block_offset:
             # THIS ONLY NEEDS TO BE RUN ON NEW CONTRACTS
             # TODO: tolerate redeployment or time-based generation
@@ -967,9 +967,15 @@ class Model:
             start_usdc = random.random() * self.max_usdc
             
             address = agents[i]
-            agent = Agent(self.dao, uniswap, xsd, usdc, starting_eth=start_eth, wallet_address=address, is_mint=is_mint, **kwargs)            
+            agent = Agent(self.dao, uniswap, xsd, usdc, starting_eth=start_eth, starting_usdc=start_usdc, wallet_address=address, is_mint=is_mint, **kwargs)            
             self.agents.append(agent)
-        provider.make_request("evm_mine", [])
+        if is_try_model_mine:
+            provider.make_request("evm_mine", [])
+
+        # Update caches to current chain state
+        self.usdc_token.update(is_init_agents=self.agents)
+        self.xsd_token.update(is_init_agents=self.agents)
+        self.uniswap.update(is_init_agents=self.agents)
         
     def log(self, stream, seleted_advancer, header=False):
         """
@@ -1002,6 +1008,11 @@ class Model:
         
         Returns True if anyone could act.
         """
+
+        for agent_num, a in enumerate(self.agents):            
+            # TODO: real strategy
+
+            print (a.address, a.xsd, a.usdc, a.lp)
         
         # Update caches to current chain state
         self.usdc_token.update()
@@ -1039,8 +1050,7 @@ class Model:
         for agent_num, a in enumerate(self.agents):            
             # TODO: real strategy
 
-            print(a)
-            
+            print (a.address, a.xsd, a.usdc, a.lp)      
             options = []
             if a.usdc > 0 and self.uniswap.operational():
                 options.append("buy")
@@ -1228,10 +1238,10 @@ class Model:
             else:
                 # It's normal for agents other then the first to advance to not be able to act on block 0.
                 pass
-        
 
-        # mine a block after every iteration
-        provider.make_request("evm_mine", [])
+        if is_try_model_mine:
+            # mine a block after every iteration
+            provider.make_request("evm_mine", [])
         return anyone_acted, seleted_advancer
 
 def main():
