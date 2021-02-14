@@ -229,7 +229,7 @@ contract Regulator is Comptroller {
             // assign coupons in order of bid preference
             for (uint256 i = 0; i < maxBidLen; i++) {
                 // reject bids implicit greater than the getCouponRejectBidPtile threshold
-                if (Decimal.ratio(i, maxBidLen).lessThan(Constants.getCouponRejectBidPtile())) {
+                if (Decimal.ratio(i+1, maxBidLen).lessThan(Constants.getCouponRejectBidPtile())) {
                     Epoch.CouponBidderState memory bidder = getCouponBidderState(settlementEpoch, bidMap[i]);
 
                     // only assgin bids that have not been explicitly selected already? may not need this if settleCouponAuction can only be called once per epoch passed
@@ -391,16 +391,16 @@ contract Regulator is Comptroller {
         settleCouponAuctionBidsInOrder(epoch, bidder.leftBidder, maxBidLen);
         //current bidder
         // reject bids implicit greater than the getCouponRejectBidPtile threshold
-        if (Decimal.ratio(currentBidIdx, maxBidLen).lessThan(Constants.getCouponRejectBidPtile())) {
+        if (Decimal.ratio(currentBidIdx+1, maxBidLen).lessThan(Constants.getCouponRejectBidPtile())) {
             // only assgin bids that have not been explicitly selected already? may not need this if settleCouponAuction can only be called once per epoch passed
             if (!getCouponBidderStateSelected(epoch, bidder.bidder)) {
-                Decimal.D256 memory yield = Decimal.ratio(
-                    bidder.couponAmount,
-                    bidder.dollarAmount
-                );
-
                 //must check again if account is able to be assigned
                 if (acceptableBidCheck(bidder.bidder, bidder.dollarAmount)){
+                    Decimal.D256 memory yield = Decimal.ratio(
+                        bidder.couponAmount,
+                        bidder.dollarAmount
+                    );
+
                     if (yield.lessThan(minYieldFilled)) {
                         minYieldFilled = yield;
                     } else if (yield.greaterThan(maxYieldFilled)) {

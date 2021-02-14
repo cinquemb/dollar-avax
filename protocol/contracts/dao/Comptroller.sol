@@ -112,11 +112,11 @@ contract Comptroller is Setters {
         return 0;
     }
 
-    function acceptableBidCheck(address account, uint256 dollarAmount) internal returns (bool) {
+    function acceptableBidCheck(address account, uint256 dollarAmount) internal view returns (bool) {
         return (dollar().balanceOf(account) >= balanceOfBonded(account).add(dollarAmount));
     }
 
-    function balanceCheck() private {
+    function balanceCheck() private view {
         Require.that(
             dollar().balanceOf(address(this)) >= totalBonded().add(totalStaged()).add(totalRedeemable()),
             FILE,
