@@ -14,13 +14,17 @@ import sys
 
 from web3 import Web3
 
+IS_DEBUG = False
+is_try_model_mine = True
+block_offset = 16
+
+DEADLINE_FROM_NOW = 60 * 60 * 24 * 7 * 52
+UINT256_MAX = 2**256 - 1
+ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+
 deploy_data = None
 with open("deploy_output.txt", 'r+') as f:
     deploy_data = f.read()
-
-IS_DEBUG = False
-is_try_model_mine = False
-block_offset = 16
 
 logger = logging.getLogger(__name__)
 provider = Web3.WebsocketProvider('ws://localhost:7545', websocket_timeout=60)
@@ -77,10 +81,6 @@ xSDS = {
   "symbol": 'xSDS',
 }
 
-DEADLINE_FROM_NOW = 60 * 15
-UINT256_MAX = 2**256 - 1
-ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
-
 DaoContract = json.loads(open('./build/contracts/Implementation.json', 'r+').read())
 USDCContract = json.loads(open('./build/contracts/TestnetUSDC.json', 'r+').read())
 # Use the full Dollar ABI so we can interrogate the token for metadata
@@ -100,10 +100,8 @@ xSD['addr'] = get_addr_from_contract(DaoContract)
 xSDS['addr'] = get_addr_from_contract(TokenContract)
 
 def get_nonce(agent):
-
     if is_try_model_mine:
         current_block = int(w3.eth.get_block('latest')["number"])
-        
         if current_block not in agent.seen_block:
             if (agent.current_block == 0):
                 agent.current_block += 1
@@ -112,9 +110,6 @@ def get_nonce(agent):
         else:
             agent.next_tx_count += 1
             agent.seen_block[current_block] = True
-
-        print(agent.address, agent.next_tx_count)
-
         return agent.next_tx_count 
     else:
         return w3.eth.getTransactionCount(agent.address, block_identifier=int(w3.eth.get_block('latest')["number"]))
@@ -914,7 +909,9 @@ class DAO:
         operations, the reported reward may be affected by those transfers.
         """
         self.xsd_token.update()
+        provider.make_request("evm_increaseTime", [7201])
         before_advance = self.xsd_token[agent.address]
+        #before_advance1 = Balance(self.xsd_token.contract.functions.balanceOf(agent.address).call(), self.xsd_token.decimals)
         
         self.contract.functions.advance().transact({
             'nonce': get_nonce(agent),
@@ -926,9 +923,11 @@ class DAO:
         # need to force mine block after every advance or the state wont change in token balance
         if is_try_model_mine:
             provider.make_request("evm_mine", [])
-        provider.make_request("evm_increaseTime", [7201])
+        
         self.xsd_token.update()
         after_advance = self.xsd_token[agent.address]
+        #after_advance1 = Balance(self.xsd_token.contract.functions.balanceOf(agent.address).call(), self.xsd_token.decimals)
+        #print(after_advance - before_advance, after_advance1 - before_advance1)
         return after_advance - before_advance
                         
 class Model:
@@ -1008,12 +1007,6 @@ class Model:
         
         Returns True if anyone could act.
         """
-
-        for agent_num, a in enumerate(self.agents):            
-            # TODO: real strategy
-
-            print (a.address, a.xsd, a.usdc, a.lp)
-        
         # Update caches to current chain state
         self.usdc_token.update()
         self.xsd_token.update()
@@ -1047,11 +1040,14 @@ class Model:
 
         #'''
 
+        total_tx_submitted = 0
+
         for agent_num, a in enumerate(self.agents):            
             # TODO: real strategy
-
-            print (a.address, a.xsd, a.usdc, a.lp)      
             options = []
+
+            start_tx_count = a.next_tx_count
+            
             if a.usdc > 0 and self.uniswap.operational():
                 options.append("buy")
             if a.xsd > 0 and self.uniswap.operational():
@@ -1239,9 +1235,17 @@ class Model:
                 # It's normal for agents other then the first to advance to not be able to act on block 0.
                 pass
 
+            end_tx_count = a.next_tx_count
+
+            total_tx_submitted += (end_tx_count - start_tx_count)
+
         if is_try_model_mine:
-            # mine a block after every iteration
-            provider.make_request("evm_mine", [])
+            # mine a block after every iteration for every tx sumbitted during round
+            logging.info("{} sumbitted, mining blocks for them now".format(
+                total_tx_submitted)
+            )
+            for i in range(0, total_tx_submitted):
+                provider.make_request("evm_mine", [])
         return anyone_acted, seleted_advancer
 
 def main():
