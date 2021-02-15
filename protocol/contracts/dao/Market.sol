@@ -202,11 +202,18 @@ contract Market is Comptroller, Curve {
 
         uint256 yield = maxCouponAmount.div(dollarAmount);
         uint256 maxYield = Constants.getCouponMaxYieldToBurn();
+        uint256 maxExpiry = Constants.getCouponMaxExpiryTime().div(Constants.getEpochStrategy().period);
 
         Require.that(
             maxYield >= yield,
             FILE,
             "Must be under maxYield"
+        );
+
+        Require.that(
+            couponEpochExpiry >= couponEpochExpiry,
+            FILE,
+            "Must be under maxExpiry"
         );
 
         // insert bid onto chain

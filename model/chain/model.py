@@ -939,7 +939,7 @@ class Model:
         self.max_eth = Balance.from_tokens(100000, 18)
         self.max_usdc = self.usdc_token.from_tokens(100000)
         self.bootstrap_epoch = 20
-        self.max_coupon_exp = 10000000
+        self.max_coupon_exp = 131400
         self.max_coupon_premium = 10000000
         self.min_usdc_balance = self.usdc_token.from_tokens(200)
 
@@ -1030,7 +1030,7 @@ class Model:
         #'''
 
         total_tx_submitted = 0
-
+        random.shuffle(self.agents)
         for agent_num, a in enumerate(self.agents):            
             # TODO: real strategy
             options = []
@@ -1052,7 +1052,7 @@ class Model:
             if a.xsd > 0 and epoch_start_price < 1.0 and self.dao.epoch(a.address) > self.bootstrap_epoch and self.min_usdc_balance <= usdc_b and self.dao.has_coupon_bid():
                 options.append("coupon_bid")
             # try any ways but handle traceback, faster than looping over all the epocks
-            if epoch_start_price > 1.0 and total_coupons > 0 and self.dao.total_coupons_for_agent(a):
+            if epoch_start_price > 1.0 and total_coupons > 0 and len((a.coupon_expirys) > 0:
                 options.append("redeem")
             if a.usdc > 0 and a.xsd > 0:
                 options.append("provide_liquidity")
@@ -1175,9 +1175,9 @@ class Model:
                                 self.dao.redeem(a, c_exp, a.coupon_expiry_coupons[c_idx])
                         except Exception as inst:
                             if 'revert SafeMath: subtraction overflow' not in str(inst):
-                                total_epochs_tried[c_idx] = True
                                 print({"agent": a.address, "error": inst, "action": "redeem", "exact_expiry": c_exp, "coupons_tried": a.coupon_expiry_coupons[c_idx]})
                             else:
+                                total_epochs_tried[c_idx] = True
                                 continue
                     
                     for c_idx in total_epochs_tried.keys():
@@ -1261,7 +1261,7 @@ def main():
     
     logging.basicConfig(level=logging.INFO)
     
-    max_accounts = 20
+    max_accounts = 40
     print(w3.eth.get_block('latest')["number"])
     if w3.eth.get_block('latest')["number"] == block_offset:
         # THIS ONLY NEEDS TO BE RUN ON NEW CONTRACTS
