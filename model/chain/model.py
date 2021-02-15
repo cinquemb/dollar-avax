@@ -892,8 +892,7 @@ class DAO:
             'from' : agent.address,
             'gas': 8000000,
             'gasPrice': 1,
-        })            
-        return total_before_coupons - total_after_coupons
+        })
 
     def advance(self, agent):
         """
