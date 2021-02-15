@@ -1052,7 +1052,7 @@ class Model:
             if a.xsd > 0 and epoch_start_price < 1.0 and self.dao.epoch(a.address) > self.bootstrap_epoch and self.min_usdc_balance <= usdc_b and self.dao.has_coupon_bid():
                 options.append("coupon_bid")
             # try any ways but handle traceback, faster than looping over all the epocks
-            if epoch_start_price > 1.0 and total_coupons > 0 and len((a.coupon_expirys) > 0:
+            if epoch_start_price > 1.0 and total_coupons > 0 and len(a.coupon_expirys) > 0:
                 options.append("redeem")
             if a.usdc > 0 and a.xsd > 0:
                 options.append("provide_liquidity")
