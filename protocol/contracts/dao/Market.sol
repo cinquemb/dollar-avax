@@ -219,6 +219,7 @@ contract Market is Comptroller, Curve {
         // insert bid onto chain
         uint256 currentEpoch = uint256(epoch());
         uint256 totalBids = getCouponAuctionBids(currentEpoch);
+        // this is the only time this addition operation should happen when adding current epoch to bid epoch
         uint256 epochExpiry = currentEpoch.add(couponEpochExpiry);
         setCouponAuctionRelYield(maxCouponAmount.div(dollarAmount));
         setCouponAuctionRelDollarAmount(dollarAmount);

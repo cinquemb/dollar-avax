@@ -324,7 +324,7 @@ contract Getters is State {
         return sumCoupons;
     }
 
-    function getSumofBestBidsAcrossCouponAuctionsNew() public view returns (uint256) {
+    function getSumofBestBidsAcrossCouponAuctionsNew() internal view returns (uint256) {
         // loop over past epochs from the latest `dead` epoch to the current
         uint256 sumCoupons = 0;
         for (uint256 d_idx = getEarliestDeadAuctionEpoch(); d_idx < uint256(epoch()); d_idx++) {

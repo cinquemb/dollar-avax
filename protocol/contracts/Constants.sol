@@ -67,7 +67,7 @@ library Constants {
     uint256 private constant MAX_COUPON_YIELD_MULT = 10000000; //10MM coupouns per 1 dollar burn
     uint256 private constant MAX_COUPON_EXPIRATION_TIME = 946080000; //30 (years) * 365 (days)* 24 (hours) * 60 (min) * 60 (secs)
 
-    uint256 private constant REJECT_COUPON_BID_PERCENTILE = 90; //reject the last 90% of bids
+    uint256 private constant REJECT_COUPON_BID_PERCENTILE = 85;//90; //reject the last 90% of bids
 
     /* Regulator */
     uint256 private constant SUPPLY_CHANGE_LIMIT = 2e16; // 2%

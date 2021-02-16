@@ -163,6 +163,7 @@ contract Setters is State, Getters {
             _state.epochs[epoch()].auction.minDollarAmount = 2**256 -1;
             _state.epochs[epoch()].auction.maxDollarAmount = 0;
             _state.epochs[epoch()].auction.isInit = true;
+            _state.epochs[epoch()].auction.latestRedeemedSelectedBidderIndex = 0;
         }
     }
 
