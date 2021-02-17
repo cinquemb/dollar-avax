@@ -913,6 +913,7 @@ class DAO:
         operations, the reported reward may be affected by those transfers.
         """
         self.xsd_token.update()
+        epoch_before = self.epoch(agent.address)
         provider.make_request("evm_increaseTime", [7201])
         before_advance = self.xsd_token[agent.address]
         
@@ -926,6 +927,13 @@ class DAO:
         # need to force mine block after every advance or the state wont change in token balance
         if is_try_model_mine:
             provider.make_request("evm_mine", [])
+
+        epoch_after = self.epoch(agent.address)
+
+        while (epoch_after - epoch_before) < 1:
+            print('Waiting for epoch to advance')
+            time.sleep(2)
+            epoch_after = self.epoch(agent.address)
         
         self.xsd_token.update()
         after_advance = self.xsd_token[agent.address]
@@ -960,15 +968,19 @@ class Model:
             # TODO: tolerate redeployment or time-based generation
             is_mint = True
         
+        total_tx_submitted = len(agents) 
         for i in range(len(agents)):
+
             start_eth = random.random() * self.max_eth
             start_usdc = random.random() * self.max_usdc
             
             address = agents[i]
             agent = Agent(self.dao, uniswap, xsd, usdc, starting_eth=start_eth, starting_usdc=start_usdc, wallet_address=address, is_mint=is_mint, **kwargs)            
             self.agents.append(agent)
+
         if is_try_model_mine:
-            provider.make_request("evm_mine", [])
+            for i in range(0, total_tx_submitted):
+                provider.make_request("evm_mine", [])
 
         # Update caches to current chain state
         self.usdc_token.update(is_init_agents=self.agents)

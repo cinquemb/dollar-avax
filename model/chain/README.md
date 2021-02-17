@@ -33,6 +33,11 @@ If you are editing the model, you can run:
 RUN_SHELL=1 ./run.sh
 ```
 
+You will need to run at the sime time when deploying the contracts, then kill it once its finished before running the model
+```
+./force_mine.sh
+```
+
 Then you can run `./model.py` in that shell multiple times, against the same prepared chain. To tear down the chain, just `exit`.
 
 
