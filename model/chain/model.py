@@ -842,6 +842,9 @@ class DAO:
         for c_idx, c_exp in enumerate(agent.coupon_expirys):
             t_coupons = self.coupon_balance_at_epoch(agent.address, c_exp)
             total_coupons += t_coupons
+            if t_coupons == 0:
+                agent.coupon_expirys[c_idx] = 0
+                agent.coupon_expiry_coupons[c_idx] = 0
 
         self.total_coupons_bid = Balance.from_tokens(total_coupons, xSD["decimals"])
         return total_coupons
@@ -850,6 +853,8 @@ class DAO:
         ''' 
             returns the total coupon balance for an address
         '''
+        if epoch == 0:
+            return 0
         total_coupons = self.contract.caller({'from' : address, 'gas': 8000000}).balanceOfCoupons(address, unreg_int(epoch, xSD["decimals"]))
         #total_coupons = self.contract.caller({'from' : address, 'gas': 8000000}).balanceOfCoupons(address, unreg_int(Balance.from_tokens(epoch, xSD['decimals']), xSD["decimals"]))
         return total_coupons
@@ -1182,17 +1187,29 @@ class Model:
                     except Exception as inst:
                         print({"agent": a.address, "error": inst, "action": "coupon_bid", "exact_expiry": exact_expiry, "xsd_at_risk": xsd_at_risk})
                 elif action == "redeem":
+                    total_redeemed = 0
+                    total_epochs_tried = {}
+
                     for c_idx, c_exp in enumerate(a.coupon_expirys):
                         try:
                             if c_exp == 0:
-                                continue
+                                total_epochs_tried[c_idx] = True
                             else:
                                 self.dao.redeem(a, c_exp, a.coupon_expiry_coupons[c_idx])
                         except Exception as inst:
                             if 'revert SafeMath: subtraction overflow' not in str(inst):
                                 print({"agent": a.address, "error": inst, "action": "redeem", "exact_expiry": c_exp, "coupons_tried": a.coupon_expiry_coupons[c_idx]})
                             else:
+                                total_epochs_tried[c_idx] = True
                                 continue
+
+                    for c_idx in total_epochs_tried.keys():
+                        a.coupon_expirys[c_idx] = 0
+                        a.coupon_expiry_coupons[c_idx] = 0
+                    
+                    if len(total_epochs_tried) == len(a.coupon_expirys):
+                        a.coupon_expirys = []
+                        a.coupon_expiry_coupons = []
 
                 elif action == "provide_liquidity":
                     min_xsd_needed = Balance(0, xSD['decimals'])

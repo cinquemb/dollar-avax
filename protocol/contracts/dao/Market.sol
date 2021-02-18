@@ -110,18 +110,10 @@ contract Market is Comptroller, Curve {
     function redeemCoupons(uint256 couponEpoch, uint256 couponAmount) external {
         require(epoch().sub(couponEpoch) >= 2, "Market: Too early to redeem");
         decrementBalanceOfCoupons(msg.sender, couponEpoch, couponAmount, "Market: Insufficient coupon balance");
-        
-        uint burnAmount = couponRedemptionPenalty(couponEpoch, couponAmount);
-        uint256 redeemAmount = couponAmount - burnAmount;
-        
-        redeemToAccount(msg.sender, redeemAmount);
+        redeemToAccount(msg.sender, couponAmount);
+        setCouponBidderStateRedeemed(couponEpoch, msg.sender);
 
-        if(burnAmount > 0){
-            setCouponBidderStateRedeemed(couponEpoch, msg.sender);
-            emit CouponBurn(msg.sender, couponEpoch, burnAmount);
-        }
-
-        emit CouponRedemption(msg.sender, couponEpoch, redeemAmount);
+        emit CouponRedemption(msg.sender, couponEpoch, couponAmount);
     }
 
     function redeemCoupons(uint256 couponEpoch, uint256 couponAmount, uint256 minOutput) external {
@@ -224,7 +216,7 @@ contract Market is Comptroller, Curve {
         setCouponAuctionRelYield(maxCouponAmount.div(dollarAmount));
         setCouponAuctionRelDollarAmount(dollarAmount);
         setCouponAuctionRelExpiry(epochExpiry);
-        setCouponBidderState(currentEpoch, msg.sender, couponEpochExpiry, dollarAmount, maxCouponAmount);
+        setCouponBidderState(currentEpoch, msg.sender, epochExpiry, dollarAmount, maxCouponAmount);
         setCouponBidderStateIndex(currentEpoch, totalBids, msg.sender);
 
         // todo sort bid on chain via BST
