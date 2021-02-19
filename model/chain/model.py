@@ -308,6 +308,9 @@ class Balance:
         
     def __float__(self):
         return self._wei / 10**self._decimals
+
+    def __round__(self):
+        return Balance(int(math.floor(self._wei / 10**self._decimals)) * 10**self._decimals, self._decimals)
         
     def __format__(self, s):
         if s == '':
@@ -319,7 +322,7 @@ class Balance:
         
     def decimals(self):
         return self._decimals
-         
+
 class TokenProxy:
     """
     A proxy for an ERC20 token. Monitors events, processes them when update()
@@ -826,7 +829,7 @@ class DAO:
         return self.xsd_token.totalSupply
 
     def total_coupons_at_epoch(self, address, epoch):
-        total_coupons = self.contract.caller({'from' : address, 'gas': 8000000}).outstandingCoupons(unreg_int(epoch, xSD["decimals"]))
+        total_coupons = self.contract.caller({'from' : address, 'gas': 8000000}).outstandingCoupons(epoch)
         return Balance.from_tokens(total_coupons, xSD['decimals'])
         
     def total_coupons(self):
@@ -842,9 +845,11 @@ class DAO:
         for c_idx, c_exp in enumerate(agent.coupon_expirys):
             t_coupons = self.coupon_balance_at_epoch(agent.address, c_exp)
             total_coupons += t_coupons
+            '''
             if t_coupons == 0:
                 agent.coupon_expirys[c_idx] = 0
                 agent.coupon_expiry_coupons[c_idx] = 0
+            '''
 
         self.total_coupons_bid = Balance.from_tokens(total_coupons, xSD["decimals"])
         return total_coupons
@@ -853,9 +858,9 @@ class DAO:
         ''' 
             returns the total coupon balance for an address
         '''
-        if epoch == 0:
-            return 0
-        total_coupons = self.contract.caller({'from' : address, 'gas': 8000000}).balanceOfCoupons(address, unreg_int(epoch, xSD["decimals"]))
+        #if epoch == 0:
+        #    return 0
+        total_coupons = self.contract.caller({'from' : address, 'gas': 8000000}).balanceOfCoupons(address, epoch)
         #total_coupons = self.contract.caller({'from' : address, 'gas': 8000000}).balanceOfCoupons(address, unreg_int(Balance.from_tokens(epoch, xSD['decimals']), xSD["decimals"]))
         return total_coupons
 
@@ -876,7 +881,7 @@ class DAO:
         self.xsd_token.ensure_approved(agent, self.contract)
 
         self.contract.functions.placeCouponAuctionBid(
-            unreg_int(coupon_expiry, xSD["decimals"]),
+            coupon_expiry,
             unreg_int(xsd_amount, xSD["decimals"]),
             unreg_int(max_coupon_amount, xSD["decimals"])
         ).transact({
@@ -895,8 +900,11 @@ class DAO:
         
         Assumes everything is actually redeemable.
         """
+        if self.coupon_balance_at_epoch(agent.address, epoch_expired) == 0:
+            return
+
         self.contract.functions.redeemCoupons(
-            unreg_int(epoch_expired, xSD["decimals"]),
+            epoch_expired,
             unreg_int(coupons_to_redeem, xSD["decimals"])
         ).transact({
             'nonce': get_nonce(agent),
@@ -1051,6 +1059,26 @@ class Model:
         total_tx_submitted = 0
         total_coupoun_bidders = 0
         random.shuffle(self.agents)
+
+
+        # try to redeem any outstanding coupons here first to better
+        if epoch_start_price > 1.0 and total_coupons > 0:
+            for agent_num, a in enumerate(self.agents):  
+                if self.dao.total_coupons_for_agent(a) > 0:
+                    start_tx_count = a.next_tx_count
+                    for c_idx, c_exp in enumerate(a.coupon_expirys):
+                        try:
+                            self.dao.redeem(a, c_exp, a.coupon_expiry_coupons[c_idx])
+                            print({"agent": a.address, "action": "redeem", "exact_expiry": c_exp, "coupons_tried": a.coupon_expiry_coupons[c_idx]})
+                        except Exception as inst:
+                            if 'revert SafeMath: subtraction overflow' not in str(inst):
+                                print({"agent": a.address, "error": inst, "action": "redeem", "exact_expiry": c_exp, "coupons_tried": a.coupon_expiry_coupons[c_idx]})
+                            else:
+                                print({"agent": a.address, "error": inst, "action": "redeem", "exact_expiry": c_exp, "coupons_tried": a.coupon_expiry_coupons[c_idx]})
+                                continue
+                end_tx_count = a.next_tx_count
+                total_tx_submitted += (end_tx_count - start_tx_count)
+
         for agent_num, a in enumerate(self.agents):            
             # TODO: real strategy
             options = []
@@ -1076,7 +1104,8 @@ class Model:
                 '''
                     TODO: Try to auto redeem if possible
                 '''
-                options.append("redeem")
+                pass
+                #options.append("redeem")
             if a.usdc > 0 and a.xsd > 0:
                 options.append("provide_liquidity")
             if a.lp > 0:
@@ -1173,10 +1202,10 @@ class Model:
                         TODO: NEED TO FIGURE OUT BETTER WAY TO TRACK THIS?
                     '''
                     xsd_at_risk = portion_dedusted(a.xsd, commitment)
-                    rand_epoch_expiry = Balance.from_tokens(int(random.random() * self.max_coupon_exp), xSD['decimals'])
-                    rand_max_coupons = random.random() * self.max_coupon_premium * xsd_at_risk
+                    rand_epoch_expiry = int(random.random() * self.max_coupon_exp)
+                    rand_max_coupons =  round(int(math.floor(random.random() * self.max_coupon_premium)) * xsd_at_risk)
                     try:
-                        exact_expiry = rand_epoch_expiry + Balance.from_tokens(current_epoch, xSD['decimals'])
+                        exact_expiry = rand_epoch_expiry + current_epoch
                         #logger.info("Addr {} Bid to burn init {:.2f} xSD for {:.2f} coupons with expiry at epoch {}".format(a.address, xsd_at_risk, rand_max_coupons, exact_expiry))
                         self.dao.coupon_bid(a, rand_epoch_expiry, xsd_at_risk, rand_max_coupons)
                         a.total_coupons_bid += rand_max_coupons
@@ -1187,6 +1216,7 @@ class Model:
                     except Exception as inst:
                         print({"agent": a.address, "error": inst, "action": "coupon_bid", "exact_expiry": exact_expiry, "xsd_at_risk": xsd_at_risk})
                 elif action == "redeem":
+                    '''
                     total_redeemed = 0
                     total_epochs_tried = {}
 
@@ -1210,6 +1240,8 @@ class Model:
                     if len(total_epochs_tried) == len(a.coupon_expirys):
                         a.coupon_expirys = []
                         a.coupon_expiry_coupons = []
+                    '''
+                    pass
 
                 elif action == "provide_liquidity":
                     min_xsd_needed = Balance(0, xSD['decimals'])

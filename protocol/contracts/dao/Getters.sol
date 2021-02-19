@@ -303,12 +303,12 @@ contract Getters is State {
     function getSumofBestBidsAcrossCouponAuctions() public view returns (uint256) {
         // loop over past epochs from the latest `dead` epoch to the current
         uint256 sumCoupons = 0;
-        for (uint256 d_idx = getEarliestDeadAuctionEpoch(); d_idx < uint256(epoch()); d_idx++) {
+        uint256 current_epoch = epoch();
+        for (uint256 d_idx = getEarliestDeadAuctionEpoch(); d_idx < current_epoch; d_idx++) {
             uint256 temp_coupon_auction_epoch = d_idx;
             Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(temp_coupon_auction_epoch);
             
-            // skip auctions that have been canceled, dead or not finished auction present?
-            if (!auction.canceled && !auction.dead && auction.isInit && auction.finished) {
+            if (auction.finished) {
                 uint256 best_idx = getLatestCouponAuctionRedeemedSelectedBidderIndex(temp_coupon_auction_epoch);
                 address bidderAddress = getCouponBidderStateAssginedAtIndex(temp_coupon_auction_epoch, best_idx);
                 Epoch.CouponBidderState storage bidder = getCouponBidderState(temp_coupon_auction_epoch, bidderAddress);
@@ -324,15 +324,16 @@ contract Getters is State {
         return sumCoupons;
     }
 
-    function getSumofBestBidsAcrossCouponAuctionsNew() internal view returns (uint256) {
+    function getSumofBestBidsAcrossCouponAuctionsNew() public view returns (uint256) {
         // loop over past epochs from the latest `dead` epoch to the current
+        // DOES NOT WORK FIX LATER
         uint256 sumCoupons = 0;
-        for (uint256 d_idx = getEarliestDeadAuctionEpoch(); d_idx < uint256(epoch()); d_idx++) {
+        uint256 current_epoch = epoch();
+        for (uint256 d_idx = getEarliestDeadAuctionEpoch(); d_idx < current_epoch; d_idx++) {
             uint256 temp_coupon_auction_epoch = d_idx;
             Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(temp_coupon_auction_epoch);
             
-            // skip auctions that have been canceled, dead or not finished auction present?
-            if (!auction.canceled && !auction.dead && auction.isInit && auction.finished) {
+            if (auction.finished) {
                 sumCoupons = getBestBidsInOrder(temp_coupon_auction_epoch, sumCoupons);
             }
         }

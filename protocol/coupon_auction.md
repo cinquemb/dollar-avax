@@ -8,7 +8,7 @@ An auction is initiated for every epoch when TWAP < 1, during that epoch people 
 
 This is designed to dis-incentivize existing holders from buying coupons unless they are willing to risk the amount of DSD they are willing to burn, offering extremely high potential yield compared to what's available in the crypto ecosystem while naturally being capped by the varying market forces (current non redeemed best bidders across auctions; i.e. those with the most at risk) and coupon expiry for expansion and contraction, respectively.
 
-Existing coupon mechanisms for redemption and buying will still exist as is.
+Existing for redemption and buying will still exist as is.
 
 Exapnsion is purely driven by the best outstanding coupon bids, there are no locks times on LP or DAO, but the states remain such that it is easy to demarkate between them and people can move freely between them as they see fit without artifitial limitations
 

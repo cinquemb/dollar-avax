@@ -90,7 +90,7 @@ contract Regulator is Comptroller {
 
     function growSupply(Decimal.D256 memory price) private {
         // supply growth is purly a function sum of the best outstanding bids amounts across auctions at any given time untill they get redeemed, split between pools
-        uint256 newSupply = getSumofBestBidsAcrossCouponAuctionsNew();
+        uint256 newSupply = getSumofBestBidsAcrossCouponAuctions();
         (uint256 newRedeemable, uint256 newBonded) = increaseSupply(newSupply);
         emit SupplyIncrease(epoch(), price.value, newRedeemable, 0, newBonded);
     }
@@ -278,7 +278,7 @@ contract Regulator is Comptroller {
                             totalCurrentlyTriedRedeemed++;
                             setCouponBidderStateRedeemed(temp_coupon_auction_epoch, bidderAddress);
                             
-                            if (bidder.couponExpiryEpoch > uint256(temp_coupon_auction_epoch)) {
+                            if (bidder.couponExpiryEpoch > temp_coupon_auction_epoch) {
                                 //check if coupons for epoch are expired already
                                 continue;
                             }

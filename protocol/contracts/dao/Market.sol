@@ -28,9 +28,7 @@ contract Market is Comptroller, Curve {
     bytes32 private constant FILE = "Market";
 
     event CouponExpiration(uint256 indexed epoch, uint256 couponsExpired, uint256 lessRedeemable, uint256 lessDebt, uint256 newBonded);
-    event CouponPurchase(address indexed account, uint256 indexed epoch, uint256 dollarAmount, uint256 couponAmount);
     event CouponRedemption(address indexed account, uint256 indexed epoch, uint256 couponAmount);
-    event CouponBurn(address indexed account, uint256 indexed epoch, uint256 couponAmount);
     event CouponTransfer(address indexed from, address indexed to, uint256 indexed epoch, uint256 value);
     event CouponApproval(address indexed owner, address indexed spender, uint256 value);
     event CouponBidPlaced(address indexed account, uint256 indexed epoch, uint256 dollarAmount, uint256 maxCouponAmount);
@@ -40,10 +38,6 @@ contract Market is Comptroller, Curve {
         for (uint256 i = 0; i < expiringCoupons(epoch()); i++) {
             expireCouponsForEpoch(expiringCouponsAtIndex(epoch(), i));
         }
-
-        // Record expiry for current epoch's coupons
-        uint256 expirationEpoch = epoch().add(Constants.getCouponExpiration());
-        initializeCouponsExpiration(epoch(), expirationEpoch);
     }
 
     function expireCouponsForEpoch(uint256 epoch) private {
@@ -63,80 +57,12 @@ contract Market is Comptroller, Curve {
         emit CouponExpiration(epoch, couponsForEpoch, lessRedeemable, 0, newBonded);
     }
 
-    function couponPremium(uint256 amount) public view returns (uint256) {
-        return calculateCouponPremium(dollar().totalSupply(), totalDebt(), amount);
-    }
-
-    function couponRedemptionPenalty(uint256 couponEpoch, uint256 couponAmount) public view returns (uint256) {
-        uint timeIntoEpoch = block.timestamp % Constants.getEpochStrategy().period;
-        uint couponAge = epoch() - couponEpoch;
-
-        uint couponEpochDecay = Constants.getCouponRedemptionPenaltyDecay() * (Constants.getCouponExpiration() - couponAge) / Constants.getCouponExpiration();
-
-        if(timeIntoEpoch > couponEpochDecay) {
-            return 0;
-        }
-
-        Decimal.D256 memory couponEpochInitialPenalty = Constants.getInitialCouponRedemptionPenalty().div(Decimal.D256({value: Constants.getCouponExpiration() })).mul(Decimal.D256({value: Constants.getCouponExpiration() - couponAge}));
-
-        Decimal.D256 memory couponEpochDecayedPenalty = couponEpochInitialPenalty.div(Decimal.D256({value: couponEpochDecay})).mul(Decimal.D256({value: couponEpochDecay - timeIntoEpoch}));
-
-        return Decimal.D256({value: couponAmount}).mul(couponEpochDecayedPenalty).value;
-    }
-
-    function purchaseCoupons(uint256 dollarAmount) external returns (uint256) {
-        Require.that(
-            dollarAmount > 0,
-            FILE,
-            "Must purchase non-zero amount"
-        );
-
-        Require.that(
-            totalDebt() >= dollarAmount,
-            FILE,
-            "Not enough debt"
-        );
-
-        uint256 epoch = epoch();
-        uint256 couponAmount = dollarAmount.add(couponPremium(dollarAmount));
-        burnFromAccount(msg.sender, dollarAmount);
-        incrementBalanceOfCoupons(msg.sender, epoch, couponAmount);
-
-        emit CouponPurchase(msg.sender, epoch, dollarAmount, couponAmount);
-
-        return couponAmount;
-    }
-
     function redeemCoupons(uint256 couponEpoch, uint256 couponAmount) external {
-        require(epoch().sub(couponEpoch) >= 2, "Market: Too early to redeem");
         decrementBalanceOfCoupons(msg.sender, couponEpoch, couponAmount, "Market: Insufficient coupon balance");
         redeemToAccount(msg.sender, couponAmount);
         setCouponBidderStateRedeemed(couponEpoch, msg.sender);
 
         emit CouponRedemption(msg.sender, couponEpoch, couponAmount);
-    }
-
-    function redeemCoupons(uint256 couponEpoch, uint256 couponAmount, uint256 minOutput) external {
-        require(epoch().sub(couponEpoch) >= 2, "Market: Too early to redeem");
-        decrementBalanceOfCoupons(msg.sender, couponEpoch, couponAmount, "Market: Insufficient coupon balance");
-        
-        uint burnAmount = couponRedemptionPenalty(couponEpoch, couponAmount);
-        uint256 redeemAmount = couponAmount - burnAmount;
-
-        Require.that(
-            redeemAmount >= minOutput,
-            FILE,
-            "Insufficient output amount"
-        );
-        
-        redeemToAccount(msg.sender, redeemAmount);
-
-        if(burnAmount > 0){
-            setCouponBidderStateRedeemed(couponEpoch, msg.sender);
-            emit CouponBurn(msg.sender, couponEpoch, burnAmount);
-        }
-
-        emit CouponRedemption(msg.sender, couponEpoch, redeemAmount);
     }
 
     function approveCoupons(address spender, uint256 amount) external {
@@ -209,7 +135,7 @@ contract Market is Comptroller, Curve {
         );
 
         // insert bid onto chain
-        uint256 currentEpoch = uint256(epoch());
+        uint256 currentEpoch = epoch();
         uint256 totalBids = getCouponAuctionBids(currentEpoch);
         // this is the only time this addition operation should happen when adding current epoch to bid epoch
         uint256 epochExpiry = currentEpoch.add(couponEpochExpiry);
