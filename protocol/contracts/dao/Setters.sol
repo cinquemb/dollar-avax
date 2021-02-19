@@ -30,15 +30,15 @@ contract Setters is State, Getters {
      * ERC20 Interface
      */
 
-    function transfer(address recipient, uint256 amount) external returns (bool) {
+    function transfer(address recipient, uint256 amount) external pure returns (bool) {
         return false;
     }
 
-    function approve(address spender, uint256 amount) external returns (bool) {
+    function approve(address spender, uint256 amount) external pure returns (bool) {
         return false;
     }
 
-    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool) {
+    function transferFrom(address sender, address recipient, uint256 amount) external pure returns (bool) {
         return false;
     }
 

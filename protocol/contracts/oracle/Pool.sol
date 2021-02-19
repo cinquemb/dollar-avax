@@ -150,7 +150,7 @@ contract Pool is PoolSetters, Liquidity {
         pause();
     }
 
-    function balanceCheck() private {
+    function balanceCheck() private view {
         Require.that(
             univ2().balanceOf(address(this)) >= totalStaged().add(totalBonded()),
             FILE,

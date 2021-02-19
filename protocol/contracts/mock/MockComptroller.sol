@@ -43,18 +43,6 @@ contract MockComptroller is Comptroller, MockState {
         super.burnRedeemable(amount);
     }
 
-    function increaseDebtE(uint256 amount) external {
-        super.increaseDebt(amount);
-    }
-
-    function decreaseDebtE(uint256 amount) external {
-        super.decreaseDebt(amount);
-    }
-
-    function resetDebtE(uint256 percent) external {
-        super.resetDebt(Decimal.ratio(percent, 100));
-    }
-
     /* For testing only */
     function mintToE(address account, uint256 amount) external {
         dollar().mint(account, amount);

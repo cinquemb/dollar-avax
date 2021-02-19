@@ -78,7 +78,7 @@ contract Regulator is Comptroller {
         if (price.lessThan(Decimal.one())) {
             //check for outstanding auction, if exists settle it and start a new one
             if (auction.isInit == true){
-                bool isAuctionSettled = settleCouponAuctionNew(prev_epoch);
+                settleCouponAuction(prev_epoch);
                 finishCouponAuctionAtEpoch(prev_epoch);
             }
             initCouponAuction();
@@ -95,18 +95,6 @@ contract Regulator is Comptroller {
         emit SupplyIncrease(epoch(), price.value, newRedeemable, 0, newBonded);
     }
 
-    function limit(Decimal.D256 memory delta, Decimal.D256 memory price) private view returns (Decimal.D256 memory) {
-        Decimal.D256 memory supplyChangeLimit = Constants.getSupplyChangeLimit();
-        
-        uint256 totalRedeemable = totalRedeemable();
-        uint256 totalCoupons = totalCoupons();
-        if (price.greaterThan(Decimal.one()) && (totalRedeemable < totalCoupons)) {
-            supplyChangeLimit = Constants.getCouponSupplyChangeLimit();
-        }
-
-        return delta.greaterThan(supplyChangeLimit) ? supplyChangeLimit : delta;
-    }
-
     function oracleCapture() private returns (Decimal.D256 memory) {
         (Decimal.D256 memory price, bool valid) = oracle().capture();
 
@@ -120,7 +108,7 @@ contract Regulator is Comptroller {
         return price;
     }
     
-    function settleCouponAuctionNew(uint256 settlementEpoch) internal returns (bool success) {
+    function settleCouponAuction(uint256 settlementEpoch) internal returns (bool success) {
         if (!isCouponAuctionFinished(settlementEpoch) && !isCouponAuctionCanceled(settlementEpoch)) {
 
             uint256 maxBidLen = getCouponAuctionBids(settlementEpoch);

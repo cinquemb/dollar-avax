@@ -53,18 +53,14 @@ library Constants {
     uint256 private constant GOVERNANCE_EMERGENCY_DELAY = 6; // 6 epochs
 
     /* DAO */
-    uint256 private constant ADVANCE_INCENTIVE = 150e18; // 150 DSD
+    uint256 private constant ADVANCE_INCENTIVE = 1500e18; // 1500 DSD
     uint256 private constant DAO_EXIT_LOCKUP_EPOCHS = 0; // 0 epochs fluid, can leave at any time
 
     /* Pool */
     uint256 private constant POOL_EXIT_LOCKUP_EPOCHS = 0; // 0 epochs fluid, can leave at any time
 
     /* Market */
-    uint256 private constant COUPON_EXPIRATION = 360;
-    uint256 private constant DEBT_RATIO_CAP = 35e16; // 35%
-    uint256 private constant INITIAL_COUPON_REDEMPTION_PENALTY = 50e16; // 50%
-    uint256 private constant COUPON_REDEMPTION_PENALTY_DECAY = 3600; // 1 hour
-    uint256 private constant MAX_COUPON_YIELD_MULT = 10000000; //10MM coupouns per 1 dollar burn
+    uint256 private constant MAX_COUPON_YIELD_MULT = 1000000; //1MM coupouns per 1 dollar burn
     uint256 private constant MAX_COUPON_EXPIRATION_TIME = 946080000; //30 (years) * 365 (days)* 24 (hours) * 60 (min) * 60 (secs)
 
     uint256 private constant REJECT_COUPON_BID_PERCENTILE = 85;//90; //reject the last 90% of bids
@@ -147,22 +143,6 @@ library Constants {
         return POOL_EXIT_LOCKUP_EPOCHS;
     }
 
-    function getCouponExpiration() internal pure returns (uint256) {
-        return COUPON_EXPIRATION;
-    }
-
-    function getDebtRatioCap() internal pure returns (Decimal.D256 memory) {
-        return Decimal.D256({value: DEBT_RATIO_CAP});
-    }
-    
-    function getInitialCouponRedemptionPenalty() internal pure returns (Decimal.D256 memory) {
-        return Decimal.D256({value: INITIAL_COUPON_REDEMPTION_PENALTY});
-    }
-
-    function getCouponRedemptionPenaltyDecay() internal pure returns (uint256) {
-        return COUPON_REDEMPTION_PENALTY_DECAY;
-    }
-
     function getCouponMaxYieldToBurn() internal pure returns (uint256) {
         return MAX_COUPON_YIELD_MULT;
     }
@@ -173,26 +153,6 @@ library Constants {
 
     function getCouponRejectBidPtile() internal pure returns (Decimal.D256 memory) {
         return Decimal.ratio(100 - REJECT_COUPON_BID_PERCENTILE, 100);
-    }
-
-    function getSupplyChangeLimit() internal pure returns (Decimal.D256 memory) {
-        return Decimal.D256({value: SUPPLY_CHANGE_LIMIT});
-    }
-
-    function getSupplyChangeDivisor() internal pure returns (Decimal.D256 memory) {
-        return Decimal.D256({value: SUPPLY_CHANGE_DIVISOR});
-    }
-
-    function getCouponSupplyChangeLimit() internal pure returns (Decimal.D256 memory) {
-        return Decimal.D256({value: COUPON_SUPPLY_CHANGE_LIMIT});
-    }
-
-    function getCouponSupplyChangeDivisor() internal pure returns (Decimal.D256 memory) {
-        return Decimal.D256({value: COUPON_SUPPLY_CHANGE_DIVISOR});
-    }
-
-    function getNegativeSupplyChangeDivisor() internal pure returns (Decimal.D256 memory) {
-        return Decimal.D256({value: NEGATIVE_SUPPLY_CHANGE_DIVISOR});
     }
 
     function getOraclePoolRatio() internal pure returns (uint256) {

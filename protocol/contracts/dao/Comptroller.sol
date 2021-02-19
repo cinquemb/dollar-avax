@@ -28,10 +28,6 @@ contract Comptroller is Setters {
 
     function mintToAccount(address account, uint256 amount) internal {
         dollar().mint(account, amount);
-        if (!bootstrappingAt(epoch())) {
-            increaseDebt(amount);
-        }
-
         balanceCheck();
     }
 
@@ -63,21 +59,6 @@ contract Comptroller is Setters {
         balanceCheck();
     }
 
-    function increaseDebt(uint256 amount) internal returns (uint256) {
-        incrementTotalDebt(amount);
-        uint256 lessDebt = resetDebt(Constants.getDebtRatioCap());
-
-        balanceCheck();
-
-        return lessDebt > amount ? 0 : amount.sub(lessDebt);
-    }
-
-    function decreaseDebt(uint256 amount) internal {
-        decrementTotalDebt(amount, "Comptroller: not enough debt");
-
-        balanceCheck();
-    }
-
     function increaseSupply(uint256 newSupply) internal returns (uint256, uint256) {
         /* 
             supply growth is purely a function of the best auction bids outstanding for coupons from below peg
@@ -98,20 +79,6 @@ contract Comptroller is Setters {
         return (newRedeemable, 0);
     }
 
-    function resetDebt(Decimal.D256 memory targetDebtRatio) internal returns (uint256) {
-        uint256 targetDebt = targetDebtRatio.mul(dollar().totalSupply()).asUint256();
-        uint256 currentDebt = totalDebt();
-
-        if (currentDebt > targetDebt) {
-            uint256 lessDebt = currentDebt.sub(targetDebt);
-            decreaseDebt(lessDebt);
-
-            return lessDebt;
-        }
-
-        return 0;
-    }
-
     function acceptableBidCheck(address account, uint256 dollarAmount) internal view returns (bool) {
         return (dollar().balanceOf(account) >= balanceOfBonded(account).add(dollarAmount));
     }
@@ -128,12 +95,6 @@ contract Comptroller is Setters {
         if (amount > 0) {
             dollar().mint(address(this), amount);
             incrementTotalBonded(amount);
-        }
-    }
-
-    function mintToTreasury(uint256 amount) private {
-        if (amount > 0) {
-            dollar().mint(Constants.getTreasuryAddress(), amount);
         }
     }
 

@@ -983,8 +983,10 @@ class Model:
             start_usdc = random.random() * self.max_usdc
             
             address = agents[i]
-            agent = Agent(self.dao, uniswap, xsd, usdc, starting_eth=start_eth, starting_usdc=start_usdc, wallet_address=address, is_mint=is_mint, **kwargs)            
+            agent = Agent(self.dao, uniswap, xsd, usdc, starting_eth=start_eth, starting_usdc=start_usdc, wallet_address=address, is_mint=is_mint, **kwargs)
+            #print (agent)  
             self.agents.append(agent)
+        #sys.exit()
 
         if is_try_model_mine:
             for i in range(0, total_tx_submitted):

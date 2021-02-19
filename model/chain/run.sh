@@ -65,5 +65,7 @@ else
 fi
 
 
+# grep -P "^  Gas usage: .{6,}" ganache_output.txt | wc -l
+# grep -P "^  Gas usage: .{0,}" ganache_output.txt | wc -l
 
 

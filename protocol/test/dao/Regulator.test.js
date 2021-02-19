@@ -18,7 +18,11 @@ function poolIncentive(newAmount) {
 }
 
 describe('Regulator', function () {
-  const [ ownerAddress, userAddress, poolAddress, userAddress2, userAddress3,  userAddress4 ] = accounts;
+  const [ ownerAddress, userAddress, poolAddress, 
+    userAddress2, userAddress3,  userAddress4, 
+    userAddress5, userAddress6,  userAddress7, 
+    userAddress8, userAddress9,  userAddress10, 
+    userAddress11, userAddress12,  userAddress13 ] = accounts;
 
   beforeEach(async function () {
     this.oracle = await MockSettableOracle.new({from: ownerAddress, gas: 8000000});
@@ -569,16 +573,25 @@ describe('Regulator', function () {
           });
 
           describe('when calling init again during auction', function () {
-            describe('auction is not finished and not canceled', function () {
+            describe('auction is not finished and not canceled new', function () {
               beforeEach(async function () {
                 await this.regulator.mintToE(userAddress, 1000000);
                 await this.regulator.mintToE(userAddress2, 1000000);
                 await this.regulator.mintToE(userAddress3, 1000000);
                 await this.regulator.mintToE(userAddress4, 1000000);
+                await this.regulator.mintToE(userAddress5, 1000000);
+                await this.regulator.mintToE(userAddress6, 1000000);
+                await this.regulator.mintToE(userAddress7, 1000000);
+                await this.regulator.mintToE(userAddress8, 1000000);
                 await this.dollar.approve(this.regulator.address, 1000000, {from: userAddress});
                 await this.dollar.approve(this.regulator.address, 1000000, {from: userAddress2});
                 await this.dollar.approve(this.regulator.address, 1000000, {from: userAddress3});
                 await this.dollar.approve(this.regulator.address, 1000000, {from: userAddress4});
+                await this.dollar.approve(this.regulator.address, 1000000, {from: userAddress5});
+                await this.dollar.approve(this.regulator.address, 1000000, {from: userAddress6});
+                await this.dollar.approve(this.regulator.address, 1000000, {from: userAddress7});
+                await this.dollar.approve(this.regulator.address, 1000000, {from: userAddress8});
+                await this.dollar.approve(this.regulator.address, 1000000, {from: userAddress9});
               });
 
               it('is able to settle auction and generated internals without resetting them', async function () {
@@ -587,6 +600,13 @@ describe('Regulator', function () {
                 this.result1 = await this.regulator.placeCouponAuctionBid(5, 2000, 50000, {from: userAddress2});
                 this.result2 = await this.regulator.placeCouponAuctionBid(1000, 900, 50000, {from: userAddress3});
                 this.result3 = await this.regulator.placeCouponAuctionBid(100990, 900, 50000, {from: userAddress4});
+                this.result4 = await this.regulator.placeCouponAuctionBid(30, 9000, 700000, {from: userAddress5});
+                this.result5 = await this.regulator.placeCouponAuctionBid(466, 90, 880000, {from: userAddress6});
+                this.result6 = await this.regulator.placeCouponAuctionBid(67567, 90, 50000, {from: userAddress7});
+                this.result7 = await this.regulator.placeCouponAuctionBid(3545, 91100, 900000, {from: userAddress8});
+                this.result8 = await this.regulator.placeCouponAuctionBid(234234, 9000, 200000, {from: userAddress9});
+                this.result9 = await this.regulator.placeCouponAuctionBid(4344, 800, 50000, {from: userAddress10});
+                this.result10 = await this.regulator.placeCouponAuctionBid(342, 100, 100000, {from: userAddress11});
                 this.auction_settlement = await this.regulator.settleCouponAuctionE(7);
                 
                 await this.regulator.initCouponAuctionE.call();

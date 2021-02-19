@@ -18,11 +18,10 @@ pragma solidity ^0.5.17;
 pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
-import "./Curve.sol";
 import "./Comptroller.sol";
 import "../Constants.sol";
 
-contract Market is Comptroller, Curve {
+contract Market is Comptroller {
     using SafeMath for uint256;
 
     bytes32 private constant FILE = "Market";
@@ -129,7 +128,7 @@ contract Market is Comptroller, Curve {
         );
 
         Require.that(
-            couponEpochExpiry >= couponEpochExpiry,
+            maxExpiry >= couponEpochExpiry,
             FILE,
             "Must be under maxExpiry"
         );
