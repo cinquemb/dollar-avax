@@ -506,6 +506,8 @@ class Agent:
         self.coupon_expirys = []
         #coupons at a given exirpy index
         self.coupon_expiry_coupons = []
+        # how many times coupons have been redeemmed
+        self.redeem_count = 0
 
         self.dao = dao
 
@@ -556,7 +558,7 @@ class Agent:
             self.xsd, self.usdc, self.eth, self.lp, self.dao.total_coupons_for_agent(self))
 
         
-    def get_strategy(self, block, price, total_supply):
+    def get_strategy(self, block, price, total_supply, total_coupons):
         """
         Get weights, as a dict from action to float, as a function of the price.
         """
@@ -570,7 +572,7 @@ class Agent:
         strategy["coupon"] = 0.1
 
         # People are fast to coupon bid to get in front of redemption queue
-        strategy["coupon_bid"] = 1.0
+        strategy["coupon_bid"] = 2.0
 
         # And to unbond because of the delay
         strategy["unbond"] = 0.1
@@ -581,7 +583,7 @@ class Agent:
             # And not unbond
             strategy["unbond"] = 0
             # Or redeem if possible
-            strategy["redeem"] = 1000000.0
+            strategy["redeem"] = 10000000000000.0
             # no incetive to buy above 1
             strategy["buy"] = 0.0
         else:
@@ -594,8 +596,7 @@ class Agent:
             # Vary our strategy based on how much xSD we think ought to exist
             if price * total_supply > self.get_faith(block, price, total_supply):
                 # There is too much xSD, so we want to sell
-                strategy["unbond"] *= 2
-                strategy["sell"] = 4.0
+                strategy["sell"] = 10.0 if ((total_coupons > 0) and (price > 1.0)) else 2.0
             else:
                 # no faith based buying, just selling
                 pass
@@ -782,7 +783,7 @@ class UniswapPool:
             'gasPrice': 1,
         })
         
-    def sell(self, agent, xsd, min_usdc_amount):
+    def sell(self, agent, xsd, min_usdc_amount, advancer):
         """
         Sell the given number of xSD for USDC.
         """
@@ -791,7 +792,7 @@ class UniswapPool:
         self.xsd_token.ensure_approved(agent, UNIV2Router["addr"])
 
         # explore this more?
-        slippage = 0.75
+        slippage = 0.75 if ((advancer.address == agent.address) or (agent.redeem_count > 0)) else 0.01
         min_usdc_amount = (min_usdc_amount * (1 - slippage))
 
         self.uniswap_router.functions.swapExactTokensForTokens(
@@ -966,7 +967,7 @@ class Model:
         self.max_usdc = self.usdc_token.from_tokens(100000)
         self.bootstrap_epoch = 20
         self.max_coupon_exp = 131400
-        self.max_coupon_premium = 10000000
+        self.max_coupon_premium = 10
         self.min_usdc_balance = self.usdc_token.from_tokens(200)
 
 
@@ -1067,19 +1068,18 @@ class Model:
         if epoch_start_price > 1.0 and total_coupons > 0:
             for agent_num, a in enumerate(self.agents):  
                 if self.dao.total_coupons_for_agent(a) > 0:
+                    a.redeem_count += 1
                     start_tx_count = a.next_tx_count
                     for c_idx, c_exp in enumerate(a.coupon_expirys):
                         try:
                             self.dao.redeem(a, c_exp, a.coupon_expiry_coupons[c_idx])
-                            print({"agent": a.address, "action": "redeem", "exact_expiry": c_exp, "coupons_tried": a.coupon_expiry_coupons[c_idx]})
                         except Exception as inst:
                             if 'revert SafeMath: subtraction overflow' not in str(inst):
                                 print({"agent": a.address, "error": inst, "action": "redeem", "exact_expiry": c_exp, "coupons_tried": a.coupon_expiry_coupons[c_idx]})
                             else:
-                                print({"agent": a.address, "error": inst, "action": "redeem", "exact_expiry": c_exp, "coupons_tried": a.coupon_expiry_coupons[c_idx]})
                                 continue
-                end_tx_count = a.next_tx_count
-                total_tx_submitted += (end_tx_count - start_tx_count)
+                    end_tx_count = a.next_tx_count
+                    total_tx_submitted += (end_tx_count - start_tx_count)
 
         for agent_num, a in enumerate(self.agents):            
             # TODO: real strategy
@@ -1126,7 +1126,7 @@ class Model:
                         advance, provide_liquidity, remove_liquidity, buy, sell, coupon_bid, redeem, 
                 '''
         
-                strategy = a.get_strategy(w3.eth.get_block('latest')["number"], self.uniswap.xsd_price(), self.dao.xsd_supply())
+                strategy = a.get_strategy(w3.eth.get_block('latest')["number"], self.uniswap.xsd_price(), self.dao.xsd_supply(), total_coupons)
                 
                 weights = [strategy[o] for o in options]
                 
@@ -1195,7 +1195,7 @@ class Model:
                     try:
                         price = self.uniswap.xsd_price()
                         #logger.debug("Sell init {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd_out, price, max_amount))
-                        self.uniswap.sell(a, xsd_out, max_amount)
+                        self.uniswap.sell(a, xsd_out, max_amount, seleted_advancer)
                         #logger.debug("Sell end {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd_out, price, usdc))
                     except Exception as inst:
                         print({"agent": a.address, "error": inst, "action": "sell", "xsd_out": xsd_out, "max_amount": max_amount, "account_xsd": a.xsd})
@@ -1217,34 +1217,6 @@ class Model:
                         total_coupoun_bidders += 1
                     except Exception as inst:
                         print({"agent": a.address, "error": inst, "action": "coupon_bid", "exact_expiry": exact_expiry, "xsd_at_risk": xsd_at_risk})
-                elif action == "redeem":
-                    '''
-                    total_redeemed = 0
-                    total_epochs_tried = {}
-
-                    for c_idx, c_exp in enumerate(a.coupon_expirys):
-                        try:
-                            if c_exp == 0:
-                                total_epochs_tried[c_idx] = True
-                            else:
-                                self.dao.redeem(a, c_exp, a.coupon_expiry_coupons[c_idx])
-                        except Exception as inst:
-                            if 'revert SafeMath: subtraction overflow' not in str(inst):
-                                print({"agent": a.address, "error": inst, "action": "redeem", "exact_expiry": c_exp, "coupons_tried": a.coupon_expiry_coupons[c_idx]})
-                            else:
-                                total_epochs_tried[c_idx] = True
-                                continue
-
-                    for c_idx in total_epochs_tried.keys():
-                        a.coupon_expirys[c_idx] = 0
-                        a.coupon_expiry_coupons[c_idx] = 0
-                    
-                    if len(total_epochs_tried) == len(a.coupon_expirys):
-                        a.coupon_expirys = []
-                        a.coupon_expiry_coupons = []
-                    '''
-                    pass
-
                 elif action == "provide_liquidity":
                     min_xsd_needed = Balance(0, xSD['decimals'])
                     usdc = Balance(0, USDC['decimals'])
