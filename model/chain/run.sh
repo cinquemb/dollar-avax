@@ -10,7 +10,7 @@ set -e
 
 # Clean it out
 echo "Cleaning Old Database..."
-mkdir -p ./empty_dir
+mkdir -p ./empty_db
 time rsync -a --delete ./empty_db/ ./db/
 rm -Rf db
 
@@ -21,7 +21,7 @@ function cleanup {
     kill "${GANACHE}" 2>/dev/null || true
     # Clean database
     echo "Cleaning Up Database..."
-    mkdir -p ./empty_dir
+    mkdir -p ./empty_db
     time rsync -a --delete ./empty_db/ ./db/
     rm -Rf db
 }
