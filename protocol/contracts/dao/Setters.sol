@@ -112,6 +112,17 @@ contract Setters is State, Getters {
         _state.accounts[account].coupons[epoch] = _state.accounts[account].coupons[epoch].sub(amount, reason);
         _state.epochs[epoch].coupons.outstanding = _state.epochs[epoch].coupons.outstanding.sub(amount, reason);
         _state.balance.coupons = _state.balance.coupons.sub(amount, reason);
+        setCouponsAssignedAtEpoch(account, epoch);
+    }
+
+    function incrementCouponsAssignedIndex(address account) internal {
+        _state.accounts[account].couponAssginedIndex++;
+    }
+
+    function setCouponsAssignedAtEpoch(address account, uint256 epoch) internal {
+        uint256 couponAssignedIndex = getCouponsCurrentAssignedIndex(account);
+        _state.accounts[account].couponAssignedIndexAtEpoch[couponAssignedIndex] = epoch;
+        incrementCouponsAssignedIndex(account);
     }
 
     function unfreeze(address account) internal {
@@ -137,11 +148,6 @@ contract Setters is State, Getters {
 
     function snapshotTotalBonded() internal {
         _state.epochs[epoch()].bonded = totalSupply();
-    }
-
-    function initializeCouponsExpiration(uint256 epoch, uint256 expiration) internal {
-        _state.epochs[epoch].coupons.expiration = expiration;
-        _state.epochs[expiration].coupons.expiring.push(epoch);
     }
 
     function eliminateOutstandingCoupons(uint256 epoch) internal {

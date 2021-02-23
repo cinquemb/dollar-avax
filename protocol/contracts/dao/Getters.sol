@@ -122,6 +122,14 @@ contract Getters is State {
         return _state.accounts[account].coupons[epoch];
     }
 
+    function getCouponsAssignedAtEpoch(address account, uint256 couponAssignedIndex) public view returns (uint256) {
+        return _state.accounts[account].couponAssignedIndexAtEpoch[couponAssignedIndex];
+    }
+
+    function getCouponsCurrentAssignedIndex(address account) public view returns (uint256) {
+        return _state.accounts[account].couponAssginedIndex;
+    }
+
     function statusOf(address account) public view returns (Account.Status) {
         if (_state.accounts[account].lockedUntil > epoch()) {
             return Account.Status.Locked;
@@ -172,24 +180,8 @@ contract Getters is State {
         return _state.epochs[epoch].coupons.outstanding;
     }
 
-    function couponsExpiration(uint256 epoch) public view returns (uint256) {
-        return _state.epochs[epoch].coupons.expiration;
-    }
-
-    function expiringCoupons(uint256 epoch) public view returns (uint256) {
-        return _state.epochs[epoch].coupons.expiring.length;
-    }
-
-    function expiringCouponsAtIndex(uint256 epoch, uint256 i) public view returns (uint256) {
-        return _state.epochs[epoch].coupons.expiring[i];
-    }
-
     function totalBondedAt(uint256 epoch) public view returns (uint256) {
         return _state.epochs[epoch].bonded;
-    }
-
-    function bootstrappingAt(uint256 epoch) public view returns (bool) {
-        return epoch <= Constants.getBootstrappingPeriod();
     }
 
     function getCouponAuctionAtEpoch(uint256 epoch) internal view returns (Epoch.AuctionState storage) {
@@ -309,6 +301,10 @@ contract Getters is State {
             Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(temp_coupon_auction_epoch);
             
             if (auction.finished) {
+                /*
+                    TODO: 
+                        THINK ABOUT CHECKING IF THE PERSON REDEEMING IS THE CURRENT BEST BIDDER?
+                */
                 uint256 best_idx = getLatestCouponAuctionRedeemedSelectedBidderIndex(temp_coupon_auction_epoch);
                 address bidderAddress = getCouponBidderStateAssginedAtIndex(temp_coupon_auction_epoch, best_idx);
                 Epoch.CouponBidderState storage bidder = getCouponBidderState(temp_coupon_auction_epoch, bidderAddress);

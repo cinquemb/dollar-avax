@@ -23,13 +23,9 @@ library Constants {
     /* Chain */
     uint256 private constant CHAIN_ID = 1; // Mainnet
 
-    /* Bootstrapping */
-    uint256 private constant BOOTSTRAPPING_PERIOD = 20; // 20 epochs
-    uint256 private constant BOOTSTRAPPING_PRICE = 154e16; // 1.54 USDC (targeting 4.5% inflation)
-
     /* Oracle */
     address private constant USDC = address(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48);
-    uint256 private constant ORACLE_RESERVE_MINIMUM = 2e8;//200 USDC //1e10; // 10,000 USDC
+    uint256 private constant ORACLE_RESERVE_MINIMUM = 1e8;//100 USDC
 
     /* Bonding */
     uint256 private constant INITIAL_STAKE_MULTIPLE = 1e6; // 100 DSD -> 100M DSDS
@@ -53,17 +49,18 @@ library Constants {
     uint256 private constant GOVERNANCE_EMERGENCY_DELAY = 6; // 6 epochs
 
     /* DAO */
-    uint256 private constant ADVANCE_INCENTIVE = 1500e18; // 1500 DSD
+    // need to use either a gase price oracle or make dynamic to always be pegged to USDC price
+    uint256 private constant ADVANCE_INCENTIVE = 150e18; // 150 DSD
     uint256 private constant DAO_EXIT_LOCKUP_EPOCHS = 0; // 0 epochs fluid, can leave at any time
 
     /* Pool */
     uint256 private constant POOL_EXIT_LOCKUP_EPOCHS = 0; // 0 epochs fluid, can leave at any time
 
     /* Market */
-    uint256 private constant MAX_COUPON_YIELD_MULT = 100000; //100K coupouns per 1 dollar burn
+    uint256 private constant MAX_COUPON_YIELD_MULT = 10; //100K coupouns per 1 dollar burn
     uint256 private constant MAX_COUPON_EXPIRATION_TIME = 946080000; //30 (years) * 365 (days)* 24 (hours) * 60 (min) * 60 (secs)
 
-    uint256 private constant REJECT_COUPON_BID_PERCENTILE = 85;//90; //reject the last 90% of bids
+    uint256 private constant REJECT_COUPON_BID_PERCENTILE = 90;//85;//90; //reject the last 90% of bids
 
     /* Regulator */
     uint256 private constant SUPPLY_CHANGE_LIMIT = 2e16; // 2%
@@ -101,14 +98,6 @@ library Constants {
 
     function getInitialStakeMultiple() internal pure returns (uint256) {
         return INITIAL_STAKE_MULTIPLE;
-    }
-
-    function getBootstrappingPeriod() internal pure returns (uint256) {
-        return BOOTSTRAPPING_PERIOD;
-    }
-
-    function getBootstrappingPrice() internal pure returns (Decimal.D256 memory) {
-        return Decimal.D256({value: BOOTSTRAPPING_PRICE});
     }
 
     function getGovernancePeriod() internal pure returns (uint256) {

@@ -15,7 +15,7 @@ import sys
 from web3 import Web3
 
 IS_DEBUG = False
-is_try_model_mine = True
+is_try_model_mine = False
 block_offset = 16
 
 DEADLINE_FROM_NOW = 60 * 60 * 24 * 7 * 52
@@ -27,7 +27,8 @@ with open("deploy_output.txt", 'r+') as f:
     deploy_data = f.read()
 
 logger = logging.getLogger(__name__)
-provider = Web3.WebsocketProvider('ws://localhost:7545', websocket_timeout=60*30)
+provider = Web3.HTTPProvider('http://localhost:7545', request_kwargs={"timeout": 60*300})
+#provider = Web3.WebsocketProvider('ws://localhost:7545', websocket_timeout=60*30)
 #provider = Web3.IPCProvider("./development.ipc")
 w3 = Web3(provider)
 
@@ -62,9 +63,9 @@ UNIV2Router = {
 }
 
 for contract in [UNI, USDC, UNIV2LP, UNIV2Router]:
-    print(contract["deploy_slug"])
+    logger.info(contract["deploy_slug"])
     contract["addr"] = deploy_data.split(contract["deploy_slug"])[1].split('\n')[0]
-    print('\t'+contract["addr"])
+    logger.info('\t'+contract["addr"])
 
 
 # dao (from Deploy current Implementation on testnet)
@@ -511,6 +512,9 @@ class Agent:
 
         self.dao = dao
 
+        # current coupon assigned index of epoch
+        a.max_coupon_epoch_index = 0
+
         # Uniswap Pair TokenProxy
         self.uniswap_pair_token = uniswap_pair
 
@@ -569,7 +573,7 @@ class Agent:
         # TODO: agent preferences/utility function
 
         # People are fast to coupon bid to get in front of redemption queue
-        strategy["coupon_bid"] = 10.0
+        strategy["coupon_bid"] = 2.0
 
         # And to unbond because of the delay
         strategy["unbond"] = 0.1
@@ -685,7 +689,7 @@ class UniswapPool:
                             raise ContractLogicError(f'execution reverted: {response["error"]["message"]}')
                             web3.exceptions.ContractLogicError: execution reverted: Reverting to invalid state checkpoint failed
                     """
-                    print({"function": "xsd_price", "error": inst })
+                    logger.info({"function": "xsd_price", "error": inst })
         else:
             return 1.0
 
@@ -790,7 +794,7 @@ class UniswapPool:
         self.xsd_token.ensure_approved(agent, UNIV2Router["addr"])
 
         # explore this more?
-        slippage = 0.75 if (advancer.address == agent.address) or ((agent.redeem_count > 0) and agent.xsd > uniswap_usdc_supply) else 0.01
+        slippage = 0.99 if (advancer.address == agent.address) or ((agent.redeem_count > 0) and agent.xsd > uniswap_usdc_supply) else 0.01
         min_usdc_amount = (min_usdc_amount * (1 - slippage))
 
         self.uniswap_router.functions.swapExactTokensForTokens(
@@ -844,11 +848,6 @@ class DAO:
         for c_idx, c_exp in enumerate(agent.coupon_expirys):
             t_coupons = self.coupon_balance_at_epoch(agent.address, c_exp)
             total_coupons += t_coupons
-            '''
-            if t_coupons == 0:
-                agent.coupon_expirys[c_idx] = 0
-                agent.coupon_expiry_coupons[c_idx] = 0
-            '''
 
         self.total_coupons_bid = Balance.from_tokens(total_coupons, xSD["decimals"])
         return total_coupons
@@ -860,8 +859,23 @@ class DAO:
         if epoch == 0:
             return 0
         total_coupons = self.contract.caller({'from' : address, 'gas': 8000000}).balanceOfCoupons(address, epoch)
-        #total_coupons = self.contract.caller({'from' : address, 'gas': 8000000}).balanceOfCoupons(address, unreg_int(Balance.from_tokens(epoch, xSD['decimals']), xSD["decimals"]))
         return total_coupons
+
+    def get_coupon_expirirations(self, agent):
+        '''
+            Return a list of coupon expirations for an address from last time called
+        '''
+        epochs = []
+        epoch_index_max = self.contract.caller({'from' : agent.address, 'gas': 8000000}).getCouponsCurrentAssignedIndex(agent.address)
+
+        for i in range(agent.max_coupon_epoch_index, epoch_index_max):
+            t_epoch = self.contract.caller({'from' : agent.address, 'gas': 8000000}).getCouponsAssignedAtEpoch(agent.address, i)
+            epochs.append(t_epoch)
+
+        agent.max_coupon_epoch_index = epoch_index_max
+        agent.coupon_expirys = epochs
+
+        return epochs
 
     def epoch(self, address):
         return self.contract.caller({'from' : address, 'gas': 8000000}).epoch()
@@ -919,6 +933,8 @@ class DAO:
         Note that if advance() does any kind of auction settlement or other
         operations, the reported reward may be affected by those transfers.
         """
+        global provider
+        global w3
         epoch_before = self.epoch(agent.address)
         provider.make_request("evm_increaseTime", [7201])
         before_advance = self.xsd_token[agent.address]
@@ -933,13 +949,6 @@ class DAO:
         # need to force mine block after every advance or the state wont change in token balance
         if is_try_model_mine:
             provider.make_request("evm_mine", [])
-
-        epoch_after = self.epoch(agent.address)
-
-        while (epoch_after - epoch_before) < 1:
-            print('Waiting for epoch to advance')
-            time.sleep(2)
-            epoch_after = self.epoch(agent.address)
                         
 class Model:
     """
@@ -958,7 +967,7 @@ class Model:
         self.xsd_token = xsd
         self.max_eth = Balance.from_tokens(100000, 18)
         self.max_usdc = self.usdc_token.from_tokens(100000)
-        self.bootstrap_epoch = 20
+        self.bootstrap_epoch = 2
         self.max_coupon_exp = 131400
         self.max_coupon_premium = 10 #redoo with 10 with same settings
         self.min_usdc_balance = self.usdc_token.from_tokens(200)
@@ -1021,6 +1030,8 @@ class Model:
         
         Returns True if anyone could act.
         """
+        global provider
+        global w3
         # Update caches to current chain state
         self.usdc_token.update()
         self.xsd_token.update()
@@ -1038,16 +1049,18 @@ class Model:
 
         epoch_start_price = self.uniswap.xsd_price()
 
+        dao_xsd_supply = self.dao.xsd_supply()
+
         total_coupons = self.dao.total_coupons()
         
         logger.info("Block {}, epoch {}, price {:.2f}, supply {:.2f}, faith: {:.2f}, bonded {:2.1f}%, coupons: {:.2f}, liquidity {:.2f} xSD / {:.2f} USDC".format(
-            w3.eth.get_block('latest')["number"], current_epoch, self.uniswap.xsd_price(), self.dao.xsd_supply(),
+            w3.eth.get_block('latest')["number"], current_epoch, epoch_start_price, dao_xsd_supply,
             self.get_overall_faith(), 0, total_coupons,
             xsd_b, usdc_b)
         )
         
         anyone_acted = False
-        if self.dao.epoch(seleted_advancer.address) < self.bootstrap_epoch:
+        if current_epoch < self.bootstrap_epoch:
             anyone_acted = True
             return anyone_acted, seleted_advancer
 
@@ -1066,24 +1079,18 @@ class Model:
 
             # try to redeem any outstanding coupons here first to better
             if epoch_start_price > 1.0 and total_coupons > 0:
+                self.dao.get_coupon_expirirations(a)
                 if self.dao.total_coupons_for_agent(a) > 0:
-                    a.redeem_count += 1
-                    redeemed_count = 0
+                    # if agent has coupons
+                    a.redeem_count += 1                    
                     for c_idx, c_exp in enumerate(a.coupon_expirys):
                         try:
-                            if c_exp == 0:
-                                redeemed_count += 1
                             self.dao.redeem(a, c_exp, a.coupon_expiry_coupons[c_idx])
-                            a.coupon_expirys[c_idx] = Balance.from_tokens(0, xSD['decimals'])
                         except Exception as inst:
                             if 'revert SafeMath: subtraction overflow' not in str(inst):
-                                print({"agent": a.address, "error": inst, "action": "redeem", "exact_expiry": c_exp, "coupons_tried": a.coupon_expiry_coupons[c_idx]})
+                                logger.info({"agent": a.address, "error": inst, "action": "redeem", "exact_expiry": c_exp, "coupons_tried": a.coupon_expiry_coupons[c_idx]})
                             else:
                                 continue
-
-                    if redeemed_count == len(a.coupon_expirys):
-                        a.coupon_expirys = []
-                        a.coupon_expiry_coupons = []
 
             if a.usdc > 0 and is_uni_op:
                 options.append("buy")
@@ -1097,7 +1104,7 @@ class Model:
                 options.append("unbond")
             '''
             # no point in buying coupons untill theres at least 10k usdc in the pool (so like 80-100 epoch effective warmup)
-            if a.xsd > 0 and epoch_start_price < 1.0 and current_epoch > self.bootstrap_epoch and self.min_usdc_balance <= usdc_b and self.dao.has_coupon_bid():
+            if a.xsd > 0 and self.min_usdc_balance <= usdc_b and self.dao.has_coupon_bid():
                 options.append("coupon_bid")
             if a.usdc > 0 and a.xsd > 0:
                 options.append("provide_liquidity")
@@ -1117,7 +1124,7 @@ class Model:
                         advance, provide_liquidity, remove_liquidity, buy, sell, coupon_bid, redeem, 
                 '''
         
-                strategy = a.get_strategy(w3.eth.get_block('latest')["number"], self.uniswap.xsd_price(), self.dao.xsd_supply(), total_coupons)
+                strategy = a.get_strategy(w3.eth.get_block('latest')["number"], self.uniswap.xsd_price(), dao_xsd_supply, total_coupons)
                 
                 weights = [strategy[o] for o in options]
                 
@@ -1145,7 +1152,7 @@ class Model:
                         max_amount = reg_int(max_amount, xSD['decimals'])
                     except Exception as inst:
                         # not enough on market to fill bid
-                        print({"agent": a.address, "error": inst, "action": "buy", "amount_in": usdc_in})
+                        logger.info({"agent": a.address, "error": inst, "action": "buy", "amount_in": usdc_in})
                         continue
                     
                     try:
@@ -1155,7 +1162,7 @@ class Model:
                         #logger.debug("Buy end {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(max_amount, price, usdc_in))
                         
                     except Exception as inst:
-                        print({"agent": a.address, "error": inst, "action": "buy", "usdc_in": usdc_in, "max_amount": max_amount})
+                        logger.info({"agent": a.address, "error": inst, "action": "buy", "usdc_in": usdc_in, "max_amount": max_amount})
                         continue
                 elif action == "sell":
                     # this will limit the size of orders avaialble
@@ -1177,7 +1184,7 @@ class Model:
                         )
                         max_amount = reg_int(max_amount, USDC['decimals'])
                     except Exception as inst:
-                        print({"agent": a.address, "error": inst, "action": "sell", "amount_out": xsd_out})
+                        logger.info({"agent": a.address, "error": inst, "action": "sell", "amount_out": xsd_out})
 
                     try:
                         price = epoch_start_price
@@ -1185,7 +1192,7 @@ class Model:
                         self.uniswap.sell(a, xsd_out, max_amount, seleted_advancer, usdc_b.to_decimals(xSD['decimals']))
                         #logger.debug("Sell end {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd_out, price, usdc))
                     except Exception as inst:
-                        print({"agent": a.address, "error": inst, "action": "sell", "xsd_out": xsd_out, "max_amount": max_amount, "account_xsd": a.xsd})
+                        logger.info({"agent": a.address, "error": inst, "action": "sell", "xsd_out": xsd_out, "max_amount": max_amount, "account_xsd": a.xsd})
                 elif action == "coupon_bid":
                     '''
                         TODO: NEED TO FIGURE OUT BETTER WAY TO TRACK THIS?
@@ -1203,7 +1210,7 @@ class Model:
                         #logger.info("Addr {} Bid to burn end {:.2f} xSD for {:.2f} coupons with expiry at epoch {}".format(a.address, xsd_at_risk, rand_max_coupons, exact_expiry))
                         total_coupoun_bidders += 1
                     except Exception as inst:
-                        print({"agent": a.address, "error": inst, "action": "coupon_bid", "exact_expiry": exact_expiry, "xsd_at_risk": xsd_at_risk})
+                        logger.info({"agent": a.address, "error": inst, "action": "coupon_bid", "exact_expiry": exact_expiry, "xsd_at_risk": xsd_at_risk})
                 elif action == "provide_liquidity":
                     min_xsd_needed = Balance(0, xSD['decimals'])
                     usdc = Balance(0, USDC['decimals'])
@@ -1228,7 +1235,7 @@ class Model:
                         self.uniswap.provide_liquidity(a, min_xsd_needed, usdc)
                     except Exception as inst:
                         # SLENCE TRANSFER_FROM_FAILED ISSUES
-                        #print({"agent": a.address, "error": inst, "action": "provide_liquidity", "min_xsd_needed": min_xsd_needed, "usdc": usdc})
+                        #logger.info({"agent": a.address, "error": inst, "action": "provide_liquidity", "min_xsd_needed": min_xsd_needed, "usdc": usdc})
                         continue
                 elif action == "remove_liquidity":
                     lp = portion_dedusted(a.lp, commitment)
@@ -1246,7 +1253,7 @@ class Model:
                         #logger.debug("Stop providing {:.2f} xSD and {:.2f} USDC".format(min_xsd_amount, min_usdc_amount))
                         self.uniswap.remove_liquidity(a, lp, min_xsd_amount, min_usdc_amount)
                     except Exception as inst:
-                        print({"agent": a.address, "error": inst, "action": "remove_liquidity", "min_xsd_needed": min_xsd_amount, "usdc": min_usdc_amount})
+                        logger.info({"agent": a.address, "error": inst, "action": "remove_liquidity", "min_xsd_needed": min_xsd_amount, "usdc": min_usdc_amount})
                 else:
                     raise RuntimeError("Bad action: " + action)
                     
@@ -1275,16 +1282,16 @@ def main():
     
     logging.basicConfig(level=logging.INFO)
     
-    max_accounts = 20
-    print(w3.eth.get_block('latest')["number"])
+    max_accounts = 30
+    logger.info(w3.eth.get_block('latest')["number"])
     if w3.eth.get_block('latest')["number"] == block_offset:
         # THIS ONLY NEEDS TO BE RUN ON NEW CONTRACTS
-        print(provider.make_request("evm_increaseTime", [1606348800]))
+        logger.info(provider.make_request("evm_increaseTime", [1606348800]))
 
-    print('Total Agents:',len(w3.eth.accounts[:max_accounts]))
+    logger.info('Total Agents:',len(w3.eth.accounts[:max_accounts]))
     dao = w3.eth.contract(abi=DaoContract['abi'], address=xSDS["addr"])
-    print('Dao is at:', dao.address)
-    print("Oracle is at:", dao.caller({'from' : dao.address, 'gas': 8000000}).oracle())
+    logger.info('Dao is at:', dao.address)
+    logger.info("Oracle is at:", dao.caller({'from' : dao.address, 'gas': 8000000}).oracle())
 
     oracle = w3.eth.contract(abi=OracleContract['abi'], address=dao.caller({'from' : dao.address, 'gas': 8000000}).oracle())
 
@@ -1305,7 +1312,7 @@ def main():
     print ('INIT FINISHED', end_init - start_init, '(s)')
 
     # Make a log file for system parameters, for analysis
-    stream = open("log.tsv", "w")
+    stream = open("log.tsv", "a+")
     
     for i in range(50000):
         # Every block
@@ -1315,10 +1322,10 @@ def main():
         (anyone_acted, seleted_advancer) = model.step()
         if not anyone_acted:
             # Nobody could act
-            print("Nobody could act")
+            logger.info("Nobody could act")
             break
         end_iter = time.time()
-        print('iter: %s, sys time %s' % (i, end_iter-start_iter))
+        logger.info('iter: %s, sys time %s' % (i, end_iter-start_iter))
         # Log system state
         model.log(stream, seleted_advancer, header=(i == 0))
         

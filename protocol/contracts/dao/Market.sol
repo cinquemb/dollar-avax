@@ -33,10 +33,8 @@ contract Market is Comptroller {
     event CouponBidPlaced(address indexed account, uint256 indexed epoch, uint256 dollarAmount, uint256 maxCouponAmount);
     
     function step() internal {
-        // Expire prior coupons
-        for (uint256 i = 0; i < expiringCoupons(epoch()); i++) {
-            expireCouponsForEpoch(expiringCouponsAtIndex(epoch(), i));
-        }
+        // Expire prior epoch coupons
+        expireCouponsForEpoch(epoch().sub(1));
     }
 
     function expireCouponsForEpoch(uint256 epoch) private {

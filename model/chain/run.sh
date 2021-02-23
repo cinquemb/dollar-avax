@@ -10,6 +10,8 @@ set -e
 
 # Clean it out
 echo "Cleaning Old Database..."
+mkdir -p ./empty_dir
+time rsync -a --delete ./empty_db/ ./db/
 rm -Rf db
 
 # Have a function to kill off Ganache and clean up the database when we quit.
@@ -19,6 +21,8 @@ function cleanup {
     kill "${GANACHE}" 2>/dev/null || true
     # Clean database
     echo "Cleaning Up Database..."
+    mkdir -p ./empty_dir
+    time rsync -a --delete ./empty_db/ ./db/
     rm -Rf db
 }
 
@@ -28,8 +32,8 @@ trap cleanup EXIT
 echo "Starting Ganache..."
 # Need to run the below command in a while loop when deploying locally
 # curl -H "Content-Type: application/json" -X POST --data '{"id":1337,"jsonrpc":"2.0","method":"evm_mine","params":[]}' http://localhost:7545 
-#TMPDIR="$(pwd)" ganache-cli --p 7545 --gasLimit 8000000 --accounts 2000 --defaultBalanceEther 1000000 --db ./db >ganache_output.txt &
-TMPDIR="$(pwd)" ganache-cli --p 7545 --gasLimit 8000000 --accounts 200 --defaultBalanceEther 1000000 --blockTime 604800 --db ./db >ganache_output.txt &
+TMPDIR="$(pwd)" ganache-cli --p 7545 --gasLimit 8000000 --accounts 30 --defaultBalanceEther 1000000 --db ./db --noVMErrorsOnRPCResponse > ganache_output.txt &
+#TMPDIR="$(pwd)" ganache-cli --p 7545 --gasLimit 8000000 --accounts 20 --defaultBalanceEther 1000000 --blockTime 604800 --db ./db --noVMErrorsOnRPCResponse  >ganache_output.txt &
 GANACHE=$!
 
 # Wait for it to come up

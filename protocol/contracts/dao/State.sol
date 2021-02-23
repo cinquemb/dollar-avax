@@ -32,10 +32,12 @@ contract Account {
     struct State {
         uint256 staged;
         uint256 balance;
-        mapping(uint256 => uint256) coupons;
-        mapping(address => uint256) couponAllowances;
         uint256 fluidUntil;
         uint256 lockedUntil;
+        uint256 couponAssginedIndex;
+        mapping(uint256 => uint256) coupons;
+        mapping(address => uint256) couponAllowances;
+        mapping(uint256 => uint256) couponAssignedIndexAtEpoch;
     }
 }
 

@@ -60,15 +60,16 @@ contract Regulator is Comptroller {
         }
         
         Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(prev_epoch);
+        //check for outstanding auction, if exists settle it and start a new one, auctions below and above peg
+        if (auction.isInit == true){
+            settleCouponAuction(prev_epoch);
+            finishCouponAuctionAtEpoch(prev_epoch);
+        }
+        initCouponAuction();
+
 
         if (price.greaterThan(Decimal.one())) {
             setDebtToZero();
-
-            //check for outstanding auction, if exists cancel it
-            if (auction.isInit == true){
-                cancelCouponAuctionAtEpoch(prev_epoch);
-            }
-
             /* gas costs error */
             // autoRedeemFromCouponAuctionNew();
             growSupply(price);
@@ -76,12 +77,6 @@ contract Regulator is Comptroller {
         }
 
         if (price.lessThan(Decimal.one())) {
-            //check for outstanding auction, if exists settle it and start a new one
-            if (auction.isInit == true){
-                settleCouponAuction(prev_epoch);
-                finishCouponAuctionAtEpoch(prev_epoch);
-            }
-            initCouponAuction();
             return;
         }
 
@@ -89,7 +84,7 @@ contract Regulator is Comptroller {
     }
 
     function growSupply(Decimal.D256 memory price) private {
-        // supply growth is purly a function sum of the best outstanding bids amounts across auctions at any given time untill they get redeemed, split between pools
+        // supply growth is purly a function sum of the best outstanding bids amounts across auctions at any given time untill they get redeemed
         uint256 newSupply = getSumofBestBidsAcrossCouponAuctions();
         (uint256 newRedeemable, uint256 newBonded) = increaseSupply(newSupply);
         emit SupplyIncrease(epoch(), price.value, newRedeemable, 0, newBonded);
@@ -98,9 +93,6 @@ contract Regulator is Comptroller {
     function oracleCapture() private returns (Decimal.D256 memory) {
         (Decimal.D256 memory price, bool valid) = oracle().capture();
 
-        if (bootstrappingAt(epoch().sub(1))) {
-            return Constants.getBootstrappingPrice();
-        }
         if (!valid) {
             return Decimal.one();
         }
