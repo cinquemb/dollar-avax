@@ -180,6 +180,10 @@ contract Getters is State {
         return _state.epochs[epoch].coupons.outstanding;
     }
 
+    function outstandingCouponsForAddress(address account) public view returns (uint256) {
+        return _state.accounts[account].outstanding_coupons;
+    }
+
     function totalBondedAt(uint256 epoch) public view returns (uint256) {
         return _state.epochs[epoch].bonded;
     }

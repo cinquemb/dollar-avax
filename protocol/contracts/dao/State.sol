@@ -35,6 +35,7 @@ contract Account {
         uint256 fluidUntil;
         uint256 lockedUntil;
         uint256 couponAssginedIndex;
+        uint256 outstanding_coupons;
         mapping(uint256 => uint256) coupons;
         mapping(address => uint256) couponAllowances;
         mapping(uint256 => uint256) couponAssignedIndexAtEpoch;

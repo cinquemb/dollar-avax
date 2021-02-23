@@ -106,13 +106,16 @@ contract Setters is State, Getters {
         _state.accounts[account].coupons[epoch] = _state.accounts[account].coupons[epoch].add(amount);
         _state.epochs[epoch].coupons.outstanding = _state.epochs[epoch].coupons.outstanding.add(amount);
         _state.balance.coupons = _state.balance.coupons.add(amount);
+        _state.accounts[account].outstanding_coupons = _state.accounts[account].outstanding_coupons.add(amount);
+        setCouponsAssignedAtEpoch(account, epoch);
     }
 
     function decrementBalanceOfCoupons(address account, uint256 epoch, uint256 amount, string memory reason) internal {
         _state.accounts[account].coupons[epoch] = _state.accounts[account].coupons[epoch].sub(amount, reason);
         _state.epochs[epoch].coupons.outstanding = _state.epochs[epoch].coupons.outstanding.sub(amount, reason);
         _state.balance.coupons = _state.balance.coupons.sub(amount, reason);
-        setCouponsAssignedAtEpoch(account, epoch);
+        _state.accounts[account].outstanding_coupons = _state.accounts[account].outstanding_coupons.sub(amount);
+        
     }
 
     function incrementCouponsAssignedIndex(address account) internal {

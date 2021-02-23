@@ -50,7 +50,7 @@ library Constants {
 
     /* DAO */
     // need to use either a gase price oracle or make dynamic to always be pegged to USDC price
-    uint256 private constant ADVANCE_INCENTIVE = 150e18; // 150 DSD
+    uint256 private constant ADVANCE_INCENTIVE = 1500e18; // 150 DSD
     uint256 private constant DAO_EXIT_LOCKUP_EPOCHS = 0; // 0 epochs fluid, can leave at any time
 
     /* Pool */
