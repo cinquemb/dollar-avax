@@ -24,8 +24,8 @@ import "../external/Decimal.sol";
 
 contract Account {
     enum Status {
-        Frozen,
         Fluid,
+        Frozen,
         Locked
     }
 
@@ -51,9 +51,9 @@ contract Epoch {
     }
 
     struct Coupons {
-        uint256 outstanding;
         uint256 expiration;
         uint256[] expiring;
+        uint256 outstanding;
     }
 
     struct CouponBidderState {
@@ -108,44 +108,43 @@ contract Epoch {
 
 contract Candidate {
     enum Vote {
-        UNDECIDED,
+        REJECT,
         APPROVE,
-        REJECT
+        UNDECIDED
     }
 
     struct State {
         uint256 start;
         uint256 period;
-        uint256 approve;
         uint256 reject;
-        mapping(address => Vote) votes;
+        uint256 approve;
         bool initialized;
+        mapping(address => Vote) votes;
     }
 }
 
 contract Storage {
     struct Provider {
+        address pool;
         IDollar dollar;
         IOracle oracle;
-        address pool;
     }
 
     struct Balance {
+        uint256 debt;
         uint256 supply;
         uint256 bonded;
         uint256 staged;
-        uint256 redeemable;
-        uint256 debt;
         uint256 coupons;
+        uint256 redeemable;
     }
 
     struct State {
-        Epoch.Global epoch;
         Balance balance;
         Provider provider;
-
-        mapping(address => Account.State) accounts;
+        Epoch.Global epoch;
         mapping(uint256 => Epoch.State) epochs;
+        mapping(address => Account.State) accounts;
         mapping(address => Candidate.State) candidates;
     }
 }

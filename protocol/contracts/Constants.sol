@@ -59,17 +59,7 @@ library Constants {
     /* Market */
     uint256 private constant MAX_COUPON_YIELD_MULT = 10; //100K coupouns per 1 dollar burn
     uint256 private constant MAX_COUPON_EXPIRATION_TIME = 946080000; //30 (years) * 365 (days)* 24 (hours) * 60 (min) * 60 (secs)
-
-    uint256 private constant REJECT_COUPON_BID_PERCENTILE = 90;//85;//90; //reject the last 90% of bids
-
-    /* Regulator */
-    uint256 private constant SUPPLY_CHANGE_LIMIT = 2e16; // 2%
-    uint256 private constant SUPPLY_CHANGE_DIVISOR = 25e18; // 25 > Max expansion at 1.5
-    uint256 private constant COUPON_SUPPLY_CHANGE_LIMIT = 3e16; // 3%
-    uint256 private constant COUPON_SUPPLY_CHANGE_DIVISOR = 1666e16; // 16.66 > Max expansion at ~1.5
-    uint256 private constant NEGATIVE_SUPPLY_CHANGE_DIVISOR = 5e18; // 5 > Max negative expansion at 0.9
-    uint256 private constant ORACLE_POOL_RATIO = 40; // 40%
-    uint256 private constant TREASURY_RATIO = 3; // 3%
+    uint256 private constant REJECT_COUPON_BID_PERCENTILE = 50;//85;//90; //reject the last 90% of bids
 
     /* Deployed */
     address private constant DAO_ADDRESS = address(0x6Bf977ED1A09214E6209F4EA5f525261f1A2690a);
@@ -142,14 +132,6 @@ library Constants {
 
     function getCouponRejectBidPtile() internal pure returns (Decimal.D256 memory) {
         return Decimal.ratio(100 - REJECT_COUPON_BID_PERCENTILE, 100);
-    }
-
-    function getOraclePoolRatio() internal pure returns (uint256) {
-        return ORACLE_POOL_RATIO;
-    }
-
-    function getTreasuryRatio() internal pure returns (uint256) {
-        return TREASURY_RATIO;
     }
 
     function getChainId() internal pure returns (uint256) {

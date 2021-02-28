@@ -868,7 +868,7 @@ class DAO:
             epochs.append(t_epoch)
 
         agent.max_coupon_epoch_index = epoch_index_max
-        agent.coupon_expirys = epochs
+        agent.coupon_expirys += epochs
         return agent.coupon_expirys
 
     def epoch(self, address):
@@ -1071,16 +1071,22 @@ class Model:
             if epoch_start_price > 1.0 and total_coupons > 0:
                 if a.coupons > 0:
                     # if agent has coupons
-                    logger.info("COUPON EXP: Agent {}, exp_epochs: {}".format(a.address, json.dumps(a.coupon_expirys)))
-                    a.redeem_count += 1                    
-                    for c_idx, c_exp in enumerate(a.coupon_expirys):
-                        try:
-                            self.dao.redeem(a, c_exp)
-                        except Exception as inst:
-                            if 'revert SafeMath: subtraction overflow' not in str(inst):
-                                logger.info({"agent": a.address, "error": inst, "action": "redeem", "exact_expiry": c_exp})
-                            else:
-                                continue 
+                    # logger.info("COUPON EXP: Agent {}, exp_epochs: {}".format(a.address, json.dumps(a.coupon_expirys)))
+                    if len(a.coupon_expirys) > 0:
+                        a.redeem_count += 1
+                        to_delete_index = []             
+                        for c_idx, c_exp in enumerate(a.coupon_expirys):
+                            try:
+                                self.dao.redeem(a, c_exp)
+                                to_delete_index.append(c_idx)
+                            except Exception as inst:
+                                if 'revert SafeMath: subtraction overflow' not in str(inst):
+                                    logger.info({"agent": a.address, "error": inst, "action": "redeem", "exact_expiry": c_exp})
+                                else:
+                                    continue
+
+                        for d_idx in to_delete_index:
+                            del a.coupon_expirys[d_idx] 
 
         for agent_num, a in enumerate(self.agents):            
             # TODO: real strategy
@@ -1303,14 +1309,14 @@ def main():
     uniswap_token = w3.eth.contract(abi=PoolContract['abi'], address=UNIV2LP["addr"])
 
     xsd = TokenProxy(w3.eth.contract(abi=DollarContract['abi'], address=dao.caller().dollar()))
-    print (dao.caller().dollar())
+    logger.info(dao.caller().dollar())
     
     # Make a model of the economy
     start_init = time.time()
-    print ('INIT STARTED')
+    logger.info('INIT STARTED')
     model = Model(dao, uniswap, usdc, uniswap_router, uniswap_token, xsd, w3.eth.accounts[:max_accounts], min_faith=0.5E6, max_faith=1E6, use_faith=True)
     end_init = time.time()
-    print ('INIT FINISHED', end_init - start_init, '(s)')
+    logger.info('INIT FINISHED {} (s)'.format(end_init - start_init))
 
     # Make a log file for system parameters, for analysis
     stream = open("log.tsv", "a+")
