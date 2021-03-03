@@ -1087,7 +1087,10 @@ class Model:
                                     continue
 
                         for d_idx in to_delete_index:
-                            del a.coupon_expirys[d_idx] 
+                            try:
+                                del a.coupon_expirys[d_idx] 
+                            except:
+                                pass
 
         for agent_num, a in enumerate(self.agents):            
             # TODO: real strategy

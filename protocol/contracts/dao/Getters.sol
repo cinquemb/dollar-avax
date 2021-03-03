@@ -305,17 +305,14 @@ contract Getters is State {
             Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(temp_coupon_auction_epoch);
             
             if (auction.finished) {
-                /*
-                    TODO: 
-                        THINK ABOUT CHECKING IF THE PERSON REDEEMING IS THE CURRENT BEST BIDDER?
-                */
                 uint256 max_assigned_bidders = getTotalFilled(temp_coupon_auction_epoch);
                 for (uint256 b_idx = 0; b_idx < max_assigned_bidders; b_idx++) {
                     address bidderAddress = getCouponBidderStateAssginedAtIndex(temp_coupon_auction_epoch, b_idx);
                     Epoch.CouponBidderState storage bidder = getCouponBidderState(temp_coupon_auction_epoch, bidderAddress);
                     
                     // skip over those bids that have already been redeemed at least partially
-                    if (bidder.redeemed) {
+                    // skip over bids that are expired
+                    if (bidder.redeemed || (temp_coupon_auction_epoch > bidder.couponExpiryEpoch)) {
                         continue;
                     }
                     sumCoupons += bidder.couponAmount;
@@ -344,7 +341,8 @@ contract Getters is State {
                     Epoch.CouponBidderState storage bidder = getCouponBidderState(temp_coupon_auction_epoch, bidderAddress);
                     
                     // skip over those bids that have already been redeemed at least partially
-                    if (bidder.redeemed) {
+                    // skip over bids that are expired
+                    if (bidder.redeemed || (temp_coupon_auction_epoch > bidder.couponExpiryEpoch)) {
                         continue;
                     }
                     sumCoupons += bidder.couponAmount;
@@ -372,7 +370,8 @@ contract Getters is State {
                 Epoch.CouponBidderState storage bidder = getCouponBidderState(epoch, bidderAddress);
                 
                 // skip over those bids that have already been redeemed at least partially
-                if (bidder.redeemed) {
+                // skip over bids that are expired
+                if (bidder.redeemed || (epoch > bidder.couponExpiryEpoch)) {
                     continue;
                 }
                 
