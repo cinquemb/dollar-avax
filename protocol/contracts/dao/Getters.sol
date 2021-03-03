@@ -309,19 +309,78 @@ contract Getters is State {
                     TODO: 
                         THINK ABOUT CHECKING IF THE PERSON REDEEMING IS THE CURRENT BEST BIDDER?
                 */
-                uint256 best_idx = getLatestCouponAuctionRedeemedSelectedBidderIndex(temp_coupon_auction_epoch);
-                address bidderAddress = getCouponBidderStateAssginedAtIndex(temp_coupon_auction_epoch, best_idx);
-                Epoch.CouponBidderState storage bidder = getCouponBidderState(temp_coupon_auction_epoch, bidderAddress);
-                
-                // skip over those bids that have already been redeemed
-                if (bidder.redeemed) {
-                    continue;
+                uint256 max_assigned_bidders = getTotalFilled(temp_coupon_auction_epoch);
+                for (uint256 b_idx = 0; b_idx < max_assigned_bidders; b_idx++) {
+                    address bidderAddress = getCouponBidderStateAssginedAtIndex(temp_coupon_auction_epoch, b_idx);
+                    Epoch.CouponBidderState storage bidder = getCouponBidderState(temp_coupon_auction_epoch, bidderAddress);
+                    
+                    // skip over those bids that have already been redeemed at least partially
+                    if (bidder.redeemed) {
+                        continue;
+                    }
+                    sumCoupons += bidder.couponAmount;
+                    break;
                 }
-                sumCoupons += bidder.couponAmount;
             }
         }
 
         return sumCoupons;
+    }
+
+    function findEarliestActiveAuctionEpoch() internal view returns (uint256) {
+        // loop over past epochs from the latest `dead` epoch to the current
+        uint256 earliest_non_dead_auction_epoch = 1;
+        uint256 current_epoch = epoch();
+        for (uint256 d_idx = getEarliestDeadAuctionEpoch(); d_idx < current_epoch; d_idx++) {
+            uint256 temp_coupon_auction_epoch = d_idx;
+            Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(temp_coupon_auction_epoch);
+            
+            if (auction.finished) {
+                uint256 sumCoupons = 0;
+                uint256 max_assigned_bidders = getTotalFilled(temp_coupon_auction_epoch);
+
+                for (uint256 b_idx = 0; b_idx < max_assigned_bidders; b_idx++) {
+                    address bidderAddress = getCouponBidderStateAssginedAtIndex(temp_coupon_auction_epoch, b_idx);
+                    Epoch.CouponBidderState storage bidder = getCouponBidderState(temp_coupon_auction_epoch, bidderAddress);
+                    
+                    // skip over those bids that have already been redeemed at least partially
+                    if (bidder.redeemed) {
+                        continue;
+                    }
+                    sumCoupons += bidder.couponAmount;
+                    break;
+                }
+
+                if (sumCoupons > 0)
+                    return earliest_non_dead_auction_epoch;
+                else {
+                    earliest_non_dead_auction_epoch = temp_coupon_auction_epoch;
+                }
+            }
+        }
+
+        return earliest_non_dead_auction_epoch;
+    }
+
+    function getBestBidderFromEarliestActiveAuctionEpoch(uint256 epoch) internal view returns (address) {
+        Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(epoch);    
+        if (auction.finished) {
+            uint256 max_assigned_bidders = getTotalFilled(epoch);
+
+            for (uint256 b_idx = 0; b_idx < max_assigned_bidders; b_idx++) {
+                address bidderAddress = getCouponBidderStateAssginedAtIndex(epoch, b_idx);
+                Epoch.CouponBidderState storage bidder = getCouponBidderState(epoch, bidderAddress);
+                
+                // skip over those bids that have already been redeemed at least partially
+                if (bidder.redeemed) {
+                    continue;
+                }
+                
+                return bidderAddress;
+            }
+        } else {
+            return address(0);
+        }
     }
 
     function getSumofBestBidsAcrossCouponAuctionsNew() public view returns (uint256) {

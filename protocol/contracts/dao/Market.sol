@@ -55,6 +55,14 @@ contract Market is Comptroller {
     }
 
     function redeemCoupons(uint256 couponEpoch, uint256 couponAmount) external {
+        address bestBidderFromEpoch = getBestBidderFromEarliestActiveAuctionEpoch(couponEpoch);
+
+        Require.that(
+            bestBidderFromEpoch == msg.sender,
+            FILE,
+            "Must be current best bidder"
+        );
+
         decrementBalanceOfCoupons(msg.sender, couponEpoch, couponAmount, "Market: Insufficient coupon balance");
         redeemToAccount(msg.sender, couponAmount);
         setCouponBidderStateRedeemed(couponEpoch, msg.sender);

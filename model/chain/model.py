@@ -1035,6 +1035,7 @@ class Model:
         #randomly have an agent advance the epoch
         seleted_advancer = self.agents[int(random.random() * (len(self.agents) - 1))]
         self.dao.advance(seleted_advancer)
+        logger.info("Earliest Non Dead Auction: {}".format(self.dao.contract.caller({'from' : seleted_advancer.address, 'gas': 8000000}).getEarliestDeadAuctionEpoch()))
         logger.info("Advance from {}".format(seleted_advancer.address))
 
         (usdc_b, xsd_b) = self.uniswap.getTokenBalance()
