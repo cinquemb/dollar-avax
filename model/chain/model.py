@@ -869,6 +869,8 @@ class DAO:
 
         agent.max_coupon_epoch_index = epoch_index_max
         agent.coupon_expirys += epochs
+
+        agent.coupon_expirys = list(set(agent.coupon_expirys))
         return agent.coupon_expirys
 
     def epoch(self, address):
@@ -1038,10 +1040,19 @@ class Model:
         logger.info("Earliest Non Dead Auction: {}".format(self.dao.contract.caller({'from' : seleted_advancer.address, 'gas': 8000000}).getEarliestDeadAuctionEpoch()))
         logger.info("Advance from {}".format(seleted_advancer.address))
 
+
         (usdc_b, xsd_b) = self.uniswap.getTokenBalance()
         revs = self.uniswap.getReserves()
 
         current_epoch = self.dao.epoch(seleted_advancer.address)
+
+        '''
+        best_bidders = []
+        for c_exp in range(0, current_epoch):
+            b_address = self.dao.contract.caller({'from' : a.address, 'gas': 8000000}).getBestBidderFromEarliestActiveAuctionEpoch(c_exp)
+            best_bidders.append(b_address)
+        '''
+
 
         epoch_start_price = self.uniswap.xsd_price()
 
@@ -1073,24 +1084,23 @@ class Model:
                 if a.coupons > 0:
                     # if agent has coupons
                     # logger.info("COUPON EXP: Agent {}, exp_epochs: {}".format(a.address, json.dumps(a.coupon_expirys)))
+
                     if len(a.coupon_expirys) > 0:
                         a.redeem_count += 1
-                        to_delete_index = []             
                         for c_idx, c_exp in enumerate(a.coupon_expirys):
+                            '''
+                            b_address = self.dao.contract.caller({'from' : a.address, 'gas': 8000000}).getBestBidderFromEarliestActiveAuctionEpoch(c_exp)
+
+                            logger.info(b_address)
+                            if str(b_address) != a.address:
+                                continue
+                            '''
+
                             try:
-                                self.dao.redeem(a, c_exp)
-                                to_delete_index.append(c_idx)
+                                self.dao.redeem(a, c_exp)    
                             except Exception as inst:
                                 if 'revert SafeMath: subtraction overflow' not in str(inst):
                                     logger.info({"agent": a.address, "error": inst, "action": "redeem", "exact_expiry": c_exp})
-                                else:
-                                    continue
-
-                        for d_idx in to_delete_index:
-                            try:
-                                del a.coupon_expirys[d_idx] 
-                            except:
-                                pass
 
         for agent_num, a in enumerate(self.agents):            
             # TODO: real strategy
@@ -1301,6 +1311,9 @@ def main():
     logger.info('Total Agents: {}'.format(len(w3.eth.accounts[:max_accounts])))
     dao = w3.eth.contract(abi=DaoContract['abi'], address=xSDS["addr"])
     logger.info('Dao is at: {}'.format(dao.address))
+
+    #logger.info("Earliest Bidder Non Dead Auction 7: {}".format(dao.caller().balanceOfCoupons("0x4aDB4a0E08D1ca88d30e8e39E3A5dC2720e9015b", 7)))
+    #sys.exit()
     
 
     oracle = w3.eth.contract(abi=OracleContract['abi'], address=dao.caller({'from' : dao.address, 'gas': 8000000}).oracle())
