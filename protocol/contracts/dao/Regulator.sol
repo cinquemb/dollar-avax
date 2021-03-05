@@ -69,10 +69,11 @@ contract Regulator is Comptroller {
 
 
         if (price.greaterThan(Decimal.one())) {
-            setDebtToZero();
-            /* gas costs error */
-            // autoRedeemFromCouponAuctionNew();
+            
             growSupply(price);
+
+            /* gas costs error */
+            //autoRedeemFromCouponAuctionNew();
             return;
         }
 
@@ -221,6 +222,8 @@ contract Regulator is Comptroller {
         /*
             WARNING: may need fundemental constraints in order to cap max run time as epocs grow? (i.e totalRedeemable needs to be a function of auction internals of non dead auctions when twap > 1)
             Redeem the best outstanding bidder at any given time
+
+            // need to find max limit
         */
 
         uint256 earliestDeadauction = 0;
@@ -229,91 +232,29 @@ contract Regulator is Comptroller {
         // this will allow us to reloop over best bidders in each auction
         while (totalRedeemable() > 0) {
             // loop over past epochs from the latest `dead` epoch to the current
-            for (uint256 d_idx = getEarliestDeadAuctionEpoch(); d_idx < uint256(epoch()); d_idx++) {
-                uint256 temp_coupon_auction_epoch = d_idx;
-                Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(temp_coupon_auction_epoch);
+            for (uint256 d_idx = getEarliestDeadAuctionEpoch(); d_idx < epoch(); d_idx++) {
+                uint256 cur_reedemable = totalRedeemable();
+                if (cur_reedemable > 0) {
+                    uint256 tmp_epoch = d_idx;
+                    address baddr = getBestBidderFromEarliestActiveAuctionEpoch(tmp_epoch);
+                    uint256 cur_coupon_idx = getCouponsCurrentAssignedIndex(baddr);
+                    if (cur_coupon_idx > 0)
+                        cur_coupon_idx -= 1;
+                    uint256 exp_epoch = getCouponsAssignedAtEpoch(baddr, cur_coupon_idx);
+                    uint256 bal_coupons = balanceOfCoupons(baddr, exp_epoch);
 
-                // only look at finished auctions
-                if (auction.finished) {
-                    uint256 totalCurrentlyTriedRedeemed = 0;
-                    // loop over bidders in order of assigned per epoch and redeem automatically untill capp is filled for epoch, mark those bids as redeemed, 
+                    if (cur_reedemable < bal_coupons)
+                        return true;
 
-                    uint256 latestRedeemedIndex = getLatestCouponAuctionRedeemedSelectedBidderIndex(temp_coupon_auction_epoch);
-
-                    for (uint256 s_idx = latestRedeemedIndex; s_idx < getTotalFilled(temp_coupon_auction_epoch); s_idx++) {
-                        address bidderAddress = getCouponBidderStateAssginedAtIndex(temp_coupon_auction_epoch, s_idx);
-                        Epoch.CouponBidderState storage bidder = getCouponBidderState(temp_coupon_auction_epoch, bidderAddress);
-
-                        // skip over those bids that have already been redeemed
-                        if (bidder.redeemed) {
-                            totalCurrentlyTriedRedeemed++;
-                            continue;
-                        }
-
-                        uint256 totalRedeemable = totalRedeemable();
-
-                        if (totalRedeemable > bidder.couponAmount) {  
-                            /* TODO
-                                - need to make sure this is "safe" (i.e. it should NOT revert and undo all the previous redemptions, just break and skip while still incrementing total redeemed tried count)
-                            */
-
-                            totalCurrentlyTriedRedeemed++;
-                            setCouponBidderStateRedeemed(temp_coupon_auction_epoch, bidderAddress);
-                            
-                            if (bidder.couponExpiryEpoch > temp_coupon_auction_epoch) {
-                                //check if coupons for epoch are expired already
-                                continue;
-                            }
-
-                            uint256 couponBalance = balanceOfCoupons(bidderAddress, bidder.couponExpiryEpoch);
-
-                            // mark as redeemd
-                            setCouponBidderStateRedeemed(temp_coupon_auction_epoch, bidderAddress);
-                            latestRedeemedIndex++;
-
-                            if (couponBalance > 0) {
-                                uint256 minCouponAmount = checkMinCouponBalance(couponBalance, bidder.couponAmount);
-                                decrementBalanceOfCoupons(bidderAddress, bidder.couponExpiryEpoch, minCouponAmount, "Regulator: Insufficient coupon balance");
-                                redeemToAccount(bidderAddress, minCouponAmount);
-                                // no point in trying to redeem more if quota for epoch is done
-                                willRedeemableOverflow = true;
-                            }
-
-                            // time to jump into next auctions bidders
-                            break;
-                        } else {
-                            // no point in trying to redeem more if quota for epoch is done
-                            willRedeemableOverflow = true;
-                            break;
-                        }
-                    } 
-
-                    // if all have been tried to be redeemd or expired, mark auction as `dead`
-                    if (totalCurrentlyTriedRedeemed == getTotalFilled(temp_coupon_auction_epoch)) {
-                        earliestDeadauction = temp_coupon_auction_epoch;
-                    }
-
-                    // set the next bidder in line for the next iteration
-                    setLatestCouponAuctionRedeemedSelectedBidderIndex(temp_coupon_auction_epoch, latestRedeemedIndex);
-
-                    if (willRedeemableOverflow) {
-                        // stop trying to redeem across auctions
-                        break;
-                    }
+                    decrementBalanceOfCoupons(baddr, exp_epoch, cur_reedemable, "Regulator: Insufficient coupon balance");
+                    redeemToAccount(baddr, cur_reedemable);
+                    setCouponBidderStateRedeemed(exp_epoch, baddr);
                 } else {
-                    earliestDeadauction = temp_coupon_auction_epoch;
+                    return true;
                 }
-            }
-
-            if (willRedeemableOverflow) {
-                // stop trying to redeem across auctions
-                break;
+                
             }
         }
-
-        setEarliestDeadAuctionEpoch(earliestDeadauction);
-        setCouponAuctionStateDead(earliestDeadauction);
-
         return true;
     }
 

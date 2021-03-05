@@ -313,7 +313,7 @@ contract Getters is State {
                     // skip over those bids that have already been redeemed at least partially
                     // skip over bids that are expired
                     // skip over if balance of coupons for address is zero at epoch
-                    if (bidder.redeemed || (temp_coupon_auction_epoch > bidder.couponExpiryEpoch) || (balanceOfCoupons(bidderAddress, temp_coupon_auction_epoch) == 0)) {
+                    if (bidder.redeemed || (temp_coupon_auction_epoch > bidder.couponExpiryEpoch) || (balanceOfCoupons(bidderAddress, bidder.couponExpiryEpoch) == 0)) {
                         continue;
                     } else {
                         sumCoupons += bidder.couponAmount;
@@ -346,7 +346,7 @@ contract Getters is State {
                     // skip over those bids that have already been redeemed at least partially
                     // skip over bids that are expired
                     // skip over if balance of coupons for address is zero at epoch
-                    if (bidder.redeemed || (temp_coupon_auction_epoch > bidder.couponExpiryEpoch) || (balanceOfCoupons(bidderAddress, temp_coupon_auction_epoch) == 0)) {
+                    if (bidder.redeemed || (temp_coupon_auction_epoch > bidder.couponExpiryEpoch) || (balanceOfCoupons(bidderAddress, bidder.couponExpiryEpoch) == 0)) {
                         continue;
                     } else {
                         sumCoupons += bidder.couponAmount;
@@ -375,7 +375,7 @@ contract Getters is State {
                 // skip over those bids that have already been redeemed at least partially
                 // skip over bids that are expired
                 // skip over if balance of coupons for address is zero at epoch
-                if (bidder.redeemed || (epoch > bidder.couponExpiryEpoch) || (balanceOfCoupons(bidderAddress, epoch) == 0)) {
+                if (bidder.redeemed || (epoch > bidder.couponExpiryEpoch) || (balanceOfCoupons(bidderAddress, bidder.couponExpiryEpoch) == 0)) {
                     continue;
                 }
                 

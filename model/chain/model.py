@@ -565,7 +565,7 @@ class Agent:
             self.xsd, self.usdc, self.eth, self.lp, self.coupons)
 
         
-    def get_strategy(self, block, price, total_supply, total_coupons):
+    def get_strategy(self, block, price, total_supply, total_coupons, agent_coupons):
         """
         Get weights, as a dict from action to float, as a function of the price.
         """
@@ -598,7 +598,7 @@ class Agent:
             # Vary our strategy based on how much xSD we think ought to exist
             if price * total_supply > self.get_faith(block, price, total_supply):
                 # There is too much xSD, so we want to sell
-                strategy["sell"] = 10.0 if ((self.coupons > 0) and (price > 1.0)) else 2.0
+                strategy["sell"] = 10.0 if ((agent_coupons> 0) and (price > 1.0)) else 2.0
             else:
                 # no faith based buying, just selling
                 pass
@@ -913,7 +913,7 @@ class DAO:
         if total_coupons == 0:
             return
 
-        self.contract.functions.redeemCoupons(
+        tx_hash = self.contract.functions.redeemCoupons(
             epoch_expired,
             total_coupons
         ).transact({
@@ -922,6 +922,7 @@ class DAO:
             'gas': 8000000,
             'gasPrice': 1,
         })
+
 
     def advance(self, agent):
         """
@@ -968,6 +969,7 @@ class Model:
         self.max_coupon_exp = 131400
         self.max_coupon_premium = 10 #redoo with 10 with same settings
         self.min_usdc_balance = self.usdc_token.from_tokens(200)
+        self.agent_coupons = {x: 0 for x in agents}
 
 
         is_mint = is_try_model_mine
@@ -984,7 +986,7 @@ class Model:
             
             address = agents[i]
             agent = Agent(self.dao, uniswap, xsd, usdc, starting_eth=start_eth, starting_usdc=start_usdc, wallet_address=address, is_mint=is_mint, **kwargs)
-            #print (agent)  
+            #logger.info(agent)  
             self.agents.append(agent)
         #sys.exit()
 
@@ -1076,31 +1078,36 @@ class Model:
         total_coupoun_bidders = 0
         random.shuffle(self.agents)
 
-        is_uni_op = self.uniswap.operational()    
+        is_uni_op = self.uniswap.operational()
+        
 
-        for agent_num, a in enumerate(self.agents):
-            # try to redeem any outstanding coupons here first to better
-            if epoch_start_price > 1.0 and total_coupons > 0:
-                if a.coupons > 0:
-                    # if agent has coupons
-                    # logger.info("COUPON EXP: Agent {}, exp_epochs: {}".format(a.address, json.dumps(a.coupon_expirys)))
 
-                    if len(a.coupon_expirys) > 0:
+        # try to redeem any outstanding coupons here first to better
+        if epoch_start_price > 1.0 and total_coupons > 0:
+            for agent_num, a in enumerate(self.agents):
+                tr = self.dao.contract.caller({'from' : a.address, 'gas': 8000000}).totalRedeemable()
+                if tr == 0:
+                    break
+                
+                if self.agent_coupons[a.address] > 0 and tr >= self.agent_coupons[a.address]:
+                    # if agent has coupons                    
+                    logger.info("COUPON EXP: Agent {}, exp_epochs: {}".format(a.address, json.dumps(a.coupon_expirys)))
+
+                    if len(a.coupon_expirys) == 0:
+                        #logger.info("ERROR WITH EXIPRIATION LIST")
+                        continue
+                    else:
                         a.redeem_count += 1
+                        tried_idx = []
                         for c_idx, c_exp in enumerate(a.coupon_expirys):
-                            '''
-                            b_address = self.dao.contract.caller({'from' : a.address, 'gas': 8000000}).getBestBidderFromEarliestActiveAuctionEpoch(c_exp)
-
-                            logger.info(b_address)
-                            if str(b_address) != a.address:
-                                continue
-                            '''
-
                             try:
-                                self.dao.redeem(a, c_exp)    
+                                self.dao.redeem(a, c_exp)
+                                tried_idx.append(c_idx)
                             except Exception as inst:
-                                if 'revert SafeMath: subtraction overflow' not in str(inst):
-                                    logger.info({"agent": a.address, "error": inst, "action": "redeem", "exact_expiry": c_exp})
+                                logger.info({"agent": a.address, "error": inst, "action": "redeem", "exact_expiry": c_exp})
+
+                        filt_list = [j for i, j in enumerate(a.coupon_expirys) if i not in tried_idx]
+                        a.coupon_expirys = filt_list
 
         for agent_num, a in enumerate(self.agents):            
             # TODO: real strategy
@@ -1141,7 +1148,7 @@ class Model:
                         advance, provide_liquidity, remove_liquidity, buy, sell, coupon_bid, redeem, 
                 '''
         
-                strategy = a.get_strategy(w3.eth.get_block('latest')["number"], self.uniswap.xsd_price(), dao_xsd_supply, total_coupons)
+                strategy = a.get_strategy(w3.eth.get_block('latest')["number"], self.uniswap.xsd_price(), dao_xsd_supply, total_coupons, self.agent_coupons[a.address])
                 
                 weights = [strategy[o] for o in options]
                 
@@ -1221,6 +1228,7 @@ class Model:
                         exact_expiry = rand_epoch_expiry + current_epoch
                         #logger.info("Addr {} Bid to burn init {:.2f} xSD for {:.2f} coupons with expiry at epoch {}".format(a.address, xsd_at_risk, rand_max_coupons, exact_expiry))
                         self.dao.coupon_bid(a, rand_epoch_expiry, xsd_at_risk, rand_max_coupons)
+                        self.agent_coupons[a.address] = a.coupons
                         self.dao.get_coupon_expirirations(a)
                         #logger.info("Addr {} Bid to burn end {:.2f} xSD for {:.2f} coupons with expiry at epoch {}".format(a.address, xsd_at_risk, rand_max_coupons, exact_expiry))
                         total_coupoun_bidders += 1
@@ -1312,8 +1320,35 @@ def main():
     dao = w3.eth.contract(abi=DaoContract['abi'], address=xSDS["addr"])
     logger.info('Dao is at: {}'.format(dao.address))
 
-    #logger.info("Earliest Bidder Non Dead Auction 7: {}".format(dao.caller().balanceOfCoupons("0x4aDB4a0E08D1ca88d30e8e39E3A5dC2720e9015b", 7)))
+    '''
+    #for acc in w3.eth.accounts[:max_accounts]:
+    #    logger.info("how many times assigned coupons for {}: {}".format(acc, dao.caller().getCouponsCurrentAssignedIndex(acc)+1))
+
+    logger.info("getTotalFilled at epoch 4: {}".format(dao.caller().getTotalFilled(4)))
+
+    baddr = dao.caller().getBestBidderFromEarliestActiveAuctionEpoch(4)
+    exp = dao.caller({'from' : baddr, 'gas': 8000000}).getCouponsAssignedAtEpoch(baddr, 0)
+    logger.info("getBestBidderFromEarliestActiveAuctionEpoch at epoch 4: {}".format(baddr))
+    logger.info("getCouponsAssignedAtEpoch at epoch 4: epoch exp {}".format(exp))
+
+    total_coupons = dao.caller({'from' : baddr, 'gas': 8000000}).balanceOfCoupons(baddr, exp)
+    logger.info("total_coupons at exp epoch {}: {}".format(exp, total_coupons))
+    tr = dao.caller({'from' : baddr, 'gas': 8000000}).totalRedeemable()
+    logger.info("totalRedeemable: {}".format(tr))
+    
+    dao.functions.redeemCoupons(
+        88665,
+        328000000000000000000
+    ).transact({
+        'nonce': w3.eth.getTransactionCount(baddr, block_identifier=int(w3.eth.get_block('latest')["number"])),
+        'from' : baddr,
+        'gas': 8000000,
+        'gasPrice': 1,
+    })
+    '''
+
     #sys.exit()
+
     
 
     oracle = w3.eth.contract(abi=OracleContract['abi'], address=dao.caller({'from' : dao.address, 'gas': 8000000}).oracle())
