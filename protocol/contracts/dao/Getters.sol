@@ -79,10 +79,6 @@ contract Getters is State {
         return _state.balance.staged;
     }
 
-    function totalDebt() public view returns (uint256) {
-        return _state.balance.debt;
-    }
-
     function totalRedeemable() public view returns (uint256) {
         return _state.balance.redeemable;
     }
@@ -96,7 +92,7 @@ contract Getters is State {
     }
 
     function totalNet() public view returns (uint256) {
-        return dollar().totalSupply().sub(totalDebt());
+        return dollar().totalSupply();
     }
 
     /**

@@ -54,18 +54,6 @@ contract Setters is State, Getters {
         _state.balance.bonded = _state.balance.bonded.sub(amount, reason);
     }
 
-    function incrementTotalDebt(uint256 amount) internal {
-        _state.balance.debt = _state.balance.debt.add(amount);
-    }
-
-    function decrementTotalDebt(uint256 amount, string memory reason) internal {
-        _state.balance.debt = _state.balance.debt.sub(amount, reason);
-    }
-
-    function setDebtToZero() internal {
-        _state.balance.debt = 0;
-    }
-
     function incrementTotalRedeemable(uint256 amount) internal {
         _state.balance.redeemable = _state.balance.redeemable.add(amount);
     }

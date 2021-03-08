@@ -40,22 +40,18 @@ contract Comptroller is Setters {
     function burnFromAccount(address account, uint256 amount) internal {
         dollar().transferFrom(account, address(this), amount);
         dollar().burn(amount);
-        decrementTotalDebt(amount, "Comptroller: not enough outstanding debt");
-
         balanceCheck();
     }
 
     function redeemToAccount(address account, uint256 amount) internal {
         dollar().transfer(account, amount);
         decrementTotalRedeemable(amount, "Comptroller: not enough redeemable balance");
-
         balanceCheck();
     }
 
     function burnRedeemable(uint256 amount) internal {
         dollar().burn(amount);
         decrementTotalRedeemable(amount, "Comptroller: not enough redeemable balance");
-
         balanceCheck();
     }
 
@@ -107,7 +103,6 @@ contract Comptroller is Setters {
     function mintToRedeemable(uint256 amount) private {
         dollar().mint(address(this), amount);
         incrementTotalRedeemable(amount);
-
         balanceCheck();
     }
 }
