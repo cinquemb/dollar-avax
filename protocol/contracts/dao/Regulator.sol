@@ -246,8 +246,8 @@ contract Regulator is Comptroller {
                     if (cur_reedemable < bal_coupons)
                         return true;
 
-                    decrementBalanceOfCoupons(baddr, exp_epoch, cur_reedemable, "Regulator: Insufficient coupon balance");
-                    redeemToAccount(baddr, cur_reedemable);
+                    decrementBalanceOfCoupons(baddr, exp_epoch, bal_coupons, "Regulator: Insufficient coupon balance");
+                    redeemToAccount(baddr, bal_coupons);
                     setCouponBidderStateRedeemed(exp_epoch, baddr);
                 } else {
                     return true;

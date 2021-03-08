@@ -986,9 +986,9 @@ class Model:
             
             address = agents[i]
             agent = Agent(self.dao, uniswap, xsd, usdc, starting_eth=start_eth, starting_usdc=start_usdc, wallet_address=address, is_mint=is_mint, **kwargs)
-            #logger.info(agent)  
+            logger.info(agent)  
             self.agents.append(agent)
-        #sys.exit()
+        sys.exit()
 
         if is_try_model_mine:
             for i in range(0, total_tx_submitted):
@@ -1080,8 +1080,6 @@ class Model:
 
         is_uni_op = self.uniswap.operational()
         
-
-
         # try to redeem any outstanding coupons here first to better
         if epoch_start_price > 1.0 and total_coupons > 0:
             for agent_num, a in enumerate(self.agents):
@@ -1320,10 +1318,9 @@ def main():
     dao = w3.eth.contract(abi=DaoContract['abi'], address=xSDS["addr"])
     logger.info('Dao is at: {}'.format(dao.address))
 
+    for acc in w3.eth.accounts[:max_accounts]:
+        logger.info("how many times assigned coupons for {}: {}".format(acc, dao.caller().getCouponsCurrentAssignedIndex(acc)+1))
     '''
-    #for acc in w3.eth.accounts[:max_accounts]:
-    #    logger.info("how many times assigned coupons for {}: {}".format(acc, dao.caller().getCouponsCurrentAssignedIndex(acc)+1))
-
     logger.info("getTotalFilled at epoch 4: {}".format(dao.caller().getTotalFilled(4)))
 
     baddr = dao.caller().getBestBidderFromEarliestActiveAuctionEpoch(4)
@@ -1345,12 +1342,8 @@ def main():
         'gas': 8000000,
         'gasPrice': 1,
     })
+    sys.exit()
     '''
-
-    #sys.exit()
-
-    
-
     oracle = w3.eth.contract(abi=OracleContract['abi'], address=dao.caller({'from' : dao.address, 'gas': 8000000}).oracle())
     logger.info("Oracle is at: {}".format(oracle.address))
 
