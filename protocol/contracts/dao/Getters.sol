@@ -216,10 +216,6 @@ contract Getters is State {
         return _state.epochs[epoch].auction.finished;
     }
 
-    function isCouponAuctionCanceled(uint256 epoch) internal view returns (bool){
-        return _state.epochs[epoch].auction.canceled;
-    }
-
     function getCouponAuctionMinExpiry(uint256 epoch) internal view returns (uint256) {
         return _state.epochs[epoch].auction.minExpiry;
     }

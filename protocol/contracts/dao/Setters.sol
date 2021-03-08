@@ -103,7 +103,6 @@ contract Setters is State, Getters {
         _state.epochs[epoch].coupons.outstanding = _state.epochs[epoch].coupons.outstanding.sub(amount, reason);
         _state.balance.coupons = _state.balance.coupons.sub(amount, reason);
         _state.accounts[account].outstanding_coupons = _state.accounts[account].outstanding_coupons.sub(amount);
-        
     }
 
     function incrementCouponsAssignedIndex(address account) internal {
@@ -162,10 +161,6 @@ contract Setters is State, Getters {
             _state.epochs[epoch()].auction.isInit = true;
             _state.epochs[epoch()].auction.latestRedeemedSelectedBidderIndex = 0;
         }
-    }
-
-    function cancelCouponAuctionAtEpoch(uint256 epoch) internal {
-        _state.epochs[epoch].auction.canceled = true;
     }
 
     function finishCouponAuctionAtEpoch(uint256 epoch) internal {
@@ -266,10 +261,6 @@ contract Setters is State, Getters {
 
     function setTotalAuctioned(uint256 epoch, uint256 totalAuctioned) internal {
         _state.epochs[epoch].auction.totalAuctioned = totalAuctioned;
-    }
-
-    function setCouponAuctionStateDead(uint256 epoch) internal {
-        _state.epochs[epoch].auction.dead = true;
     }
 
     function setTotalBurned(uint256 epoch, uint256 totalBurned) internal {

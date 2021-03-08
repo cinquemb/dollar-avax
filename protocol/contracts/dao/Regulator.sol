@@ -104,7 +104,7 @@ contract Regulator is Comptroller {
     }
     
     function settleCouponAuction(uint256 settlementEpoch) internal returns (bool success) {
-        if (!isCouponAuctionFinished(settlementEpoch) && !isCouponAuctionCanceled(settlementEpoch)) {
+        if (!isCouponAuctionFinished(settlementEpoch)) {
 
             uint256 maxBidLen = getCouponAuctionBids(settlementEpoch);
             settleCouponAuctionBidsInOrder(settlementEpoch, maxBidLen);
@@ -252,7 +252,6 @@ contract Regulator is Comptroller {
                 } else {
                     return true;
                 }
-                
             }
         }
         return true;

@@ -51,13 +51,10 @@ contract Epoch {
     }
 
     struct Coupons {
-        uint256 expiration;
-        uint256[] expiring;
         uint256 outstanding;
     }
 
     struct CouponBidderState {
-        bool dead;
         bool selected;
         bool redeemed;
         address bidder;
@@ -71,9 +68,7 @@ contract Epoch {
     }
 
     struct AuctionState {
-        bool dead;
         bool isInit;
-        bool canceled;
         bool finished;
         uint256 minYield;
         uint256 maxYield;
@@ -131,7 +126,6 @@ contract Storage {
     }
 
     struct Balance {
-        uint256 debt;
         uint256 supply;
         uint256 bonded;
         uint256 staged;
