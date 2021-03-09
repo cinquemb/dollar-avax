@@ -32,12 +32,12 @@ provider = Web3.HTTPProvider('http://localhost:7545', request_kwargs={"timeout":
 #provider = Web3.IPCProvider("./development.ipc")
 w3 = Web3(provider)
 
-# from (Uniswap pair is at:)
-UNI = {
+# from (Pangolin pair is at:)
+PGL = {
   "addr": '',
   "decimals": 18,
-  "symbol": 'UNI',
-  "deploy_slug": "Uniswap pair is at: "
+  "symbol": 'PGL',
+  "deploy_slug": "Pangolin pair is at: "
 }
 
 # USDC is at: 
@@ -49,20 +49,20 @@ USDC = {
 }
 
 #Pool is at: 
-UNIV2LP = {
+PGLLP = {
     "addr": '',
     "decimals": 18,
     "deploy_slug": "Pool is at: "
 }
 
-#UniswapV2Router is at: 
-UNIV2Router = {
+#PangolinRouter is at: 
+PGLRouter = {
     "addr": "",
     "decimals": 12,
-    "deploy_slug": "UniswapV2Router is at: "
+    "deploy_slug": "PangolinRouter is at: "
 }
 
-for contract in [UNI, USDC, UNIV2LP, UNIV2Router]:
+for contract in [UNI, USDC, PGLLP, PGLRouter]:
     logger.info(contract["deploy_slug"])
     contract["addr"] = deploy_data.split(contract["deploy_slug"])[1].split('\n')[0]
     logger.info('\t'+contract["addr"])
@@ -87,9 +87,8 @@ USDCContract = json.loads(open('./build/contracts/TestnetUSDC.json', 'r+').read(
 # Use the full Dollar ABI so we can interrogate the token for metadata
 DollarContract = json.loads(open('./build/contracts/Dollar.json', 'r+').read())
 
-UniswapPairContract = json.loads(open('./build/contracts/IUniswapV2Pair.json', 'r+').read())
-UniswapRouterAbiContract = json.loads(open('./node_modules/@uniswap/v2-periphery/build/IUniswapV2Router02.json', 'r+').read())
-UniswapClientAbiContract = json.loads(open('./node_modules/@uniswap/v2-core/build/IUniswapV2ERC20.json', 'r+').read())
+PangolinPairContract = json.loads(open('./build/contracts/IPangolinPair.json', 'r+').read())
+PangolinRouterAbiContract = json.loads(open('./node_modules/@pangolindex/exchange-contracts/artifacts/contracts/pangolin-periphery/interfaces/IPangolinRouter.sol/IPangolinRouter.json', 'r+').read())
 TokenContract = json.loads(open('./build/contracts/Root.json', 'r+').read())
 PoolContract = json.loads(open('./build/contracts/Pool.json', 'r+').read())
 OracleContract = json.loads(open('./build/contracts/MockOracle.json', 'r+').read())
@@ -475,7 +474,7 @@ class Agent:
     Represents an agent. Tracks all the agent's balances.
     """
     
-    def __init__(self, dao, uniswap_pair, xsd_token, usdc_token, **kwargs):
+    def __init__(self, dao, pangolin_pair, xsd_token, usdc_token, **kwargs):
  
         # xSD TokenProxy
         self.xsd_token = xsd_token
@@ -511,8 +510,8 @@ class Agent:
         # current coupon assigned index of epoch
         self.max_coupon_epoch_index = 0
 
-        # Uniswap Pair TokenProxy
-        self.uniswap_pair_token = uniswap_pair
+        # Pangolin Pair TokenProxy
+        self.pangolin_token = pangolin_pair
 
         # keeps track of latest block seen for nonce tracking/tx
         self.seen_block = {}
@@ -546,9 +545,9 @@ class Agent:
     @property
     def lp(self):
         """
-        Get the current balance in Uniswap LP Shares from the TokenProxy.
+        Get the current balance in Pangolin LP Shares from the TokenProxy.
         """
-        return self.uniswap_pair_token[self]
+        return self.pangolin_pair_token[self]
 
     @property
     def coupons(self):
@@ -626,15 +625,15 @@ class Agent:
         
         return faith
         
-class UniswapPool:
+class PangolinPool:
     """
-    Represents the Uniswap pool. Tracks xSD and USDC balances of pool, and total outstanding LP shares.
+    Represents the Pangolin pool. Tracks xSD and USDC balances of pool, and total outstanding LP shares.
     """
     
-    def __init__(self, uniswap, uniswap_router, uniswap_token, usdc_token, xsd_token, **kwargs):
-        self.uniswap_pair_token = uniswap
-        self.uniswap_router = uniswap_router
-        self.uniswap_token = uniswap_token
+    def __init__(self, pangolin, pangolin_router, pangolin_token, usdc_token, xsd_token, **kwargs):
+        self.pangolin_pair_token = pangolin
+        self.pangolin_router = pangolin_router
+        self.pangolin_token = pangolin_token
         self.usdc_token = usdc_token
         self.xsd_token = xsd_token
     
@@ -648,11 +647,11 @@ class UniswapPool:
         return token0Balance > 0 and token1Balance > 0
     
     def getToken0(self):
-        exchange = self.uniswap_pair_token.contract
+        exchange = self.pangolin_pair_token.contract
         return exchange.functions.token0().call()
 
     def getReserves(self):
-        exchange = self.uniswap_pair_token.contract
+        exchange = self.pangolin_pair_token.contract
         return exchange.functions.getReserves().call()
 
     def getTokenBalance(self):
@@ -668,8 +667,8 @@ class UniswapPool:
       token0Balance = reserve[0]
       token1Balance = reserve[1]
       if (token0.lower() == USDC["addr"].lower()):
-        return int(token0Balance) * pow(10, UNIV2Router['decimals']) / float(int(token1Balance)) if int(token1Balance) != 0 else 0
-      return int(token1Balance) * pow(10, UNIV2Router['decimals']) / float(int(token0Balance)) if int(token0Balance) != 0 else 0
+        return int(token0Balance) * pow(10, PGLRouter['decimals']) / float(int(token1Balance)) if int(token1Balance) != 0 else 0
+      return int(token1Balance) * pow(10, PGLRouter['decimals']) / float(int(token0Balance)) if int(token0Balance) != 0 else 0
     
     def xsd_price(self):
         """
@@ -694,15 +693,15 @@ class UniswapPool:
             return 1.0
 
     def total_lp(self):
-        return reg_int(self.uniswap_pair_token.contract.functions.totalSupply().call(), UNIV2Router['decimals'])
+        return reg_int(self.pangolin_pair_token.contract.functions.totalSupply().call(), PGLRouter['decimals'])
         
     def provide_liquidity(self, agent, xsd, usdc):
         """
         Provide liquidity.
         """        
         
-        self.usdc_token.ensure_approved(agent, UNIV2Router["addr"])
-        self.xsd_token.ensure_approved(agent, UNIV2Router["addr"])
+        self.usdc_token.ensure_approved(agent, PGLRouter["addr"])
+        self.xsd_token.ensure_approved(agent, PGLRouter["addr"])
         
         slippage = 0.01
         min_xsd_amount = (xsd * (1 - slippage))
@@ -716,7 +715,7 @@ class UniswapPool:
             assert xsd_wei >= xsd.to_wei()
             assert usdc_wei >= usdc.to_wei()
 
-        rv = self.uniswap_router.functions.addLiquidity(
+        rv = self.pangolin_router.functions.addLiquidity(
             self.xsd_token.address,
             self.usdc_token.address,
             unreg_int(xsd, xSD['decimals']),
@@ -737,16 +736,16 @@ class UniswapPool:
         Remove liquidity for the given number of shares.
 
         """
-        self.uniswap_pair_token.ensure_approved(agent, UNIV2Router["addr"])
+        self.pangolin_pair_token.ensure_approved(agent, PGLRouter["addr"])
 
         slippage = 0.01
         min_xsd_amount = (min_xsd_amount * (1 - slippage))
         min_usdc_amount = (min_usdc_amount * (1 - slippage))
 
-        self.uniswap_router.functions.removeLiquidity(
+        self.pangolin_router.functions.removeLiquidity(
             self.xsd_token.address,
             self.usdc_token.address,
-            unreg_int(shares, UNIV2Router['decimals']),
+            unreg_int(shares, PGLRouter['decimals']),
             unreg_int(min_xsd_amount, xSD['decimals']),
             unreg_int(min_usdc_amount, USDC['decimals']),
             agent.address,
@@ -765,14 +764,14 @@ class UniswapPool:
         ['swapTokensForExactTokens(uint256,uint256,address[],address,uint256)']
         """  
         
-        self.usdc_token.ensure_approved(agent, UNIV2Router["addr"])
-        self.xsd_token.ensure_approved(agent, UNIV2Router["addr"])
+        self.usdc_token.ensure_approved(agent, PGLRouter["addr"])
+        self.xsd_token.ensure_approved(agent, PGLRouter["addr"])
 
         # explore this more?
         slippage = 0.01
         max_usdc_amount = (max_usdc_amount * (1 + slippage))
 
-        self.uniswap_router.functions.swapExactTokensForTokens(
+        self.pangolin_router.functions.swapExactTokensForTokens(
             usdc.to_wei(),
             max_usdc_amount.to_wei(),
             [self.usdc_token.address, self.xsd_token.address],
@@ -785,19 +784,19 @@ class UniswapPool:
             'gasPrice': 1,
         })
         
-    def sell(self, agent, xsd, min_usdc_amount, advancer, uniswap_usdc_supply):
+    def sell(self, agent, xsd, min_usdc_amount, advancer, pangolin_usdc_supply):
         """
         Sell the given number of xSD for USDC.
         """
 
-        self.usdc_token.ensure_approved(agent, UNIV2Router["addr"])
-        self.xsd_token.ensure_approved(agent, UNIV2Router["addr"])
+        self.usdc_token.ensure_approved(agent, PGLRouter["addr"])
+        self.xsd_token.ensure_approved(agent, PGLRouter["addr"])
 
         # explore this more?
-        slippage = 0.99 if (advancer.address == agent.address) or ((agent.redeem_count > 0) and agent.xsd > uniswap_usdc_supply) else 0.01
+        slippage = 0.99 if (advancer.address == agent.address) or ((agent.redeem_count > 0) and agent.xsd > pangolin_usdc_supply) else 0.01
         min_usdc_amount = (min_usdc_amount * (1 - slippage))
 
-        self.uniswap_router.functions.swapExactTokensForTokens(
+        self.pangolin_router.functions.swapExactTokensForTokens(
             xsd.to_wei(),
             min_usdc_amount.to_wei(),
             [self.xsd_token.address, self.usdc_token.address],
@@ -811,7 +810,7 @@ class UniswapPool:
         })
 
     def update(self, is_init_agents=[]):
-        self.uniswap_pair_token.update(is_init_agents=is_init_agents)
+        self.pangolin_pair_token.update(is_init_agents=is_init_agents)
 
 class DAO:
     """
@@ -953,15 +952,15 @@ class Model:
     Full model of the economy.
     """
     
-    def __init__(self, dao, uniswap, usdc, uniswap_router, uniswap_token, xsd, agents, **kwargs):
+    def __init__(self, dao, pangolin, usdc, pangolin_router, pangolin_token, xsd, agents, **kwargs):
         """
         Takes in experiment parameters and forwards them on to all components.
         """
-        self.uniswap = UniswapPool(uniswap, uniswap_router, uniswap_token, usdc, xsd, **kwargs)
+        self.pangolin = PangolinPool(pangolin, pangolin_router, pangolin_token, usdc, xsd, **kwargs)
         self.dao = DAO(dao, xsd, **kwargs)
         self.agents = []
         self.usdc_token = usdc
-        self.uniswap_router = uniswap_router
+        self.pangolin_router = pangolin_router
         self.xsd_token = xsd
         self.max_eth = Balance.from_tokens(100000, 18)
         self.max_usdc = self.usdc_token.from_tokens(100000)
@@ -985,7 +984,7 @@ class Model:
             start_usdc = random.random() * self.max_usdc
             
             address = agents[i]
-            agent = Agent(self.dao, uniswap, xsd, usdc, starting_eth=start_eth, starting_usdc=start_usdc, wallet_address=address, is_mint=is_mint, **kwargs)
+            agent = Agent(self.dao, pangolin, xsd, usdc, starting_eth=start_eth, starting_usdc=start_usdc, wallet_address=address, is_mint=is_mint, **kwargs)
             logger.info(agent)  
             self.agents.append(agent)
         sys.exit()
@@ -997,7 +996,7 @@ class Model:
         # Update caches to current chain state
         self.usdc_token.update(is_init_agents=self.agents)
         self.xsd_token.update(is_init_agents=self.agents)
-        self.uniswap.update(is_init_agents=self.agents)
+        self.pangolin.update(is_init_agents=self.agents)
         
     def log(self, stream, seleted_advancer, header=False):
         """
@@ -1011,7 +1010,7 @@ class Model:
         stream.write('{}\t{}\t{:.2f}\t{:.2f}\t{:.2f}\t{:.2f}\n'.format(
             w3.eth.get_block('latest')["number"],
             self.dao.epoch(seleted_advancer.address),
-            self.uniswap.xsd_price(),
+            self.pangolin.xsd_price(),
             self.dao.xsd_supply(),
             self.dao.total_coupons(),
             self.get_overall_faith())
@@ -1021,7 +1020,7 @@ class Model:
         """
         What target should the system be trying to hit in xSD market cap?
         """
-        return self.agents[0].get_faith(w3.eth.get_block('latest')["number"], self.uniswap.xsd_price(), self.dao.xsd_supply())
+        return self.agents[0].get_faith(w3.eth.get_block('latest')["number"], self.pangolin.xsd_price(), self.dao.xsd_supply())
        
     def step(self):
         """
@@ -1034,7 +1033,7 @@ class Model:
         # Update caches to current chain state
         self.usdc_token.update()
         self.xsd_token.update()
-        self.uniswap.update()
+        self.pangolin.update()
 
         #randomly have an agent advance the epoch
         seleted_advancer = self.agents[int(random.random() * (len(self.agents) - 1))]
@@ -1043,8 +1042,8 @@ class Model:
         logger.info("Advance from {}".format(seleted_advancer.address))
 
 
-        (usdc_b, xsd_b) = self.uniswap.getTokenBalance()
-        revs = self.uniswap.getReserves()
+        (usdc_b, xsd_b) = self.pangolin.getTokenBalance()
+        revs = self.pangolin.getReserves()
 
         current_epoch = self.dao.epoch(seleted_advancer.address)
 
@@ -1056,7 +1055,7 @@ class Model:
         '''
 
 
-        epoch_start_price = self.uniswap.xsd_price()
+        epoch_start_price = self.pangolin.xsd_price()
 
         dao_xsd_supply = self.dao.xsd_supply()
 
@@ -1078,7 +1077,7 @@ class Model:
         total_coupoun_bidders = 0
         random.shuffle(self.agents)
 
-        is_uni_op = self.uniswap.operational()
+        is_uni_op = self.pangolin.operational()
         
         # try to redeem any outstanding coupons here first to better
         if epoch_start_price > 1.0 and total_coupons > 0:
@@ -1146,7 +1145,7 @@ class Model:
                         advance, provide_liquidity, remove_liquidity, buy, sell, coupon_bid, redeem, 
                 '''
         
-                strategy = a.get_strategy(w3.eth.get_block('latest')["number"], self.uniswap.xsd_price(), dao_xsd_supply, total_coupons, self.agent_coupons[a.address])
+                strategy = a.get_strategy(w3.eth.get_block('latest')["number"], self.pangolin.xsd_price(), dao_xsd_supply, total_coupons, self.agent_coupons[a.address])
                 
                 weights = [strategy[o] for o in options]
                 
@@ -1167,7 +1166,7 @@ class Model:
                         continue
 
                     try:
-                        (max_amount, _) = self.uniswap_router.caller({'from' : a.address, 'gas': 8000000}).getAmountsIn(
+                        (max_amount, _) = self.pangolin_router.caller({'from' : a.address, 'gas': 8000000}).getAmountsIn(
                             unreg_int(usdc_in, USDC['decimals']), 
                             [self.usdc_token.address, self.xsd_token.address]
                         )
@@ -1180,7 +1179,7 @@ class Model:
                     try:
                         price = epoch_start_price
                         #logger.debug("Buy init {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(usdc_in, price, max_amount))
-                        self.uniswap.buy(a, usdc_in, max_amount)
+                        self.pangolin.buy(a, usdc_in, max_amount)
                         #logger.debug("Buy end {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(max_amount, price, usdc_in))
                         
                     except Exception as inst:
@@ -1200,7 +1199,7 @@ class Model:
                         continue
                     
                     try:
-                        (_, max_amount) = self.uniswap_router.caller({'from' : a.address, 'gas': 8000000}).getAmountsOut(
+                        (_, max_amount) = self.pangolin_router.caller({'from' : a.address, 'gas': 8000000}).getAmountsOut(
                             unreg_int(xsd_out, xSD['decimals']), 
                             [self.xsd_token.address, self.usdc_token.address]
                         )
@@ -1211,7 +1210,7 @@ class Model:
                     try:
                         price = epoch_start_price
                         #logger.debug("Sell init {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd_out, price, max_amount))
-                        self.uniswap.sell(a, xsd_out, max_amount, seleted_advancer, usdc_b.to_decimals(xSD['decimals']))
+                        self.pangolin.sell(a, xsd_out, max_amount, seleted_advancer, usdc_b.to_decimals(xSD['decimals']))
                         #logger.debug("Sell end {:.2f} xSD @ {:.2f} for {:.2f} USDC".format(xsd_out, price, usdc))
                     except Exception as inst:
                         logger.info({"agent": a.address, "error": inst, "action": "sell", "xsd_out": xsd_out, "max_amount": max_amount, "account_xsd": a.xsd})
@@ -1241,7 +1240,7 @@ class Model:
                         usdc = portion_dedusted(a.usdc, commitment)
                         
                     if revs[1] > 0:
-                        min_xsd_needed = reg_int(self.uniswap_router.caller({'from' : a.address, 'gas': 8000000}).quote(unreg_int(usdc, USDC['decimals']), revs[0], revs[1]), xSD['decimals'])
+                        min_xsd_needed = reg_int(self.pangolin_router.caller({'from' : a.address, 'gas': 8000000}).quote(unreg_int(usdc, USDC['decimals']), revs[0], revs[1]), xSD['decimals'])
                         if min_xsd_needed == 0:
                             price = epoch_start_price
                             min_xsd_needed = (usdc / float(price)).to_decimals(xSD['decimals'])
@@ -1253,16 +1252,16 @@ class Model:
 
                     try:
                         #logger.debug("Provide {:.2f} xSD (of {:.2f} xSD) and {:.2f} USDC".format(min_xsd_needed, a.xsd, usdc))
-                        self.uniswap.provide_liquidity(a, min_xsd_needed, usdc)
+                        self.pangolin.provide_liquidity(a, min_xsd_needed, usdc)
                     except Exception as inst:
                         # SLENCE TRANSFER_FROM_FAILED ISSUES
                         #logger.info({"agent": a.address, "error": inst, "action": "provide_liquidity", "min_xsd_needed": min_xsd_needed, "usdc": usdc})
                         continue
                 elif action == "remove_liquidity":
                     lp = portion_dedusted(a.lp, commitment)
-                    total_lp = self.uniswap.total_lp()
+                    total_lp = self.pangolin.total_lp()
                     
-                    usdc_b, xsd_b = self.uniswap.getTokenBalance()
+                    usdc_b, xsd_b = self.pangolin.getTokenBalance()
 
                     min_xsd_amount = max(Balance(0, xSD['decimals']), Balance(float(xsd_b) * float(lp / float(total_lp)), xSD['decimals']))
                     min_usdc_amount = max(Balance(0, USDC['decimals']), Balance(float(usdc_b) * float(lp / float(total_lp)), USDC['decimals']))
@@ -1272,7 +1271,7 @@ class Model:
 
                     try:
                         #logger.debug("Stop providing {:.2f} xSD and {:.2f} USDC".format(min_xsd_amount, min_usdc_amount))
-                        self.uniswap.remove_liquidity(a, lp, min_xsd_amount, min_usdc_amount)
+                        self.pangolin.remove_liquidity(a, lp, min_xsd_amount, min_usdc_amount)
                     except Exception as inst:
                         logger.info({"agent": a.address, "error": inst, "action": "remove_liquidity", "min_xsd_needed": min_xsd_amount, "usdc": min_usdc_amount})
                 else:
@@ -1347,11 +1346,11 @@ def main():
     oracle = w3.eth.contract(abi=OracleContract['abi'], address=dao.caller({'from' : dao.address, 'gas': 8000000}).oracle())
     logger.info("Oracle is at: {}".format(oracle.address))
 
-    uniswap = TokenProxy(w3.eth.contract(abi=UniswapPairContract['abi'], address=UNI["addr"]))
+    pangolin = TokenProxy(w3.eth.contract(abi=PangolinPairContract['abi'], address=PGL["addr"]))
     usdc = TokenProxy(w3.eth.contract(abi=USDCContract['abi'], address=USDC["addr"]))
     
-    uniswap_router = w3.eth.contract(abi=UniswapRouterAbiContract['abi'], address=UNIV2Router["addr"])
-    uniswap_token = w3.eth.contract(abi=PoolContract['abi'], address=UNIV2LP["addr"])
+    pangolin_router = w3.eth.contract(abi=PangolinRouterAbiContract['abi'], address=PGLRouter["addr"])
+    pangolin_token = w3.eth.contract(abi=PoolContract['abi'], address=PGLLP["addr"])
 
     xsd = TokenProxy(w3.eth.contract(abi=DollarContract['abi'], address=dao.caller().dollar()))
     logger.info(dao.caller().dollar())
@@ -1359,7 +1358,7 @@ def main():
     # Make a model of the economy
     start_init = time.time()
     logger.info('INIT STARTED')
-    model = Model(dao, uniswap, usdc, uniswap_router, uniswap_token, xsd, w3.eth.accounts[:max_accounts], min_faith=0.5E6, max_faith=1E6, use_faith=True)
+    model = Model(dao, pangolin, usdc, pangolin_router, pangolin_token, xsd, w3.eth.accounts[:max_accounts], min_faith=0.5E6, max_faith=1E6, use_faith=True)
     end_init = time.time()
     logger.info('INIT FINISHED {} (s)'.format(end_init - start_init))
 

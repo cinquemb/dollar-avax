@@ -41,11 +41,7 @@ contract MockRegulator is MockComptroller, Regulator {
     function settleCouponAuctionE(uint256 epoch) external {
         super.settleCouponAuction(epoch);
     }
-
-    function cancelCouponAuctionAtEpochE(uint256 epoch) external {
-        super.cancelCouponAuctionAtEpoch(epoch);
-    }
-
+    
     function finishCouponAuctionAtEpochE(uint256 epoch) external {
          super.finishCouponAuctionAtEpoch(epoch);
     }

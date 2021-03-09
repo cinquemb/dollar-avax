@@ -17,6 +17,7 @@
     "@openzeppelin/contracts": "^2.5.0",
     "@openzeppelin/upgrades": "^2.8.0",
     "@pangolindex/exchange-contracts": "^1.0.1",
+    "ganache-cli": "^6.12.2",
     "web3-provider-engine": "^16.0.1"
   },
   "devDependencies": {

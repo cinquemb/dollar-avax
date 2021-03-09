@@ -7,9 +7,9 @@ const Implementation = artifacts.require("Implementation");
 const Root = artifacts.require("Root");
 const TestnetUSDC = artifacts.require("TestnetUSDC");
 
-const UniswapV2FactoryBytecode = require('@uniswap/v2-core/build/UniswapV2Factory.json').bytecode
-const UniswapV2Router02Bytecode = require('@uniswap/v2-periphery/build/UniswapV2Router02.json').bytecode;
-const WETH9Bytecode = require('@uniswap/v2-periphery/build/WETH9.json').bytecode;
+const PangolinFactoryBytecode = require('@pangolindex/exchange-contracts/artifacts/contracts/pangolin-core/PangolinFactory.sol/PangolinFactory.json').bytecode
+const PangolinRouter02Bytecode = require('@pangolindex/exchange-contracts/artifacts/contracts/pangolin-periphery/PangolinRouter.sol/PangolinRouter.json').bytecode;
+const WAVAXBytecode = require('@pangolindex/exchange-contracts/artifacts/contracts/WAVAX.sol/WAVAX.json').bytecode;
 
 
 async function deployTestnetUSDC(deployer) {
@@ -30,28 +30,28 @@ async function deployTestnet(deployer, network, accounts) {
   console.log('View Root as Deployer1');
   const rootAsD1 = await Deployer1.at(root.address);
 
-  console.log('Deploy fake Uniswap Factory');
+  console.log('Deploy fake Pangolin Factory');
   // We need an address arg to the contract
-  let uniswapArg = '';
+  let pangolinArg = '';
   for (let i = 0; i < 32; i++) {
-    uniswapArg += '00';
+    pangolinArg += '00';
   }
-  const uniswapFactoryAddress = (await web3.eth.sendTransaction({from: accounts[0], gas: 8000000, data: UniswapV2FactoryBytecode + uniswapArg})).contractAddress;
+  const pangolinFactoryAddress = (await web3.eth.sendTransaction({from: accounts[0], gas: 8000000, data: PangolinFactoryBytecode + pangolinArg})).contractAddress;
 
-  console.log('Deploy fake wETH');
-  const wETHAddress = (await web3.eth.sendTransaction({from: accounts[0], gas: 8000000, data: WETH9Bytecode})).contractAddress;
+  console.log('Deploy fake wAVAX');
+  const wAVAXAddress = (await web3.eth.sendTransaction({from: accounts[0], gas: 8000000, data: WAVAXBytecode})).contractAddress;
 
-  console.log('Deploy fake UniswapV2 Router');
-  console.log(uniswapFactoryAddress.substr(2));
-  console.log(wETHAddress.substr(2));
-  console.log(web3.eth.abi.encodeParameters(['address', 'address'],[uniswapFactoryAddress, wETHAddress]).slice(2));
-  const UniswapV2RouterAddress = (await web3.eth.sendTransaction({
+  console.log('Deploy fake Pangolin Router');
+  console.log(pangolinFactoryAddress.substr(2));
+  console.log(wAVAXAddress.substr(2));
+  console.log(web3.eth.abi.encodeParameters(['address', 'address'],[pangolinFactoryAddress, wAVAXAddress]).slice(2));
+  const PangolinRouterAddress = (await web3.eth.sendTransaction({
     from: accounts[0],
     gas: 8000000,
-    data: UniswapV2Router02Bytecode + web3.eth.abi.encodeParameters(['address', 'address'],[uniswapFactoryAddress, wETHAddress]).slice(2)
+    data: PangolinRouter02Bytecode + web3.eth.abi.encodeParameters(['address', 'address'],[pangolinFactoryAddress, wAVAXAddress]).slice(2)
   })).contractAddress;
 
-  console.log('UniswapV2Router is at: ' + UniswapV2RouterAddress);
+  console.log('PangolinRouter is at: ' + PangolinRouterAddress);
   
   console.log('Deploy Deployer2');
   const d2 = await deployer.deploy(Deployer2);
@@ -65,10 +65,10 @@ async function deployTestnet(deployer, network, accounts) {
   const oracle = await MockOracle.at(oracleAddress);
   console.log('Oracle is at: ' + oracleAddress);
   
-  // Make the oracle make the Uniswap pair on our custom factory
-  await oracle.set(uniswapFactoryAddress, usdc.address);
+  // Make the oracle make the pangolin pair on our custom factory
+  await oracle.set(pangolinFactoryAddress, usdc.address);
   const pair = await oracle.pair.call();
-  console.log('Uniswap pair is at: ' + pair);
+  console.log('Pangolin pair is at: ' + pair);
 
   console.log('Deploy Deployer3');
   const d3 = await deployer.deploy(Deployer3);

@@ -17,7 +17,7 @@
 pragma solidity ^0.5.17;
 pragma experimental ABIEncoderV2;
 
-import '@pangolindex/exchange-contracts/contracts/pangolin-core/pangolin-lib/libraries/FixedPoint.sol';
+import '@pangolindex/exchange-contracts/contracts/pangolin-lib/libraries/FixedPoint.sol';
 import '@pangolindex/exchange-contracts/contracts/pangolin-core/interfaces/IPangolinPair.sol';
 
 contract MockPangolinPairTrade is IPangolinPair {
