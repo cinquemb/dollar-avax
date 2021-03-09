@@ -59,7 +59,7 @@ contract Comptroller is Setters {
         /* 
             supply growth is purely a function of the best auction bids outstanding for coupons from below peg
             - lps collect fees for incentive
-            - if lock times were removed, no need to incentivize dao, people can vote and leave any time they want as fast as they want
+            - people can vote and leave any time they want as fast as they want
 
         */
         uint256 newRedeemable = 0;
