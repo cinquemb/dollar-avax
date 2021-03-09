@@ -43,10 +43,10 @@ contract Implementation is State, Bonding, Market, Regulator, Govern {
 
     modifier incentivized {
         // Mint advance reward to sender
-        require(
+        /*require(
             hasRecievedAdvanceIncentive(msg.sender) == false,
             "DAO: Already advanced"
-        );
+        );*/
         uint256 incentive = Constants.getAdvanceIncentive();
         mintToAccount(msg.sender, incentive);
         setRecievedAdvanceIncentive(msg.sender);

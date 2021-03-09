@@ -16,7 +16,7 @@ from web3 import Web3
 
 IS_DEBUG = False
 is_try_model_mine = False
-block_offset = 16
+block_offset = 17
 
 DEADLINE_FROM_NOW = 60 * 60 * 24 * 7 * 52
 UINT256_MAX = 2**256 - 1
@@ -1220,7 +1220,7 @@ class Model:
                     '''
                     xsd_at_risk = max(Balance.from_tokens(1, 18), portion_dedusted(a.xsd, commitment))
                     rand_epoch_expiry = int(random.random() * self.max_coupon_exp)
-                    rand_max_coupons =  round(int(math.floor(random.random() * self.max_coupon_premium)) * xsd_at_risk)
+                    rand_max_coupons =  round(max(1.01, int(math.floor(random.random() * self.max_coupon_premium))) * xsd_at_risk)
                     try:
                         exact_expiry = rand_epoch_expiry + current_epoch
                         #logger.info("Addr {} Bid to burn init {:.2f} xSD for {:.2f} coupons with expiry at epoch {}".format(a.address, xsd_at_risk, rand_max_coupons, exact_expiry))
@@ -1251,7 +1251,7 @@ class Model:
                         continue
 
                     try:
-                        #logger.debug("Provide {:.2f} xSD (of {:.2f} xSD) and {:.2f} USDC".format(min_xsd_needed, a.xsd, usdc))
+                        #logger.info("Provide {:.2f} xSD (of {:.2f} xSD) and {:.2f} USDC".format(min_xsd_needed, a.xsd, usdc))
                         self.pangolin.provide_liquidity(a, min_xsd_needed, usdc)
                     except Exception as inst:
                         # SLENCE TRANSFER_FROM_FAILED ISSUES
@@ -1260,9 +1260,6 @@ class Model:
                 elif action == "remove_liquidity":
                     lp = portion_dedusted(a.lp, commitment)
                     total_lp = self.pangolin.total_lp()
-                    
-                    usdc_b, xsd_b = self.pangolin.getTokenBalance()
-
                     min_xsd_amount = max(Balance(0, xSD['decimals']), Balance(float(xsd_b) * float(lp / float(total_lp)), xSD['decimals']))
                     min_usdc_amount = max(Balance(0, USDC['decimals']), Balance(float(usdc_b) * float(lp / float(total_lp)), USDC['decimals']))
 
@@ -1270,7 +1267,7 @@ class Model:
                         continue
 
                     try:
-                        #logger.debug("Stop providing {:.2f} xSD and {:.2f} USDC".format(min_xsd_amount, min_usdc_amount))
+                        #logger.info("Stop providing {:.2f} xSD and {:.2f} USDC".format(min_xsd_amount, min_usdc_amount))
                         self.pangolin.remove_liquidity(a, lp, min_xsd_amount, min_usdc_amount)
                     except Exception as inst:
                         logger.info({"agent": a.address, "error": inst, "action": "remove_liquidity", "min_xsd_needed": min_xsd_amount, "usdc": min_usdc_amount})
