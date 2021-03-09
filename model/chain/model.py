@@ -62,7 +62,7 @@ PGLRouter = {
     "deploy_slug": "PangolinRouter is at: "
 }
 
-for contract in [UNI, USDC, PGLLP, PGLRouter]:
+for contract in [PGL, USDC, PGLLP, PGLRouter]:
     logger.info(contract["deploy_slug"])
     contract["addr"] = deploy_data.split(contract["deploy_slug"])[1].split('\n')[0]
     logger.info('\t'+contract["addr"])
@@ -511,7 +511,7 @@ class Agent:
         self.max_coupon_epoch_index = 0
 
         # Pangolin Pair TokenProxy
-        self.pangolin_token = pangolin_pair
+        self.pangolin_pair_token = pangolin_pair
 
         # keeps track of latest block seen for nonce tracking/tx
         self.seen_block = {}
@@ -987,7 +987,7 @@ class Model:
             agent = Agent(self.dao, pangolin, xsd, usdc, starting_eth=start_eth, starting_usdc=start_usdc, wallet_address=address, is_mint=is_mint, **kwargs)
             logger.info(agent)  
             self.agents.append(agent)
-        sys.exit()
+        #sys.exit()
 
         if is_try_model_mine:
             for i in range(0, total_tx_submitted):
@@ -1077,7 +1077,7 @@ class Model:
         total_coupoun_bidders = 0
         random.shuffle(self.agents)
 
-        is_uni_op = self.pangolin.operational()
+        is_pgl_op = self.pangolin.operational()
         
         # try to redeem any outstanding coupons here first to better
         if epoch_start_price > 1.0 and total_coupons > 0:
@@ -1112,9 +1112,9 @@ class Model:
 
             start_tx_count = a.next_tx_count
 
-            if a.usdc > 0 and is_uni_op:
+            if a.usdc > 0 and is_pgl_op:
                 options.append("buy")
-            if a.xsd > 0 and is_uni_op:
+            if a.xsd > 0 and is_pgl_op:
                 options.append("sell")
             '''
             TODO: CURRENTLY NO INCENTIVE TO BOND INTO LP OR DAO (EXCEPT FOR VOTING, MAY USE THIS TO DISTRUBTION EXPANSIONARY PROFITS)

@@ -3,6 +3,7 @@ const Deployer2 = artifacts.require("Deployer2");
 const Deployer3 = artifacts.require("Deployer3");
 const MockOracle = artifacts.require("MockOracle");
 const Pool = artifacts.require("Pool");
+const Constants = artifacts.require("Constants");
 const Implementation = artifacts.require("Implementation");
 const Root = artifacts.require("Root");
 const TestnetUSDC = artifacts.require("TestnetUSDC");
@@ -79,6 +80,9 @@ async function deployTestnet(deployer, network, accounts) {
 
   const pool = await Pool.at(await rootAsD3.pool.call());
   console.log('Pool is at: ' + pool.address);
+
+  await deployer.deploy(Constants);
+  await deployer.link(Constants, Implementation);
 
   console.log('Deploy current Implementation');
   const implementation = await deployer.deploy(Implementation);

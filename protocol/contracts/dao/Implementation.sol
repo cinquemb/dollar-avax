@@ -30,8 +30,6 @@ contract Implementation is State, Bonding, Market, Regulator, Govern {
     event Advance(uint256 indexed epoch, uint256 block, uint256 timestamp);
     event Incentivization(address indexed account, uint256 amount);
 
-    bytes32 private constant FILE = "Implementation";
-
     function initialize() initializer public {
         //mintToAccount(0x61105dD0b0deD973BC94BB054f314c46A0234B06, 1500e18); // xSD to @cinquemb
     }
@@ -40,16 +38,14 @@ contract Implementation is State, Bonding, Market, Regulator, Govern {
         Bonding.step();
         Regulator.step();
         Market.step();
-
         emit Advance(epoch(), block.number, block.timestamp);
     }
 
     modifier incentivized {
         // Mint advance reward to sender
-        Require(
+        require(
             hasRecievedAdvanceIncentive(msg.sender) == false,
-            FILE,
-            "Already advanced"
+            "DAO: Already advanced"
         );
         uint256 incentive = Constants.getAdvanceIncentive();
         mintToAccount(msg.sender, incentive);
