@@ -1,12 +1,7 @@
 # Chain-based modeling
 
-To model ESD system behavior, you can run it on a local blockchain using the
+To model xSD system behavior, you can run it on a local blockchain using the
 Truffle project in this directory.
-
-This is challenging because the ESD system contracts all want to read from
-Constants.sol, and the Mock versions sometimes want constructor arguments, and
-the Deployers that set up the system don't have access to their own state when
-operating on the system state.
 
 First, you need to install the dependencies in this directory:
 

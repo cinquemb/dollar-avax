@@ -58,7 +58,7 @@ contract Comptroller is Setters {
     function increaseSupply(uint256 newSupply) internal returns (uint256, uint256) {
         /* 
             supply growth is purely a function of the best auction bids outstanding for coupons from below peg
-            - lps collect fees for incentive
+            - lps collect fees for incentive (maybe lp pool can get a cut of total redeemable coupons? like 1%?)
             - people can vote and leave any time they want as fast as they want
 
         */
