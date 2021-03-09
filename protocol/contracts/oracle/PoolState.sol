@@ -42,7 +42,7 @@ contract PoolStorage {
     struct Provider {
         IDAO dao;
         IDollar dollar;
-        IERC20 univ2;
+        IERC20 pangolin;
     }
     
     struct Balance {

@@ -40,8 +40,8 @@ contract PoolGetters is PoolState {
         return _state.provider.dollar;
     }
 
-    function univ2() public view returns (IERC20) {
-        return _state.provider.univ2;
+    function pangolin() public view returns (IERC20) {
+        return _state.provider.pangolin;
     }
 
     function totalBonded() public view returns (uint256) {

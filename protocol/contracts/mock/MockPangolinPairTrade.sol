@@ -17,10 +17,10 @@
 pragma solidity ^0.5.17;
 pragma experimental ABIEncoderV2;
 
-import '@uniswap/lib/contracts/libraries/FixedPoint.sol';
-import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol';
+import '@pangolindex/exchange-contracts/contracts/pangolin-core/pangolin-lib/libraries/FixedPoint.sol';
+import '@pangolindex/exchange-contracts/contracts/pangolin-core/interfaces/IPangolinPair.sol';
 
-contract MockUniswapV2PairTrade is IUniswapV2Pair {
+contract MockPangolinPairTrade is IPangolinPair {
     uint112 private reserve0;           // uses single storage slot, accessible via getReserves
     uint112 private reserve1;           // uses single storage slot, accessible via getReserves
     uint32  private blockTimestampLast; // uses single storage slot, accessible via getReserves

@@ -17,7 +17,7 @@
 pragma solidity ^0.5.17;
 pragma experimental ABIEncoderV2;
 
-import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol';
+import '@pangolindex/exchange-contracts/contracts/pangolin-core/interfaces/IPangolinPair.sol';
 import "../oracle/Oracle.sol";
 import "../external/Decimal.sol";
 
@@ -27,7 +27,7 @@ contract MockOracle is Oracle {
     address private _usdc;
 
     constructor (address pair, address dollar, address usdc) Oracle(dollar) public {
-        _pair = IUniswapV2Pair(pair);
+        _pair = IPangolinPair(pair);
         _index = 0;
         _usdc = usdc;
     }
@@ -38,7 +38,7 @@ contract MockOracle is Oracle {
 
     function set(address factory, address usdc) external {
         _usdc = usdc;
-        _pair = IUniswapV2Pair(IUniswapV2Factory(factory).createPair(_dollar, _usdc));
+        _pair = IPangolinPair(IPangolinFactory(factory).createPair(_dollar, _usdc));
 
         (address token0, address token1) = (_pair.token0(), _pair.token1());
         _index = _dollar == token0 ? 0 : 1;

@@ -17,10 +17,10 @@
 pragma solidity ^0.5.17;
 pragma experimental ABIEncoderV2;
 
-import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol';
-import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol';
-import '../external/UniswapV2OracleLibrary.sol';
-import '../external/UniswapV2Library.sol';
+import '@pangolindex/exchange-contracts/contracts/pangolin-core/interfaces/IPangolinFactory.sol';
+import '@pangolindex/exchange-contracts/contracts/pangolin-core/interfaces/IPangolinPair.sol';
+import '../external/PangolinOracleLibrary.sol';
+import '../external/PangolinLibrary.sol';
 import "../external/Require.sol";
 import "../external/Decimal.sol";
 import "./IOracle.sol";
@@ -31,13 +31,13 @@ contract Oracle is IOracle {
     using Decimal for Decimal.D256;
 
     bytes32 private constant FILE = "Oracle";
-    address private constant UNISWAP_FACTORY = address(0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f);
+    address private constant PANGOLIN_FACTORY = address(0xefa94DE7a4656D787667C749f7E1223D71E9FD88);
 
     address internal _dao;
     address internal _dollar;
 
     bool internal _initialized;
-    IUniswapV2Pair internal _pair;
+    IPangolinPair internal _pair;
     uint256 internal _index;
     uint256 internal _cumulative;
     uint32 internal _timestamp;
@@ -50,7 +50,7 @@ contract Oracle is IOracle {
     }
 
     function setup() public onlyDao {
-        _pair = IUniswapV2Pair(IUniswapV2Factory(UNISWAP_FACTORY).createPair(_dollar, usdc()));
+        _pair = IPangolinPair(IPangolinFactory(PANGOLIN_FACTORY).createPair(_dollar, usdc()));
 
         (address token0, address token1) = (_pair.token0(), _pair.token1());
         _index = _dollar == token0 ? 0 : 1;
@@ -79,7 +79,7 @@ contract Oracle is IOracle {
     }
 
     function initializeOracle() private {
-        IUniswapV2Pair pair = _pair;
+        IPangolinPair pair = _pair;
         uint256 priceCumulative = _index == 0 ?
             pair.price0CumulativeLast() :
             pair.price1CumulativeLast();
@@ -113,7 +113,7 @@ contract Oracle is IOracle {
 
     function updatePrice() private returns (Decimal.D256 memory) {
         (uint256 price0Cumulative, uint256 price1Cumulative, uint32 blockTimestamp) =
-        UniswapV2OracleLibrary.currentCumulativePrices(address(_pair));
+        PangolinOracleLibrary.currentCumulativePrices(address(_pair));
         uint32 timeElapsed = blockTimestamp - _timestamp; // overflow is desired
         uint256 priceCumulative = _index == 0 ? price0Cumulative : price1Cumulative;
         Decimal.D256 memory price = Decimal.ratio((priceCumulative - _cumulative) / timeElapsed, 2**112);

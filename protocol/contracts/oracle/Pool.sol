@@ -27,10 +27,10 @@ import "./Liquidity.sol";
 contract Pool is PoolSetters, Liquidity {
     using SafeMath for uint256;
 
-    constructor(address dollar, address univ2) public {
+    constructor(address dollar, address pangolin) public {
         _state.provider.dao = IDAO(msg.sender);
         _state.provider.dollar = IDollar(dollar);
-        _state.provider.univ2 = IERC20(univ2);
+        _state.provider.pangolin = IERC20(pangolin);
     }
 
     bytes32 private constant FILE = "Pool";
@@ -40,10 +40,10 @@ contract Pool is PoolSetters, Liquidity {
     event Claim(address indexed account, uint256 value);
     event Bond(address indexed account, uint256 start, uint256 value);
     event Unbond(address indexed account, uint256 start, uint256 value, uint256 newClaimable);
-    event Provide(address indexed account, uint256 value, uint256 lessUsdc, uint256 newUniv2);
+    event Provide(address indexed account, uint256 value, uint256 lessUsdc, uint256 newPangolin);
 
     function deposit(uint256 value) external onlyFrozen(msg.sender) notPaused {
-        univ2().transferFrom(msg.sender, address(this), value);
+        pangolin().transferFrom(msg.sender, address(this), value);
         incrementBalanceOfStaged(msg.sender, value);
 
         balanceCheck();
@@ -52,7 +52,7 @@ contract Pool is PoolSetters, Liquidity {
     }
 
     function withdraw(uint256 value) external onlyFrozen(msg.sender) {
-        univ2().transfer(msg.sender, value);
+        pangolin().transfer(msg.sender, value);
         decrementBalanceOfStaged(msg.sender, value, "Pool: insufficient staged balance");
 
         balanceCheck();
@@ -128,18 +128,18 @@ contract Pool is PoolSetters, Liquidity {
             "insufficient rewarded balance"
         );
 
-        (uint256 lessUsdc, uint256 newUniv2) = addLiquidity(value);
+        (uint256 lessUsdc, uint256 newPangolin) = addLiquidity(value);
 
         uint256 totalRewardedWithPhantom = totalRewarded().add(totalPhantom()).add(value);
-        uint256 newPhantomFromBonded = totalRewardedWithPhantom.mul(newUniv2).div(totalBonded());
+        uint256 newPhantomFromBonded = totalRewardedWithPhantom.mul(newPangolin).div(totalBonded());
 
-        incrementBalanceOfBonded(msg.sender, newUniv2);
+        incrementBalanceOfBonded(msg.sender, newPangolin);
         incrementBalanceOfPhantom(msg.sender, value.add(newPhantomFromBonded));
 
 
         balanceCheck();
 
-        emit Provide(msg.sender, value, lessUsdc, newUniv2);
+        emit Provide(msg.sender, value, lessUsdc, newPangolin);
     }
 
     function emergencyWithdraw(address token, uint256 value) external onlyDao {
@@ -152,9 +152,9 @@ contract Pool is PoolSetters, Liquidity {
 
     function balanceCheck() private view {
         Require.that(
-            univ2().balanceOf(address(this)) >= totalStaged().add(totalBonded()),
+            pangolin().balanceOf(address(this)) >= totalStaged().add(totalBonded()),
             FILE,
-            "Inconsistent UNI-V2 balances"
+            "Inconsistent PGL balances"
         );
     }
 

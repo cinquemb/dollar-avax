@@ -18,10 +18,10 @@ pragma solidity ^0.5.17;
 pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
-import '@uniswap/lib/contracts/libraries/FixedPoint.sol';
-import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol';
+import '@pangolindex/exchange-contracts/contracts/pangolin-lib/libraries/FixedPoint.sol';
+import '@pangolindex/exchange-contracts/contracts/pangolin-core/interfaces/IPangolinPair.sol';
 
-contract MockUniswapV2PairLiquidity is IUniswapV2Pair {
+contract MockPangolinPairLiquidity is IPangolinPair {
     using SafeMath for uint256;
 
     uint112 private reserve0;           // uses single storage slot, accessible via getReserves
@@ -52,8 +52,8 @@ contract MockUniswapV2PairLiquidity is IUniswapV2Pair {
      * Should not use
      */
 
-    function name() external pure returns (string memory) { return "Uniswap V2"; }
-    function symbol() external pure returns (string memory) { return "UNI-V2"; }
+    function name() external pure returns (string memory) { return "Pangolin Liquidity"; }
+    function symbol() external pure returns (string memory) { return "PGL"; }
     function decimals() external pure returns (uint8) { return 18; }
 
     function DOMAIN_SEPARATOR() external view returns (bytes32) { revert("Should not use"); }
