@@ -1,5 +1,5 @@
 /*
-    Copyright 2020 Dynamic Dollar Devs, based on the works of the Empty Set Squad
+    Copyright 2021 xSD Contributors, based on the works of the Empty Set Squad
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -218,16 +218,13 @@ contract Regulator is Comptroller {
         
     }
 
-    function autoRedeemFromCouponAuctionNew() internal returns (bool success) {
+    function autoRedeemFromCouponAuction() internal returns (bool success) {
         /*
             WARNING: may need fundemental constraints in order to cap max run time as epocs grow? (i.e totalRedeemable needs to be a function of auction internals of non dead auctions when twap > 1)
             Redeem the best outstanding bidder at any given time
 
             // need to find max limit
         */
-
-        uint256 earliestDeadauction = 0;
-        bool willRedeemableOverflow = false;
 
         // this will allow us to reloop over best bidders in each auction
         while (totalRedeemable() > 0) {

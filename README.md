@@ -1,20 +1,20 @@
-# Dynamic Set Dollar
+# x Set Dollar
 
-- shorthand name: `dynamic dollar`
-- full name: `Dynamic Set Dollar`
-- symbol: `DSD`
+- shorthand name: `x dollar`
+- full name: `x Set Dollar`
+- symbol: `xSD`
 - decimals: `18`
 - icon:
 
-![DSD Logo](https://dsd.finance/logo.png)
+![xSD Logo](x)
 
 ## contracts
 ### mainnet
-- `0x6Bf977ED1A09214E6209F4EA5f525261f1A2690a` **DAO (DSDS)**
-- `0xbd2f0cd039e0bfcf88901c98c0bfac5ab27566e3` **DSD**
-- `0xe2e279d1b911bad880d1104a750dfcd262fb6cf4` **Oracle**
-- `0x66e33d2605c5fb25ebb7cd7528e7997b0afa55e8` **UniswapV2 USDC:DSD Pair**
-- `0x70A87e1b97436D2F194B8B9EBF337bFc7521C70f` **LP Incentivation Pool**
+- `[TBD]` **DAO (xSDS)**
+- `[TBD]` **xSD**
+- `[TBD]` **Oracle**
+- `[TBD]` **Pangolin USDC:xSD Pair**
+- `[TBD]` **LP Incentivation Pool**
 
 ## audit of forked codebase
 
@@ -24,7 +24,7 @@ is available [here](https://github.com/dynamicdollardevs/dsd/blob/master/audit/R
 this project is an experiment - the protocol is audited, and we've put a significant amount of work into testing as well as generally de-risking the design of its core mechanism, however participants should take great caution as bugs resulting in loss of funds are always a possibility.
 
 ```
-Copyright 2020 Dynamic Dollar Devs, based on the works of the Empty Set Squad
+Copyright 2021 xSD Contributors, based on the works of the Empty Set Squad
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use the included code except in compliance with the License.

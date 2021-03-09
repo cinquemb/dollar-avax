@@ -1,5 +1,5 @@
 /*
-    Copyright 2020 Dynamic Dollar Devs, based on the works of the Empty Set Squad
+    Copyright 2021 xSD Contributors, based on the works of the Empty Set Squad
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -32,11 +32,11 @@ contract Getters is State {
      */
 
     function name() public view returns (string memory) {
-        return "Dynamic Set Dollar Stake";
+        return "x Set Dollar Stake";
     }
 
     function symbol() public view returns (string memory) {
-        return "DSDS";
+        return "xSDS";
     }
 
     function decimals() public view returns (uint8) {
@@ -291,7 +291,7 @@ contract Getters is State {
     function getSumofBestBidsAcrossCouponAuctions() public view returns (uint256) {
         // loop over past epochs from the latest `dead` epoch to the current
         uint256 sumCoupons = 0;
-        uint256 current_epoch = epoch();
+        uint256 current_epoch = (epoch().sub(getEarliestDeadAuctionEpoch()) > Constants.getCouponAuctionMaxEpochsBestBidderSelection()) ? Constants.getCouponAuctionMaxEpochsBestBidderSelection() : epoch();
         for (uint256 d_idx = getEarliestDeadAuctionEpoch(); d_idx < current_epoch; d_idx++) {
             uint256 temp_coupon_auction_epoch = d_idx;
             Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(temp_coupon_auction_epoch);
@@ -321,7 +321,7 @@ contract Getters is State {
     function findEarliestActiveAuctionEpoch() internal view returns (uint256) {
         // loop over past epochs from the latest `dead` epoch to the current
         uint256 earliest_non_dead_auction_epoch = 1;
-        uint256 current_epoch = epoch();
+        uint256 current_epoch = (epoch().sub(getEarliestDeadAuctionEpoch()) > Constants.getCouponAuctionMaxEpochsBestBidderSelection()) ? Constants.getCouponAuctionMaxEpochsBestBidderSelection() : epoch();
         for (uint256 d_idx = getEarliestDeadAuctionEpoch(); d_idx < current_epoch; d_idx++) {
             uint256 temp_coupon_auction_epoch = d_idx;
             Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(temp_coupon_auction_epoch);
@@ -376,50 +376,6 @@ contract Getters is State {
         } else {
             return address(0);
         }
-    }
-
-    function getSumofBestBidsAcrossCouponAuctionsNew() public view returns (uint256) {
-        // loop over past epochs from the latest `dead` epoch to the current
-        // DOES NOT WORK FIX LATER
-        uint256 sumCoupons = 0;
-        uint256 current_epoch = epoch();
-        for (uint256 d_idx = getEarliestDeadAuctionEpoch(); d_idx < current_epoch; d_idx++) {
-            uint256 temp_coupon_auction_epoch = d_idx;
-            Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(temp_coupon_auction_epoch);
-            
-            if (auction.finished) {
-                sumCoupons = getBestBidsInOrder(temp_coupon_auction_epoch, sumCoupons);
-            }
-        }
-
-        return sumCoupons;
-    }
-
-    function getBestBidsInOrder(uint256 epoch, uint256 couponAmount) internal view returns (uint256) {
-        Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(epoch);
-        Epoch.CouponBidderState storage bidder = getCouponBidderState(epoch, auction.initBidder);
-        return getBestBidsInOrder(epoch, bidder.leftBidder, couponAmount);
-    }
-
-    function getBestBidsInOrder(uint256 epoch, address curBidder, uint256 couponAmount) internal view returns (uint256) {
-        if (curBidder == address(0))
-            return couponAmount;
-
-        Epoch.CouponBidderState storage bidder = getCouponBidderState(epoch, curBidder);
-        
-        // iter left
-        getBestBidsInOrder(epoch, bidder.leftBidder, couponAmount);
-
-        // skip over those bids that have already been redeemed
-        if (bidder.redeemed) {
-            
-        } else {
-            couponAmount += bidder.couponAmount;
-        }
-        
-        // iter right
-        getBestBidsInOrder(epoch, bidder.rightBidder, couponAmount);
-        
     }
 
     /**

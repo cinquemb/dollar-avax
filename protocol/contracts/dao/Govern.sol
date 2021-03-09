@@ -1,5 +1,5 @@
 /*
-    Copyright 2020 Dynamic Dollar Devs, based on the works of the Empty Set Squad
+    Copyright 2021 xSD Contributors, based on the works of the Empty Set Squad
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -148,6 +148,10 @@ contract Govern is Setters, Permission, Upgradeable {
 
     function canPropose(address account) private view returns (bool) {
         if (totalBonded() == 0) {
+            return false;
+        }
+
+        if (epoch() < Constants.getGovernanceDelay()) {
             return false;
         }
 

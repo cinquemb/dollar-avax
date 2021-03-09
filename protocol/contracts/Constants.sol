@@ -1,5 +1,5 @@
 /*
-    Copyright 2020 Dynamic Dollar Devs, based on the works of the Empty Set Squad
+    Copyright 2021 xSD Contributors, based on the works of the Empty Set Squad
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -27,9 +27,6 @@ library Constants {
     address private constant USDC = address(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48);
     uint256 private constant ORACLE_RESERVE_MINIMUM = 1e8;//100 USDC
 
-    /* Bonding */
-    uint256 private constant INITIAL_STAKE_MULTIPLE = 1e6; // 100 DSD -> 100M DSDS
-
     /* Epoch */
     struct EpochStrategy {
         uint256 offset;
@@ -47,6 +44,7 @@ library Constants {
     uint256 private constant GOVERNANCE_PROPOSAL_THRESHOLD = 5e15; // 0.5%
     uint256 private constant GOVERNANCE_SUPER_MAJORITY = 66e16; // 66%
     uint256 private constant GOVERNANCE_EMERGENCY_DELAY = 6; // 6 epochs
+    uint256 private constant INIT_GOVERNANCE_DELAY = 1080; // 1080 epochs before anyone can propose
 
     /* DAO */
     // need to use either a gase price oracle or make dynamic to always be pegged to USDC price
@@ -59,13 +57,13 @@ library Constants {
     /* Market */
     uint256 private constant MAX_COUPON_YIELD_MULT = 10; //100K coupouns per 1 dollar burn
     uint256 private constant MAX_COUPON_EXPIRATION_TIME = 946080000; //30 (years) * 365 (days)* 24 (hours) * 60 (min) * 60 (secs)
+    uint256 private constant MAX_COUPON_AUCTION_EPOCHS_BEST_BIDDER_SELECTION = 200; //limit to past 200 auctions because of gas constraints
     uint256 private constant REJECT_COUPON_BID_PERCENTILE = 50;//85;//90; //reject the last 90% of bids
 
     /* Deployed */
-    address private constant DAO_ADDRESS = address(0x6Bf977ED1A09214E6209F4EA5f525261f1A2690a);
-    address private constant DOLLAR_ADDRESS = address(0xBD2F0Cd039E0BFcf88901C98c0bFAc5ab27566e3);
-    address private constant PAIR_ADDRESS = address(0x66e33d2605c5fB25eBb7cd7528E7997b0afA55E8);
-    address private constant TREASURY_ADDRESS = address(0xC7DA8087b8BA11f0892f1B0BFacfD44C116B303e);
+    address private constant DAO_ADDRESS = address(0); //TODO: THIS NEEDS TO CHANGE AFTER DEPLOY
+    address private constant DOLLAR_ADDRESS = address(0); //TODO: THIS NEEDS TO CHANGE AFTER DEPLOY
+    address private constant PAIR_ADDRESS = address(0); //TODO: THIS NEEDS TO CHANGE AFTER DEPLOY
 
     /**
      * Getters
@@ -86,8 +84,8 @@ library Constants {
         });
     }
 
-    function getInitialStakeMultiple() internal pure returns (uint256) {
-        return INITIAL_STAKE_MULTIPLE;
+    function getGovernanceDelay() public view returns (uint256) {
+        return INIT_GOVERNANCE_DELAY;
     }
 
     function getGovernancePeriod() internal pure returns (uint256) {
@@ -130,6 +128,10 @@ library Constants {
         return MAX_COUPON_EXPIRATION_TIME;
     }
 
+    function getCouponAuctionMaxEpochsBestBidderSelection() internal pure returns (uint256) {
+        return MAX_COUPON_AUCTION_EPOCHS_BEST_BIDDER_SELECTION;
+    }
+
     function getCouponRejectBidPtile() internal pure returns (Decimal.D256 memory) {
         return Decimal.ratio(100 - REJECT_COUPON_BID_PERCENTILE, 100);
     }
@@ -148,9 +150,5 @@ library Constants {
 
     function getPairAddress() internal pure returns (address) {
         return PAIR_ADDRESS;
-    }
-
-    function getTreasuryAddress() internal pure returns (address) {
-        return TREASURY_ADDRESS;
     }
 }

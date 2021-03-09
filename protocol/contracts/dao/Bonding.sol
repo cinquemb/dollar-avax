@@ -1,5 +1,5 @@
 /*
-    Copyright 2020 Dynamic Dollar Devs, based on the works of the Empty Set Squad
+    Copyright 2021 xSD Contributors, based on the works of the Empty Set Squad
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -60,15 +60,11 @@ contract Bonding is Setters, Permission {
 
     function bond(uint256 value) external onlyFrozenOrFluid(msg.sender) {
         unfreeze(msg.sender);
-
-        uint256 balance = totalBonded() == 0 ?
-            value.mul(Constants.getInitialStakeMultiple()) :
-            value.mul(totalSupply()).div(totalBonded());
-        incrementBalanceOf(msg.sender, balance);
+        incrementBalanceOf(msg.sender, value);
         incrementTotalBonded(value);
         decrementBalanceOfStaged(msg.sender, value, "Bonding: insufficient staged balance");
 
-        emit Bond(msg.sender, epoch().add(1), balance, value);
+        emit Bond(msg.sender, epoch().add(1), value, value);
     }
 
     function unbond(uint256 value) external onlyFrozenOrFluid(msg.sender) {

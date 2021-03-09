@@ -1,5 +1,5 @@
 /*
-    Copyright 2020 Dynamic Dollar Devs, based on the works of the Empty Set Squad
+    Copyright 2021 xSD Contributors, based on the works of the Empty Set Squad
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -71,14 +71,7 @@ contract Pool is PoolSetters, Liquidity {
 
     function bond(uint256 value) external notPaused {
         unfreeze(msg.sender);
-
-        uint256 totalRewardedWithPhantom = totalRewarded().add(totalPhantom());
-        uint256 newPhantom = totalBonded() == 0 ?
-            totalRewarded() == 0 ? Constants.getInitialStakeMultiple().mul(value) : 0 :
-            totalRewardedWithPhantom.mul(value).div(totalBonded());
-
         incrementBalanceOfBonded(msg.sender, value);
-        incrementBalanceOfPhantom(msg.sender, newPhantom);
         decrementBalanceOfStaged(msg.sender, value, "Pool: insufficient staged balance");
 
         balanceCheck();
