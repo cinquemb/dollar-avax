@@ -52,10 +52,12 @@ if [[ ! -e venv ]] ; then
     virtualenv --python python3 venv
     . venv/bin/activate
     pip3 install -r requirements.txt
+    time python -m py_compile model.py
 else
     # Just go into it
     echo "Entering Virtual Environment..."
     . venv/bin/activate
+    time python -m py_compile model.py
 fi
 
 if [[ "${RUN_SHELL}" == "1" ]] ; then

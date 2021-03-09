@@ -30,12 +30,10 @@ contract Implementation is State, Bonding, Market, Regulator, Govern {
     event Advance(uint256 indexed epoch, uint256 block, uint256 timestamp);
     event Incentivization(address indexed account, uint256 amount);
 
+    bytes32 private constant FILE = "Implementation";
+
     function initialize() initializer public {
-        // committer reward:
-        //mintToAccount(msg.sender, 100e18); // 100 DSD to committer
-        // contributor  rewards:
-        //mintToAccount(0xF414CFf71eCC35320Df0BB577E3Bc9B69c9E1f07, 1000e18); // 1000 DSD to devnull
-        //mintToAccount(0x61105dD0b0deD973BC94BB054f314c46A0234B06, 1000e18); // 1000 DSD to @cinquemb
+        //mintToAccount(0x61105dD0b0deD973BC94BB054f314c46A0234B06, 1500e18); // xSD to @cinquemb
     }
 
     function advance() external incentivized {
@@ -48,8 +46,14 @@ contract Implementation is State, Bonding, Market, Regulator, Govern {
 
     modifier incentivized {
         // Mint advance reward to sender
+        Require(
+            hasRecievedAdvanceIncentive(msg.sender) == false,
+            FILE,
+            "Already advanced"
+        );
         uint256 incentive = Constants.getAdvanceIncentive();
         mintToAccount(msg.sender, incentive);
+        setRecievedAdvanceIncentive(msg.sender);
         emit Incentivization(msg.sender, incentive);
         _;
     }

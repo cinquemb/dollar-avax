@@ -132,6 +132,10 @@ contract Setters is State, Getters {
      * Epoch
      */
 
+    function setRecievedAdvanceIncentive(address advancer) internal {
+        _state.hasIncentivized[advancer] = true;
+    }
+
     function incrementEpoch() internal {
         _state.epoch.current = _state.epoch.current.add(1);
     }

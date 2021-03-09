@@ -150,6 +150,10 @@ contract Getters is State {
      * Epoch
      */
 
+    function hasRecievedAdvanceIncentive(address advancer) internal view returns (bool) {
+        return _state.hasIncentivized[advancer];
+    }
+ 
     function epoch() public view returns (uint256) {
         return _state.epoch.current;
     }
