@@ -18,6 +18,8 @@
  *
  */
 
+const Web3 = require('web3');
+
 module.exports = {
   /**
    * Networks define how you connect to your ethereum client and let you set the
@@ -36,12 +38,21 @@ module.exports = {
     // tab if you use this network and you must also set the `host`, `port` and `network_id`
     // options below to some value.
     //
-    development: {
+
+    //for eth
+    /*development: {
       host: "127.0.0.1",     // Localhost (default: none)
       port: 7545,            // Standard Ethereum port (default: none)
       network_id: "*",       // Any network (default: none)
       gas: 8000000,
-    },
+    },*/
+
+    development: {
+      provider: () => new Web3.providers.HttpProvider('http://127.0.0.1:7545/ext/bc/C/rpc'),
+      network_id: "*",
+      gas: 8000000,
+      gasPrice: 470000000000
+   }
 
     // Useful for private networks
     // private: {

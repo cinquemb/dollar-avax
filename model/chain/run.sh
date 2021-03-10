@@ -12,36 +12,45 @@ set -e
 echo "Cleaning Old Database..."
 mkdir -p ./empty_db
 time rsync -a --delete ./empty_db/ ./db/
-rm -Rf db
+rm -Rf db go-ethereum-keystore*
 
 # Have a function to kill off Ganache and clean up the database when we quit.
 function cleanup {
-    echo "Stopping Ganache (${GANACHE})..."
+    #echo "Stopping Ganache (${GANACHE})..."
+    echo "Stopping AvalancheGo (${GANACHE})..."
     # Kill Ganache if not dead already
     kill "${GANACHE}" 2>/dev/null || true
     # Clean database
     echo "Cleaning Up Database..."
     mkdir -p ./empty_db
     time rsync -a --delete ./empty_db/ ./db/
-    rm -Rf db
+    rm -Rf db go-ethereum-keystore*
 }
 
 trap cleanup EXIT
 
 # Start the chain
-echo "Starting Ganache..."
+#echo "Starting Ganache..."
 # Need to run the below command in a while loop when deploying locally
-# curl -H "Content-Type: application/json" -X POST --data '{"id":1337,"jsonrpc":"2.0","method":"evm_mine","params":[]}' http://localhost:7545 
-TMPDIR="$(pwd)" ganache-cli --p 7545 --gasLimit 8000000 --accounts 20 --defaultBalanceEther 1000000 --db ./db --noVMErrorsOnRPCResponse > ganache_output.txt &
+# curl -H "Content-Type: application/json" -X POST --data '{"id":1337,"jsonrpc":"2.0","method":"evm_mine","params":[]}' http://localhost:7545
+echo "Starting AvalancheGo..."
+TMPDIR="$(pwd)" avalanchego --network-id=local --staking-enabled=false --snow-sample-size=1 --snow-quorum-size=1 --db-dir=./db/ --ipcs-path=./xsd-ipc.ipc --api-ipcs-enabled --http-port=7545  > ganache_output.txt &
+#TMPDIR="$(pwd)" ganache-cli --p 7545 --gasLimit 8000000 --accounts 20 --defaultBalanceEther 1000000 --db ./db --noVMErrorsOnRPCResponse > ganache_output.txt &
 #TMPDIR="$(pwd)" ganache-cli --p 7545 --gasLimit 8000000 --accounts 20 --defaultBalanceEther 1000000 --blockTime 604800 --db ./db --noVMErrorsOnRPCResponse  >ganache_output.txt &
 GANACHE=$!
 
 # Wait for it to come up
-echo "Waiting for Ganache..."
-while ! grep "^Listening on" ganache_output.txt 2>/dev/null ; do
+#echo "Waiting for Ganache..."
+echo "Waiting for AvalancheGo..."
+#while ! grep "^Listening on" ganache_output.txt 2>/dev/null ; do
+while ! grep -i "listening on" ganache_output.txt 2>/dev/null ; do
     sleep 1
 done
 
+
+# Creating accounts
+echo "Creating test accounts..."
+truffle exec make_accounts.js --network development >> ganache_output.txt
 # Run the deployment
 echo "Deploying contracts..."
 truffle migrate --reset --network=development | tee deploy_output.txt
