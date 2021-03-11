@@ -28,8 +28,6 @@ async function deployTestnet(deployer, network, accounts) {
   const d1 = await deployer.deploy(Deployer1);
   console.log('Deploy Root');
   const root = await deployer.deploy(Root, d1.address);
-  console.log('View Root as Deployer1');
-  const rootAsD1 = await Deployer1.at(root.address);
 
   console.log('Deploy fake Pangolin Factory');
   // We need an address arg to the contract
@@ -53,15 +51,23 @@ async function deployTestnet(deployer, network, accounts) {
   })).contractAddress;
 
   console.log('PangolinRouter is at: ' + PangolinRouterAddress);
+
+  console.log('View Root as Deployer1');
+  await new Promise(r => setTimeout(r, 10000));
+  const rootAsD1 = await Deployer1.deployed();
+  //const rootAsD1 = await Deployer1.at(root.address);
   
   console.log('Deploy Deployer2');
   const d2 = await deployer.deploy(Deployer2);
   console.log('Implement Deployer2');
   await rootAsD1.implement(d2.address);
   console.log('View root as Deployer2');
-  const rootAsD2 = await Deployer2.at(root.address);
+  await new Promise(r => setTimeout(r, 120000));
+  const rootAsD2 = await Deployer2.deployed();//at(rootAsD1.address);
+  //const rootAsD2 = await Deployer2.at(root.address);
   
   // Set up the fields of the oracle that we can't pass through a Deployer
+  await new Promise(r => setTimeout(r, 10000));
   const oracleAddress = await rootAsD2.oracle.call();
   const oracle = await MockOracle.at(oracleAddress);
   console.log('Oracle is at: ' + oracleAddress);
@@ -76,8 +82,9 @@ async function deployTestnet(deployer, network, accounts) {
   console.log('Implement Deployer3');
   await rootAsD2.implement(d3.address);
   console.log('View root as Deployer3');
+  await new Promise(r => setTimeout(r, 10000));
   const rootAsD3 = await Deployer3.at(root.address);
-
+  await new Promise(r => setTimeout(r, 10000));
   const pool = await Pool.at(await rootAsD3.pool.call());
   console.log('Pool is at: ' + pool.address);
 
@@ -92,6 +99,8 @@ async function deployTestnet(deployer, network, accounts) {
 
 module.exports = function(deployer, network, accounts) {
   deployer.then(async() => {
+    await deployTestnet(deployer, network, accounts);
+    /*
     console.log(deployer.network);
     switch (deployer.network) {
       case 'development':
@@ -100,6 +109,7 @@ module.exports = function(deployer, network, accounts) {
       default:
         throw("Unsupported network");
     }
+    */
   })
 };
 

@@ -11,12 +11,12 @@ import math
 import logging
 import time
 import sys
-
+from eth_abi import decoding
 from web3 import Web3
 
 IS_DEBUG = False
 is_try_model_mine = False
-block_offset = 17
+block_offset = 18
 
 DEADLINE_FROM_NOW = 60 * 60 * 24 * 7 * 52
 UINT256_MAX = 2**256 - 1
@@ -27,10 +27,45 @@ with open("deploy_output.txt", 'r+') as f:
     deploy_data = f.read()
 
 logger = logging.getLogger(__name__)
-provider = Web3.HTTPProvider('http://localhost:7545', request_kwargs={"timeout": 60*300})
+#provider = Web3.HTTPProvider('http://127.0.0.1:7545/ext/bc/C/rpc', request_kwargs={"timeout": 60*300})
+provider = Web3.WebsocketProvider('ws://127.0.0.1:9545/ext/bc/C/ws', websocket_timeout=60*300)
+
+#provider = Web3.IPCProvider("./xsd-ipc.ipc")
+#provider = Web3.HTTPProvider('http://localhost:7545', request_kwargs={"timeout": 60*300})
 #provider = Web3.WebsocketProvider('ws://localhost:7545', websocket_timeout=60*30)
 #provider = Web3.IPCProvider("./development.ipc")
 w3 = Web3(provider)
+from web3.middleware import geth_poa_middleware
+#print(geth_poa_middleware)
+w3.middleware_onion.inject(geth_poa_middleware, layer=0)
+
+w3.eth.defaultAccount = w3.eth.accounts[0]
+#print(w3.eth.defaultAccount)
+#print(w3.eth.get_block('latest'))
+#print(w3.isConnected())
+print(w3.eth.blockNumber)
+print(w3.clientVersion)
+#print(w3.eth.accounts)
+#sys.exit()
+
+'''
+existing_func = decoding.Fixed32ByteSizeDecoder.read_data_from_stream
+
+def read_data_from_stream(self, stream):
+    global existing_func
+    try:
+        output = existing_func(self, stream)
+        print(output)
+        return output
+    except Exception as inst:
+        print(inst)
+        data = stream.read(self.data_byte_size)
+        return data
+
+decoding.Fixed32ByteSizeDecoder.read_data_from_stream = read_data_from_stream
+'''
+
+#sys.exit()
 
 # from (Pangolin pair is at:)
 PGL = {
@@ -1305,6 +1340,7 @@ def main():
     logging.basicConfig(level=logging.INFO)
     
     max_accounts = 20
+    #print(w3.eth.get_block('latest'))
     logger.info(w3.eth.get_block('latest')["number"])
     if w3.eth.get_block('latest')["number"] == block_offset:
         # THIS ONLY NEEDS TO BE RUN ON NEW CONTRACTS
@@ -1312,10 +1348,11 @@ def main():
 
     logger.info('Total Agents: {}'.format(len(w3.eth.accounts[:max_accounts])))
     dao = w3.eth.contract(abi=DaoContract['abi'], address=xSDS["addr"])
+    print(w3.eth.getCode(dao.address))
     logger.info('Dao is at: {}'.format(dao.address))
 
     for acc in w3.eth.accounts[:max_accounts]:
-        logger.info("how many times assigned coupons for {}: {}".format(acc, dao.caller().getCouponsCurrentAssignedIndex(acc)+1))
+        logger.info("how many times assigned coupons for {}: {}".format(acc, dao.functions.getCouponsCurrentAssignedIndex(acc).call()))
     '''
     logger.info("getTotalFilled at epoch 4: {}".format(dao.caller().getTotalFilled(4)))
 
@@ -1340,6 +1377,8 @@ def main():
     })
     sys.exit()
     '''
+
+    #print(dao.caller({'from' : dao.address, 'gas': Web3.toWei(470, 'gwei')}).oracle())
     oracle = w3.eth.contract(abi=OracleContract['abi'], address=dao.caller({'from' : dao.address, 'gas': 8000000}).oracle())
     logger.info("Oracle is at: {}".format(oracle.address))
 
