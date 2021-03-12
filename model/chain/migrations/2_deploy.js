@@ -54,8 +54,7 @@ async function deployTestnet(deployer, network, accounts) {
 
   console.log('View Root as Deployer1');
   await new Promise(r => setTimeout(r, 10000));
-  const rootAsD1 = await Deployer1.deployed();
-  //const rootAsD1 = await Deployer1.at(root.address);
+  const rootAsD1 = await Deployer1.at(root.address);
   
   console.log('Deploy Deployer2');
   const d2 = await deployer.deploy(Deployer2);
@@ -63,14 +62,14 @@ async function deployTestnet(deployer, network, accounts) {
   await rootAsD1.implement(d2.address);
   console.log('View root as Deployer2');
   await new Promise(r => setTimeout(r, 120000));
-  const rootAsD2 = await Deployer2.deployed();//at(rootAsD1.address);
-  //const rootAsD2 = await Deployer2.at(root.address);
-  
+  const rootAsD2 = await Deployer2.at(rootAsD1.address);
+
   // Set up the fields of the oracle that we can't pass through a Deployer
   await new Promise(r => setTimeout(r, 10000));
+  console.log('Setup Oracle');
   const oracleAddress = await rootAsD2.oracle.call();
-  const oracle = await MockOracle.at(oracleAddress);
   console.log('Oracle is at: ' + oracleAddress);
+  const oracle = await MockOracle.at(oracleAddress);
   
   // Make the oracle make the pangolin pair on our custom factory
   await oracle.set(pangolinFactoryAddress, usdc.address);

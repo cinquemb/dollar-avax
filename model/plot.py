@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-project_name = "cinquemb:dsd-protocol"
+project_name = "cinquemb:xsd-protocol"
 """
 plot.py: plot log of % system behavior
 """ % (project_name)
@@ -16,7 +16,7 @@ def main():
     # This will hold each column, as a list
     columns = []
 
-    log = open("log.tsv")
+    log = open("./chain/log.1500adv.10prem_4.tsv")
     for line in log:
         line = line.strip()
         if line == '':
@@ -42,7 +42,7 @@ def main():
         raise RuntimeError("No column: " + x_heading)
         
     fig, axes = plt.subplots(len(columns) - 1, 1, sharex=True)
-    fig.suptitle('% Simulation Results' % (project_name))
+    fig.suptitle('%s Simulation Results' % (project_name))
 
     axis_cursor = 0
         

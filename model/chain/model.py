@@ -129,7 +129,7 @@ PoolContract = json.loads(open('./build/contracts/Pool.json', 'r+').read())
 OracleContract = json.loads(open('./build/contracts/MockOracle.json', 'r+').read())
 
 def get_addr_from_contract(contract):
-    return contract["networks"][str(sorted(map(int,contract["networks"].keys()))[-1])]["address"]
+    return contract["networks"][str(sorted(map(int,contract["networks"].keys()))[0])]["address"]
 
 xSD['addr'] = get_addr_from_contract(DaoContract)
 xSDS['addr'] = get_addr_from_contract(TokenContract)
@@ -1339,16 +1339,18 @@ def main():
     
     logging.basicConfig(level=logging.INFO)
     
-    max_accounts = 20
+    max_accounts = 1
     #print(w3.eth.get_block('latest'))
     logger.info(w3.eth.get_block('latest')["number"])
     if w3.eth.get_block('latest')["number"] == block_offset:
         # THIS ONLY NEEDS TO BE RUN ON NEW CONTRACTS
         logger.info(provider.make_request("evm_increaseTime", [1606348800]))
 
+    logger.info('Root Addr: {}'.format(xSDS['addr']))
+
     logger.info('Total Agents: {}'.format(len(w3.eth.accounts[:max_accounts])))
     dao = w3.eth.contract(abi=DaoContract['abi'], address=xSDS["addr"])
-    print(w3.eth.getCode(dao.address))
+    logger.info('Dao code at {}: {}'.format(dao.address, w3.eth.getCode(dao.address)))
     logger.info('Dao is at: {}'.format(dao.address))
 
     for acc in w3.eth.accounts[:max_accounts]:
@@ -1378,8 +1380,8 @@ def main():
     sys.exit()
     '''
 
-    #print(dao.caller({'from' : dao.address, 'gas': Web3.toWei(470, 'gwei')}).oracle())
-    oracle = w3.eth.contract(abi=OracleContract['abi'], address=dao.caller({'from' : dao.address, 'gas': 8000000}).oracle())
+    #print(dao.caller().oracle())
+    oracle = w3.eth.contract(abi=OracleContract['abi'], address="0xe0526Cc18AeE582bc174011DEEDeB2cC58e246f4")
     logger.info("Oracle is at: {}".format(oracle.address))
 
     pangolin = TokenProxy(w3.eth.contract(abi=PangolinPairContract['abi'], address=PGL["addr"]))
@@ -1390,6 +1392,8 @@ def main():
 
     xsd = TokenProxy(w3.eth.contract(abi=DollarContract['abi'], address=dao.caller().dollar()))
     logger.info(dao.caller().dollar())
+
+    sys.exit()
     
     # Make a model of the economy
     start_init = time.time()
