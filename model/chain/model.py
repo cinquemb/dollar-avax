@@ -1120,13 +1120,13 @@ class Model:
                     break
                 
                 if self.agent_coupons[a.address] > 0 and tr >= self.agent_coupons[a.address]:
-                    # if agent has coupons                    
-                    logger.info("COUPON EXP: Agent {}, exp_epochs: {}".format(a.address, json.dumps(a.coupon_expirys)))
-
                     if len(a.coupon_expirys) == 0:
                         #logger.info("ERROR WITH EXIPRIATION LIST")
                         continue
                     else:
+                        # if agent has coupons                    
+                        logger.info("COUPON EXP: Agent {}, exp_epochs: {}".format(a.address, json.dumps(a.coupon_expirys)))
+
                         a.redeem_count += 1
                         tried_idx = []
                         for c_idx, c_exp in enumerate(a.coupon_expirys):
