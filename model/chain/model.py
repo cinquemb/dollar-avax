@@ -16,7 +16,7 @@ from web3 import Web3
 
 IS_DEBUG = False
 is_try_model_mine = False
-block_offset = 18
+block_offset = 39
 
 DEADLINE_FROM_NOW = 60 * 60 * 24 * 7 * 52
 UINT256_MAX = 2**256 - 1
@@ -30,6 +30,13 @@ logger = logging.getLogger(__name__)
 #provider = Web3.HTTPProvider('http://127.0.0.1:7545/ext/bc/C/rpc', request_kwargs={"timeout": 60*300})
 provider = Web3.WebsocketProvider('ws://127.0.0.1:9545/ext/bc/C/ws', websocket_timeout=60*300)
 
+'''
+curl -X POST --data '{ "jsonrpc":"2.0", "id" :1, "method" :"platform.incrementTimeTx", "params" :{ "time": 10000 }}' -H 'content-type:application/json;' http://127.0.0.1:9545/ext/P
+'''
+providerP = Web3.HTTPProvider('http://127.0.0.1:9545/ext/P', request_kwargs={"timeout": 60*300})
+#print(providerP.make_request("platform.incrementTimeTx", {"time": 10000}))
+#logger.info(provider.make_request("platform.incrementTimeTx", {"time": 10000}))
+#sys.exit()
 #provider = Web3.IPCProvider("./xsd-ipc.ipc")
 #provider = Web3.HTTPProvider('http://localhost:7545', request_kwargs={"timeout": 60*300})
 #provider = Web3.WebsocketProvider('ws://localhost:7545', websocket_timeout=60*30)
@@ -135,19 +142,16 @@ xSD['addr'] = get_addr_from_contract(DaoContract)
 xSDS['addr'] = get_addr_from_contract(TokenContract)
 
 def get_nonce(agent):
-    if is_try_model_mine:
-        current_block = int(w3.eth.get_block('latest')["number"])
-        if current_block not in agent.seen_block:
-            if (agent.current_block == 0):
-                agent.current_block += 1
-            else:
-                agent.next_tx_count += 1
+    current_block = int(w3.eth.get_block('latest')["number"])
+    if current_block not in agent.seen_block:
+        if (agent.current_block == 0):
+            agent.current_block += 1
         else:
             agent.next_tx_count += 1
-            agent.seen_block[current_block] = True
-        return agent.next_tx_count 
     else:
-        return w3.eth.getTransactionCount(agent.address, block_identifier=int(w3.eth.get_block('latest')["number"]))
+        agent.next_tx_count += 1
+        agent.seen_block[current_block] = True
+    return agent.next_tx_count
 
 def reg_int(value, scale):
     """
@@ -484,7 +488,7 @@ class TokenProxy:
                 'nonce': get_nonce(owner),
                 'from' : getattr(owner, 'address', owner),
                 'gas': 8000000,
-                'gasPrice': 1,
+                'gasPrice': Web3.toWei(470, 'gwei'),
             })
             self.__approved[owner].add(spender)
             
@@ -560,7 +564,7 @@ class Agent:
                 'nonce': get_nonce(self),
                 'from' : self.address,
                 'gas': 8000000,
-                'gasPrice': 1,
+                'gasPrice': Web3.toWei(470, 'gwei'),
             })
         
     @property
@@ -763,7 +767,7 @@ class PangolinPool:
             'nonce': get_nonce(agent),
             'from' : agent.address,
             'gas': 8000000,
-            'gasPrice': 1,
+            'gasPrice': Web3.toWei(470, 'gwei'),
         })
         
     def remove_liquidity(self, agent, shares, min_xsd_amount, min_usdc_amount):
@@ -790,7 +794,7 @@ class PangolinPool:
             'nonce': get_nonce(agent),
             'from' : agent.address,
             'gas': 8000000,
-            'gasPrice': 1,
+            'gasPrice': Web3.toWei(470, 'gwei'),
         })
         
     def buy(self, agent, usdc, max_usdc_amount):
@@ -816,7 +820,7 @@ class PangolinPool:
             'nonce': get_nonce(agent),
             'from' : agent.address,
             'gas': 8000000,
-            'gasPrice': 1,
+            'gasPrice': Web3.toWei(470, 'gwei'),
         })
         
     def sell(self, agent, xsd, min_usdc_amount, advancer, pangolin_usdc_supply):
@@ -841,7 +845,7 @@ class PangolinPool:
             'nonce': get_nonce(agent),
             'from' : agent.address,
             'gas': 8000000,
-            'gasPrice': 1,
+            'gasPrice': Web3.toWei(470, 'gwei'),
         })
 
     def update(self, is_init_agents=[]):
@@ -931,7 +935,7 @@ class DAO:
             'nonce': get_nonce(agent),
             'from' : agent.address,
             'gas': 8000000,
-            'gasPrice': 1,
+            'gasPrice': Web3.toWei(470, 'gwei'),
         })
         
     def redeem(self, agent, epoch_expired):
@@ -954,7 +958,7 @@ class DAO:
             'nonce': get_nonce(agent),
             'from' : agent.address,
             'gas': 8000000,
-            'gasPrice': 1,
+            'gasPrice': Web3.toWei(470, 'gwei'),
         })
 
 
@@ -968,19 +972,16 @@ class DAO:
         global provider
         global w3
         epoch_before = self.epoch(agent.address)
-        provider.make_request("evm_increaseTime", [7201])
+        print(provider.make_request("avax.incrementTimeTx", {"time": 7201}))
+        time.sleep(2)
         before_advance = self.xsd_token[agent.address]
         
         self.contract.functions.advance().transact({
             'nonce': get_nonce(agent),
             'from' : agent.address,
             'gas': 8000000,
-            'gasPrice': Web3.toWei(1, 'gwei'),
+            'gasPrice': Web3.toWei(470, 'gwei'),
         })
-        
-        # need to force mine block after every advance or the state wont change in token balance
-        if is_try_model_mine:
-            provider.make_request("evm_mine", [])
                         
 class Model:
     """
@@ -1024,9 +1025,6 @@ class Model:
             self.agents.append(agent)
         #sys.exit()
 
-        if is_try_model_mine:
-            for i in range(0, total_tx_submitted):
-                provider.make_request("evm_mine", [])
 
         # Update caches to current chain state
         self.usdc_token.update(is_init_agents=self.agents)
@@ -1323,8 +1321,6 @@ class Model:
             logging.info("{} sumbitted, mining blocks for them now, {} coupon bidders".format(
                 total_tx_submitted, total_coupoun_bidders)
             )
-            for i in range(0, total_tx_submitted):
-                provider.make_request("evm_mine", [])
         else:
             logging.info("{} coupon bidders".format(
                 total_coupoun_bidders)
@@ -1339,12 +1335,15 @@ def main():
     
     logging.basicConfig(level=logging.INFO)
     
-    max_accounts = 1
+    max_accounts = 20
     #print(w3.eth.get_block('latest'))
     logger.info(w3.eth.get_block('latest')["number"])
+    #sys.exit()
     if w3.eth.get_block('latest')["number"] == block_offset:
         # THIS ONLY NEEDS TO BE RUN ON NEW CONTRACTS
-        logger.info(provider.make_request("evm_increaseTime", [1606348800]))
+        logger.info(provider.make_request("avax.incrementTimeTx", {"time": 10000}))
+
+    #sys.exit()
 
     logger.info('Root Addr: {}'.format(xSDS['addr']))
 
@@ -1355,6 +1354,7 @@ def main():
 
     for acc in w3.eth.accounts[:max_accounts]:
         logger.info("how many times assigned coupons for {}: {}".format(acc, dao.functions.getCouponsCurrentAssignedIndex(acc).call()))
+
     '''
     logger.info("getTotalFilled at epoch 4: {}".format(dao.caller().getTotalFilled(4)))
 
@@ -1381,7 +1381,7 @@ def main():
     '''
 
     #print(dao.caller().oracle())
-    oracle = w3.eth.contract(abi=OracleContract['abi'], address="0xe0526Cc18AeE582bc174011DEEDeB2cC58e246f4")
+    oracle = w3.eth.contract(abi=OracleContract['abi'], address=dao.caller().oracle())
     logger.info("Oracle is at: {}".format(oracle.address))
 
     pangolin = TokenProxy(w3.eth.contract(abi=PangolinPairContract['abi'], address=PGL["addr"]))
@@ -1393,8 +1393,6 @@ def main():
     xsd = TokenProxy(w3.eth.contract(abi=DollarContract['abi'], address=dao.caller().dollar()))
     logger.info(dao.caller().dollar())
 
-    sys.exit()
-    
     # Make a model of the economy
     start_init = time.time()
     logger.info('INIT STARTED')

@@ -3,15 +3,21 @@ const provider = new Web3.providers.HttpProvider('http://127.0.0.1:9545/ext/bc/C
 const w3 = new Web3(provider);
 const avalanche = require("avalanche");
 
+//cchain.callMethod('avax.incrementTimeTx', {"time": 10000}).then((res) => console.log(res.data))
+//pchain.callMethod('platform.incrementTimeTx', {"time": 10000}).then((res) => console.log(res.data))
+
 let maxAccounts = 1;
-let pk = "PrivateKey-ewoqjP7PxY4yr3iLTpLisriqt94hdyDFNgchSxGGztUrTXtNN";
 let ava = new avalanche.Avalanche('127.0.0.1', 9545, 'http', 12345);
 let xchain = ava.XChain();
 let cchain = ava.CChain();
+let pchain = ava.PChain();
 let xKeychain = xchain.keyChain();
 let cKeychain = cchain.keyChain();
+let pKeychain = pchain.keyChain();
+let pk = "PrivateKey-ewoqjP7PxY4yr3iLTpLisriqt94hdyDFNgchSxGGztUrTXtNN";
 xKeychain.importKey(pk);
 cKeychain.importKey(pk);
+pKeychain.importKey(pk);
 let xAddresses = xchain.keyChain().getAddresses();
 let cAddresses = cchain.keyChain().getAddresses();
 let xAddressStrings = xchain.keyChain().getAddressStrings();
@@ -65,12 +71,11 @@ async function importTxXtoC(evmAddr) {
 
 
 async function seedTestAccounts(evmAddr) {
-	//let xBalance = await xchain.getBalance(xAddressStrings[0], bintools.cb58Encode(avaxAssetID));
 	// EXPORT TX FROM X-CHAIN INTO C-CHAIN
 	await exportTxXtoC()
 
 	// sleep
-	await new Promise(r => setTimeout(r, 1000));
+	await new Promise(r => setTimeout(r, 5000));
 	// IMPORT TX INTO C-CHAIN FROM X-CHAIN
 	await importTxXtoC(evmAddr);
 }

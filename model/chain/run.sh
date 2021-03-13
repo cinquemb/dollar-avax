@@ -47,16 +47,16 @@ while ! grep -i "listening on" ganache_output.txt 2>/dev/null ; do
     sleep 1
 done
 
-
+#: '
 # Creating accounts
 echo "Creating test accounts..."
-time truffle exec make_accounts.js --network development >> ganache_output.txt
+time truffle exec make_accounts.js --network development > make_accounts_output.txt
 # Run the deployment
 echo "Deploying contracts..."
 truffle migrate --reset --skip-dry-run --network=development | tee deploy_output.txt
 
 #truffle migrate --reset --network=development | tee deploy_output.txt
-
+#'
 if [[ ! -e venv ]] ; then
     # Set up the virtual environment
     echo "Preparing Virtual Environment..."
@@ -80,7 +80,6 @@ else
     echo "Running Model..."
     ./model.py
 fi
-
 
 # grep -P "^  Gas usage: .{6,}" ganache_output.txt | wc -l
 # grep -P "^  Gas usage: .{0,}" ganache_output.txt | wc -l
