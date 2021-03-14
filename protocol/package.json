@@ -18,7 +18,6 @@
     "@openzeppelin/upgrades": "^2.8.0",
     "@pangolindex/exchange-contracts": "^1.0.1",
     "avalanche": "^3.2.1",
-    "ganache-cli": "^6.12.2",
     "web3": "^1.3.4",
     "web3-provider-engine": "^16.0.1"
   },

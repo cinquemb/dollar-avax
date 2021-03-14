@@ -4,7 +4,6 @@ const w3 = new Web3(provider);
 const avalanche = require("avalanche");
 
 //cchain.callMethod('avax.incrementTimeTx', {"time": 10000}).then((res) => console.log(res.data))
-//pchain.callMethod('platform.incrementTimeTx', {"time": 10000}).then((res) => console.log(res.data))
 
 let maxAccounts = 1;
 let ava = new avalanche.Avalanche('127.0.0.1', 9545, 'http', 12345);
@@ -26,7 +25,7 @@ let bintools = avalanche.BinTools.getInstance();
 
 let cChainBlockchainID = cchain.getBlockchainID();
 const ONEAVAX = new avalanche.BN(1000000000);
-let amount = ONEAVAX.mul(new avalanche.BN(100000)); //seed all wallets with 100k avax
+let amount = ONEAVAX.mul(new avalanche.BN(1000000)); //seed all wallets with 1000k avax
 let locktime = new avalanche.BN(0);
 let threshold = 1;
 
@@ -94,7 +93,6 @@ module.exports = async (callback) => {
   // seed accounts with avax from x-chain to c-chain
   console.log('seed accounts with avax from x-chain to c-chain');
   for (var i=0; i<accounts.length;i++) {await seedTestAccounts(accounts[i]);}
-
   await new Promise(r => setTimeout(r, 5000));
 
   // check balance of accounts

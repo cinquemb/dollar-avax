@@ -16,7 +16,7 @@ def main():
     # This will hold each column, as a list
     columns = []
 
-    log = open("./chain/log.1500adv.10prem_4.tsv")
+    log = open("./chain/log.150adv.10prem_2.tsv")
     for line in log:
         line = line.strip()
         if line == '':

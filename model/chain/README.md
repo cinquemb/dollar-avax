@@ -9,14 +9,20 @@ First, you need to install the dependencies in this directory:
 npm install
 ```
 
-Then, you need Ganache and Truffle installed:
+Then, you need AvalancheGo, AvalancheJs and Truffle installed:
 
 ```
-npm install -g ganache-cli
+go get -v -d github.com/ava-labs/avalanchego/...
+cd $GOPATH/src/github.com/ava-labs/avalanchego
+./scripts/build.sh
+PATH=$GOPATH/src/github.com/ava-labs/avalanchego/build/:$PATH
+export PATH
 npm install -g truffle
+npm install avalanche
+
 ```
 
-Finally, you can run the wrapper script, which will start Ganache, deploy the contracts into it, install necessary Python dependencies, run the `model.py` modeling script, and clean up temporary files afterward.
+Finally, you can run the wrapper script, which will start avalanchego, deploy the contracts into it, install necessary Python dependencies, run the `model.py` modeling script, and clean up temporary files afterward.
 
 ```
 ./run.sh
@@ -28,10 +34,6 @@ If you are editing the model, you can run:
 RUN_SHELL=1 ./run.sh
 ```
 
-You will need to run at the sime time when deploying the contracts, then kill it once its finished before running the model
-```
-./force_mine.sh
-```
 
 Then you can run `./model.py` in that shell multiple times, against the same prepared chain. To tear down the chain, just `exit`.
 

@@ -487,7 +487,7 @@ class TokenProxy:
             self.__contract.functions.approve(spender, UINT256_MAX).transact({
                 'nonce': get_nonce(owner),
                 'from' : getattr(owner, 'address', owner),
-                'gas': 8000000,
+                'gas': 89902345,
                 'gasPrice': Web3.toWei(470, 'gwei'),
             })
             self.__approved[owner].add(spender)
@@ -521,8 +521,8 @@ class Agent:
         self.usdc_token = usdc_token
         # xSDS (Dao share) balance
         self.xsds = Balance(0, xSDS["decimals"])
-        # Eth balance
-        self.eth = kwargs.get("starting_eth", Balance(0, 18))
+        # avax balance
+        self.avax = kwargs.get("starting_avax", Balance(0, 18))
         
         # Coupon underlying part by expiration epoch
         self.underlying_coupons = collections.defaultdict(float)
@@ -563,7 +563,7 @@ class Agent:
             self.usdc_token.contract.functions.mint(self.address, unreg_int(start_usdc_formatted, USDC['decimals'])).transact({
                 'nonce': get_nonce(self),
                 'from' : self.address,
-                'gas': 8000000,
+                'gas': 89902345,
                 'gasPrice': Web3.toWei(470, 'gwei'),
             })
         
@@ -599,8 +599,8 @@ class Agent:
         """
         Turn into a readable string summary.
         """
-        return "Agent(xSD={:.2f}, usdc={:.2f}, eth={}, lp={}, coupons={:.2f})".format(
-            self.xsd, self.usdc, self.eth, self.lp, self.coupons)
+        return "Agent(xSD={:.2f}, usdc={:.2f}, avax={}, lp={}, coupons={:.2f})".format(
+            self.xsd, self.usdc, self.avax, self.lp, self.coupons)
 
         
     def get_strategy(self, block, price, total_supply, total_coupons, agent_coupons):
@@ -660,7 +660,7 @@ class Agent:
         
         center_faith = (self.max_faith + self.min_faith) / 2
         swing_faith = (self.max_faith - self.min_faith) / 2
-        faith = center_faith + swing_faith * math.sin(block * (2 * math.pi / 5000))
+        faith = center_faith + swing_faith * math.sin(block * (2 * math.pi / 50))
         
         return faith
         
@@ -766,7 +766,7 @@ class PangolinPool:
         ).transact({
             'nonce': get_nonce(agent),
             'from' : agent.address,
-            'gas': 8000000,
+            'gas': 89902345,
             'gasPrice': Web3.toWei(470, 'gwei'),
         })
         
@@ -793,7 +793,7 @@ class PangolinPool:
         ).transact({
             'nonce': get_nonce(agent),
             'from' : agent.address,
-            'gas': 8000000,
+            'gas': 89902345,
             'gasPrice': Web3.toWei(470, 'gwei'),
         })
         
@@ -819,7 +819,7 @@ class PangolinPool:
         ).transact({
             'nonce': get_nonce(agent),
             'from' : agent.address,
-            'gas': 8000000,
+            'gas': 89902345,
             'gasPrice': Web3.toWei(470, 'gwei'),
         })
         
@@ -844,7 +844,7 @@ class PangolinPool:
         ).transact({
             'nonce': get_nonce(agent),
             'from' : agent.address,
-            'gas': 8000000,
+            'gas': 89902345,
             'gasPrice': Web3.toWei(470, 'gwei'),
         })
 
@@ -870,7 +870,7 @@ class DAO:
         return self.xsd_token.totalSupply
 
     def total_coupons_at_epoch(self, address, epoch):
-        total_coupons = self.contract.caller({'from' : address, 'gas': 8000000}).outstandingCoupons(epoch)
+        total_coupons = self.contract.caller({'from' : address, 'gas': 89902345}).outstandingCoupons(epoch)
         return Balance.from_tokens(total_coupons, xSD['decimals'])
         
     def total_coupons(self):
@@ -882,7 +882,7 @@ class DAO:
         return reg_int(total, xSD['decimals'])
 
     def total_coupons_for_agent(self, agent):
-        total_coupons = self.contract.caller({'from' : agent.address, 'gas': 8000000}).outstandingCouponsForAddress(agent.address)
+        total_coupons = self.contract.caller({'from' : agent.address, 'gas': 89902345}).outstandingCouponsForAddress(agent.address)
         return total_coupons
 
     def coupon_balance_at_epoch(self, address, epoch):
@@ -891,7 +891,7 @@ class DAO:
         '''
         if epoch == 0:
             return 0
-        total_coupons = self.contract.caller({'from' : address, 'gas': 8000000}).balanceOfCoupons(address, epoch)
+        total_coupons = self.contract.caller({'from' : address, 'gas': 89902345}).balanceOfCoupons(address, epoch)
         return total_coupons
 
     def get_coupon_expirirations(self, agent):
@@ -899,10 +899,10 @@ class DAO:
             Return a list of coupon expirations for an address from last time called
         '''
         epochs = []
-        epoch_index_max = self.contract.caller({'from' : agent.address, 'gas': 8000000}).getCouponsCurrentAssignedIndex(agent.address)
+        epoch_index_max = self.contract.caller({'from' : agent.address, 'gas': 89902345}).getCouponsCurrentAssignedIndex(agent.address)
 
         for i in range(agent.max_coupon_epoch_index, epoch_index_max):
-            t_epoch = self.contract.caller({'from' : agent.address, 'gas': 8000000}).getCouponsAssignedAtEpoch(agent.address, i)
+            t_epoch = self.contract.caller({'from' : agent.address, 'gas': 89902345}).getCouponsAssignedAtEpoch(agent.address, i)
             epochs.append(t_epoch)
 
         agent.max_coupon_epoch_index = epoch_index_max
@@ -912,7 +912,7 @@ class DAO:
         return agent.coupon_expirys
 
     def epoch(self, address):
-        return self.contract.caller({'from' : address, 'gas': 8000000}).epoch()
+        return self.contract.caller({'from' : address, 'gas': 89902345}).epoch()
         
     def has_coupon_bid(self):
         """
@@ -934,7 +934,7 @@ class DAO:
         ).transact({
             'nonce': get_nonce(agent),
             'from' : agent.address,
-            'gas': 8000000,
+            'gas': 89902345,
             'gasPrice': Web3.toWei(470, 'gwei'),
         })
         
@@ -957,7 +957,7 @@ class DAO:
         ).transact({
             'nonce': get_nonce(agent),
             'from' : agent.address,
-            'gas': 8000000,
+            'gas': 89902345,
             'gasPrice': Web3.toWei(470, 'gwei'),
         })
 
@@ -972,16 +972,18 @@ class DAO:
         global provider
         global w3
         epoch_before = self.epoch(agent.address)
+        block_before = w3.eth.get_block('latest')["number"]
         print(provider.make_request("avax.incrementTimeTx", {"time": 7201}))
-        time.sleep(2)
         before_advance = self.xsd_token[agent.address]
-        
         self.contract.functions.advance().transact({
             'nonce': get_nonce(agent),
             'from' : agent.address,
-            'gas': 8000000,
+            'gas': 89902345,
             'gasPrice': Web3.toWei(470, 'gwei'),
         })
+
+        while (w3.eth.get_block('latest')["number"] == block_before):
+            time.sleep(1)
                         
 class Model:
     """
@@ -998,12 +1000,12 @@ class Model:
         self.usdc_token = usdc
         self.pangolin_router = pangolin_router
         self.xsd_token = xsd
-        self.max_eth = Balance.from_tokens(100000, 18)
+        self.max_avax = Balance.from_tokens(1000000, 18)
         self.max_usdc = self.usdc_token.from_tokens(100000)
         self.bootstrap_epoch = 2
         self.max_coupon_exp = 131400
-        self.max_coupon_premium = 10 #redoo with 10 with same settings
-        self.min_usdc_balance = self.usdc_token.from_tokens(200)
+        self.max_coupon_premium = 10
+        self.min_usdc_balance = self.usdc_token.from_tokens(25)
         self.agent_coupons = {x: 0 for x in agents}
 
 
@@ -1015,21 +1017,23 @@ class Model:
         
         total_tx_submitted = len(agents) 
         for i in range(len(agents)):
-
-            start_eth = random.random() * self.max_eth
+            start_avax = random.random() * self.max_avax
             start_usdc = random.random() * self.max_usdc
             
             address = agents[i]
-            agent = Agent(self.dao, pangolin, xsd, usdc, starting_eth=start_eth, starting_usdc=start_usdc, wallet_address=address, is_mint=is_mint, **kwargs)
-            logger.info(agent)  
+            agent = Agent(self.dao, pangolin, xsd, usdc, starting_axax=start_avax, starting_usdc=start_usdc, wallet_address=address, is_mint=is_mint, **kwargs)
+             
             self.agents.append(agent)
-        #sys.exit()
-
 
         # Update caches to current chain state
         self.usdc_token.update(is_init_agents=self.agents)
         self.xsd_token.update(is_init_agents=self.agents)
         self.pangolin.update(is_init_agents=self.agents)
+
+        for i in range(len(agents)):
+            logger.info(self.agents[i])
+
+        #sys.exit()
         
     def log(self, stream, seleted_advancer, header=False):
         """
@@ -1071,7 +1075,7 @@ class Model:
         #randomly have an agent advance the epoch
         seleted_advancer = self.agents[int(random.random() * (len(self.agents) - 1))]
         self.dao.advance(seleted_advancer)
-        logger.info("Earliest Non Dead Auction: {}".format(self.dao.contract.caller({'from' : seleted_advancer.address, 'gas': 8000000}).getEarliestDeadAuctionEpoch()))
+        logger.info("Earliest Non Dead Auction: {}".format(self.dao.contract.caller({'from' : seleted_advancer.address, 'gas': 89902345}).getEarliestDeadAuctionEpoch()))
         logger.info("Advance from {}".format(seleted_advancer.address))
 
 
@@ -1083,7 +1087,7 @@ class Model:
         '''
         best_bidders = []
         for c_exp in range(0, current_epoch):
-            b_address = self.dao.contract.caller({'from' : a.address, 'gas': 8000000}).getBestBidderFromEarliestActiveAuctionEpoch(c_exp)
+            b_address = self.dao.contract.caller({'from' : a.address, 'gas': 89902345}).getBestBidderFromEarliestActiveAuctionEpoch(c_exp)
             best_bidders.append(b_address)
         '''
 
@@ -1115,7 +1119,7 @@ class Model:
         # try to redeem any outstanding coupons here first to better
         if epoch_start_price > 1.0 and total_coupons > 0:
             for agent_num, a in enumerate(self.agents):
-                tr = self.dao.contract.caller({'from' : a.address, 'gas': 8000000}).totalRedeemable()
+                tr = self.dao.contract.caller({'from' : a.address, 'gas': 89902345}).totalRedeemable()
                 if tr == 0:
                     break
                 
@@ -1199,7 +1203,7 @@ class Model:
                         continue
 
                     try:
-                        (max_amount, _) = self.pangolin_router.caller({'from' : a.address, 'gas': 8000000}).getAmountsIn(
+                        (max_amount, _) = self.pangolin_router.caller({'from' : a.address, 'gas': 89902345}).getAmountsIn(
                             unreg_int(usdc_in, USDC['decimals']), 
                             [self.usdc_token.address, self.xsd_token.address]
                         )
@@ -1232,7 +1236,7 @@ class Model:
                         continue
                     
                     try:
-                        (_, max_amount) = self.pangolin_router.caller({'from' : a.address, 'gas': 8000000}).getAmountsOut(
+                        (_, max_amount) = self.pangolin_router.caller({'from' : a.address, 'gas': 89902345}).getAmountsOut(
                             unreg_int(xsd_out, xSD['decimals']), 
                             [self.xsd_token.address, self.usdc_token.address]
                         )
@@ -1273,7 +1277,7 @@ class Model:
                         usdc = portion_dedusted(a.usdc, commitment)
                         
                     if revs[1] > 0:
-                        min_xsd_needed = reg_int(self.pangolin_router.caller({'from' : a.address, 'gas': 8000000}).quote(unreg_int(usdc, USDC['decimals']), revs[0], revs[1]), xSD['decimals'])
+                        min_xsd_needed = reg_int(self.pangolin_router.caller({'from' : a.address, 'gas': 89902345}).quote(unreg_int(usdc, USDC['decimals']), revs[0], revs[1]), xSD['decimals'])
                         if min_xsd_needed == 0:
                             price = epoch_start_price
                             min_xsd_needed = (usdc / float(price)).to_decimals(xSD['decimals'])
@@ -1338,10 +1342,6 @@ def main():
     max_accounts = 20
     #print(w3.eth.get_block('latest'))
     logger.info(w3.eth.get_block('latest')["number"])
-    #sys.exit()
-    if w3.eth.get_block('latest')["number"] == block_offset:
-        # THIS ONLY NEEDS TO BE RUN ON NEW CONTRACTS
-        logger.info(provider.make_request("avax.incrementTimeTx", {"time": 10000}))
 
     #sys.exit()
 
@@ -1349,7 +1349,6 @@ def main():
 
     logger.info('Total Agents: {}'.format(len(w3.eth.accounts[:max_accounts])))
     dao = w3.eth.contract(abi=DaoContract['abi'], address=xSDS["addr"])
-    logger.info('Dao code at {}: {}'.format(dao.address, w3.eth.getCode(dao.address)))
     logger.info('Dao is at: {}'.format(dao.address))
 
     for acc in w3.eth.accounts[:max_accounts]:
@@ -1359,13 +1358,13 @@ def main():
     logger.info("getTotalFilled at epoch 4: {}".format(dao.caller().getTotalFilled(4)))
 
     baddr = dao.caller().getBestBidderFromEarliestActiveAuctionEpoch(4)
-    exp = dao.caller({'from' : baddr, 'gas': 8000000}).getCouponsAssignedAtEpoch(baddr, 0)
+    exp = dao.caller({'from' : baddr, 'gas': 89902345}).getCouponsAssignedAtEpoch(baddr, 0)
     logger.info("getBestBidderFromEarliestActiveAuctionEpoch at epoch 4: {}".format(baddr))
     logger.info("getCouponsAssignedAtEpoch at epoch 4: epoch exp {}".format(exp))
 
-    total_coupons = dao.caller({'from' : baddr, 'gas': 8000000}).balanceOfCoupons(baddr, exp)
+    total_coupons = dao.caller({'from' : baddr, 'gas': 89902345}).balanceOfCoupons(baddr, exp)
     logger.info("total_coupons at exp epoch {}: {}".format(exp, total_coupons))
-    tr = dao.caller({'from' : baddr, 'gas': 8000000}).totalRedeemable()
+    tr = dao.caller({'from' : baddr, 'gas': 89902345}).totalRedeemable()
     logger.info("totalRedeemable: {}".format(tr))
     
     dao.functions.redeemCoupons(
@@ -1374,7 +1373,7 @@ def main():
     ).transact({
         'nonce': w3.eth.getTransactionCount(baddr, block_identifier=int(w3.eth.get_block('latest')["number"])),
         'from' : baddr,
-        'gas': 8000000,
+        'gas': 89902345,
         'gasPrice': 1,
     })
     sys.exit()
