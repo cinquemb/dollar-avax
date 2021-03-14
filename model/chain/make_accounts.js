@@ -4,6 +4,7 @@ const w3 = new Web3(provider);
 const avalanche = require("avalanche");
 
 //cchain.callMethod('avax.incrementTimeTx', {"time": 10000}).then((res) => console.log(res.data))
+//cchain.callMethod('avax.issueBlock').then((res) => console.log(res.data))
 
 let maxAccounts = 1;
 let ava = new avalanche.Avalanche('127.0.0.1', 9545, 'http', 12345);

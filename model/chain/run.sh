@@ -34,7 +34,7 @@ trap cleanup EXIT
 # Need to run the below command in a while loop when deploying locally
 # curl -H "Content-Type: application/json" -X POST --data '{"id":1337,"jsonrpc":"2.0","method":"evm_mine","params":[]}' http://localhost:7545
 echo "Starting AvalancheGo..."
-TMPDIR="$(pwd)" avalanchego --network-id=local --staking-enabled=false --snow-sample-size=1 --snow-quorum-size=1 --db-dir=./db/ --http-port=9545  > ganache_output.txt &
+TMPDIR="$(pwd)" avalanchego --network-id=local --staking-enabled=false --snow-sample-size=1 --snow-quorum-size=1 --db-dir=./db/ --http-port=9545 --log-level=verbo --log-dir=./db/ --snow-avalanche-batch-size=1 > ganache_output.txt &
 #TMPDIR="$(pwd)" ganache-cli --p 7545 --gasLimit 8000000 --accounts 20 --defaultBalanceEther 1000000 --db ./db --noVMErrorsOnRPCResponse > ganache_output.txt &
 #TMPDIR="$(pwd)" ganache-cli --p 7545 --gasLimit 8000000 --accounts 20 --defaultBalanceEther 1000000 --blockTime 604800 --db ./db --noVMErrorsOnRPCResponse  >ganache_output.txt &
 GANACHE=$!
