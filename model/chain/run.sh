@@ -49,11 +49,13 @@ done
 
 #: '
 # Creating accounts
-echo "Creating test accounts..."
+echo "Creating deploy test accounts..."
 time truffle exec make_accounts.js --network development > make_accounts_output.txt
 # Run the deployment
 echo "Deploying contracts..."
-truffle migrate --reset --skip-dry-run --network=development | tee deploy_output.txt
+time truffle migrate --reset --skip-dry-run --network=development | tee deploy_output.txt
+echo "Creating sim test accounts..."
+time truffle exec make_accounts.js --network development --max-accounts 40 >> make_accounts_output.txt
 
 #truffle migrate --reset --network=development | tee deploy_output.txt
 #'

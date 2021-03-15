@@ -72,6 +72,24 @@ contract Market is Comptroller {
         emit CouponRedemption(msg.sender, couponEpoch, couponAmount);
     }
 
+    function redeemCouponsForAccount(uint256 couponEpoch, uint256 couponAmount, address bidderAddr) external {
+        /*
+            TODO: this doesn't work, need a way to map bidding epoch to coupon epoch without looping?
+        address bestBidderFromEpoch = getBestBidderFromEarliestActiveAuctionEpoch(couponEpoch);
+
+        Require.that(
+            bestBidderFromEpoch == bidderAddr,
+            FILE,
+            "Must be current best bidder"
+        );*/
+
+        decrementBalanceOfCoupons(bidderAddr, couponEpoch, couponAmount, "Market: Insufficient coupon balance");
+        redeemToAccount(bidderAddr, couponAmount);
+        setCouponBidderStateRedeemed(couponEpoch, bidderAddr);
+
+        emit CouponRedemption(bidderAddr, couponEpoch, couponAmount);
+    }
+
     function approveCoupons(address spender, uint256 amount) external {
         require(spender != address(0), "Market: Coupon approve to the zero address");
 
@@ -187,11 +205,11 @@ contract Market is Comptroller {
 
                 if(nodeAddrDistance.greaterThan(bidAddrDistance)) {
                     // if node distance is greater than current bid distance
-                    pnode = nodeBidder.bidder;
+                    //pnode = nodeBidder.bidder;
                     node = nodeBidder.leftBidder;
                 } else if(nodeAddrDistance.lessThan(bidAddrDistance)) {
                     // if node distance is less than current bid distance
-                    pnode = nodeBidder.bidder;
+                    //pnode = nodeBidder.bidder;
                     node = nodeBidder.rightBidder;
                 } else if(nodeAddrDistance.equals(bidAddrDistance)) {
                     // duplicate values, sort not needed

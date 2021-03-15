@@ -16,7 +16,8 @@ from web3 import Web3
 
 IS_DEBUG = False
 is_try_model_mine = False
-block_offset = 39
+max_accounts = 40
+block_offset = 19 + max_accounts
 
 DEADLINE_FROM_NOW = 60 * 60 * 24 * 7 * 52
 UINT256_MAX = 2**256 - 1
@@ -908,12 +909,16 @@ class DAO:
 
         for i in range(agent.max_coupon_epoch_index, epoch_index_max):
             t_epoch = self.contract.caller({'from' : agent.address, 'gas': 100000}).getCouponsAssignedAtEpoch(agent.address, i)
-            epochs.append(t_epoch)
+            total_coupons = self.coupon_balance_at_epoch(agent.address, t_epoch)
+            if total_coupons == 0:
+                continue
+            else:
+                epochs.append(t_epoch)
 
-        agent.max_coupon_epoch_index = epoch_index_max
-        agent.coupon_expirys += epochs
+        agent.max_coupon_epoch_index = 0
+        agent.coupon_expirys = epochs
 
-        agent.coupon_expirys = list(set(agent.coupon_expirys))
+        #agent.coupon_expirys = list(set(agent.coupon_expirys))
         return agent.coupon_expirys
 
     def epoch(self, address):
@@ -940,7 +945,7 @@ class DAO:
         ).transact({
             'nonce': get_nonce(agent),
             'from' : agent.address,
-            'gas': 1500000,
+            'gas': 2000000,
             'gasPrice': Web3.toWei(470, 'gwei'),
         })
         providerAvax.make_request("avax.incrementTimeTx", {"time": 60})
@@ -965,7 +970,7 @@ class DAO:
         ).transact({
             'nonce': get_nonce(agent),
             'from' : agent.address,
-            'gas': 100000,
+            'gas': 8000000,
             'gasPrice': Web3.toWei(470, 'gwei'),
         })
 
@@ -982,16 +987,19 @@ class DAO:
         #time.sleep(10)
         
         #logger.info(providerAvax.make_request("avax.issueBlock", {}))
-        
+        providerAvax.make_request("avax.issueBlock", {})
         logger.info(providerAvax.make_request("avax.incrementTimeTx", {"time": 7201}))
+        time.sleep(1)
         before_advance = self.xsd_token[agent.address]
         self.contract.functions.advance().transact({
             'nonce': get_nonce(agent),
             'from' : agent.address,
-            'gas': 30000000,
+            'gas': 20000000,
             'gasPrice': Web3.toWei(470, 'gwei'),
         })
-        time.sleep(3)
+        providerAvax.make_request("avax.issueBlock", {})
+        time.sleep(1)
+        
         #logger.info(providerAvax.make_request("avax.issueBlock", {}))
 
         #'''
@@ -1045,6 +1053,9 @@ class Model:
         self.pangolin.update(is_init_agents=self.agents)
 
         for i in range(len(agents)):
+            if not is_mint:
+                self.agent_coupons[self.agents[i].address] = self.agents[i].coupons
+                self.dao.get_coupon_expirirations(self.agents[i])
             logger.info(self.agents[i])
 
         #sys.exit()
@@ -1125,6 +1136,7 @@ class Model:
 
 
         total_tx_submitted = 0
+        total_redeem_submitted = 0
         total_coupoun_bidders = 0
         random.shuffle(self.agents)
 
@@ -1138,6 +1150,7 @@ class Model:
                     break
                 
                 if self.agent_coupons[a.address] > 0 and tr >= self.agent_coupons[a.address]:
+                    self.dao.get_coupon_expirirations(a)
                     if len(a.coupon_expirys) == 0:
                         #logger.info("ERROR WITH EXIPRIATION LIST")
                         continue
@@ -1150,12 +1163,11 @@ class Model:
                         for c_idx, c_exp in enumerate(a.coupon_expirys):
                             try:
                                 self.dao.redeem(a, c_exp)
-                                tried_idx.append(c_idx)
+                                total_redeem_submitted += 1
+                                providerAvax.make_request("avax.issueBlock", {})
+                                time.sleep(1)
                             except Exception as inst:
                                 logger.info({"agent": a.address, "error": inst, "action": "redeem", "exact_expiry": c_exp})
-
-                        filt_list = [j for i, j in enumerate(a.coupon_expirys) if i not in tried_idx]
-                        a.coupon_expirys = filt_list
 
         for agent_num, a in enumerate(self.agents):            
             # TODO: real strategy
@@ -1277,7 +1289,6 @@ class Model:
                         #logger.info("Addr {} Bid to burn init {:.2f} xSD for {:.2f} coupons with expiry at epoch {}".format(a.address, xsd_at_risk, rand_max_coupons, exact_expiry))
                         self.dao.coupon_bid(a, rand_epoch_expiry, xsd_at_risk, rand_max_coupons)
                         self.agent_coupons[a.address] = a.coupons
-                        self.dao.get_coupon_expirirations(a)
                         #logger.info("Addr {} Bid to burn end {:.2f} xSD for {:.2f} coupons with expiry at epoch {}".format(a.address, xsd_at_risk, rand_max_coupons, exact_expiry))
                         total_coupoun_bidders += 1
                     except Exception as inst:
@@ -1344,6 +1355,9 @@ class Model:
                 total_coupoun_bidders)
             )
 
+        providerAvax.make_request("avax.issueBlock", {})
+        time.sleep(1)
+
         return anyone_acted, seleted_advancer
 
 def main():
@@ -1352,8 +1366,6 @@ def main():
     """
     
     logging.basicConfig(level=logging.INFO)
-    
-    max_accounts = 20
     #print(w3.eth.get_block('latest'))
     logger.info(w3.eth.get_block('latest')["number"])
 
@@ -1369,28 +1381,30 @@ def main():
         logger.info("how many times assigned coupons for {}: {}".format(acc, dao.functions.getCouponsCurrentAssignedIndex(acc).call()))
 
     '''
-    logger.info("getTotalFilled at epoch 4: {}".format(dao.caller().getTotalFilled(4)))
 
-    baddr = dao.caller().getBestBidderFromEarliestActiveAuctionEpoch(4)
-    exp = dao.caller({'from' : baddr, 'gas': 89902345}).getCouponsAssignedAtEpoch(baddr, 0)
-    logger.info("getBestBidderFromEarliestActiveAuctionEpoch at epoch 4: {}".format(baddr))
-    logger.info("getCouponsAssignedAtEpoch at epoch 4: epoch exp {}".format(exp))
+    #logger.info("getTotalFilled at epoch 4: {}".format(dao.caller().getTotalFilled(10)))
+    earlies_active_epoch = dao.caller().getEarliestDeadAuctionEpoch()
+    baddr = dao.caller().getBestBidderFromEarliestActiveAuctionEpoch(earlies_active_epoch)
+    logger.info("getBestBidderFromEarliestActiveAuctionEpoch at epoch {}: {}".format(earlies_active_epoch, baddr))
+    exp = dao.caller().getCouponsAssignedAtEpoch(baddr, 0)
 
-    total_coupons = dao.caller({'from' : baddr, 'gas': 89902345}).balanceOfCoupons(baddr, exp)
+    total_coupons = dao.caller().balanceOfCoupons(baddr, exp) / 10.**xSD["decimals"]
     logger.info("total_coupons at exp epoch {}: {}".format(exp, total_coupons))
-    tr = dao.caller({'from' : baddr, 'gas': 89902345}).totalRedeemable()
+
+    total_best_coupons = dao.caller().getSumofBestBidsAcrossCouponAuctions() / 10.**xSD["decimals"]
+    logger.info("total_best_coupons: {}".format(total_best_coupons))
+    tr = dao.caller().totalRedeemable() / 10.**xSD["decimals"]
     logger.info("totalRedeemable: {}".format(tr))
-    
+    sys.exit()
     dao.functions.redeemCoupons(
-        88665,
-        328000000000000000000
+        exp,
+        dao.caller().balanceOfCoupons(baddr, exp)
     ).transact({
         'nonce': w3.eth.getTransactionCount(baddr, block_identifier=int(w3.eth.get_block('latest')["number"])),
         'from' : baddr,
-        'gas': 89902345,
-        'gasPrice': 1,
+        'gas': 8000000
     })
-    sys.exit()
+    #sys.exit()
     '''
 
     #print(dao.caller().oracle())

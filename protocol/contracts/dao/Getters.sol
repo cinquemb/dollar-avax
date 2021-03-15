@@ -294,9 +294,16 @@ contract Getters is State {
 
     function getSumofBestBidsAcrossCouponAuctions() public view returns (uint256) {
         // loop over past epochs from the latest `dead` epoch to the current
+        /*
+            TODO: NEED TO SPLIT THIS INTO RANGES THAT GET COMPUTED BY COUPON BIDDERS AND REDEEMERS?
+                - find min and max, chunk by reasonable amount
+                - need to figure out how to cache the chuncks
+                    - running sum with global state var?
+        */
         uint256 sumCoupons = 0;
-        uint256 current_epoch = (epoch().sub(getEarliestDeadAuctionEpoch()) > Constants.getCouponAuctionMaxEpochsBestBidderSelection()) ? Constants.getCouponAuctionMaxEpochsBestBidderSelection() : epoch();
-        for (uint256 d_idx = getEarliestDeadAuctionEpoch(); d_idx < current_epoch; d_idx++) {
+        uint256 earlist_epoch = getEarliestDeadAuctionEpoch();
+        uint256 current_epoch = (epoch().sub(earlist_epoch) > Constants.getCouponAuctionMaxEpochsBestBidderSelection()) ? earlist_epoch.add(Constants.getCouponAuctionMaxEpochsBestBidderSelection()) : epoch();
+        for (uint256 d_idx = earlist_epoch; d_idx < current_epoch; d_idx++) {
             uint256 temp_coupon_auction_epoch = d_idx;
             Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(temp_coupon_auction_epoch);
             
@@ -309,7 +316,7 @@ contract Getters is State {
                     // skip over those bids that have already been redeemed at least partially
                     // skip over bids that are expired
                     // skip over if balance of coupons for address is zero at epoch
-                    if (bidder.redeemed || (temp_coupon_auction_epoch > bidder.couponExpiryEpoch) || (balanceOfCoupons(bidderAddress, bidder.couponExpiryEpoch) == 0)) {
+                    if (bidder.redeemed || (temp_coupon_auction_epoch > bidder.couponExpiryEpoch) || (balanceOfCoupons(bidderAddress, bidder.couponExpiryEpoch) < bidder.couponAmount)) {
                         continue;
                     } else {
                         sumCoupons += bidder.couponAmount;
@@ -342,10 +349,11 @@ contract Getters is State {
                     // skip over those bids that have already been redeemed at least partially
                     // skip over bids that are expired
                     // skip over if balance of coupons for address is zero at epoch
-                    if (bidder.redeemed || (temp_coupon_auction_epoch > bidder.couponExpiryEpoch) || (balanceOfCoupons(bidderAddress, bidder.couponExpiryEpoch) == 0)) {
+                    uint256 currBalanceOfCoupons = balanceOfCoupons(bidderAddress, bidder.couponExpiryEpoch);
+                    if (bidder.redeemed || (temp_coupon_auction_epoch > bidder.couponExpiryEpoch) || (currBalanceOfCoupons < bidder.couponAmount)) {
                         continue;
                     } else {
-                        sumCoupons += bidder.couponAmount;
+                        sumCoupons += currBalanceOfCoupons;
                         break;
                     }
                 }
@@ -371,7 +379,7 @@ contract Getters is State {
                 // skip over those bids that have already been redeemed at least partially
                 // skip over bids that are expired
                 // skip over if balance of coupons for address is zero at epoch
-                if (bidder.redeemed || (epoch > bidder.couponExpiryEpoch) || (balanceOfCoupons(bidderAddress, bidder.couponExpiryEpoch) == 0)) {
+                if (bidder.redeemed || (epoch > bidder.couponExpiryEpoch) || (balanceOfCoupons(bidderAddress, bidder.couponExpiryEpoch) < bidder.couponAmount)) {
                     continue;
                 }
                 

@@ -2,11 +2,11 @@ const Web3 = require('web3');
 const provider = new Web3.providers.HttpProvider('http://127.0.0.1:9545/ext/bc/C/rpc');
 const w3 = new Web3(provider);
 const avalanche = require("avalanche");
+const process = require("process");
 
 //cchain.callMethod('avax.incrementTimeTx', {"time": 10000}).then((res) => console.log(res.data))
 //cchain.callMethod('avax.issueBlock').then((res) => console.log(res.data))
 
-let maxAccounts = 1;
 let ava = new avalanche.Avalanche('127.0.0.1', 9545, 'http', 12345);
 let xchain = ava.XChain();
 let cchain = ava.CChain();
@@ -81,14 +81,18 @@ async function seedTestAccounts(evmAddr) {
 }
 
 module.exports = async (callback) => {
+  let maxAccounts = 1;
+  for (var i=0; i<process.argv.length;i++) { 
+    if (process.argv[i] == '--max-accounts')
+  		maxAccounts = parseInt(process.argv[i+1]);
+  }
   // create test accounts
-  console.log('create test accounts');
+  console.log('create test accounts:', maxAccounts);
   for (var i=0; i<maxAccounts;i++) { await w3.eth.personal.newAccount('');}
   var accounts = await w3.eth.personal.getAccounts();
-  console.log(accounts);
 
   // create unlock accounts
-  console.log('unlock test accounts');
+  console.log('unlock test accounts', accounts);
   for (var i=0; i<accounts.length;i++) {await w3.eth.personal.unlockAccount(accounts[i], '',9099999999);}
 
   // seed accounts with avax from x-chain to c-chain
