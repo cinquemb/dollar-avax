@@ -303,6 +303,7 @@ contract Getters is State {
         uint256 sumCoupons = 0;
         uint256 earlist_epoch = getEarliestDeadAuctionEpoch();
         uint256 current_epoch = (epoch().sub(earlist_epoch) > Constants.getCouponAuctionMaxEpochsBestBidderSelection()) ? earlist_epoch.add(Constants.getCouponAuctionMaxEpochsBestBidderSelection()) : epoch();
+        //uint256 current_epoch = epoch();
         for (uint256 d_idx = earlist_epoch; d_idx < current_epoch; d_idx++) {
             uint256 temp_coupon_auction_epoch = d_idx;
             Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(temp_coupon_auction_epoch);
@@ -332,8 +333,10 @@ contract Getters is State {
     function findEarliestActiveAuctionEpoch() internal view returns (uint256) {
         // loop over past epochs from the latest `dead` epoch to the current
         uint256 earliest_non_dead_auction_epoch = 1;
-        uint256 current_epoch = (epoch().sub(getEarliestDeadAuctionEpoch()) > Constants.getCouponAuctionMaxEpochsBestBidderSelection()) ? Constants.getCouponAuctionMaxEpochsBestBidderSelection() : epoch();
-        for (uint256 d_idx = getEarliestDeadAuctionEpoch(); d_idx < current_epoch; d_idx++) {
+        uint256 earlist_epoch = getEarliestDeadAuctionEpoch();
+        uint256 current_epoch = (epoch().sub(earlist_epoch) > Constants.getCouponAuctionMaxEpochsBestBidderSelection()) ? earlist_epoch.add(Constants.getCouponAuctionMaxEpochsBestBidderSelection()) : epoch();
+        //uint256 current_epoch = epoch();
+        for (uint256 d_idx = earlist_epoch; d_idx < current_epoch; d_idx++) {
             uint256 temp_coupon_auction_epoch = d_idx;
             Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(temp_coupon_auction_epoch);
             earliest_non_dead_auction_epoch = d_idx;

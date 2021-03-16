@@ -47,7 +47,8 @@ contract MockRegulator is MockComptroller, Regulator {
     }
 
     function initCouponAuctionE() external {
-        super.initCouponAuction();
+        Decimal.D256 memory price = Decimal.ratio(1, 1);
+        super.initCouponAuction(price);
     }
 
     function getCouponAuctionBidsE(uint256 epoch) external returns (uint256) {

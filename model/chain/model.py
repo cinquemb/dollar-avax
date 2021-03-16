@@ -16,7 +16,7 @@ from web3 import Web3
 
 IS_DEBUG = False
 is_try_model_mine = False
-max_accounts = 40
+max_accounts = 20
 block_offset = 19 + max_accounts
 
 DEADLINE_FROM_NOW = 60 * 60 * 24 * 7 * 52
@@ -994,7 +994,7 @@ class DAO:
             'nonce': get_nonce(agent),
             'from' : agent.address,
             'gas': 8000000,
-            'gasPrice': Web3.toWei(479, 'gwei'),
+            'gasPrice': Web3.toWei(470, 'gwei'),
         })
         providerAvax.make_request("avax.issueBlock", {})
         time.sleep(3)
@@ -1002,7 +1002,7 @@ class DAO:
         #logger.info(providerAvax.make_request("avax.issueBlock", {}))
 
         #'''
-        while (w3.eth.get_block('latest')["number"] == block_before):
+        while (self.epoch(agent.address) == epoch_before):
             time.sleep(10)
         #'''
                         
@@ -1379,7 +1379,6 @@ def main():
 
     for acc in w3.eth.accounts[:max_accounts]:
         logger.info("how many times assigned coupons for {}: {}".format(acc, dao.functions.getCouponsCurrentAssignedIndex(acc).call()))
-
     '''
 
     #logger.info("getTotalFilled at epoch 4: {}".format(dao.caller().getTotalFilled(10)))

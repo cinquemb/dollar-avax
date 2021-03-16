@@ -153,7 +153,7 @@ contract Setters is State, Getters {
         _state.epochs[epoch].coupons.outstanding = 0;
     }
 
-    function initCouponAuction(Decimal.D256 initPrice) internal  {
+    function initCouponAuction(Decimal.D256 memory initPrice) internal  {
         if (_state.epochs[epoch()].auction.isInit == false) {
             _state.epochs[epoch()].auction._totalBids = 0;
             _state.epochs[epoch()].auction.initPrice = initPrice;
