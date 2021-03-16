@@ -153,9 +153,10 @@ contract Setters is State, Getters {
         _state.epochs[epoch].coupons.outstanding = 0;
     }
 
-    function initCouponAuction() internal  {
+    function initCouponAuction(Decimal.D256 initPrice) internal  {
         if (_state.epochs[epoch()].auction.isInit == false) {
             _state.epochs[epoch()].auction._totalBids = 0;
+            _state.epochs[epoch()].auction.initPrice = initPrice;
             _state.epochs[epoch()].auction.minExpiry = 2**256 -1;
             _state.epochs[epoch()].auction.maxExpiry = 0;
             _state.epochs[epoch()].auction.minYield = 2**256 -1;

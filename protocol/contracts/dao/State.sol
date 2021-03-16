@@ -79,6 +79,7 @@ contract Epoch {
         uint256 bidToCover;
         uint256 totalFilled;
         uint256 totalBurned;
+        Decimal.D256 initPrice;
         uint256 totalAuctioned;
         uint256 minYieldFilled;
         uint256 maxYieldFilled;

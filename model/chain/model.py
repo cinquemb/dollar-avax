@@ -989,22 +989,21 @@ class DAO:
         #logger.info(providerAvax.make_request("avax.issueBlock", {}))
         providerAvax.make_request("avax.issueBlock", {})
         logger.info(providerAvax.make_request("avax.incrementTimeTx", {"time": 7201}))
-        time.sleep(1)
         before_advance = self.xsd_token[agent.address]
         self.contract.functions.advance().transact({
             'nonce': get_nonce(agent),
             'from' : agent.address,
-            'gas': 20000000,
-            'gasPrice': Web3.toWei(470, 'gwei'),
+            'gas': 8000000,
+            'gasPrice': Web3.toWei(479, 'gwei'),
         })
         providerAvax.make_request("avax.issueBlock", {})
-        time.sleep(1)
+        time.sleep(3)
         
         #logger.info(providerAvax.make_request("avax.issueBlock", {}))
 
         #'''
-        #if (w3.eth.get_block('latest')["number"] == block_before):
-        #    time.sleep(10)
+        while (w3.eth.get_block('latest')["number"] == block_before):
+            time.sleep(10)
         #'''
                         
 class Model:
@@ -1174,10 +1173,11 @@ class Model:
             options = []
 
             start_tx_count = a.next_tx_count
+            commitment = random.random() * 0.1
 
-            if a.usdc > 0 and is_pgl_op:
+            if portion_dedusted(a.usdc, commitment) > 0 and is_pgl_op:
                 options.append("buy")
-            if a.xsd > 0 and is_pgl_op:
+            if portion_dedusted(a.xsd, commitment) > 0 and is_pgl_op:
                 options.append("sell")
             '''
             TODO: CURRENTLY NO INCENTIVE TO BOND INTO LP OR DAO (EXCEPT FOR VOTING, MAY USE THIS TO DISTRUBTION EXPANSIONARY PROFITS)
@@ -1188,9 +1188,9 @@ class Model:
             if a.coupons > 0 and epoch_start_price > 1.0:
                 options.append("redeem")
             '''
-            if a.xsd >= Balance.from_tokens(1, xSD['decimals']) and self.dao.has_coupon_bid():
+            if portion_dedusted(a.xsd, commitment) >= Balance.from_tokens(1, xSD['decimals']) and self.dao.has_coupon_bid():
                 options.append("coupon_bid")
-            if a.usdc > 0 and a.xsd > 0:
+            if portion_dedusted(a.usdc, commitment) > 0 and portion_dedusted(a.xsd, commitment) > 0:
                 options.append("provide_liquidity")
             if a.lp > 0:
                 options.append("remove_liquidity")
@@ -1216,7 +1216,7 @@ class Model:
                 
                 # What fraction of the total possible amount of doing this
                 # action will the agent do?
-                commitment = random.random() * 0.1
+                
                 
                 if action == "buy":
                     # this will limit the size of orders avaialble
@@ -1356,7 +1356,7 @@ class Model:
             )
 
         providerAvax.make_request("avax.issueBlock", {})
-        time.sleep(1)
+        time.sleep(3)
 
         return anyone_acted, seleted_advancer
 

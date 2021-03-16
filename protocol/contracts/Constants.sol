@@ -57,7 +57,7 @@ library Constants {
     /* Market */
     uint256 private constant MAX_COUPON_YIELD_MULT = 10; //100K coupouns per 1 dollar burn
     uint256 private constant MAX_COUPON_EXPIRATION_TIME = 946080000; //30 (years) * 365 (days)* 24 (hours) * 60 (min) * 60 (secs)
-    uint256 private constant MAX_COUPON_AUCTION_EPOCHS_BEST_BIDDER_SELECTION = 20000000; //limit to past 200 auctions because of gas constraints on eth mainnet **EXPERIMENTAL** higher limits on avax c-chain
+    uint256 private constant MAX_COUPON_AUCTION_EPOCHS_BEST_BIDDER_SELECTION = 200; //limit to past 200 auctions because of gas constraints on eth mainnet **EXPERIMENTAL** higher limits on avax c-chain
     uint256 private constant REJECT_COUPON_BID_PERCENTILE = 50;//85;//90; //reject the last 90% of bids
 
     /* Deployed */

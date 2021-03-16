@@ -16,7 +16,7 @@ def main():
     # This will hold each column, as a list
     columns = []
 
-    log = open("./chain/log.150adv.10prem_2.tsv")
+    log = open("./chain/log.150adv.10prem.40agents.tsv")
     for line in log:
         line = line.strip()
         if line == '':
@@ -41,12 +41,16 @@ def main():
     if x_column_number == -1:
         raise RuntimeError("No column: " + x_heading)
         
-    fig, axes = plt.subplots(len(columns) - 1, 1, sharex=True)
+    fig, axes = plt.subplots(len(columns) - 2, 1, sharex=True)
     fig.suptitle('%s Simulation Results' % (project_name))
 
     axis_cursor = 0
         
     for column_number in range(len(columns)):
+
+        if headings[column_number] == 'epoch':
+            continue
+        
         if column_number == x_column_number:
             # Don't plot against self
             continue

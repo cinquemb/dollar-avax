@@ -62,18 +62,20 @@ contract Regulator is Comptroller {
         Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(prev_epoch);
         //check for outstanding auction, if exists settle it and start a new one, auctions below and above peg
         if (auction.isInit == true){
-            settleCouponAuction(prev_epoch);
-            finishCouponAuctionAtEpoch(prev_epoch);
+            // only settle/finish auctions that are not on the crossover boundary
+            if ((price.greaterThan(Decimal.one()) && auction.initPrice.greaterThan(Decimal.one())) || (price.lessThan(Decimal.one()) && auction.initPrice.lessThan(Decimal.one()))) {
+                settleCouponAuction(prev_epoch);
+                finishCouponAuctionAtEpoch(prev_epoch);
+            }
+            
         }
-        initCouponAuction();
 
+        initCouponAuction(price);
 
         if (price.greaterThan(Decimal.one())) {
-            
             growSupply(price);
-
             /* gas costs error */
-            //autoRedeemFromCouponAuctionNew();
+            //autoRedeemFromCouponAuction();
             return;
         }
 
@@ -252,15 +254,5 @@ contract Regulator is Comptroller {
             }
         }
         return true;
-    }
-
-    function checkMinCouponBalance(uint256 couponBalance, uint256 couponAmount) internal pure returns (uint256) {
-        uint256 minCouponAmount = 0;
-        if (couponBalance >= couponAmount) {
-            minCouponAmount = couponAmount;
-        } else {
-            minCouponAmount = couponBalance;
-        }
-        return minCouponAmount;
     }
 }
