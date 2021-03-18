@@ -20,6 +20,7 @@ pragma experimental ABIEncoderV2;
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "./Comptroller.sol";
 import "../Constants.sol";
+import "./Implementation.sol";
 
 contract Market is Comptroller {
     using SafeMath for uint256;
@@ -118,12 +119,6 @@ contract Market is Comptroller {
             FILE,
             "Must have non-zero expiry"
         );
-
-        Require.that(
-            epoch().add(couponEpochExpiry) > 0,
-            FILE,
-            "Must have non-zero expiry"
-        );
         
         Require.that(
             dollarAmount > 0,
@@ -157,6 +152,26 @@ contract Market is Comptroller {
             maxExpiry >= couponEpochExpiry,
             FILE,
             "Must be under maxExpiry"
+        );
+
+        uint256 possibleCurrentEpoch = epoch();
+        Decimal.D256 memory epochStartPrice = getCouponAuctionStartPriceAtEpoch(possibleCurrentEpoch);
+        if (epochStartPrice.lessThan(Decimal.one())) {
+            // if currently below reference price, make bidder advance epoch
+            if (epochTime() > possibleCurrentEpoch) {
+                Implementation(oracle().dao()).advanceNonIncentivized();
+                Require.that(
+                    epoch() > possibleCurrentEpoch,
+                    FILE,
+                    "Must advance epoch properly"
+                );
+            }
+        }
+        
+        Require.that(
+            epoch().add(couponEpochExpiry) > 0,
+            FILE,
+            "Must have non-zero expiry"
         );
 
         // insert bid onto chain

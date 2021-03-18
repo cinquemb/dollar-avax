@@ -35,7 +35,7 @@ library Constants {
     }
 
     uint256 private constant EPOCH_OFFSET = 0;
-    uint256 private constant EPOCH_START = 1606348800;
+    uint256 private constant EPOCH_START = 1616108020;//1606348800;
     uint256 private constant EPOCH_PERIOD = 7200;
 
     /* Governance */

@@ -55,7 +55,7 @@ contract Regulator is Comptroller {
         //need to check previous epoch because by the time the Regulator.step function is fired, Bonding.step may have already incremented the epoch
 
         uint256 prev_epoch = epoch();
-        if (epoch() > 0) {
+        if (prev_epoch > 0) {
             prev_epoch = epoch() - 1;
         }
         

@@ -144,6 +144,10 @@ contract Oracle is IOracle {
         return _reserve;
     }
 
+    function dao() public view returns (address) {
+        return _dao;
+    }
+
     modifier onlyDao() {
         Require.that(
             msg.sender == _dao,

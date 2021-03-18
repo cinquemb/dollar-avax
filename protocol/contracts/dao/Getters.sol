@@ -191,6 +191,10 @@ contract Getters is State {
     function getCouponAuctionAtEpoch(uint256 epoch) internal view returns (Epoch.AuctionState storage) {
         return _state.epochs[epoch].auction;
     }
+
+    function getCouponAuctionStartPriceAtEpoch(uint256 epoch) internal view returns (Decimal.D256 memory) {
+        return _state.epochs[epoch].auction.initPrice;
+    }
     
     function getCouponAuctionBids(uint256 epoch) internal view returns (uint256) {
         return _state.epochs[epoch].auction._totalBids;

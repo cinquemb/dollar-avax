@@ -35,6 +35,27 @@ contract Implementation is State, Bonding, Market, Regulator, Govern {
     }
 
     function advance() external incentivized {
+        uint256 prev_epoch = epoch();
+        
+        if (prev_epoch > 1) {
+            prev_epoch = epoch() - 1;
+
+            //can only incentivize advance above or at ref price
+            Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(prev_epoch);
+            require(
+                auction.initPrice.greaterThanOrEqualTo(Decimal.one()),
+                "DAO: Must coupon bid"
+            );
+        } 
+        
+
+        Bonding.step();
+        Regulator.step();
+        Market.step();
+        emit Advance(epoch(), block.number, block.timestamp);
+    }
+
+    function advanceNonIncentivized() external {
         Bonding.step();
         Regulator.step();
         Market.step();
@@ -47,6 +68,19 @@ contract Implementation is State, Bonding, Market, Regulator, Govern {
             hasRecievedAdvanceIncentive(msg.sender) == false,
             "DAO: Already advanced"
         );*/
+
+        uint256 prev_epoch = epoch();
+        if (prev_epoch > 1) {
+            prev_epoch = epoch() - 1;
+
+            //can only incentivize advance above or at ref price
+            Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(prev_epoch);
+            require(
+                auction.initPrice.greaterThanOrEqualTo(Decimal.one()),
+                "DAO: Must coupon bid"
+            );
+        } 
+
         uint256 incentive = Constants.getAdvanceIncentive();
         mintToAccount(msg.sender, incentive);
         setRecievedAdvanceIncentive(msg.sender);
