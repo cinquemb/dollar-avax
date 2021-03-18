@@ -125,7 +125,8 @@ def get_nonce(agent):
         agent.next_tx_count += 1
         agent.seen_block[current_block] = True
 
-    providerAvax.make_request("avax.incrementTimeTx", {"time": 1})
+    #providerAvax.make_request("avax.incrementTimeTx", {"time": 1})
+    provider.make_request("debug_increaseTime", [1])
 
     return agent.next_tx_count
 
@@ -952,7 +953,8 @@ class DAO:
             'gas': 8000000,
             'gasPrice': Web3.toWei(470, 'gwei'),
         })
-        providerAvax.make_request("avax.incrementTimeTx", {"time": 1})
+        provider.make_request("debug_increaseTime", [1])
+        #providerAvax.make_request("avax.incrementTimeTx", {"time": 1})
         #providerAvax.make_request("avax.issueBlock", {})
 
         return tx_hash
@@ -1090,15 +1092,19 @@ class Model:
         self.pangolin.update()
 
         #randomly have an agent advance the epoch
-        seleted_advancer = self.agents[int(random.random() * (len(self.agents) - 1))]        
-        data = providerAvax.make_request("avax.incrementTimeTx", {"time": 7201})
-        logger.info("After Jump Clock: {}, {}".format(w3.eth.get_block('latest')['timestamp'], json.dumps(data)))
+        seleted_advancer = self.agents[int(random.random() * (len(self.agents) - 1))]
+        provider.make_request("debug_increaseTime", [7201+2400])        
+        #data = providerAvax.make_request("avax.incrementTimeTx", {"time": 7201})
+        #logger.info("After Jump Clock: {}, {}".format(w3.eth.get_block('latest')['timestamp'], json.dumps(data)))
+        logger.info("Before Jump Clock: {}".format(w3.eth.get_block('latest')['timestamp']))
 
         epoch_before = self.dao.epoch(seleted_advancer.address)
         incentivized_adv_tx = self.dao.advance(seleted_advancer)
 
         logger.info("Earliest Non Dead Auction: {}".format(self.dao.contract.caller({'from' : seleted_advancer.address, 'gas': 100000}).getEarliestDeadAuctionEpoch()))
         logger.info("Advance from {}".format(seleted_advancer.address))
+        logger.info("After Jump Clock: {}".format(w3.eth.get_block('latest')['timestamp']))
+
 
 
         (usdc_b, xsd_b) = self.pangolin.getTokenBalance()
@@ -1418,10 +1424,10 @@ def main():
     if w3.eth.get_block('latest')["number"] == block_offset:
         logger.info("Start Clock: {}".format(w3.eth.get_block('latest')['timestamp']))
 
-
-        provider.make_request("debug_increaseTime", [0])
+        logger.info(w3.debug.__dict__)
+        #logger.info(provider.make_request("evm_increaseTime", [7201+2400]))
         #data = providerAvax.make_request("avax.incrementTimeTx", {"time": 7201})
-        logger.info("After Reset Clock: {}, {}".format(w3.eth.get_block('latest')['timestamp'], json.dumps(data)))
+        #logger.info("After Reset Clock: {}, {}".format(w3.eth.get_block('latest')['timestamp'], json.dumps(data)))
         time.sleep(100)
         
     logger.info(w3.eth.get_block('latest')["number"])

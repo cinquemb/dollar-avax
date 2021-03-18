@@ -1,0 +1,23 @@
+{
+    "coreth-config": {
+        "snowman-api-enabled": true,
+        "coreth-admin-api-enabled": true,
+        "net-api-enabled": true,
+        "rpc-gas-cap": 2500000000,
+        "rpc-tx-fee-cap": 100,
+        "eth-api-enabled": true,
+        "personal-api-enabled": true,
+        "tx-pool-api-enabled": true,
+        "debug-api-enabled": true,
+        "web3-api-enabled": true
+    },
+    "network-id": "local",
+    "staking-enabled": false,
+    "snow-sample-size": 1,
+    "snow-quorum-size": 1,
+    "db-dir": "./db/",
+    "http-port": 9545,
+    "log-level": "verbo",
+    "log-dir": "./db/",
+    "snow-avalanche-batch-size": 1 
+}

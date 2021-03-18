@@ -46,7 +46,9 @@ diff $GOPATH/pkg/mod/github.com/ava-labs/coreth@\@v0.3.26/miner/worker.go $GOPAT
 # Start the chain
 # Need to run the below command in a while loop when deploying locally
 echo "Starting AvalancheGo..."
-TMPDIR="$(pwd)" avalanchego --network-id=local --staking-enabled=false --snow-sample-size=1 --snow-quorum-size=1 --db-dir=./db/ --http-port=9545 --log-level=verbo --log-dir=./db/ --snow-avalanche-batch-size=1 > ganache_output.txt &
+
+#--network-id=local --staking-enabled=false --snow-sample-size=1 --snow-quorum-size=1 --db-dir=./db/ --http-port=9545 --log-level=verbo --log-dir=./db/ --snow-avalanche-batch-size=1 
+TMPDIR="$(pwd)" avalanchego --config-file=./config.json > ganache_output.txt &
 GANACHE=$!
 
 # Wait for it to come up
