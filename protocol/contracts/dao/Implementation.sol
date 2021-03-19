@@ -30,28 +30,37 @@ contract Implementation is State, Bonding, Market, Regulator, Govern {
     event Advance(uint256 indexed epoch, uint256 block, uint256 timestamp);
     event Incentivization(address indexed account, uint256 amount);
 
-    function initialize() initializer public {
-        //mintToAccount(0x61105dD0b0deD973BC94BB054f314c46A0234B06, 1500e18); // xSD to @cinquemb
-    }
+    function initialize() initializer public { }
 
-    function advance() external incentivized {
+    function advance() external {
+        /*
         uint256 prev_epoch = epoch();
-        
-        if (prev_epoch > 1) {
-            prev_epoch = epoch() - 1;
-
+        bool latestValid = oracle().latestValid();
+        if ((prev_epoch > 0) && (latestValid == true)) {
             //can only incentivize advance above or at ref price
-            Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(prev_epoch);
+            Decimal.D256 memory price = oracle().latestPrice();
             require(
-                auction.initPrice.greaterThanOrEqualTo(Decimal.one()),
+                price.greaterThanOrEqualTo(Decimal.one()),
                 "DAO: Must coupon bid"
             );
-        } 
-        
+        }*/
+
+        // Mint advance reward to sender
+        /*require(
+            hasRecievedAdvanceIncentive(msg.sender) == false,
+            "DAO: Already advanced"
+        );*/
 
         Bonding.step();
         Regulator.step();
         Market.step();
+        setAdvanceCalled(epoch());
+
+        uint256 incentive = Constants.getAdvanceIncentive();
+        mintToAccount(msg.sender, incentive);
+        setRecievedAdvanceIncentive(msg.sender);
+        
+        emit Incentivization(msg.sender, incentive);
         emit Advance(epoch(), block.number, block.timestamp);
     }
 
@@ -59,32 +68,7 @@ contract Implementation is State, Bonding, Market, Regulator, Govern {
         Bonding.step();
         Regulator.step();
         Market.step();
+        setAdvanceCalled(epoch());
         emit Advance(epoch(), block.number, block.timestamp);
-    }
-
-    modifier incentivized {
-        // Mint advance reward to sender
-        /*require(
-            hasRecievedAdvanceIncentive(msg.sender) == false,
-            "DAO: Already advanced"
-        );*/
-
-        uint256 prev_epoch = epoch();
-        if (prev_epoch > 1) {
-            prev_epoch = epoch() - 1;
-
-            //can only incentivize advance above or at ref price
-            Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(prev_epoch);
-            require(
-                auction.initPrice.greaterThanOrEqualTo(Decimal.one()),
-                "DAO: Must coupon bid"
-            );
-        } 
-
-        uint256 incentive = Constants.getAdvanceIncentive();
-        mintToAccount(msg.sender, incentive);
-        setRecievedAdvanceIncentive(msg.sender);
-        emit Incentivization(msg.sender, incentive);
-        _;
     }
 }

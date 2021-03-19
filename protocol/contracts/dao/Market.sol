@@ -155,18 +155,15 @@ contract Market is Comptroller {
         );
 
         uint256 possibleCurrentEpoch = epoch();
-        Decimal.D256 memory epochStartPrice = getCouponAuctionStartPriceAtEpoch(possibleCurrentEpoch);
-        if (epochStartPrice.lessThan(Decimal.one())) {
+        /*
+        if (getAdvanceCalled(epoch()) == false) {
             // if currently below reference price, make bidder advance epoch
-            if (epochTime() > possibleCurrentEpoch) {
+            Decimal.D256 memory epochStartPrice = getCouponAuctionStartPriceAtEpoch(possibleCurrentEpoch);
+            
+            if (epochStartPrice.lessThan(Decimal.one())) {
                 Implementation(oracle().dao()).advanceNonIncentivized();
-                Require.that(
-                    epoch() > possibleCurrentEpoch,
-                    FILE,
-                    "Must advance epoch properly"
-                );
             }
-        }
+        }*/
         
         Require.that(
             epoch().add(couponEpochExpiry) > 0,

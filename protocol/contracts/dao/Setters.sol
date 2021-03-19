@@ -132,6 +132,11 @@ contract Setters is State, Getters {
      * Epoch
      */
 
+    function setAdvanceCalled(uint256 epoch) internal {
+        _state.advanceCalled[epoch] = true;
+    }
+
+
     function setRecievedAdvanceIncentive(address advancer) internal {
         _state.hasIncentivized[advancer] = true;
     }

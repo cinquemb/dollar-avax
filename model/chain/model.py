@@ -128,7 +128,7 @@ def get_nonce(agent):
         agent.seen_block[current_block] = True
 
     #providerAvax.make_request("avax.incrementTimeTx", {"time": 1})
-    provider.make_request("debug_increaseTime", [1])
+    #provider.make_request("debug_increaseTime", [1])
 
     return agent.next_tx_count
 
@@ -952,10 +952,10 @@ class DAO:
         ).transact({
             'nonce': get_nonce(agent),
             'from' : agent.address,
-            'gas': 8000000,
+            'gas': 800000,
             'gasPrice': Web3.toWei(470, 'gwei'),
         })
-        provider.make_request("debug_increaseTime", [1])
+        #provider.make_request("debug_increaseTime", [1])
         #providerAvax.make_request("avax.incrementTimeTx", {"time": 1})
         #providerAvax.make_request("avax.issueBlock", {})
 
@@ -1025,7 +1025,7 @@ class Model:
         self.bootstrap_epoch = 2
         self.max_coupon_exp = 131400
         self.max_coupon_premium = 10
-        self.min_usdc_balance = self.usdc_token.from_tokens(25)
+        self.min_usdc_balance = self.usdc_token.from_tokens(100)
         self.agent_coupons = {x: 0 for x in agents}
 
 
@@ -1095,33 +1095,23 @@ class Model:
 
         #randomly have an agent advance the epoch
         seleted_advancer = self.agents[int(random.random() * (len(self.agents) - 1))]
-        #data = providerAvax.make_request("avax.incrementTimeTx", {"time": 7201})
-        #logger.info("After Jump Clock: {}, {}".format(w3.eth.get_block('latest')['timestamp'], json.dumps(data)))
-        logger.info("Before Jump Clock: {}".format(w3.eth.get_block('latest')['timestamp']))
-        provider.make_request("debug_increaseTime", [7201])      
-
+        provider.make_request("debug_increaseTime", [7200])   
+        logger.info("Clock: {}".format(w3.eth.get_block('latest')['timestamp']))
 
         epoch_before = self.dao.epoch(seleted_advancer.address)
         incentivized_adv_tx = self.dao.advance(seleted_advancer)
+        adv_recp = w3.eth.waitForTransactionReceipt(incentivized_adv_tx, poll_latency=tx_pool_latency)
+        is_advance_fail = False
+        if adv_recp["status"] == 0:
+            is_advance_fail = True
 
         logger.info("Earliest Non Dead Auction: {}".format(self.dao.contract.caller({'from' : seleted_advancer.address, 'gas': 100000}).getEarliestDeadAuctionEpoch()))
-        logger.info("Advance from {}".format(seleted_advancer.address))
-        logger.info("After Jump Clock: {}".format(w3.eth.get_block('latest')['timestamp']))
-
-
+        logger.info("Advance from {}, is_advance_fail: {}".format(seleted_advancer.address, is_advance_fail))
 
         (usdc_b, xsd_b) = self.pangolin.getTokenBalance()
         revs = self.pangolin.getReserves()
 
         current_epoch = self.dao.epoch(seleted_advancer.address)
-
-        '''
-        best_bidders = []
-        for c_exp in range(0, current_epoch):
-            b_address = self.dao.contract.caller({'from' : a.address, 'gas': 89902345}).getBestBidderFromEarliestActiveAuctionEpoch(c_exp)
-            best_bidders.append(b_address)
-        '''
-
 
         epoch_start_price = self.pangolin.xsd_price()
         dao_xsd_supply = self.dao.xsd_supply()
@@ -1147,7 +1137,7 @@ class Model:
         tx_hashes = []
 
         is_pgl_op = self.pangolin.operational()
-        
+
         # try to redeem any outstanding coupons here first to better
         if epoch_start_price > 1.0 and total_coupons > 0:
             for agent_num, a in enumerate(self.agents):
@@ -1196,7 +1186,7 @@ class Model:
             if a.coupons > 0 and epoch_start_price > 1.0:
                 options.append("redeem")
             '''
-            if portion_dedusted(a.xsd, commitment) >= Balance.from_tokens(1, xSD['decimals']) and self.dao.has_coupon_bid():
+            if usdc_b >= self.min_usdc_balance and portion_dedusted(a.xsd, commitment) >= Balance.from_tokens(1, xSD['decimals']) and self.dao.has_coupon_bid():
                 options.append("coupon_bid")
             if portion_dedusted(a.usdc, commitment) > 0 and portion_dedusted(a.xsd, commitment) > 0:
                 options.append("provide_liquidity")
@@ -1306,14 +1296,18 @@ class Model:
                         xsd_at_risk = rand_max_coupons
                     try:
                         exact_expiry = rand_epoch_expiry + current_epoch
-                        logger.info("Addr {} Bid to burn init {:.2f} xSD for {:.2f} coupons with expiry at epoch {}".format(a.address, xsd_at_risk, rand_max_coupons, exact_expiry))
+                        #logger.info("Addr {} Bid to burn init {:.2f} xSD for {:.2f} coupons with expiry at epoch {}".format(a.address, xsd_at_risk, rand_max_coupons, exact_expiry))
                         coupon_bid_tx_hash = self.dao.coupon_bid(a, rand_epoch_expiry, xsd_at_risk, rand_max_coupons)
                 
                         if (epoch_start_price < 1.0):
                             if (self.dao.epoch(seleted_advancer.address) == epoch_before):
                                 providerAvax.make_request("avax.issueBlock", {})
-                                time.sleep(10)
-                                receipt = w3.eth.waitForTransactionReceipt(coupon_bid_tx_hash, poll_latency=tx_pool_latency)
+                                coup_adv_recp = w3.eth.waitForTransactionReceipt(coupon_bid_tx_hash, poll_latency=tx_pool_latency)
+                                is_advance_fail = False
+                                if coup_adv_recp["status"] == 0:
+                                    is_advance_fail = True
+                                
+                                logger.info("Coupon Advance from {}, is_advance_fail: {}".format(a.address, is_advance_fail))
 
                         
                         tx_hashes.append({'type': 'coupon_bid', 'hash': coupon_bid_tx_hash})
@@ -1329,26 +1323,26 @@ class Model:
                         usdc = portion_dedusted(a.xsd.to_decimals(USDC['decimals']), commitment)
                     else:
                         usdc = portion_dedusted(a.usdc, commitment)
-                        
-                    if revs[1] > 0:
-                        min_xsd_needed = reg_int(
-                            self.pangolin_router.caller(
-                                {'from' : a.address, 'gas': 100000}
-                            ).quote(
-                                usdc.to_wei(), revs[0], revs[1]
-                            ),
-                            xSD['decimals']
-                        )
+                    
+                    try: 
+                        if revs[1] > 0:
+                            min_xsd_needed = reg_int(
+                                self.pangolin_router.caller(
+                                    {'from' : a.address, 'gas': 100000}
+                                ).quote(
+                                    usdc.to_wei(), revs[0], revs[1]
+                                ),
+                                xSD['decimals']
+                            )
+                            if min_xsd_needed == 0:
+                                price = epoch_start_price
+                                min_xsd_needed = (usdc / float(price)).to_decimals(xSD['decimals'])
+                        else:
+                            min_xsd_needed = usdc.to_decimals(xSD['decimals'])
+                            
                         if min_xsd_needed == 0:
-                            price = epoch_start_price
-                            min_xsd_needed = (usdc / float(price)).to_decimals(xSD['decimals'])
-                    else:
-                        min_xsd_needed = usdc.to_decimals(xSD['decimals'])
-                        
-                    if min_xsd_needed == 0:
-                        continue
-
-                    try:
+                            continue
+                    
                         #logger.info("Provide {:.2f} xSD (of {:.2f} xSD) and {:.2f} USDC".format(min_xsd_needed, a.xsd, usdc))
                         plp_hash = self.pangolin.provide_liquidity(a, min_xsd_needed, usdc)
                         tx_hashes.append({'type': 'provide_liquidity', 'hash': plp_hash})
@@ -1367,7 +1361,7 @@ class Model:
                         continue
 
                     try:
-                        logger.info("Stop providing {:.2f} xSD and {:.2f} USDC".format(min_xsd_amount, min_usdc_amount))
+                        #logger.info("Stop providing {:.2f} xSD and {:.2f} USDC".format(min_xsd_amount, min_usdc_amount))
                         rlp_hash = self.pangolin.remove_liquidity(a, lp, min_xsd_amount, min_usdc_amount)
                         tx_hashes.append({'type': 'remove_liquidity', 'hash': rlp_hash})
                     except Exception as inst:
@@ -1386,11 +1380,11 @@ class Model:
 
         if is_try_model_mine:
             # mine a block after every iteration for every tx sumbitted during round
-            logging.info("{} sumbitted, mining blocks for them now, {} coupon bidders".format(
+            logger.info("{} sumbitted, mining blocks for them now, {} coupon bidders".format(
                 total_tx_submitted, total_coupoun_bidders)
             )
         else:
-            logging.info("{} coupon bidders".format(
+            logger.info("{} coupon bidders".format(
                 total_coupoun_bidders)
             )
 
@@ -1410,7 +1404,7 @@ class Model:
             if receipt["status"] == 0:
                 tx_fails.append(tmp_tx_hash['type'])
 
-        logging.info("total tx: {}, successful tx: {}, tx fails: {}".format(
+        logger.info("total tx: {}, successful tx: {}, tx fails: {}".format(
                 len(tx_hashes), tx_hashes_good, json.dumps(tx_fails)
             )
         )
