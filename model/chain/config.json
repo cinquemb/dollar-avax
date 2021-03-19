@@ -18,6 +18,6 @@
     "db-dir": "./db/",
     "http-port": 9545,
     "log-level": "verbo",
-    "log-dir": "./db/",
+    "log-dir": "./log/",
     "snow-avalanche-batch-size": 1 
 }

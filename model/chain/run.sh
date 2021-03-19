@@ -47,7 +47,7 @@ diff $GOPATH/pkg/mod/github.com/ava-labs/coreth@\@v0.3.26/miner/worker.go $GOPAT
 # Need to run the below command in a while loop when deploying locally
 echo "Starting AvalancheGo..."
 
-#--network-id=local --staking-enabled=false --snow-sample-size=1 --snow-quorum-size=1 --db-dir=./db/ --http-port=9545 --log-level=verbo --log-dir=./db/ --snow-avalanche-batch-size=1 
+#TMPDIR="$(pwd)" avalanchego --network-id=local --staking-enabled=false --snow-sample-size=1 --snow-quorum-size=1 --db-dir=./db/ --http-port=9545 --log-level=verbo --log-dir=./db/ --snow-avalanche-batch-size=1 
 TMPDIR="$(pwd)" avalanchego --config-file=./config.json > ganache_output.txt &
 GANACHE=$!
 
@@ -58,6 +58,10 @@ echo "Waiting for AvalancheGo..."
 while ! grep -i "listening on" ganache_output.txt 2>/dev/null ; do
     sleep 1
 done
+
+echo "Advancing the clock..."
+curl -X POST --data '{ "jsonrpc":"2.0", "id" :1, "method" :"debug_increaseTime", "params" : [3770166]}' -H 'content-type:application/json;' http://127.0.0.1:9545/ext/bc/C/rpc
+
 #: '
 # Creating accounts
 echo "Creating deploy test accounts..."

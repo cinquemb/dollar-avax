@@ -35,6 +35,8 @@ provider = Web3.WebsocketProvider('ws://127.0.0.1:9545/ext/bc/C/ws', websocket_t
 
 '''
 curl -X POST --data '{ "jsonrpc":"2.0", "id" :1, "method" :"platform.incrementTimeTx", "params" :{ "time": 10000 }}' -H 'content-type:application/json;' http://127.0.0.1:9545/ext/P
+
+curl -X POST --data '{ "jsonrpc":"2.0", "id" :1, "method" :"evm.increaseTime", "params" : [0]}' -H 'content-type:application/json;' http://127.0.0.1:9545/ext/bc/C/rpc
 '''
 providerAvax = Web3.HTTPProvider('http://127.0.0.1:9545/ext/bc/C/avax', request_kwargs={"timeout": 60*300})
 w3 = Web3(provider)
@@ -1093,10 +1095,11 @@ class Model:
 
         #randomly have an agent advance the epoch
         seleted_advancer = self.agents[int(random.random() * (len(self.agents) - 1))]
-        provider.make_request("debug_increaseTime", [7201+2400])        
         #data = providerAvax.make_request("avax.incrementTimeTx", {"time": 7201})
         #logger.info("After Jump Clock: {}, {}".format(w3.eth.get_block('latest')['timestamp'], json.dumps(data)))
         logger.info("Before Jump Clock: {}".format(w3.eth.get_block('latest')['timestamp']))
+        provider.make_request("debug_increaseTime", [7201])      
+
 
         epoch_before = self.dao.epoch(seleted_advancer.address)
         incentivized_adv_tx = self.dao.advance(seleted_advancer)
@@ -1423,12 +1426,12 @@ def main():
 
     if w3.eth.get_block('latest')["number"] == block_offset:
         logger.info("Start Clock: {}".format(w3.eth.get_block('latest')['timestamp']))
+        #logger.info(provider.make_request("debug_increaseTime", [0]))
 
-        logger.info(w3.debug.__dict__)
-        #logger.info(provider.make_request("evm_increaseTime", [7201+2400]))
+        #logger.info(provider.make_request("debug_increaseTime", [7201+2400]))
         #data = providerAvax.make_request("avax.incrementTimeTx", {"time": 7201})
         #logger.info("After Reset Clock: {}, {}".format(w3.eth.get_block('latest')['timestamp'], json.dumps(data)))
-        time.sleep(100)
+        #time.sleep(100)
         
     logger.info(w3.eth.get_block('latest')["number"])
 
