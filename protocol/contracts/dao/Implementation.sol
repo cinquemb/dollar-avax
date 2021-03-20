@@ -33,7 +33,6 @@ contract Implementation is State, Bonding, Market, Regulator, Govern {
     function initialize() initializer public { }
 
     function advance() external {
-        /*
         uint256 prev_epoch = epoch();
         bool latestValid = oracle().latestValid();
         if ((prev_epoch > 0) && (latestValid == true)) {
@@ -43,7 +42,7 @@ contract Implementation is State, Bonding, Market, Regulator, Govern {
                 price.greaterThanOrEqualTo(Decimal.one()),
                 "DAO: Must coupon bid"
             );
-        }*/
+        }
 
         // Mint advance reward to sender
         /*require(

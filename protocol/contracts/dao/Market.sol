@@ -154,16 +154,16 @@ contract Market is Comptroller {
             "Must be under maxExpiry"
         );
 
-        uint256 possibleCurrentEpoch = epoch();
-        /*
-        if (getAdvanceCalled(epoch()) == false) {
+        if (epochTime() > epoch()) {
+            /* 
+                TODO: NEED TO FIGURE OUT WAY TO MAKE SURE THIS DOESNT REVERT IF ADVANCE HAS ALREADY BEEN CALLED? 
+            */
             // if currently below reference price, make bidder advance epoch
-            Decimal.D256 memory epochStartPrice = getCouponAuctionStartPriceAtEpoch(possibleCurrentEpoch);
-            
-            if (epochStartPrice.lessThan(Decimal.one())) {
+            Decimal.D256 memory price = oracle().latestPrice();
+            if (price.lessThan(Decimal.one())) {
                 Implementation(oracle().dao()).advanceNonIncentivized();
             }
-        }*/
+        }
         
         Require.that(
             epoch().add(couponEpochExpiry) > 0,

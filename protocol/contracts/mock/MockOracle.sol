@@ -49,11 +49,11 @@ contract MockOracle is Oracle {
         return (_latestPrice, _latestValid);
     }
 
-    function latestPrice() external view returns (Decimal.D256 memory) {
+    function latestPrice() public view returns (Decimal.D256 memory) {
         return _latestPrice;
     }
 
-    function latestValid() external view returns (bool) {
+    function latestValid() public view returns (bool) {
         return _latestValid;
     }
 

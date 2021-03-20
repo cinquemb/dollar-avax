@@ -952,7 +952,7 @@ class DAO:
         ).transact({
             'nonce': get_nonce(agent),
             'from' : agent.address,
-            'gas': 800000,
+            'gas': 8000000,
             'gasPrice': Web3.toWei(470, 'gwei'),
         })
         #provider.make_request("debug_increaseTime", [1])
@@ -1010,12 +1010,13 @@ class Model:
     Full model of the economy.
     """
     
-    def __init__(self, dao, pangolin, usdc, pangolin_router, pangolin_token, xsd, agents, **kwargs):
+    def __init__(self, dao, pangolin, usdc, pangolin_router, pangolin_token, xsd, oracle, agents, **kwargs):
         """
         Takes in experiment parameters and forwards them on to all components.
         """
         self.pangolin = PangolinPool(pangolin, pangolin_router, pangolin_token, usdc, xsd, **kwargs)
         self.dao = DAO(dao, xsd, **kwargs)
+        self.oracle = oracle
         self.agents = []
         self.usdc_token = usdc
         self.pangolin_router = pangolin_router
@@ -1027,6 +1028,7 @@ class Model:
         self.max_coupon_premium = 10
         self.min_usdc_balance = self.usdc_token.from_tokens(100)
         self.agent_coupons = {x: 0 for x in agents}
+        self.has_prev_advanced = True
 
 
         is_mint = is_try_model_mine
@@ -1095,7 +1097,10 @@ class Model:
 
         #randomly have an agent advance the epoch
         seleted_advancer = self.agents[int(random.random() * (len(self.agents) - 1))]
-        provider.make_request("debug_increaseTime", [7200])   
+
+        if self.has_prev_advanced:
+            provider.make_request("debug_increaseTime", [7200])   
+        
         logger.info("Clock: {}".format(w3.eth.get_block('latest')['timestamp']))
 
         epoch_before = self.dao.epoch(seleted_advancer.address)
@@ -1104,9 +1109,12 @@ class Model:
         is_advance_fail = False
         if adv_recp["status"] == 0:
             is_advance_fail = True
+            self.has_prev_advanced = False
+        else:
+            self.has_prev_advanced = True
 
         logger.info("Earliest Non Dead Auction: {}".format(self.dao.contract.caller({'from' : seleted_advancer.address, 'gas': 100000}).getEarliestDeadAuctionEpoch()))
-        logger.info("Advance from {}, is_advance_fail: {}".format(seleted_advancer.address, is_advance_fail))
+        logger.info("Prospective Advance from {}, is_advance_fail: {}".format(seleted_advancer.address, is_advance_fail))
 
         (usdc_b, xsd_b) = self.pangolin.getTokenBalance()
         revs = self.pangolin.getReserves()
@@ -1122,6 +1130,10 @@ class Model:
             self.get_overall_faith(), 0, total_coupons,
             xsd_b, usdc_b)
         )
+        
+        latest_price = Balance(self.oracle.caller({'from' : seleted_advancer.address, 'gas': 100000}).latestPrice()[0], xSD['decimals'])
+        latest_valid = self.oracle.caller({'from' : seleted_advancer.address, 'gas': 100000}).latestValid()
+        logger.info("latest_price: {}, latest_valid: {}".format(latest_price, latest_valid))
         
         anyone_acted = False
         if current_epoch < self.bootstrap_epoch:
@@ -1299,13 +1311,16 @@ class Model:
                         #logger.info("Addr {} Bid to burn init {:.2f} xSD for {:.2f} coupons with expiry at epoch {}".format(a.address, xsd_at_risk, rand_max_coupons, exact_expiry))
                         coupon_bid_tx_hash = self.dao.coupon_bid(a, rand_epoch_expiry, xsd_at_risk, rand_max_coupons)
                 
-                        if (epoch_start_price < 1.0):
+                        if (latest_price < 1.0) and (latest_valid == True):
                             if (self.dao.epoch(seleted_advancer.address) == epoch_before):
                                 providerAvax.make_request("avax.issueBlock", {})
                                 coup_adv_recp = w3.eth.waitForTransactionReceipt(coupon_bid_tx_hash, poll_latency=tx_pool_latency)
                                 is_advance_fail = False
                                 if coup_adv_recp["status"] == 0:
                                     is_advance_fail = True
+                                    self.has_prev_advanced = False
+                                else:
+                                    self.has_prev_advanced = True
                                 
                                 logger.info("Coupon Advance from {}, is_advance_fail: {}".format(a.address, is_advance_fail))
 
@@ -1482,7 +1497,7 @@ def main():
     # Make a model of the economy
     start_init = time.time()
     logger.info('INIT STARTED')
-    model = Model(dao, pangolin, usdc, pangolin_router, pangolin_token, xsd, w3.eth.accounts[:max_accounts], min_faith=0.5E6, max_faith=1E6, use_faith=True)
+    model = Model(dao, pangolin, usdc, pangolin_router, pangolin_token, xsd, oracle, w3.eth.accounts[:max_accounts], min_faith=0.5E6, max_faith=1E6, use_faith=True)
     end_init = time.time()
     logger.info('INIT FINISHED {} (s)'.format(end_init - start_init))
 
