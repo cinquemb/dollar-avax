@@ -66,11 +66,33 @@ contract Market is Comptroller {
             "Must be current best bidder"
         );*/
 
-        decrementBalanceOfCoupons(msg.sender, couponEpoch, couponAmount, "Market: Insufficient coupon balance");
-        redeemToAccount(msg.sender, couponAmount);
+        uint256 cur_reedemable = totalRedeemable();
+
+        uint256 realCouponAmount = balanceOfCoupons(msg.sender, couponEpoch);
+
+        Require.that(
+            realCouponAmount > 0,
+            FILE,
+            "Must be greater than 0"
+        );
+
+        Require.that(
+            couponAmount <= realCouponAmount,
+            FILE,
+            "Must be lte coupon balance"
+        );
+
+        Require.that(
+            realCouponAmount <= cur_reedemable,
+            FILE,
+            "Must be lte total redeemable"
+        );
+
+        decrementBalanceOfCoupons(msg.sender, couponEpoch, realCouponAmount, "Market: Insufficient coupon balance");
+        redeemToAccount(msg.sender, realCouponAmount);
         setCouponBidderStateRedeemed(couponEpoch, msg.sender);
 
-        emit CouponRedemption(msg.sender, couponEpoch, couponAmount);
+        emit CouponRedemption(msg.sender, couponEpoch, realCouponAmount);
     }
 
     function redeemCouponsForAccount(uint256 couponEpoch, uint256 couponAmount, address bidderAddr) external {
@@ -199,9 +221,9 @@ contract Market is Comptroller {
             auction.initBidder = bidAddr;
         } else {
             // need a away to compare, use available internals boundaries;
-            uint256 yieldRelNorm = getCouponAuctionMaxYield(currentEpoch) - getCouponAuctionMinYield(currentEpoch);
-            uint256 expiryRelNorm = getCouponAuctionMaxExpiry(currentEpoch) - getCouponAuctionMinExpiry(currentEpoch);    
-            uint256 dollarRelNorm = getCouponAuctionMaxDollarAmount(currentEpoch) - getCouponAuctionMinDollarAmount(currentEpoch);
+            uint256 yieldRelNorm = 1 + getCouponAuctionMaxYield(currentEpoch) - getCouponAuctionMinYield(currentEpoch);
+            uint256 expiryRelNorm = 1 + getCouponAuctionMaxExpiry(currentEpoch) - getCouponAuctionMinExpiry(currentEpoch);    
+            uint256 dollarRelNorm = 1 + getCouponAuctionMaxDollarAmount(currentEpoch) - getCouponAuctionMinDollarAmount(currentEpoch);
 
             // sort bid
             Epoch.CouponBidderState storage pnodeBidder = getCouponBidderState(currentEpoch, auction.initBidder);

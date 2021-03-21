@@ -31,10 +31,7 @@ contract Regulator is Comptroller {
 
     uint256 private totalFilled = 0;
     uint256 private totalBurned = 0;
-    uint256 private yieldRelNorm = 1;
-    uint256 private expiryRelNorm = 1;
     uint256 private currentBidIdx = 0;
-    uint256 private dollarRelNorm = 1;
     uint256 private totalAuctioned = 0;
     uint256 private maxExpiryFilled = 0;
     uint256 private sumExpiryFilled = 0;
@@ -143,9 +140,6 @@ contract Regulator is Comptroller {
             //reset vars
             totalFilled = 0;
             totalBurned = 0;
-            yieldRelNorm = 1;
-            expiryRelNorm = 1;
-            dollarRelNorm = 1;
             currentBidIdx = 0;
             totalAuctioned = 0;
             maxExpiryFilled = 0;

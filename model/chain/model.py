@@ -127,8 +127,7 @@ def get_nonce(agent):
         agent.next_tx_count += 1
         agent.seen_block[current_block] = True
 
-    #providerAvax.make_request("avax.incrementTimeTx", {"time": 1})
-    #provider.make_request("debug_increaseTime", [1])
+    provider.make_request("debug_increaseTime", [1])
 
     return agent.next_tx_count
 
@@ -929,6 +928,7 @@ class DAO:
 
         agent.max_coupon_epoch_index = 0
         agent.coupon_expirys = epochs
+        agent.coupon_expirys.sort()
 
         #agent.coupon_expirys = list(set(agent.coupon_expirys))
         return agent.coupon_expirys
@@ -948,8 +948,6 @@ class DAO:
         """
         
         self.xsd_token.ensure_approved(agent, self.contract)
-        #providerAvax.make_request("avax.issueBlock", {})
-        #providerAvax.make_request("avax.incrementTimeTx", {"time": 60})
         tx_hash = self.contract.functions.placeCouponAuctionBid(
             coupon_expiry,
             xsd_amount.to_wei(),
@@ -960,10 +958,6 @@ class DAO:
             'gas': 8000000,
             'gasPrice': Web3.toWei(470, 'gwei'),
         })
-        #provider.make_request("debug_increaseTime", [1])
-        #providerAvax.make_request("avax.incrementTimeTx", {"time": 1})
-        #providerAvax.make_request("avax.issueBlock", {})
-
         return tx_hash
         
     def redeem(self, agent, epoch_expired):
@@ -1156,7 +1150,7 @@ class Model:
         is_pgl_op = self.pangolin.operational()
 
         # try to redeem any outstanding coupons here first to better
-        if epoch_start_price > 1.0 and total_coupons > 0:
+        if latest_price > 1.0 and total_coupons > 0:
             for agent_num, a in enumerate(self.agents):
                 tr = self.dao.contract.caller({'from' : a.address, 'gas': 100000}).totalRedeemable()
                 if tr == 0:
@@ -1307,7 +1301,9 @@ class Model:
                     '''
                     xsd_at_risk = max(Balance.from_tokens(1, 18), portion_dedusted(a.xsd, commitment))
                     rand_epoch_expiry = int(random.random() * self.max_coupon_exp)
-                    rand_max_coupons =  round(max(1.01, int(math.floor(random.random() * self.max_coupon_premium))) * xsd_at_risk)
+                    rand_max_coupons =  round(max(1.01, min(int(math.floor(random.random() * self.max_coupon_premium)) + 1, 10.0)) * xsd_at_risk)
+                    #rand_max_coupons =  round(max(1.01, int(math.floor(self.max_coupon_premium))) * xsd_at_risk)
+
 
                     if rand_max_coupons < xsd_at_risk:
                         xsd_at_risk = rand_max_coupons
@@ -1325,6 +1321,7 @@ class Model:
                                     is_advance_fail = True
                                     self.has_prev_advanced = False
                                 else:
+                                    latest_price = Balance(self.oracle.caller({'from' : a.address, 'gas': 100000}).latestPrice()[0], xSD['decimals'])
                                     self.has_prev_advanced = True
                                 
                                 logger.info("Coupon Advance from {}, is_advance_fail: {}".format(a.address, is_advance_fail))
@@ -1454,6 +1451,22 @@ def main():
 
     for acc in w3.eth.accounts[:max_accounts]:
         logger.info("how many times assigned coupons for {}: {}".format(acc, dao.functions.getCouponsCurrentAssignedIndex(acc).call()))
+    '''
+    avg_auction_yields = []
+    for epoch in range(0, dao.caller().epoch()):
+        yields = dao.caller().getAvgYieldFilled(epoch)
+        if (yields > 1):
+            avg_auction_yields.append(yields)
+            logger.info(
+                "epoch: {}, avg yeild: {}".format(
+                    epoch, yields
+                )
+            )
+
+    avg_a_y = sum(avg_auction_yields) / float(len(avg_auction_yields))
+    logger.info("avg yield cross auctions: {}".format(avg_a_y))
+    sys.exit()
+    '''
     '''
 
     #logger.info("getTotalFilled at epoch 4: {}".format(dao.caller().getTotalFilled(10)))
