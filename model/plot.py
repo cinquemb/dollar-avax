@@ -17,7 +17,7 @@ def main():
     columns = []
 
     #log = open("./chain/log.150adv.10prem.40agents_3.tsv")
-    log = open("./chain/log.150adv.10prem_4.tsv")
+    log = open("./chain/log.tsv")
     for line in log:
         line = line.strip()
         if line == '':
@@ -64,8 +64,8 @@ def main():
         
         if headings[column_number] == "price":
             # Special axes here so we can see 1.0
-            ax.set_ylim(0, 2)
-            ax.set_yticks([0, 0.7, 1, 1.3, 2])
+            ax.set_ylim(0, 1.3)
+            ax.set_yticks([0, 0.35, 0.7, 1.05, 1.3])
             ax.hlines(1.0, min(columns[x_column_number]), max(columns[x_column_number]))
         
         # Make the next plot on the next axes

@@ -17,7 +17,7 @@ from web3 import Web3
 
 IS_DEBUG = False
 is_try_model_mine = False
-max_accounts = 20
+max_accounts = 40
 block_offset = 19 + max_accounts
 tx_pool_latency = 0.01
 
@@ -622,6 +622,11 @@ class Agent:
 
         # People are fast to coupon bid to get in front of redemption queue
         strategy["coupon_bid"] = 2.0
+
+
+        strategy["provide_liquidity"] = 0.1
+        strategy["remove_liquidity"] = 1.0
+        
         
         if price >= 1.0:
             # No rewards for expansion by itself
@@ -1311,8 +1316,8 @@ class Model:
                         #logger.info("Addr {} Bid to burn init {:.2f} xSD for {:.2f} coupons with expiry at epoch {}".format(a.address, xsd_at_risk, rand_max_coupons, exact_expiry))
                         coupon_bid_tx_hash = self.dao.coupon_bid(a, rand_epoch_expiry, xsd_at_risk, rand_max_coupons)
                 
-                        if (latest_price < 1.0) and (latest_valid == True):
-                            if (self.dao.epoch(seleted_advancer.address) == epoch_before):
+                        if (latest_valid == True):
+                            if (self.has_prev_advanced == False):
                                 providerAvax.make_request("avax.issueBlock", {})
                                 coup_adv_recp = w3.eth.waitForTransactionReceipt(coupon_bid_tx_hash, poll_latency=tx_pool_latency)
                                 is_advance_fail = False
@@ -1403,21 +1408,16 @@ class Model:
                 total_coupoun_bidders)
             )
 
-
-        #'''
-        if (self.dao.epoch(seleted_advancer.address) == epoch_before):
-            logger.info("ERROR, EPOCH IS STUCK")
-            #time.sleep(10)
-        #'''
-
         providerAvax.make_request("avax.issueBlock", {})
         tx_hashes_good = 0
         tx_fails = []
+        '''
         for tmp_tx_hash in tx_hashes:
             receipt = w3.eth.waitForTransactionReceipt(tmp_tx_hash['hash'], poll_latency=tx_pool_latency)
             tx_hashes_good += receipt["status"]
             if receipt["status"] == 0:
                 tx_fails.append(tmp_tx_hash['type'])
+        '''
 
         logger.info("total tx: {}, successful tx: {}, tx fails: {}".format(
                 len(tx_hashes), tx_hashes_good, json.dumps(tx_fails)

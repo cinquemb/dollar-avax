@@ -53,7 +53,6 @@ contract Implementation is State, Bonding, Market, Regulator, Govern {
         Bonding.step();
         Regulator.step();
         Market.step();
-        setAdvanceCalled(epoch());
 
         uint256 incentive = Constants.getAdvanceIncentive();
         mintToAccount(msg.sender, incentive);
@@ -67,7 +66,6 @@ contract Implementation is State, Bonding, Market, Regulator, Govern {
         Bonding.step();
         Regulator.step();
         Market.step();
-        setAdvanceCalled(epoch());
         emit Advance(epoch(), block.number, block.timestamp);
     }
 }

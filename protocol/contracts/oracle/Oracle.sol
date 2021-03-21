@@ -30,19 +30,19 @@ import "../Constants.sol";
 contract Oracle is IOracle {
     using Decimal for Decimal.D256;
 
-    bytes32 private constant FILE = "Oracle";
-    address private constant PANGOLIN_FACTORY = address(0xefa94DE7a4656D787667C749f7E1223D71E9FD88);
 
     address internal _dao;
+    uint256 internal _index;
     address internal _dollar;
-
+    bool private _latestValid;
+    uint256 internal _reserve;
+    uint32 internal _timestamp;
     bool internal _initialized;
     IPangolinPair internal _pair;
-    uint256 internal _index;
     uint256 internal _cumulative;
-    uint32 internal _timestamp;
-
-    uint256 internal _reserve;
+    Decimal.D256 private _latestPrice;
+    bytes32 private constant FILE = "Oracle";
+    address private constant PANGOLIN_FACTORY = address(0xefa94DE7a4656D787667C749f7E1223D71E9FD88);
 
     constructor (address dollar) public {
         _dao = msg.sender;
@@ -108,6 +108,9 @@ contract Oracle is IOracle {
             valid = false;
         }
 
+        _latestValid = valid;
+        _latestPrice = price;
+
         return (price, valid);
     }
 
@@ -146,6 +149,14 @@ contract Oracle is IOracle {
 
     function dao() public view returns (address) {
         return _dao;
+    }
+
+    function latestPrice() public view returns (Decimal.D256 memory) {
+        return _latestPrice;
+    }
+
+    function latestValid() public view returns (bool) {
+        return _latestValid;
     }
 
     modifier onlyDao() {

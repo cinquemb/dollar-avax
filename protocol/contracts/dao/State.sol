@@ -139,7 +139,6 @@ contract Storage {
         Provider provider;
         Epoch.Global epoch;
         mapping(uint256 => Epoch.State) epochs;
-        mapping(uint256 => bool) advanceCalled;
         mapping(address => bool) hasIncentivized;
         mapping(address => Account.State) accounts;
         mapping(address => Candidate.State) candidates;
