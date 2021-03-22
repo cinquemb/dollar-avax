@@ -1025,7 +1025,7 @@ class Model:
         self.bootstrap_epoch = 2
         self.max_coupon_exp = 131400
         self.max_coupon_premium = 10
-        self.min_usdc_balance = self.usdc_token.from_tokens(100)
+        self.min_usdc_balance = self.usdc_token.from_tokens(1)
         self.agent_coupons = {x: 0 for x in agents}
         self.has_prev_advanced = True
 
@@ -1312,19 +1312,19 @@ class Model:
                         #logger.info("Addr {} Bid to burn init {:.2f} xSD for {:.2f} coupons with expiry at epoch {}".format(a.address, xsd_at_risk, rand_max_coupons, exact_expiry))
                         coupon_bid_tx_hash = self.dao.coupon_bid(a, rand_epoch_expiry, xsd_at_risk, rand_max_coupons)
                 
-                        if (latest_valid == True):
-                            if (self.has_prev_advanced == False):
-                                providerAvax.make_request("avax.issueBlock", {})
-                                coup_adv_recp = w3.eth.waitForTransactionReceipt(coupon_bid_tx_hash, poll_latency=tx_pool_latency)
-                                is_advance_fail = False
-                                if coup_adv_recp["status"] == 0:
-                                    is_advance_fail = True
-                                    self.has_prev_advanced = False
-                                else:
-                                    latest_price = Balance(self.oracle.caller({'from' : a.address, 'gas': 100000}).latestPrice()[0], xSD['decimals'])
-                                    self.has_prev_advanced = True
-                                
-                                logger.info("Coupon Advance from {}, is_advance_fail: {}".format(a.address, is_advance_fail))
+                        #if (latest_valid == True):
+                        if (self.has_prev_advanced == False):
+                            providerAvax.make_request("avax.issueBlock", {})
+                            coup_adv_recp = w3.eth.waitForTransactionReceipt(coupon_bid_tx_hash, poll_latency=tx_pool_latency)
+                            is_advance_fail = False
+                            if coup_adv_recp["status"] == 0:
+                                is_advance_fail = True
+                                self.has_prev_advanced = False
+                            else:
+                                latest_price = Balance(self.oracle.caller({'from' : a.address, 'gas': 100000}).latestPrice()[0], xSD['decimals'])
+                                self.has_prev_advanced = True
+                            
+                            logger.info("Coupon Advance from {}, is_advance_fail: {}".format(a.address, is_advance_fail))
 
                         
                         tx_hashes.append({'type': 'coupon_bid', 'hash': coupon_bid_tx_hash})
@@ -1449,24 +1449,27 @@ def main():
     dao = w3.eth.contract(abi=DaoContract['abi'], address=xSDS["addr"])
     logger.info('Dao is at: {}'.format(dao.address))
 
+    '''
     for acc in w3.eth.accounts[:max_accounts]:
         logger.info("how many times assigned coupons for {}: {}".format(acc, dao.functions.getCouponsCurrentAssignedIndex(acc).call()))
     '''
     avg_auction_yields = []
     for epoch in range(0, dao.caller().epoch()):
         yields = dao.caller().getAvgYieldFilled(epoch)
-        if (yields > 1):
-            avg_auction_yields.append(yields)
+        tmp_yield = yields[0] / 10. ** xSD["decimals"]
+        if (tmp_yield > 0):
+            avg_auction_yields.append(tmp_yield)
             logger.info(
                 "epoch: {}, avg yeild: {}".format(
-                    epoch, yields
+                    epoch, tmp_yield
                 )
             )
 
     avg_a_y = sum(avg_auction_yields) / float(len(avg_auction_yields))
     logger.info("avg yield cross auctions: {}".format(avg_a_y))
     sys.exit()
-    '''
+    #'''
+    
     '''
 
     #logger.info("getTotalFilled at epoch 4: {}".format(dao.caller().getTotalFilled(10)))

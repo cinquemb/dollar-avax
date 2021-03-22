@@ -31,4 +31,4 @@ set for [i=0:N:+5] xtics (sprintf("%.1f", start_of_bin(i, START, END, N)) i)
 
 # Plot histogram: map (multiple times) every bin to 1.0. 
 # Must use smooth freq to actually count frequencies (see `help smooth freq`) !!
-plot DATAFILE using (bin($1, START, END, N)):(1) smooth freq with boxes title "Some distribution"
+plot DATAFILE using (bin($1, START, END, N)):(1.0) smooth freq with boxes title "Some distribution"

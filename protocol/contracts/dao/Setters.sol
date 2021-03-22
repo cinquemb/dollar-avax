@@ -240,23 +240,23 @@ contract Setters is State, Getters {
         _state.epochs[epoch].auction.maxExpiryFilled = maxExpiryFilled;
     }
     
-    function setAvgExpiryFilled(uint256 epoch, uint256 avgExpiryFilled) internal {
+    function setAvgExpiryFilled(uint256 epoch, Decimal.D256 memory avgExpiryFilled) internal {
         _state.epochs[epoch].auction.avgExpiryFilled = avgExpiryFilled;
     }
     
-    function setMinYieldFilled(uint256 epoch, uint256 minYieldFilled) internal {
+    function setMinYieldFilled(uint256 epoch, Decimal.D256 memory minYieldFilled) internal {
         _state.epochs[epoch].auction.minYieldFilled = minYieldFilled;
     }
     
-    function setMaxYieldFilled(uint256 epoch, uint256 maxYieldFilled) internal {
+    function setMaxYieldFilled(uint256 epoch, Decimal.D256 memory maxYieldFilled) internal {
         _state.epochs[epoch].auction.maxYieldFilled = maxYieldFilled;
     }
     
-    function setAvgYieldFilled(uint256 epoch, uint256 avgYieldFilled) internal {
+    function setAvgYieldFilled(uint256 epoch, Decimal.D256 memory avgYieldFilled) internal {
         _state.epochs[epoch].auction.avgYieldFilled = avgYieldFilled;
     }
     
-    function setBidToCover(uint256 epoch, uint256 bidToCover) internal {
+    function setBidToCover(uint256 epoch, Decimal.D256 memory bidToCover) internal {
         _state.epochs[epoch].auction.bidToCover = bidToCover;
     }
     

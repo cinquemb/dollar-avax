@@ -177,9 +177,6 @@ contract Market is Comptroller {
         );
 
         if (epochTime() > epoch()) {
-            /* 
-                TODO: NEED TO FIGURE OUT WAY TO MAKE SURE THIS DOESNT REVERT IF ADVANCE HAS ALREADY BEEN CALLED? 
-            */
             // if currently below reference price, make bidder advance epoch
             Decimal.D256 memory price = oracle().latestPrice();
             if (price.lessThan(Decimal.one())) {

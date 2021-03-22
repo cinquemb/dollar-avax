@@ -64,7 +64,7 @@ contract Bonding is Setters, Permission {
         incrementTotalBonded(value);
         decrementBalanceOfStaged(msg.sender, value, "Bonding: insufficient staged balance");
 
-        emit Bond(msg.sender, epoch().add(1), value, value);
+        emit Bond(msg.sender, epoch(), value, value);
     }
 
     function unbond(uint256 value) external onlyFrozenOrFluid(msg.sender) {
@@ -75,7 +75,7 @@ contract Bonding is Setters, Permission {
         decrementTotalBonded(staged, "Bonding: insufficient total bonded");
         decrementBalanceOf(msg.sender, value, "Bonding: insufficient balance");
 
-        emit Unbond(msg.sender, epoch().add(1), value, staged);
+        emit Unbond(msg.sender, epoch(), value, staged);
     }
 
     function unbondUnderlying(uint256 value) external onlyFrozenOrFluid(msg.sender) {
@@ -86,6 +86,6 @@ contract Bonding is Setters, Permission {
         decrementTotalBonded(value, "Bonding: insufficient total bonded");
         decrementBalanceOf(msg.sender, balance, "Bonding: insufficient balance");
 
-        emit Unbond(msg.sender, epoch().add(1), balance, value);
+        emit Unbond(msg.sender, epoch(), balance, value);
     }
 }

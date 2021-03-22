@@ -35,11 +35,9 @@ contract Regulator is Comptroller {
     uint256 private totalAuctioned = 0;
     uint256 private maxExpiryFilled = 0;
     uint256 private sumExpiryFilled = 0;
-    uint256 private sumYieldFilled = 0;
-    //need to cap bids per epoch, this may not be  the best way
-    //Epoch.CouponBidderState[20000] private bids;
     uint256 private minExpiryFilled = 2**256 - 1;
     Decimal.D256 private maxYieldFilled = Decimal.zero();
+    Decimal.D256 private sumYieldFilled = Decimal.zero();
     Decimal.D256 private minYieldFilled = Decimal.D256(2**256 - 1);
 
     event SupplyIncrease(uint256 indexed epoch, uint256 price, uint256 newRedeemable, uint256 lessDebt, uint256 newBonded);
@@ -110,10 +108,7 @@ contract Regulator is Comptroller {
 
             // set auction internals
             if (totalFilled > 0) {
-                Decimal.D256 memory avgYieldFilled = Decimal.ratio(
-                    sumYieldFilled,
-                    totalFilled
-                );
+                Decimal.D256 memory avgYieldFilled = sumYieldFilled.div(totalFilled);
                 Decimal.D256 memory avgExpiryFilled = Decimal.ratio(
                     sumExpiryFilled,
                     totalFilled
@@ -127,11 +122,11 @@ contract Regulator is Comptroller {
 
                 setMinExpiryFilled(settlementEpoch, minExpiryFilled);
                 setMaxExpiryFilled(settlementEpoch, maxExpiryFilled);
-                setAvgExpiryFilled(settlementEpoch, avgExpiryFilled.asUint256());
-                setMinYieldFilled(settlementEpoch, minYieldFilled.asUint256());
-                setMaxYieldFilled(settlementEpoch, maxYieldFilled.asUint256());
-                setAvgYieldFilled(settlementEpoch, avgYieldFilled.asUint256());
-                setBidToCover(settlementEpoch, bidToCover.asUint256());
+                setAvgExpiryFilled(settlementEpoch, avgExpiryFilled);
+                setMinYieldFilled(settlementEpoch, minYieldFilled);
+                setMaxYieldFilled(settlementEpoch, maxYieldFilled);
+                setAvgYieldFilled(settlementEpoch, avgYieldFilled);
+                setBidToCover(settlementEpoch, bidToCover);
                 setTotalFilled(settlementEpoch, totalFilled);
                 setTotalAuctioned(settlementEpoch, totalAuctioned);
                 setTotalBurned(settlementEpoch, totalBurned);
@@ -144,7 +139,7 @@ contract Regulator is Comptroller {
             totalAuctioned = 0;
             maxExpiryFilled = 0;
             sumExpiryFilled = 0;
-            sumYieldFilled = 0;
+            sumYieldFilled = Decimal.zero();
             minExpiryFilled = 2**256 - 1;
             maxYieldFilled = Decimal.zero();
             minYieldFilled = Decimal.D256(2**256 - 1);
@@ -193,7 +188,7 @@ contract Regulator is Comptroller {
                         maxExpiryFilled = bidder.couponExpiryEpoch;
                     }
                     
-                    sumYieldFilled += yield.asUint256();
+                    sumYieldFilled = sumYieldFilled.add(yield);
                     sumExpiryFilled += bidder.couponExpiryEpoch;
                     totalAuctioned += bidder.couponAmount;
                     totalBurned += bidder.dollarAmount;
