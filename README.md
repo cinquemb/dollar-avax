@@ -13,8 +13,8 @@
 - `[TBD]` **DAO (xSDS)**
 - `[TBD]` **xSD**
 - `[TBD]` **Oracle**
-- `[TBD]` **Pangolin USDC:xSD Pair**
-- `[TBD]` **LP Incentivation Pool**
+- `[TBD]` **Pangolin USDT:xSD Pair**
+- `[TBD]` **LP Incentivation Pool (No current incentives despite the pools existance)**
 
 ## audit of forked codebase
 
