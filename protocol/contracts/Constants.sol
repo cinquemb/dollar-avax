@@ -24,8 +24,8 @@ library Constants {
     uint256 private constant CHAIN_ID = 1; // Mainnet
 
     /* Oracle */
-    address private constant USDC = address(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48);
-    uint256 private constant ORACLE_RESERVE_MINIMUM = 100e6;//100 USDC
+    address private constant USDT = address(0xde3A24028580884448a5397872046a019649b084); // on avalanche c-chain
+    uint256 private constant ORACLE_RESERVE_MINIMUM = 100e6;//100 USDT
 
     /* Epoch */
     struct EpochStrategy {
@@ -47,7 +47,6 @@ library Constants {
     uint256 private constant INIT_GOVERNANCE_DELAY = 1080; // 1080 epochs before anyone can propose
 
     /* DAO */
-    // need to use either a gase price oracle or make dynamic to always be pegged to USDC price
     uint256 private constant ADVANCE_INCENTIVE = 150e18; // 150 xSD
     uint256 private constant DAO_EXIT_LOCKUP_EPOCHS = 0; // 0 epochs fluid, can leave at any time
 
@@ -68,8 +67,9 @@ library Constants {
     /**
      * Getters
      */
-    function getUsdcAddress() internal pure returns (address) {
-        return USDC;
+
+    function getUsdtAddress() internal pure returns (address) {
+        return USDT;
     }
 
     function getOracleReserveMinimum() internal pure returns (uint256) {

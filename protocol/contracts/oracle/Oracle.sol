@@ -24,7 +24,7 @@ import '../external/PangolinLibrary.sol';
 import "../external/Require.sol";
 import "../external/Decimal.sol";
 import "./IOracle.sol";
-import "./IUSDC.sol";
+import "./IUSDT.sol";
 import "../Constants.sol";
 
 contract Oracle is IOracle {
@@ -50,7 +50,7 @@ contract Oracle is IOracle {
     }
 
     function setup() public onlyDao {
-        _pair = IPangolinPair(IPangolinFactory(PANGOLIN_FACTORY).createPair(_dollar, usdc()));
+        _pair = IPangolinPair(IPangolinFactory(PANGOLIN_FACTORY).createPair(_dollar, usdt()));
 
         (address token0, address token1) = (_pair.token0(), _pair.token1());
         _index = _dollar == token0 ? 0 : 1;
@@ -95,7 +95,7 @@ contract Oracle is IOracle {
     function updateOracle() private returns (Decimal.D256 memory, bool) {
         Decimal.D256 memory price = updatePrice();
         uint256 lastReserve = updateReserve();
-        bool isBlacklisted = IUSDC(usdc()).isBlacklisted(address(_pair));
+        bool isBlacklisted = IUSDT(usdt()).isBlacklisted(address(_pair));
 
         bool valid = true;
         if (lastReserve < Constants.getOracleReserveMinimum()) {
@@ -135,8 +135,8 @@ contract Oracle is IOracle {
         return lastReserve;
     }
 
-    function usdc() internal view returns (address) {
-        return Constants.getUsdcAddress();
+    function usdt() internal view returns (address) {
+        return Constants.getUsdtAddress();
     }
 
     function pair() external view returns (address) {

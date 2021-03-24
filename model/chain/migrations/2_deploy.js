@@ -6,23 +6,23 @@ const Pool = artifacts.require("Pool");
 const Constants = artifacts.require("Constants");
 const Implementation = artifacts.require("Implementation");
 const Root = artifacts.require("Root");
-const TestnetUSDC = artifacts.require("TestnetUSDC");
+const TestnetUSDT = artifacts.require("TestnetUSDT");
 
 const PangolinFactoryBytecode = require('@pangolindex/exchange-contracts/artifacts/contracts/pangolin-core/PangolinFactory.sol/PangolinFactory.json').bytecode
 const PangolinRouter02Bytecode = require('@pangolindex/exchange-contracts/artifacts/contracts/pangolin-periphery/PangolinRouter.sol/PangolinRouter.json').bytecode;
 const WAVAXBytecode = require('@pangolindex/exchange-contracts/artifacts/contracts/WAVAX.sol/WAVAX.json').bytecode;
 
 
-async function deployTestnetUSDC(deployer) {
-  return await deployer.deploy(TestnetUSDC);
+async function deployTestnetUSDT(deployer) {
+  return await deployer.deploy(TestnetUSDT);
 }
 
 async function deployTestnet(deployer, network, accounts) {
-  console.log('Deploy fake USDC');
-  const usdc = await deployTestnetUSDC(deployer);
+  console.log('Deploy fake USDT');
+  const usdt = await deployTestnetUSDT(deployer);
 
   
-  console.log('USDC is at: ' + usdc.address);
+  console.log('USDT is at: ' + usdt.address);
 
   console.log('Deploy Deployer1');
   const d1 = await deployer.deploy(Deployer1);
@@ -72,7 +72,7 @@ async function deployTestnet(deployer, network, accounts) {
   const oracle = await MockOracle.at(oracleAddress);
   
   // Make the oracle make the pangolin pair on our custom factory
-  await oracle.set(pangolinFactoryAddress, usdc.address);
+  await oracle.set(pangolinFactoryAddress, usdt.address);
   const pair = await oracle.pair.call();
   console.log('Pangolin pair is at: ' + pair);
 

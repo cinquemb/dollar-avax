@@ -28,17 +28,17 @@ contract Liquidity is PoolGetters {
     address private constant PANGOLIN_FACTORY = address(0xefa94DE7a4656D787667C749f7E1223D71E9FD88);
 
     function addLiquidity(uint256 dollarAmount) internal returns (uint256, uint256) {
-        (address dollar, address usdc) = (address(dollar()), usdc());
-        (uint reserveA, uint reserveB) = getReserves(dollar, usdc);
+        (address dollar, address usdt) = (address(dollar()), usdt());
+        (uint reserveA, uint reserveB) = getReserves(dollar, usdt);
 
-        uint256 usdcAmount = (reserveA == 0 && reserveB == 0) ?
+        uint256 usdtAmount = (reserveA == 0 && reserveB == 0) ?
              dollarAmount :
              PangolinLibrary.quote(dollarAmount, reserveA, reserveB);
 
         address pair = address(pangolin());
         IERC20(dollar).transfer(pair, dollarAmount);
-        IERC20(usdc).transferFrom(msg.sender, pair, usdcAmount);
-        return (usdcAmount, IPangolinPair(pair).mint(address(this)));
+        IERC20(usdt).transferFrom(msg.sender, pair, usdtAmount);
+        return (usdtAmount, IPangolinPair(pair).mint(address(this)));
     }
 
     // overridable for testing

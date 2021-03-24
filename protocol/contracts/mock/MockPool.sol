@@ -20,13 +20,13 @@ pragma experimental ABIEncoderV2;
 import "../oracle/Pool.sol";
 
 contract MockPool is Pool {
-    address private _usdc;
+    address private _usdt;
     address private _dao;
     address private _dollar;
     address private _pangolin;
 
-    constructor(address dollar, address usdc, address pangolin) Pool(dollar, pangolin) public {
-        _usdc = usdc;
+    constructor(address dollar, address usdt, address pangolin) Pool(dollar, pangolin) public {
+        _usdt = usdt;
     }
 
     function set(address dao, address dollar, address pangolin) external {
@@ -35,8 +35,8 @@ contract MockPool is Pool {
         _pangolin = pangolin;
     }
 
-    function usdc() public view returns (address) {
-        return _usdc;
+    function usdt() public view returns (address) {
+        return _usdt;
     }
 
     function dao() public view returns (IDAO) {
