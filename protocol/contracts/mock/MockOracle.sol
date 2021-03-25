@@ -24,21 +24,21 @@ import "../external/Decimal.sol";
 contract MockOracle is Oracle {
     Decimal.D256 private _latestPrice;
     bool private _latestValid;
-    address private _usdc;
+    address private _usdt;
 
-    constructor (address pair, address dollar, address usdc) Oracle(dollar) public {
+    constructor (address pair, address dollar, address usdt) Oracle(dollar) public {
         _pair = IPangolinPair(pair);
         _index = 0;
-        _usdc = usdc;
+        _usdt = usdt;
     }
 
-    function usdc() internal view returns (address) {
-        return _usdc;
+    function usdt() internal view returns (address) {
+        return _usdt;
     }
 
-    function set(address factory, address usdc) external {
-        _usdc = usdc;
-        _pair = IPangolinPair(IPangolinFactory(factory).createPair(_dollar, _usdc));
+    function set(address factory, address usdt) external {
+        _usdt = usdt;
+        _pair = IPangolinPair(IPangolinFactory(factory).createPair(_dollar, _usdt));
 
         (address token0, address token1) = (_pair.token0(), _pair.token1());
         _index = _dollar == token0 ? 0 : 1;
