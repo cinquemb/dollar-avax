@@ -483,7 +483,7 @@ class TokenProxy:
                 'nonce': get_nonce(owner),
                 'from' : getattr(owner, 'address', owner),
                 'gas': 500000,
-                'gasPrice': Web3.toWei(470, 'gwei'),
+                'gasPrice': Web3.toWei(225, 'gwei'),
             })
             receipt = w3.eth.waitForTransactionReceipt(tx_hash, poll_latency=tx_pool_latency)
             #logger.info('APPROVED')
@@ -568,7 +568,7 @@ class Agent:
                 'nonce': get_nonce(self),
                 'from' : self.address,
                 'gas': 500000,
-                'gasPrice': Web3.toWei(470, 'gwei'),
+                'gasPrice': Web3.toWei(225, 'gwei'),
             })
             time.sleep(1.1)
             w3.eth.waitForTransactionReceipt(tx_hash, poll_latency=tx_pool_latency)
@@ -778,7 +778,7 @@ class PangolinPool:
             'nonce': get_nonce(agent),
             'from' : agent.address,
             'gas': 500000,
-            'gasPrice': Web3.toWei(470, 'gwei'),
+            'gasPrice': Web3.toWei(225, 'gwei'),
         })
 
         return tx_hash
@@ -806,7 +806,7 @@ class PangolinPool:
             'nonce': get_nonce(agent),
             'from' : agent.address,
             'gas': 500000,
-            'gasPrice': Web3.toWei(470, 'gwei'),
+            'gasPrice': Web3.toWei(225, 'gwei'),
         })
 
         return tx_hash
@@ -834,7 +834,7 @@ class PangolinPool:
             'nonce': get_nonce(agent),
             'from' : agent.address,
             'gas': 500000,
-            'gasPrice': Web3.toWei(470, 'gwei'),
+            'gasPrice': Web3.toWei(225, 'gwei'),
         })
         return tx_hash
         
@@ -860,7 +860,7 @@ class PangolinPool:
             'nonce': get_nonce(agent),
             'from' : agent.address,
             'gas': 500000,
-            'gasPrice': Web3.toWei(470, 'gwei'),
+            'gasPrice': Web3.toWei(225, 'gwei'),
         })
 
         return tx_hash
@@ -956,7 +956,7 @@ class DAO:
             'nonce': get_nonce(agent),
             'from' : agent.address,
             'gas': 8000000,
-            'gasPrice': Web3.toWei(470, 'gwei'),
+            'gasPrice': Web3.toWei(225, 'gwei'),
         })
         return tx_hash
         
@@ -980,7 +980,7 @@ class DAO:
             'nonce': get_nonce(agent),
             'from' : agent.address,
             'gas': 8000000,
-            'gasPrice': Web3.toWei(470, 'gwei'),
+            'gasPrice': Web3.toWei(225, 'gwei'),
         })
 
         return tx_hash
@@ -997,7 +997,7 @@ class DAO:
             'nonce': get_nonce(agent),
             'from' : agent.address,
             'gas': 8000000,
-            'gasPrice': Web3.toWei(470, 'gwei'),
+            'gasPrice': Web3.toWei(225, 'gwei'),
         })
         providerAvax.make_request("avax.issueBlock", {})
         receipt = w3.eth.waitForTransactionReceipt(tx_hash, poll_latency=tx_pool_latency)

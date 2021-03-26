@@ -36,12 +36,6 @@ function cleanup {
 
 trap cleanup EXIT
 
-: '
-# THIS IS NEEDED TO CHECK FOR DIFFS BETWEEN UPDATES
-diff $GOPATH/pkg/mod/github.com/ava-labs/coreth@\@v0.3.26/plugin/evm/client.go $GOPATH/pkg/mod/github.com/ava-labs/coreth@\@v0.3.27/plugin/evm/client.go
-diff $GOPATH/pkg/mod/github.com/ava-labs/coreth@\@v0.3.26/plugin/evm/service.go $GOPATH/pkg/mod/github.com/ava-labs/coreth@\@v0.3.27/plugin/evm/service.go
-diff $GOPATH/pkg/mod/github.com/ava-labs/coreth@\@v0.3.26/miner/worker.go $GOPATH/pkg/mod/github.com/ava-labs/coreth@\@v0.3.27/miner/worker.go
-'
 
 # Start the chain
 # Need to run the below command in a while loop when deploying locally
@@ -60,7 +54,7 @@ while ! grep -i "listening on" ganache_output.txt 2>/dev/null ; do
 done
 
 echo "Advancing the clock..."
-curl -X POST --data '{ "jsonrpc":"2.0", "id" :1, "method" :"debug_increaseTime", "params" : [3710740]}' -H 'content-type:application/json;' http://127.0.0.1:9545/ext/bc/C/rpc
+curl -X POST --data '{ "jsonrpc":"2.0", "id" :1, "method" :"debug_increaseTime", "params" : [3147746]}' -H 'content-type:application/json;' http://127.0.0.1:9545/ext/bc/C/rpc
 
 #: '
 # Creating accounts
@@ -72,7 +66,6 @@ time truffle migrate --reset --skip-dry-run --network=development | tee deploy_o
 echo "Creating sim test accounts..."
 time truffle exec make_accounts.js --network development --max-accounts 40 >> make_accounts_output.txt
 
-#truffle migrate --reset --network=development | tee deploy_output.txt
 #'
 if [[ ! -e venv ]] ; then
     # Set up the virtual environment
