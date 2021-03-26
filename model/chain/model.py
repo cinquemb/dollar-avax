@@ -1450,7 +1450,7 @@ def main():
     dao = w3.eth.contract(abi=DaoContract['abi'], address=xSDS["addr"])
     logger.info('Dao is at: {}'.format(dao.address))
 
-    '''
+    #'''
     for acc in w3.eth.accounts[:max_accounts]:
         logger.info("how many times assigned coupons for {}: {}".format(acc, dao.functions.getCouponsCurrentAssignedIndex(acc).call()))
     '''
@@ -1469,7 +1469,7 @@ def main():
     avg_a_y = sum(avg_auction_yields) / float(len(avg_auction_yields))
     logger.info("avg yield cross auctions: {}".format(avg_a_y))
     sys.exit()
-    #'''
+    '''
     
     '''
 

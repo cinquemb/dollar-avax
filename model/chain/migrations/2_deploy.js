@@ -67,7 +67,7 @@ async function deployTestnet(deployer, network, accounts) {
   console.log('PangolinRouter is at: ' + PangolinRouterAddress);
 
   console.log('View Root as Deployer1');
-  await new Promise(r => setTimeout(r, 5000));
+  await new Promise(r => setTimeout(r, 1000));
   const rootAsD1 = await Deployer1.at(root.address);
   
   console.log('Deploy Deployer2');
@@ -75,11 +75,11 @@ async function deployTestnet(deployer, network, accounts) {
   console.log('Implement Deployer2');
   await rootAsD1.implement(d2.address);
   console.log('View root as Deployer2');
-  await new Promise(r => setTimeout(r, 5000));
+  await new Promise(r => setTimeout(r, 1000));
   const rootAsD2 = await Deployer2.at(rootAsD1.address);
 
   // Set up the fields of the oracle that we can't pass through a Deployer
-  await new Promise(r => setTimeout(r, 5000));
+  await new Promise(r => setTimeout(r, 1000));
   console.log('Setup Oracle');
   const oracleAddress = await rootAsD2.oracle.call();
   console.log('Oracle is at: ' + oracleAddress);
@@ -95,9 +95,9 @@ async function deployTestnet(deployer, network, accounts) {
   console.log('Implement Deployer3');
   await rootAsD2.implement(d3.address);
   console.log('View root as Deployer3');
-  await new Promise(r => setTimeout(r, 5000));
+  await new Promise(r => setTimeout(r, 1000));
   const rootAsD3 = await Deployer3.at(root.address);
-  await new Promise(r => setTimeout(r, 5000));
+  await new Promise(r => setTimeout(r, 1000));
   const pool = await Pool.at(await rootAsD3.pool.call());
   console.log('Pool is at: ' + pool.address);
 
