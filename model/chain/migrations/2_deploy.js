@@ -12,10 +12,6 @@ const MockERC20 = artifacts.require('ERC20');
 
 const PangolinFactoryBytecode = require('@pangolindex/exchange-contracts/artifacts/contracts/pangolin-core/PangolinFactory.sol/PangolinFactory.json').bytecode
 const PangolinRouter02Bytecode = require('@pangolindex/exchange-contracts/artifacts/contracts/pangolin-periphery/PangolinRouter.sol/PangolinRouter.json').bytecode;
-
-const IPangolinFactory = artifacts.require('IPangolinFactory');
-const IPangolinPair = artifacts.require('IPangolinPair');
-
 const WAVAXBytecode = require('@pangolindex/exchange-contracts/artifacts/contracts/WAVAX.sol/WAVAX.json').bytecode;
 
 
@@ -27,15 +23,6 @@ async function deployTestnet(deployer, network, accounts) {
   console.log('Deploy fake USDT');
   const usdt = await deployTestnetUSDT(deployer);
 
-  /*
-  const OneERC20 = await deployer.deploy(MockERC20);
-  const AnotherERC20 = await deployer.deploy(MockERC20);
-
-  console.log('OneERC20 is at: ' + OneERC20.address);
-  console.log('AnotherERC20 is at: ' + AnotherERC20.address);
-  */
-
-  
   console.log('USDT is at: ' + usdt.address);
 
   console.log('Deploy Deployer1');
@@ -46,9 +33,7 @@ async function deployTestnet(deployer, network, accounts) {
   console.log('Deploy fake Pangolin Factory');
   // We need an address arg to the contract
   let pangolinArg = '';
-  for (let i = 0; i < 32; i++) {
-    pangolinArg += '00';
-  }
+  for (let i = 0; i < 32; i++) { pangolinArg += '00';}
   const pangolinFactoryAddress = (await web3.eth.sendTransaction({from: accounts[0], gas: 8000000, data: PangolinFactoryBytecode + pangolinArg})).contractAddress;
 
   console.log('Deploy fake wAVAX');

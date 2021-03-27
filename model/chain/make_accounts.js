@@ -40,7 +40,6 @@ async function exportTxXtoC() {
 
 	let avaxAssetID = await xchain.getAVAXAssetID();
 	getBalanceResponse = await xchain.getBalance(xAddressStrings[0], bintools.cb58Encode(avaxAssetID));
-	console.log("avaxAssetID Balance:", getBalanceResponse);
 	let avmUTXOResponse = await xchain.getUTXOs(xAddressStrings);
 	let utxoSet = avmUTXOResponse.utxos;
 	let unsignedTx = await xchain.buildExportTx(utxoSet, amount, cChainBlockchainIdStr, cAddressStrings, xAddressStrings, xAddressStrings, memo, asOf, locktime, threshold, bintools.cb58Encode(avaxAssetID));
@@ -63,13 +62,7 @@ async function importTxXtoC(evmAddr) {
 	let unsignedImportTx = new avalanche.evm.UnsignedTx(importTx);
 	let intx = unsignedImportTx.sign(cKeychain);
 	let ctx_id = await cchain.issueTx(intx);
-
-	console.log("ctx_id", ctx_id);
-
 	let avaxAssetID = await xchain.getAVAXAssetID();
-	getBalanceResponse = await xchain.getBalance(xAddressStrings[0], bintools.cb58Encode(avaxAssetID));
-	console.log("avaxAssetID Balance:", getBalanceResponse);
-	cchain.callMethod('avax.issueBlock').then((res) => console.log(res.data))
 }
 
 
@@ -81,19 +74,13 @@ async function seedTestAccounts(evmAddr) {
 	    console.log('Error occurred X->C', e);
 	}
 	
-	await new Promise(r => setTimeout(r, 1000));
-	
+	await new Promise(r => setTimeout(r, 5000));
+
 	// IMPORT TX INTO C-CHAIN FROM X-CHAIN
 	try {
 		await importTxXtoC(evmAddr);
 	} catch (e) {
 	    console.log('Error occurred C<-X', e);
-	}
-
-	bal = await w3.eth.getBalance(evmAddr);
-	while (bal == 0) {
-		await new Promise(r => setTimeout(r, 1000));
-		bal = await w3.eth.getBalance(evmAddr);
 	}
 }
 
