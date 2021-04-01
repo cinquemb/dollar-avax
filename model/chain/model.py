@@ -955,7 +955,7 @@ class DAO:
         ).transact({
             'nonce': get_nonce(agent),
             'from' : agent.address,
-            'gas': 8000000,
+            'gas': 2000000,
             'gasPrice': Web3.toWei(225, 'gwei'),
         })
         return tx_hash
@@ -999,9 +999,7 @@ class DAO:
             'gas': 8000000,
             'gasPrice': Web3.toWei(225, 'gwei'),
         })
-        providerAvax.make_request("avax.issueBlock", {})
-        receipt = w3.eth.waitForTransactionReceipt(tx_hash, poll_latency=tx_pool_latency)
-    
+        providerAvax.make_request("avax.issueBlock", {})    
         return tx_hash
                         
 class Model:
@@ -1101,11 +1099,14 @@ class Model:
             provider.make_request("debug_increaseTime", [7200])   
         
         logger.info("Clock: {}".format(w3.eth.get_block('latest')['timestamp']))
-
+        ts = time.time()
         epoch_before = self.dao.epoch(seleted_advancer.address)
         incentivized_adv_tx = self.dao.advance(seleted_advancer)
         adv_recp = w3.eth.waitForTransactionReceipt(incentivized_adv_tx, poll_latency=tx_pool_latency)
         is_advance_fail = False
+
+        te = time.time()
+        logger.info("Diff Advance Real Time: {}".format(te - ts))
         if adv_recp["status"] == 0:
             is_advance_fail = True
             self.has_prev_advanced = False
@@ -1408,13 +1409,13 @@ class Model:
         providerAvax.make_request("avax.issueBlock", {})
         tx_hashes_good = 0
         tx_fails = []
-        '''
+        #'''
         for tmp_tx_hash in tx_hashes:
             receipt = w3.eth.waitForTransactionReceipt(tmp_tx_hash['hash'], poll_latency=tx_pool_latency)
             tx_hashes_good += receipt["status"]
             if receipt["status"] == 0:
                 tx_fails.append(tmp_tx_hash['type'])
-        '''
+        #'''
 
         logger.info("total tx: {}, successful tx: {}, tx fails: {}".format(
                 len(tx_hashes), tx_hashes_good, json.dumps(tx_fails)
@@ -1440,19 +1441,28 @@ def main():
         #time.sleep(100)
         
     logger.info(w3.eth.get_block('latest')["number"])
-    #logger.info(w3.eth.get_block('latest'))
-
-    #sys.exit()
-
     logger.info('Root Addr: {}'.format(xSDS['addr']))
 
     logger.info('Total Agents: {}'.format(len(w3.eth.accounts[:max_accounts])))
     dao = w3.eth.contract(abi=DaoContract['abi'], address=xSDS["addr"])
     logger.info('Dao is at: {}'.format(dao.address))
 
+    '''
+    for i in range(0, 1000):
+        logger.info(dao.functions.getTotalFilled(i).call())
+    sys.exit()
+    '''
+
     #'''
     for acc in w3.eth.accounts[:max_accounts]:
-        logger.info("how many times assigned coupons for {}: {}".format(acc, dao.functions.getCouponsCurrentAssignedIndex(acc).call()))
+        max_index = dao.functions.getCouponsCurrentAssignedIndex(acc).call()
+        logger.info("how many times assigned coupons for {}: {}".format(acc, max_index))
+        '''
+        for i in range(0, max_index):
+            t_epoch = dao.caller({'from' : acc, 'gas': 100000}).getCouponsAssignedAtEpoch(acc, i)
+            logger.info("\tepochs: {}".format(t_epoch))
+        '''
+
     '''
     avg_auction_yields = []
     for epoch in range(0, dao.caller().epoch()):
@@ -1495,7 +1505,7 @@ def main():
         'from' : baddr,
         'gas': 8000000
     })
-    #sys.exit()
+    sys.exit()
     '''
 
     #print(dao.caller().oracle())

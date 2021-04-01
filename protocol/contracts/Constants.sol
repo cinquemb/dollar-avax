@@ -25,7 +25,7 @@ library Constants {
 
     /* Oracle */
     address private constant USDT = address(0xde3A24028580884448a5397872046a019649b084); // on avalanche c-chain
-    uint256 private constant ORACLE_RESERVE_MINIMUM = 100e6;//100 USDT
+    uint256 private constant ORACLE_RESERVE_MINIMUM = 10e6;//100 USDT
 
     /* Epoch */
     struct EpochStrategy {

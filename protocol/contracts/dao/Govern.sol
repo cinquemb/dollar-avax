@@ -44,7 +44,13 @@ contract Govern is Setters, Permission, Upgradeable {
 
         if (!isNominated(candidate)) {
             Require.that(
-                canPropose(msg.sender),
+                canProposeBootstrap(msg.sender),
+                FILE,
+                "Too early"
+            );
+
+            Require.that(
+                canProposeStake(msg.sender),
                 FILE,
                 "Not enough stake to propose"
             );
@@ -146,12 +152,15 @@ contract Govern is Setters, Permission, Upgradeable {
         emit Commit(msg.sender, candidate);
     }
 
-    function canPropose(address account) private view returns (bool) {
-        if (totalBonded() == 0) {
+    function canProposeBootstrap(address account) private view returns (bool) {
+        if (epoch() < Constants.getGovernanceDelay()) {
             return false;
         }
+        return true;
+    }
 
-        if (epoch() < Constants.getGovernanceDelay()) {
+    function canProposeStake(address account) private view returns (bool) {
+        if (totalBonded() == 0) {
             return false;
         }
 

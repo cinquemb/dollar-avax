@@ -27,18 +27,10 @@ contract Regulator is Comptroller {
     using SafeMath for uint256;
     using Decimal for Decimal.D256;
 
-    bytes32 private constant FILE = "Regulator";    
+    bytes32 private constant FILE = "Regulator";
 
-    uint256 private totalFilled = 0;
-    uint256 private totalBurned = 0;
-    uint256 private currentBidIdx = 0;
-    uint256 private totalAuctioned = 0;
-    uint256 private maxExpiryFilled = 0;
-    uint256 private sumExpiryFilled = 0;
-    uint256 private minExpiryFilled = 2**256 - 1;
-    Decimal.D256 private maxYieldFilled = Decimal.zero();
-    Decimal.D256 private sumYieldFilled = Decimal.zero();
-    Decimal.D256 private minYieldFilled = Decimal.D256(2**256 - 1);
+    uint256[7] private auctionInternals = [0, 0, 0, 0, 0, 0, 2**256 - 1];
+    mapping(uint256 => Decimal.D256) private auctionYieldInternals;
 
     event SupplyIncrease(uint256 indexed epoch, uint256 price, uint256 newRedeemable, uint256 lessDebt, uint256 newBonded);
     event SupplyDecrease(uint256 indexed epoch, uint256 price, uint256 newDebt);
@@ -102,48 +94,46 @@ contract Regulator is Comptroller {
     
     function settleCouponAuction(uint256 settlementEpoch) internal returns (bool success) {
         if (!isCouponAuctionFinished(settlementEpoch)) {
-
             uint256 maxBidLen = getCouponAuctionBids(settlementEpoch);
+
+            auctionYieldInternals[0] = Decimal.zero();
+            auctionYieldInternals[1] = Decimal.zero();
+            auctionYieldInternals[2] = Decimal.D256(2**256 - 1);
+            
             settleCouponAuctionBidsInOrder(settlementEpoch, maxBidLen);
 
             // set auction internals
-            if (totalFilled > 0) {
-                Decimal.D256 memory avgYieldFilled = sumYieldFilled.div(totalFilled);
+            if (auctionInternals[0] > 0) {
+                Decimal.D256 memory avgYieldFilled = auctionYieldInternals[1].div(auctionInternals[0]);
                 Decimal.D256 memory avgExpiryFilled = Decimal.ratio(
-                    sumExpiryFilled,
-                    totalFilled
+                    auctionInternals[5],
+                    auctionInternals[0]
                 );
 
                 //mul(100) to avoid sub 0 results
                 Decimal.D256 memory bidToCover = Decimal.ratio(
                     maxBidLen,
-                    totalFilled
+                    auctionInternals[0]
                 ).mul(100);
 
-                setMinExpiryFilled(settlementEpoch, minExpiryFilled);
-                setMaxExpiryFilled(settlementEpoch, maxExpiryFilled);
+                setMinExpiryFilled(settlementEpoch, auctionInternals[6]);
+                setMaxExpiryFilled(settlementEpoch, auctionInternals[4]);
                 setAvgExpiryFilled(settlementEpoch, avgExpiryFilled);
-                setMinYieldFilled(settlementEpoch, minYieldFilled);
-                setMaxYieldFilled(settlementEpoch, maxYieldFilled);
+                setMinYieldFilled(settlementEpoch, auctionYieldInternals[2]);
+                setMaxYieldFilled(settlementEpoch, auctionYieldInternals[0]);
                 setAvgYieldFilled(settlementEpoch, avgYieldFilled);
                 setBidToCover(settlementEpoch, bidToCover);
-                setTotalFilled(settlementEpoch, totalFilled);
-                setTotalAuctioned(settlementEpoch, totalAuctioned);
-                setTotalBurned(settlementEpoch, totalBurned);
+                setTotalFilled(settlementEpoch, auctionInternals[0]);
+                setTotalAuctioned(settlementEpoch, auctionInternals[3]);
+                setTotalBurned(settlementEpoch, auctionInternals[1]);
             }
 
-            //reset vars
-            totalFilled = 0;
-            totalBurned = 0;
-            currentBidIdx = 0;
-            totalAuctioned = 0;
-            maxExpiryFilled = 0;
-            sumExpiryFilled = 0;
-            sumYieldFilled = Decimal.zero();
-            minExpiryFilled = 2**256 - 1;
-            maxYieldFilled = Decimal.zero();
-            minYieldFilled = Decimal.D256(2**256 - 1);
-
+            // reset contract vars
+            auctionInternals = [0, 0, 0, 0, 0, 0, 2**256 - 1];
+            auctionYieldInternals[0] = Decimal.zero();
+            auctionYieldInternals[1] = Decimal.zero();
+            auctionYieldInternals[2] = Decimal.D256(2**256 - 1);
+            
             return true;
         } else {
             return false;
@@ -161,12 +151,17 @@ contract Regulator is Comptroller {
             return address(0);
 
         Epoch.CouponBidderState storage bidder = getCouponBidderState(epoch, curBidder);
-        
+
+
         // iter left
         settleCouponAuctionBidsInOrder(epoch, bidder.leftBidder, maxBidLen);
-        //current bidder
+        
+        /*
+            current bidder
+        */
+        
         // reject bids implicit greater than the getCouponRejectBidPtile threshold
-        if (Decimal.ratio(currentBidIdx+1, maxBidLen).lessThan(Constants.getCouponRejectBidPtile())) {
+        if (Decimal.ratio(auctionInternals[2]+1, maxBidLen).lessThan(Constants.getCouponRejectBidPtile())) {
             // only assgin bids that have not been explicitly selected already? may not need this if settleCouponAuction can only be called once per epoch passed
             if (!getCouponBidderStateSelected(epoch, bidder.bidder)) {
                 //must check again if account is able to be assigned
@@ -176,33 +171,33 @@ contract Regulator is Comptroller {
                         bidder.dollarAmount
                     );
 
-                    if (yield.lessThan(minYieldFilled)) {
-                        minYieldFilled = yield;
-                    } else if (yield.greaterThan(maxYieldFilled)) {
-                        maxYieldFilled = yield;
+                    if (yield.lessThan(auctionYieldInternals[2])) {
+                        auctionYieldInternals[2] = yield;
+                    } else if (yield.greaterThan(auctionYieldInternals[0])) {
+                        auctionYieldInternals[0] = yield;
                     }
 
-                    if (bidder.couponExpiryEpoch < minExpiryFilled) {
-                        minExpiryFilled = bidder.couponExpiryEpoch;
-                    } else if (bidder.couponExpiryEpoch > maxExpiryFilled) {
-                        maxExpiryFilled = bidder.couponExpiryEpoch;
+                    if (bidder.couponExpiryEpoch < auctionInternals[6]) {
+                        auctionInternals[6] = bidder.couponExpiryEpoch;
+                    } else if (bidder.couponExpiryEpoch > auctionInternals[4]) {
+                        auctionInternals[4] = bidder.couponExpiryEpoch;
                     }
                     
-                    sumYieldFilled = sumYieldFilled.add(yield);
-                    sumExpiryFilled += bidder.couponExpiryEpoch;
-                    totalAuctioned += bidder.couponAmount;
-                    totalBurned += bidder.dollarAmount;
+                    auctionYieldInternals[1] = auctionYieldInternals[1].add(yield);
+                    auctionInternals[5] += bidder.couponExpiryEpoch;
+                    auctionInternals[3] += bidder.couponAmount;
+                    auctionInternals[1] += bidder.dollarAmount;
                     
                     burnFromAccountSansDebt(bidder.bidder, bidder.dollarAmount);
                     incrementBalanceOfCoupons(bidder.bidder, bidder.couponExpiryEpoch, bidder.couponAmount);
-                    setCouponBidderStateSelected(epoch, bidder.bidder, currentBidIdx);
-                    totalFilled++;
+                    setCouponBidderStateSelected(epoch, bidder.bidder, auctionInternals[2]);
+                    auctionInternals[0]++;
                 }
             }
         } 
 
         //increment bidder index
-        currentBidIdx += 1;
+        auctionInternals[2] += 1;
         
         // iter right
         settleCouponAuctionBidsInOrder(epoch, bidder.rightBidder, maxBidLen);
