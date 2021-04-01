@@ -24,6 +24,7 @@ contract IOracle {
     function capture() public returns (Decimal.D256 memory, bool);
     function pair() external view returns (address);
     function dao() public view returns (address);
+    function reserve() external view returns (uint256);
     function latestPrice() public view returns (Decimal.D256 memory);
     function latestValid() public view returns (bool);
 }

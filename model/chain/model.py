@@ -127,7 +127,7 @@ def get_nonce(agent):
         agent.next_tx_count += 1
         agent.seen_block[current_block] = True
 
-    provider.make_request("debug_increaseTime", [1])
+    #provider.make_request("debug_increaseTime", [1])
 
     return agent.next_tx_count
 
@@ -1151,7 +1151,7 @@ class Model:
         is_pgl_op = self.pangolin.operational()
 
         # try to redeem any outstanding coupons here first to better
-        if latest_price > 1.0 and total_coupons > 0:
+        if epoch_start_price > 1.0 and total_coupons > 0:
             for agent_num, a in enumerate(self.agents):
                 tr = self.dao.contract.caller({'from' : a.address, 'gas': 100000}).totalRedeemable()
                 if tr == 0:

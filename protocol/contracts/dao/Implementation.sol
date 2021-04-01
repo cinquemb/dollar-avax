@@ -34,8 +34,8 @@ contract Implementation is State, Bonding, Market, Regulator, Govern {
 
     function advance() external {
         uint256 prev_epoch = epoch();
-        bool latestValid = oracle().latestValid();
-        if ((prev_epoch > 0) && (latestValid == true)) {
+        uint256 latestReserve = oracle().reserve();
+        if ((prev_epoch > 0) && (latestReserve > Constants.getOracleReserveMinimum())) {
             //can only incentivize advance above or at ref price
             Decimal.D256 memory price = oracle().latestPrice();
             require(
