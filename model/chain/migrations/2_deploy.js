@@ -8,8 +8,6 @@ const Implementation = artifacts.require("Implementation");
 const Root = artifacts.require("Root");
 const TestnetUSDT = artifacts.require("TestnetUSDT");
 
-const MockERC20 = artifacts.require('ERC20');
-
 const PangolinFactoryBytecode = require('@pangolindex/exchange-contracts/artifacts/contracts/pangolin-core/PangolinFactory.sol/PangolinFactory.json').bytecode
 const PangolinRouter02Bytecode = require('@pangolindex/exchange-contracts/artifacts/contracts/pangolin-periphery/PangolinRouter.sol/PangolinRouter.json').bytecode;
 const WAVAXBytecode = require('@pangolindex/exchange-contracts/artifacts/contracts/WAVAX.sol/WAVAX.json').bytecode;

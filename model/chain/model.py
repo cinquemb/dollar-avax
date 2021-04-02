@@ -117,7 +117,6 @@ xSDS['addr'] = get_addr_from_contract(TokenContract)
 
 def get_nonce(agent):
     current_block = int(w3.eth.get_block('latest')["number"])
-
     if current_block not in agent.seen_block:
         if (agent.current_block == 0):
             agent.current_block += 1
@@ -126,9 +125,6 @@ def get_nonce(agent):
     else:
         agent.next_tx_count += 1
         agent.seen_block[current_block] = True
-
-    #provider.make_request("debug_increaseTime", [1])
-
     return agent.next_tx_count
 
 def reg_int(value, scale):
@@ -609,7 +605,7 @@ class Agent:
             self.xsd, self.usdt, self.avax, self.lp, self.coupons)
 
         
-    def get_strategy(self, block, price, total_supply, total_coupons, agent_coupons):
+    def get_strategy(self, current_timestamp, price, total_supply, total_coupons, agent_coupons):
         """
         Get weights, as a dict from action to float, as a function of the price.
         """
@@ -645,7 +641,7 @@ class Agent:
        
         if self.use_faith:
             # Vary our strategy based on how much xSD we think ought to exist
-            if price * total_supply > self.get_faith(block, price, total_supply):
+            if price * total_supply > self.get_faith(current_timestamp, price, total_supply):
                 # There is too much xSD, so we want to sell
                 strategy["sell"] = 10.0 if ((agent_coupons> 0) and (price > 1.0)) else 2.0
             else:
@@ -654,7 +650,7 @@ class Agent:
         
         return strategy
         
-    def get_faith(self, block, price, total_supply):
+    def get_faith(self, current_timestamp, price, total_supply):
         """
         Get the total faith in xSD that this agent has, in USDT.
         
@@ -671,7 +667,7 @@ class Agent:
         
         center_faith = (self.max_faith + self.min_faith) / 2
         swing_faith = (self.max_faith - self.min_faith) / 2
-        faith = center_faith + swing_faith * math.sin(block * (2 * math.pi / 50))
+        faith = center_faith + swing_faith * math.sin(current_timestamp * (2 * math.pi / 50000))
         
         return faith
         
@@ -745,7 +741,7 @@ class PangolinPool:
     def total_lp(self):
         return reg_int(self.pangolin_pair_token.contract.functions.totalSupply().call(), PGLRouter['decimals'])
         
-    def provide_liquidity(self, agent, xsd, usdt):
+    def provide_liquidity(self, agent, xsd, usdt, current_timestamp):
         """
         Provide liquidity.
         """        
@@ -773,7 +769,7 @@ class PangolinPool:
             min_xsd_amount.to_wei(),
             min_usdt_amount.to_wei(),
             agent.address,
-            (int(w3.eth.get_block('latest')['timestamp']) + DEADLINE_FROM_NOW)
+            (int(current_timestamp) + DEADLINE_FROM_NOW)
         ).transact({
             'nonce': get_nonce(agent),
             'from' : agent.address,
@@ -783,7 +779,7 @@ class PangolinPool:
 
         return tx_hash
         
-    def remove_liquidity(self, agent, shares, min_xsd_amount, min_usdt_amount):
+    def remove_liquidity(self, agent, shares, min_xsd_amount, min_usdt_amount, current_timestamp):
         """
         Remove liquidity for the given number of shares.
 
@@ -801,7 +797,7 @@ class PangolinPool:
             min_xsd_amount.to_wei(),
             min_usdt_amount.to_wei(),
             agent.address,
-            int(w3.eth.get_block('latest')['timestamp'] + DEADLINE_FROM_NOW)   
+            int(current_timestamp + DEADLINE_FROM_NOW)   
         ).transact({
             'nonce': get_nonce(agent),
             'from' : agent.address,
@@ -811,7 +807,7 @@ class PangolinPool:
 
         return tx_hash
         
-    def buy(self, agent, usdt, max_usdt_amount):
+    def buy(self, agent, usdt, max_usdt_amount, current_timestamp):
         """
         Spend the given number of USDT to buy xSD.
         ['swapTokensForExactTokens(uint256,uint256,address[],address,uint256)']
@@ -829,7 +825,7 @@ class PangolinPool:
             max_usdt_amount.to_wei(),
             [self.usdt_token.address, self.xsd_token.address],
             agent.address,
-            int(w3.eth.get_block('latest')['timestamp'] + DEADLINE_FROM_NOW)
+            int(current_timestamp + DEADLINE_FROM_NOW)
         ).transact({
             'nonce': get_nonce(agent),
             'from' : agent.address,
@@ -838,7 +834,7 @@ class PangolinPool:
         })
         return tx_hash
         
-    def sell(self, agent, xsd, min_usdt_amount, advancer, pangolin_usdt_supply):
+    def sell(self, agent, xsd, min_usdt_amount, advancer, pangolin_usdt_supply, current_timestamp):
         """
         Sell the given number of xSD for USDT.
         """
@@ -855,7 +851,7 @@ class PangolinPool:
             min_usdt_amount.to_wei(),
             [self.xsd_token.address, self.usdt_token.address],
             agent.address,
-            int(w3.eth.get_block('latest')['timestamp'] + DEADLINE_FROM_NOW)
+            int(current_timestamp + DEADLINE_FROM_NOW)
         ).transact({
             'nonce': get_nonce(agent),
             'from' : agent.address,
@@ -955,7 +951,7 @@ class DAO:
         ).transact({
             'nonce': get_nonce(agent),
             'from' : agent.address,
-            'gas': 2000000,
+            'gas': 4000000,
             'gasPrice': Web3.toWei(225, 'gwei'),
         })
         return tx_hash
@@ -1075,11 +1071,11 @@ class Model:
             self.get_overall_faith())
         )
        
-    def get_overall_faith(self):
+    def get_overall_faith(self, current_timestamp):
         """
         What target should the system be trying to hit in xSD market cap?
         """
-        return self.agents[0].get_faith(w3.eth.get_block('latest')["number"], self.pangolin.xsd_price(), self.dao.xsd_supply())
+        return self.agents[0].get_faith(current_timestamp, self.pangolin.xsd_price(), self.dao.xsd_supply())
        
     def step(self):
         """
@@ -1098,7 +1094,8 @@ class Model:
         if self.has_prev_advanced:
             provider.make_request("debug_increaseTime", [7200])   
         
-        logger.info("Clock: {}".format(w3.eth.get_block('latest')['timestamp']))
+        current_timestamp = w3.eth.get_block('latest')['timestamp']
+        logger.info("Clock: {}".format(current_timestamp))
         ts = time.time()
         epoch_before = self.dao.epoch(seleted_advancer.address)
         incentivized_adv_tx = self.dao.advance(seleted_advancer)
@@ -1127,7 +1124,7 @@ class Model:
         
         logger.info("Block {}, epoch {}, price {:.2f}, supply {:.2f}, faith: {:.2f}, bonded {:2.1f}%, coupons: {:.2f}, liquidity {:.2f} xSD / {:.2f} USDT".format(
             w3.eth.get_block('latest')["number"], current_epoch, epoch_start_price, dao_xsd_supply,
-            self.get_overall_faith(), 0, total_coupons,
+            self.get_overall_faith(current_timestamp), 0, total_coupons,
             xsd_b, usdt_b)
         )
         
@@ -1218,7 +1215,7 @@ class Model:
                         advance, provide_liquidity, remove_liquidity, buy, sell, coupon_bid, redeem, 
                 '''
         
-                strategy = a.get_strategy(w3.eth.get_block('latest')["number"], self.pangolin.xsd_price(), dao_xsd_supply, total_coupons, self.agent_coupons[a.address])
+                strategy = a.get_strategy(current_timestamp, self.pangolin.xsd_price(), dao_xsd_supply, total_coupons, self.agent_coupons[a.address])
                 
                 weights = [strategy[o] for o in options]
                 
@@ -1257,7 +1254,7 @@ class Model:
                     try:
                         price = epoch_start_price
                         #logger.info("Buy init {:.2f} xSD @ {:.2f} for {:.2f} USDT".format(usdt_in, price, max_amount))
-                        buy_tx = self.pangolin.buy(a, usdt_in, max_amount)
+                        buy_tx = self.pangolin.buy(a, usdt_in, max_amount, current_timestamp)
                         tx_hashes.append({'type': 'buy', 'hash': buy_tx})
                         #logger.debug("Buy end {:.2f} xSD @ {:.2f} for {:.2f} USDT".format(max_amount, price, usdt_in))
                         
@@ -1291,7 +1288,7 @@ class Model:
                     try:
                         price = epoch_start_price
                         #logger.info("Sell init {:.2f} xSD @ {:.2f} for {:.2f} USDT".format(xsd_out, price, max_amount))
-                        sell_tx = self.pangolin.sell(a, xsd_out, max_amount, seleted_advancer, usdt_b.to_decimals(xSD['decimals']))
+                        sell_tx = self.pangolin.sell(a, xsd_out, max_amount, seleted_advancer, usdt_b.to_decimals(xSD['decimals']), current_timestamp)
                         tx_hashes.append({'type': 'sell', 'hash': sell_tx})
                         #logger.debug("Sell end {:.2f} xSD @ {:.2f} for {:.2f} USDT".format(xsd_out, price, usdt))
                     except Exception as inst:
@@ -1302,8 +1299,8 @@ class Model:
                     '''
                     xsd_at_risk = max(Balance.from_tokens(1, 18), portion_dedusted(a.xsd, commitment))
                     rand_epoch_expiry = int(random.random() * self.max_coupon_exp)
-                    rand_max_coupons =  round(max(1.01, min(int(math.floor(random.random() * self.max_coupon_premium)) + 1, 10.0)) * xsd_at_risk)
-                    #rand_max_coupons =  round(max(1.01, int(math.floor(self.max_coupon_premium))) * xsd_at_risk)
+                    #rand_max_coupons =  round(max(1.01, min(int(math.floor(random.random() * self.max_coupon_premium)) + 1, 10.0)) * xsd_at_risk)
+                    rand_max_coupons =  round(max(1.01, int(math.floor(self.max_coupon_premium))) * xsd_at_risk)
 
 
                     if rand_max_coupons < xsd_at_risk:
@@ -1362,7 +1359,7 @@ class Model:
                             continue
                     
                         #logger.info("Provide {:.2f} xSD (of {:.2f} xSD) and {:.2f} USDT".format(min_xsd_needed, a.xsd, usdt))
-                        plp_hash = self.pangolin.provide_liquidity(a, min_xsd_needed, usdt)
+                        plp_hash = self.pangolin.provide_liquidity(a, min_xsd_needed, usdt, current_timestamp)
                         tx_hashes.append({'type': 'provide_liquidity', 'hash': plp_hash})
                     except Exception as inst:
                         # SLENCE TRANSFER_FROM_FAILED ISSUES
@@ -1380,7 +1377,7 @@ class Model:
 
                     try:
                         #logger.info("Stop providing {:.2f} xSD and {:.2f} USDT".format(min_xsd_amount, min_usdt_amount))
-                        rlp_hash = self.pangolin.remove_liquidity(a, lp, min_xsd_amount, min_usdt_amount)
+                        rlp_hash = self.pangolin.remove_liquidity(a, lp, min_xsd_amount, min_usdt_amount, current_timestamp)
                         tx_hashes.append({'type': 'remove_liquidity', 'hash': rlp_hash})
                     except Exception as inst:
                         logger.info({"agent": a.address, "error": inst, "action": "remove_liquidity", "min_xsd_needed": min_xsd_amount, "usdt": min_usdt_amount})
@@ -1433,13 +1430,7 @@ def main():
 
     if w3.eth.get_block('latest')["number"] == block_offset:
         logger.info("Start Clock: {}".format(w3.eth.get_block('latest')['timestamp']))
-        #logger.info(provider.make_request("debug_increaseTime", [0]))
 
-        #logger.info(provider.make_request("debug_increaseTime", [7201+2400]))
-        #data = providerAvax.make_request("avax.incrementTimeTx", {"time": 7201})
-        #logger.info("After Reset Clock: {}, {}".format(w3.eth.get_block('latest')['timestamp'], json.dumps(data)))
-        #time.sleep(100)
-        
     logger.info(w3.eth.get_block('latest')["number"])
     logger.info('Root Addr: {}'.format(xSDS['addr']))
 
