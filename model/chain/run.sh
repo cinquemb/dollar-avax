@@ -65,6 +65,8 @@ echo "Deploying contracts..."
 time truffle migrate --reset --skip-dry-run --network=development | tee deploy_output.txt
 echo "Creating sim test accounts..."
 time truffle exec make_accounts.js --network development --max-accounts 40 >> make_accounts_output.txt
+#time truffle exec make_accounts.js --network development --max-accounts 10 >> make_accounts_output.txt
+
 
 #'
 if [[ ! -e venv ]] ; then

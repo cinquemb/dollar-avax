@@ -667,7 +667,7 @@ class Agent:
         
         center_faith = (self.max_faith + self.min_faith) / 2
         swing_faith = (self.max_faith - self.min_faith) / 2
-        faith = center_faith + swing_faith * math.sin(current_timestamp * (2 * math.pi / 50000))
+        faith = center_faith + swing_faith * math.sin(current_timestamp * (2 * math.pi / 5000000))
         
         return faith
         
@@ -1018,7 +1018,7 @@ class Model:
         self.max_usdt = self.usdt_token.from_tokens(100000)
         self.bootstrap_epoch = 2
         self.max_coupon_exp = 131400
-        self.max_coupon_premium = 10
+        self.max_coupon_premium = 10.0
         self.min_usdt_balance = self.usdt_token.from_tokens(1)
         self.agent_coupons = {x: 0 for x in agents}
         self.has_prev_advanced = True
@@ -1053,7 +1053,7 @@ class Model:
 
         #sys.exit()
         
-    def log(self, stream, seleted_advancer, header=False):
+    def log(self, stream, seleted_advancer, current_timestamp, header=False):
         """
         Log model statistics a TSV line.
         If header is True, include a header.
@@ -1068,7 +1068,7 @@ class Model:
             self.pangolin.xsd_price(),
             self.dao.xsd_supply(),
             self.dao.total_coupons(),
-            self.get_overall_faith())
+            self.get_overall_faith(current_timestamp))
         )
        
     def get_overall_faith(self, current_timestamp):
@@ -1110,7 +1110,7 @@ class Model:
         else:
             self.has_prev_advanced = True
 
-        logger.info("Earliest Non Dead Auction: {}".format(self.dao.contract.caller({'from' : seleted_advancer.address, 'gas': 100000}).getEarliestDeadAuctionEpoch()))
+        logger.info("Earliest Active Auction: {}".format(self.dao.contract.caller({'from' : seleted_advancer.address, 'gas': 100000}).getEarliestActiveAuctionEpoch()))
         logger.info("Prospective Advance from {}, is_advance_fail: {}".format(seleted_advancer.address, is_advance_fail))
 
         (usdt_b, xsd_b) = self.pangolin.getTokenBalance()
@@ -1224,7 +1224,6 @@ class Model:
                 # What fraction of the total possible amount of doing this
                 # action will the agent do?
                 
-                
                 if action == "buy":
                     # this will limit the size of orders avaialble
                     (usdt_b, xsd_b) = self.pangolin.getTokenBalance()
@@ -1299,8 +1298,10 @@ class Model:
                     '''
                     xsd_at_risk = max(Balance.from_tokens(1, 18), portion_dedusted(a.xsd, commitment))
                     rand_epoch_expiry = int(random.random() * self.max_coupon_exp)
-                    #rand_max_coupons =  round(max(1.01, min(int(math.floor(random.random() * self.max_coupon_premium)) + 1, 10.0)) * xsd_at_risk)
-                    rand_max_coupons =  round(max(1.01, int(math.floor(self.max_coupon_premium))) * xsd_at_risk)
+                    rand_max_coupons =  round(max(1.01, min(random.random() * self.max_coupon_premium, self.max_coupon_premium)) * xsd_at_risk)
+
+                    #rand_max_coupons =  round(max(1.01, min(random.random() + 1.0, self.max_coupon_premium)) * xsd_at_risk)
+                    #rand_max_coupons =  round(max(1.01, int(math.floor(self.max_coupon_premium))) * xsd_at_risk)
 
 
                     if rand_max_coupons < xsd_at_risk:
@@ -1475,7 +1476,7 @@ def main():
     '''
 
     #logger.info("getTotalFilled at epoch 4: {}".format(dao.caller().getTotalFilled(10)))
-    earlies_active_epoch = dao.caller().getEarliestDeadAuctionEpoch()
+    earlies_active_epoch = dao.caller().getEarliestActiveAuctionEpoch()
     baddr = dao.caller().getBestBidderFromEarliestActiveAuctionEpoch(earlies_active_epoch)
     logger.info("getBestBidderFromEarliestActiveAuctionEpoch at epoch {}: {}".format(earlies_active_epoch, baddr))
     exp = dao.caller().getCouponsAssignedAtEpoch(baddr, 0)
@@ -1535,7 +1536,8 @@ def main():
         end_iter = time.time()
         logger.info('iter: %s, sys time %s' % (i, end_iter-start_iter))
         # Log system state
-        model.log(stream, seleted_advancer, header=(i == 0))
+        current_timestamp = w3.eth.get_block('latest')['timestamp']
+        model.log(stream, seleted_advancer, current_timestamp, header=(i == 0))
         
 if __name__ == "__main__":
     main()

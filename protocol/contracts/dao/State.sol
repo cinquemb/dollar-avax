@@ -47,7 +47,7 @@ contract Epoch {
         uint256 start;
         uint256 period;
         uint256 current;
-        uint256 earliestDeadAuction;
+        uint256 earliestActiveAuction;
     }
 
     struct Coupons {

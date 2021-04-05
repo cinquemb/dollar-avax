@@ -62,7 +62,8 @@ contract Regulator is Comptroller {
         if (price.greaterThan(Decimal.one())) {
             growSupply(price);
             /* gas costs error */
-            //autoRedeemFromCouponAuction();
+            
+            autoRedeemEarlistBestBidder();
             return;
         }
 
@@ -76,8 +77,8 @@ contract Regulator is Comptroller {
     function growSupply(Decimal.D256 memory price) private {
         // supply growth is purly a function sum of the best outstanding bids amounts across auctions at any given time untill they get redeemed
         uint256 newSupply = getSumofBestBidsAcrossCouponAuctions();
-        uint256 earliestDeadAuctionEpoch = findEarliestActiveAuctionEpoch();
-        setEarliestDeadAuctionEpoch(earliestDeadAuctionEpoch);
+        uint256 earliestActiveAuctionEpoch = findEarliestActiveAuctionEpoch();
+        setEarliestActiveAuctionEpoch(earliestActiveAuctionEpoch);
         (uint256 newRedeemable, uint256 newBonded) = increaseSupply(newSupply);
         emit SupplyIncrease(epoch(), price.value, newRedeemable, 0, newBonded);
     }
@@ -204,39 +205,32 @@ contract Regulator is Comptroller {
         
     }
 
-    function autoRedeemFromCouponAuction() internal returns (bool success) {
-        /*
-            WARNING: may need fundemental constraints in order to cap max run time as epocs grow? (i.e totalRedeemable needs to be a function of auction internals of non dead auctions when twap > 1)
-            Redeem the best outstanding bidder at any given time
+    function autoRedeemEarlistBestBidder() internal returns (bool success) {
+        uint256 cur_reedemable = totalRedeemable();
+        if (cur_reedemable > 0) {
+            uint256 tmp_epoch = getEarliestActiveAuctionEpoch();
+            address baddr = getBestBidderFromEarliestActiveAuctionEpoch(tmp_epoch);
+            uint256 cur_coupon_idx = getCouponsCurrentAssignedIndex(baddr);
 
-            // need to find max limit
-        */
+            for (uint256 c_idx = 0; c_idx < cur_coupon_idx; c_idx++){
+                uint256 exp_epoch = getCouponsAssignedAtEpoch(baddr, c_idx);
+                uint256 bal_coupons = balanceOfCoupons(baddr, exp_epoch);
 
-        // this will allow us to reloop over best bidders in each auction
-        while (totalRedeemable() > 0) {
-            // loop over past epochs from the latest `dead` epoch to the current
-            for (uint256 d_idx = getEarliestDeadAuctionEpoch(); d_idx < epoch(); d_idx++) {
-                uint256 cur_reedemable = totalRedeemable();
-                if (cur_reedemable > 0) {
-                    uint256 tmp_epoch = d_idx;
-                    address baddr = getBestBidderFromEarliestActiveAuctionEpoch(tmp_epoch);
-                    uint256 cur_coupon_idx = getCouponsCurrentAssignedIndex(baddr);
-                    if (cur_coupon_idx > 0)
-                        cur_coupon_idx -= 1;
-                    uint256 exp_epoch = getCouponsAssignedAtEpoch(baddr, cur_coupon_idx);
-                    uint256 bal_coupons = balanceOfCoupons(baddr, exp_epoch);
+                if (bal_coupons == 0)
+                    continue;
 
-                    if (cur_reedemable < bal_coupons)
-                        return true;
-
-                    decrementBalanceOfCoupons(baddr, exp_epoch, bal_coupons, "Regulator: Insufficient coupon balance");
-                    redeemToAccount(baddr, bal_coupons);
-                    setCouponBidderStateRedeemed(exp_epoch, baddr);
-                } else {
-                    return true;
+                if (cur_reedemable < bal_coupons){
+                    bal_coupons = cur_reedemable;
                 }
+                
+                decrementBalanceOfCoupons(baddr, exp_epoch, bal_coupons, "Regulator: Insufficient coupon balance");
+                redeemToAccount(baddr, bal_coupons);
+                setCouponBidderStateRedeemed(exp_epoch, baddr);
+                return true;
             }
+            
+        } else {
+            return false;
         }
-        return true;
     }
 }
