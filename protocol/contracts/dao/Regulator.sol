@@ -33,7 +33,6 @@ contract Regulator is Comptroller {
     mapping(uint256 => Decimal.D256) private auctionYieldInternals;
 
     event SupplyIncrease(uint256 indexed epoch, uint256 price, uint256 newRedeemable, uint256 lessDebt, uint256 newBonded);
-    event SupplyDecrease(uint256 indexed epoch, uint256 price, uint256 newDebt);
     event SupplyNeutral(uint256 indexed epoch);
 
     function step() internal {
@@ -60,9 +59,7 @@ contract Regulator is Comptroller {
         initCouponAuction(price);
 
         if (price.greaterThan(Decimal.one())) {
-            growSupply(price);
-            /* gas costs error */
-            
+            growSupply(price);            
             autoRedeemEarlistBestBidder();
             return;
         }
@@ -189,7 +186,7 @@ contract Regulator is Comptroller {
                     auctionInternals[3] += bidder.couponAmount;
                     auctionInternals[1] += bidder.dollarAmount;
                     
-                    burnFromAccountSansDebt(bidder.bidder, bidder.dollarAmount);
+                    burnFromAccount(bidder.bidder, bidder.dollarAmount);
                     incrementBalanceOfCoupons(bidder.bidder, bidder.couponExpiryEpoch, bidder.couponAmount);
                     setCouponBidderStateSelected(epoch, bidder.bidder, auctionInternals[2]);
                     auctionInternals[0]++;
@@ -208,7 +205,7 @@ contract Regulator is Comptroller {
     function autoRedeemEarlistBestBidder() internal returns (bool success) {
         uint256 cur_reedemable = totalRedeemable();
         if (cur_reedemable > 0) {
-            uint256 tmp_epoch = getEarliestActiveAuctionEpoch();
+            uint256 tmp_epoch = findEarliestActiveAuctionPrimaryBidderEpoch();
             address baddr = getBestBidderFromEarliestActiveAuctionEpoch(tmp_epoch);
             uint256 cur_coupon_idx = getCouponsCurrentAssignedIndex(baddr);
 
@@ -223,8 +220,8 @@ contract Regulator is Comptroller {
                     bal_coupons = cur_reedemable;
                 }
                 
-                decrementBalanceOfCoupons(baddr, exp_epoch, bal_coupons, "Regulator: Insufficient coupon balance");
                 redeemToAccount(baddr, bal_coupons);
+                decrementBalanceOfCoupons(baddr, exp_epoch, bal_coupons, "Regulator: Insufficient coupon balance");
                 setCouponBidderStateRedeemed(exp_epoch, baddr);
                 return true;
             }

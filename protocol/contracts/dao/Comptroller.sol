@@ -31,12 +31,6 @@ contract Comptroller is Setters {
         balanceCheck();
     }
 
-    function burnFromAccountSansDebt(address account, uint256 amount) internal {
-        dollar().transferFrom(account, address(this), amount);
-        dollar().burn(amount);
-        balanceCheck();
-    }
-
     function burnFromAccount(address account, uint256 amount) internal {
         dollar().transferFrom(account, address(this), amount);
         dollar().burn(amount);
@@ -59,9 +53,7 @@ contract Comptroller is Setters {
 
     function increaseSupply(uint256 newSupply) internal returns (uint256, uint256) {
         /* 
-            supply growth is purely a function of the best auction bids outstanding for coupons from below peg
-            - lps collect fees for incentive (maybe lp pool can get a cut of total redeemable coupons? like 1%?)
-            - people can vote and leave any time they want as fast as they want
+            supply growth is purely a function of the best auction bids outstanding for coupons from below peg?
 
         */
         uint256 newRedeemable = 0;
@@ -87,19 +79,6 @@ contract Comptroller is Setters {
             FILE,
             "Inconsistent balances"
         );
-    }
-
-    function mintToDAO(uint256 amount) private {
-        if (amount > 0) {
-            dollar().mint(address(this), amount);
-            incrementTotalBonded(amount);
-        }
-    }
-
-    function mintToPool(uint256 amount) private {
-        if (amount > 0) {
-            dollar().mint(pool(), amount);
-        }
     }
 
     function mintToRedeemable(uint256 amount) private {

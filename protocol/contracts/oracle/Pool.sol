@@ -76,7 +76,7 @@ contract Pool is PoolSetters, Liquidity {
 
         balanceCheck();
 
-        emit Bond(msg.sender, epoch().add(1), value);
+        emit Bond(msg.sender, epoch(), value);
     }
 
     function unbond(uint256 value) external {
@@ -99,7 +99,7 @@ contract Pool is PoolSetters, Liquidity {
 
         balanceCheck();
 
-        emit Unbond(msg.sender, epoch().add(1), value, newClaimable);
+        emit Unbond(msg.sender, epoch(), value, newClaimable);
     }
 
     function provide(uint256 value) external onlyFrozen(msg.sender) notPaused {

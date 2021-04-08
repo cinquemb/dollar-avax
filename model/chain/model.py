@@ -18,7 +18,7 @@ from web3 import Web3
 IS_DEBUG = False
 is_try_model_mine = False
 max_accounts = 40
-block_offset = 19 + max_accounts
+block_offset = 18 + max_accounts
 tx_pool_latency = 0.01
 
 DEADLINE_FROM_NOW = 60 * 60 * 24 * 7 * 52
@@ -439,12 +439,12 @@ class TokenProxy:
         
         for address in new_addresses:
             # TODO: can we get a return value and a correct-as-of block in the same call?
-            self.__balances[address] = Balance(self.__contract.functions.balanceOf(address).call(), self.__decimals)
+            self.__balances[address] = Balance(self.__contract.caller({'from' : address, 'gas': 100000}).balanceOf(address), self.__decimals)
 
         if is_init_agents:
             for agent in is_init_agents:
                 # TODO: can we get a return value and a correct-as-of block in the same call?
-                self.__balances[agent.address] = Balance(self.__contract.functions.balanceOf(agent.address).call(), self.__decimals)
+                self.__balances[agent.address] = Balance(self.__contract.caller({'from' : agent.address, 'gas': 100000}).balanceOf(agent.address), self.__decimals)
 
             
     def __getitem__(self, address):
@@ -459,7 +459,7 @@ class TokenProxy:
         if address not in self.__balances:
             # Don't actually cache here; wait for a transfer.
             # Transactions may still be in flight
-            return Balance(self.__contract.functions.balanceOf(address).call(), self.__decimals)
+            return Balance(self.__contract.caller({'from' : address, 'gas': 100000}).balanceOf(address), self.__decimals)
         else:
             # Clone the stored balance so it doesn't get modified and upset the user
             return self.__balances[address].clone()
@@ -620,7 +620,6 @@ class Agent:
 
 
         strategy["provide_liquidity"] = 0.1
-        strategy["remove_liquidity"] = 1.0
         
         
         if price >= 1.0:
@@ -633,17 +632,23 @@ class Agent:
             # incetive to buy above 1 is for more coupons
             strategy["buy"] = 1.0
             strategy["sell"] = 1.0
+
+            # less incentive to remove liquidity above 1
+            strategy["remove_liquidity"] = 0.1
         else:
             # We probably want to unbond due to no returns
             strategy["unbond"] = 0
             # And not bond
             strategy["bond"] = 0
+
+            # likely to remove liquidity below peg to reduce IL?
+            strategy["remove_liquidity"] = 4.0
        
         if self.use_faith:
             # Vary our strategy based on how much xSD we think ought to exist
             if price * total_supply > self.get_faith(current_timestamp, price, total_supply):
                 # There is too much xSD, so we want to sell
-                strategy["sell"] = 10.0 if ((agent_coupons> 0) and (price > 1.0)) else 2.0
+                strategy["sell"] = 2.0
             else:
                 # no faith based buying, just selling
                 pass
@@ -738,8 +743,8 @@ class PangolinPool:
         else:
             return 1.0
 
-    def total_lp(self):
-        return reg_int(self.pangolin_pair_token.contract.functions.totalSupply().call(), PGLRouter['decimals'])
+    def total_lp(self, agent):
+        return reg_int(self.pangolin_pair_token.contract.caller({'from' : agent.address, 'gas': 100000}).totalSupply(), PGLRouter['decimals'])
         
     def provide_liquidity(self, agent, xsd, usdt, current_timestamp):
         """
@@ -786,7 +791,7 @@ class PangolinPool:
         """
         self.pangolin_pair_token.ensure_approved(agent, PGLRouter["addr"])
 
-        slippage = 0.99
+        slippage = 0.01
         min_xsd_amount = (min_xsd_amount * (1 - slippage))
         min_usdt_amount = (min_usdt_amount * (1 - slippage))
 
@@ -886,13 +891,22 @@ class DAO:
         total_coupons = self.contract.caller({'from' : address, 'gas': 100000}).outstandingCoupons(epoch)
         return Balance.from_tokens(total_coupons, xSD['decimals'])
         
-    def total_coupons(self):
+    def total_coupons(self, address):
         """
         Get all outstanding unexpired coupons.
         """
         
-        total = self.contract.caller().totalCoupons()
+        total = self.contract.caller({'from' : address, 'gas': 100000}).totalCoupons()
         return reg_int(total, xSD['decimals'])
+
+    def total_redeemable(self, address):
+        """
+        Get total reedeemable supply.
+        """
+        
+        total = self.contract.caller({'from' : address, 'gas': 100000}).totalRedeemable()
+        return reg_int(total, xSD['decimals'])
+
 
     def total_coupons_for_agent(self, agent):
         total_coupons = self.contract.caller({'from' : agent.address, 'gas': 100000}).outstandingCouponsForAddress(agent.address)
@@ -1060,15 +1074,21 @@ class Model:
         """
         
         if header:
-            stream.write("#block\tepoch\tprice\tsupply\tcoupons\tfaith\n")
+            stream.write("#block\tepoch\tprice\tsupply\tcoupons\ttotal_redeemable\tlp_supply\tfaith\n")
+
+        (usdt_b, xsd_b) = self.pangolin.getTokenBalance()
+        xsd_supply = self.dao.xsd_supply()
         
-        stream.write('{}\t{}\t{:.2f}\t{:.2f}\t{:.2f}\t{:.2f}\n'.format(
-            w3.eth.get_block('latest')["number"],
-            self.dao.epoch(seleted_advancer.address),
-            self.pangolin.xsd_price(),
-            self.dao.xsd_supply(),
-            self.dao.total_coupons(),
-            self.get_overall_faith(current_timestamp))
+        stream.write('{}\t{}\t{:.2f}\t{:.2f}\t{:.2f}\t{:.2f}\t{:.2f}\t{:.2f}\n'.format(
+                w3.eth.get_block('latest')["number"],
+                self.dao.epoch(seleted_advancer.address),
+                self.pangolin.xsd_price(),
+                xsd_supply,
+                self.dao.total_coupons(seleted_advancer.address),
+                self.dao.total_redeemable(seleted_advancer.address),
+                float(xsd_b) / float(xsd_supply) * 100 if xsd_supply > 0 else 0.0,
+                self.get_overall_faith(current_timestamp)
+            )
         )
        
     def get_overall_faith(self, current_timestamp):
@@ -1092,9 +1112,11 @@ class Model:
         seleted_advancer = self.agents[int(random.random() * (len(self.agents) - 1))]
 
         if self.has_prev_advanced:
-            provider.make_request("debug_increaseTime", [7200])   
-        
-        current_timestamp = w3.eth.get_block('latest')['timestamp']
+            provider.make_request("debug_increaseTime", [7200])
+
+
+        current_block = w3.eth.get_block('latest')
+        current_timestamp = current_block['timestamp']
         logger.info("Clock: {}".format(current_timestamp))
         ts = time.time()
         epoch_before = self.dao.epoch(seleted_advancer.address)
@@ -1120,17 +1142,18 @@ class Model:
 
         epoch_start_price = self.pangolin.xsd_price()
         dao_xsd_supply = self.dao.xsd_supply()
-        total_coupons = self.dao.total_coupons()
+        total_coupons = self.dao.total_coupons(seleted_advancer.address)
         
         logger.info("Block {}, epoch {}, price {:.2f}, supply {:.2f}, faith: {:.2f}, bonded {:2.1f}%, coupons: {:.2f}, liquidity {:.2f} xSD / {:.2f} USDT".format(
-            w3.eth.get_block('latest')["number"], current_epoch, epoch_start_price, dao_xsd_supply,
+            current_block["number"], current_epoch, epoch_start_price, dao_xsd_supply,
             self.get_overall_faith(current_timestamp), 0, total_coupons,
             xsd_b, usdt_b)
         )
         
         latest_price = Balance(self.oracle.caller({'from' : seleted_advancer.address, 'gas': 100000}).latestPrice()[0], xSD['decimals'])
         latest_valid = self.oracle.caller({'from' : seleted_advancer.address, 'gas': 100000}).latestValid()
-        logger.info("latest_price: {}, latest_valid: {}".format(latest_price, latest_valid))
+        tr = self.dao.total_redeemable(seleted_advancer.address)
+        logger.info("latest_price: {}, latest_valid: {}, totalRedeemable: {}".format(latest_price, latest_valid, tr))
         
         anyone_acted = False
         if current_epoch < self.bootstrap_epoch:
@@ -1148,7 +1171,7 @@ class Model:
         is_pgl_op = self.pangolin.operational()
 
         # try to redeem any outstanding coupons here first to better
-        if epoch_start_price > 1.0 and total_coupons > 0:
+        if tr > 0 and total_coupons > 0:
             for agent_num, a in enumerate(self.agents):
                 tr = self.dao.contract.caller({'from' : a.address, 'gas': 100000}).totalRedeemable()
                 if tr == 0:
@@ -1170,7 +1193,6 @@ class Model:
                                 redeem_tx_hash = self.dao.redeem(a, c_exp)
                                 total_redeem_submitted += 1
                                 providerAvax.make_request("avax.issueBlock", {})
-                                receipt = w3.eth.waitForTransactionReceipt(redeem_tx_hash, poll_latency=tx_pool_latency)
                                 tx_hashes.append({'type': 'redeem', 'hash': redeem_tx_hash})
                             except Exception as inst:
                                 logger.info({"agent": a.address, "error": inst, "action": "redeem", "exact_expiry": c_exp})
@@ -1369,7 +1391,7 @@ class Model:
                 elif action == "remove_liquidity":
                     (usdt_b, xsd_b) = self.pangolin.getTokenBalance()
                     lp = portion_dedusted(a.lp, commitment)
-                    total_lp = self.pangolin.total_lp()
+                    total_lp = self.pangolin.total_lp(a)
                     min_xsd_amount = max(Balance(0, xSD['decimals']), Balance(float(xsd_b) * float(lp / float(total_lp)), xSD['decimals']))
                     min_usdt_amount = max(Balance(0, USDT['decimals']), Balance(float(usdt_b) * float(lp / float(total_lp)), USDT['decimals']))
 
@@ -1447,7 +1469,7 @@ def main():
 
     #'''
     for acc in w3.eth.accounts[:max_accounts]:
-        max_index = dao.functions.getCouponsCurrentAssignedIndex(acc).call()
+        max_index = dao.caller({'from' : acc, 'gas': 100000}).getCouponsCurrentAssignedIndex(acc)
         logger.info("how many times assigned coupons for {}: {}".format(acc, max_index))
         '''
         for i in range(0, max_index):

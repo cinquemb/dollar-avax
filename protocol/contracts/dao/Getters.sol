@@ -188,6 +188,11 @@ contract Getters is State {
         return _state.epochs[epoch].bonded;
     }
 
+    /**
+     * Coupon Auction
+     */
+
+
     function getCouponAuctionAtEpoch(uint256 epoch) internal view returns (Epoch.AuctionState storage) {
         return _state.epochs[epoch].auction;
     }
@@ -369,6 +374,57 @@ contract Getters is State {
                     return earliest_non_dead_auction_epoch; 
                 }
             }
+        }
+
+        return earliest_non_dead_auction_epoch;
+    }
+
+    function findEarliestActiveAuctionPrimaryBidderEpoch() internal view returns (uint256) {
+        // loop over past epochs from the latest `dead` epoch to the current
+        uint256 earliest_non_dead_auction_epoch = 1;
+        uint256 earlist_epoch = getEarliestActiveAuctionEpoch();
+        uint256 current_epoch = (epoch().sub(earlist_epoch) > Constants.getCouponAuctionMaxEpochsBestBidderSelection()) ? earlist_epoch.add(Constants.getCouponAuctionMaxEpochsBestBidderSelection()) : epoch();
+
+        uint256 bb_idx_start = 0;
+        uint256 sumCoupons = 0;
+
+        while(sumCoupons == 0){
+            for (uint256 d_idx = earlist_epoch; d_idx < current_epoch; d_idx++) {
+                uint256 temp_coupon_auction_epoch = d_idx;
+                Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(temp_coupon_auction_epoch);
+                earliest_non_dead_auction_epoch = d_idx;
+                
+                if (auction.finished) {
+                    uint256 max_assigned_bidders = getTotalFilled(temp_coupon_auction_epoch);
+                    if (bb_idx_start >= max_assigned_bidders)
+                        continue;
+
+                    uint256 b_idx = bb_idx_start;
+                    address bidderAddress = getCouponBidderStateAssginedAtIndex(temp_coupon_auction_epoch, b_idx);
+                    Epoch.CouponBidderState storage bidder = getCouponBidderState(temp_coupon_auction_epoch, bidderAddress);
+                    
+                    // skip over those bids that have already been redeemed at least partially
+                    // skip over bids that are expired
+                    // skip over if balance of coupons for address is zero at epoch
+                    uint256 currBalanceOfCoupons = balanceOfCoupons(bidderAddress, bidder.couponExpiryEpoch);
+                    if (bidder.redeemed || (temp_coupon_auction_epoch > bidder.couponExpiryEpoch) || (currBalanceOfCoupons < bidder.couponAmount)) {
+                        continue;
+                    } else {
+                        sumCoupons += currBalanceOfCoupons;
+                        break;
+                    }
+
+                    if (sumCoupons > 0) {
+                        return earliest_non_dead_auction_epoch; 
+                    }
+                }
+            }
+
+            if (sumCoupons > 0) {
+                return earliest_non_dead_auction_epoch; 
+            }
+
+            bb_idx_start++;
         }
 
         return earliest_non_dead_auction_epoch;

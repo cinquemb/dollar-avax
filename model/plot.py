@@ -37,7 +37,7 @@ def main():
     # Now plot
     
     # Find what to plot against
-    x_heading = "block"
+    x_heading = "epoch"
     x_column_number = headings.index(x_heading)
     if x_column_number == -1:
         raise RuntimeError("No column: " + x_heading)
@@ -49,7 +49,7 @@ def main():
         
     for column_number in range(len(columns)):
 
-        if headings[column_number] == 'epoch':
+        if headings[column_number] == 'block':
             continue
         
         if column_number == x_column_number:
@@ -64,8 +64,8 @@ def main():
         
         if headings[column_number] == "price":
             # Special axes here so we can see 1.0
-            ax.set_ylim(0, 1.3)
-            ax.set_yticks([0, 0.35, 0.7, 1.05, 1.3])
+            ax.set_ylim(0, 1.4)
+            ax.set_yticks([0, 0.35, 0.7, 1.05, 1.4])
             ax.hlines(1.0, min(columns[x_column_number]), max(columns[x_column_number]))
         
         # Make the next plot on the next axes

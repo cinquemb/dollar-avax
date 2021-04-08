@@ -56,16 +56,6 @@ contract Market is Comptroller {
     }
 
     function redeemCoupons(uint256 couponEpoch, uint256 couponAmount) external {
-        /*
-            TODO: this doesn't work, need a way to map bidding epoch to coupon epoch without looping?
-        address bestBidderFromEpoch = getBestBidderFromEarliestActiveAuctionEpoch(couponEpoch);
-
-        Require.that(
-            bestBidderFromEpoch == msg.sender,
-            FILE,
-            "Must be current best bidder"
-        );*/
-
         uint256 cur_reedemable = totalRedeemable();
 
         uint256 realCouponAmount = balanceOfCoupons(msg.sender, couponEpoch);
@@ -88,28 +78,16 @@ contract Market is Comptroller {
             "Must be lte total redeemable"
         );
 
-        decrementBalanceOfCoupons(msg.sender, couponEpoch, realCouponAmount, "Market: Insufficient coupon balance");
         redeemToAccount(msg.sender, realCouponAmount);
+        decrementBalanceOfCoupons(msg.sender, couponEpoch, realCouponAmount, "Market: Insufficient coupon balance");
         setCouponBidderStateRedeemed(couponEpoch, msg.sender);
-
         emit CouponRedemption(msg.sender, couponEpoch, realCouponAmount);
     }
 
-    function redeemCouponsForAccount(uint256 couponEpoch, uint256 couponAmount, address bidderAddr) external {
-        /*
-            TODO: this doesn't work, need a way to map bidding epoch to coupon epoch without looping?
-        address bestBidderFromEpoch = getBestBidderFromEarliestActiveAuctionEpoch(couponEpoch);
-
-        Require.that(
-            bestBidderFromEpoch == bidderAddr,
-            FILE,
-            "Must be current best bidder"
-        );*/
-
-        decrementBalanceOfCoupons(bidderAddr, couponEpoch, couponAmount, "Market: Insufficient coupon balance");
+    function redeemCouponsForAccount(uint256 couponEpoch, uint256 couponAmount, address bidderAddr) external {        
         redeemToAccount(bidderAddr, couponAmount);
+        decrementBalanceOfCoupons(bidderAddr, couponEpoch, couponAmount, "Market: Insufficient coupon balance");
         setCouponBidderStateRedeemed(couponEpoch, bidderAddr);
-
         emit CouponRedemption(bidderAddr, couponEpoch, couponAmount);
     }
 
@@ -178,7 +156,7 @@ contract Market is Comptroller {
 
         if (epochTime() > epoch()) {
             // if currently below reference price, make bidder advance epoch
-            Decimal.D256 memory price = oracle().latestPrice();
+            Decimal.D256 memory price = oracle().livePrice();
             if (price.lessThan(Decimal.one())) {
                 Implementation(oracle().dao()).advanceNonIncentivized();
             }
