@@ -642,7 +642,7 @@ class Agent:
             strategy["bond"] = 0
 
             # likely to remove liquidity below peg to reduce IL?
-            strategy["remove_liquidity"] = 4.0
+            strategy["remove_liquidity"] = 4.0 if agent_coupons > 0 else 1.0
        
         if self.use_faith:
             # Vary our strategy based on how much xSD we think ought to exist

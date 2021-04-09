@@ -39,7 +39,7 @@ library Constants {
     uint256 private constant EPOCH_PERIOD = 7200;
 
     /* Governance */
-    uint256 private constant GOVERNANCE_PERIOD = 36;
+    uint256 private constant GOVERNANCE_PERIOD = 84;//12 epochs per day * 7 days
     uint256 private constant GOVERNANCE_QUORUM = 20e16; // 20%
     uint256 private constant GOVERNANCE_PROPOSAL_THRESHOLD = 5e15; // 0.5%
     uint256 private constant GOVERNANCE_SUPER_MAJORITY = 66e16; // 66%

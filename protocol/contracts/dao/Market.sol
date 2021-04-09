@@ -31,7 +31,7 @@ contract Market is Comptroller {
     event CouponRedemption(address indexed account, uint256 indexed epoch, uint256 couponAmount);
     event CouponTransfer(address indexed from, address indexed to, uint256 indexed epoch, uint256 value);
     event CouponApproval(address indexed owner, address indexed spender, uint256 value);
-    event CouponBidPlaced(address indexed account, uint256 indexed epoch, uint256 dollarAmount, uint256 maxCouponAmount);
+    event CouponBidPlaced(address indexed account);
     
     function step() internal {
         // Expire prior epoch coupons
@@ -183,7 +183,7 @@ contract Market is Comptroller {
         sortBidBST(msg.sender, totalBids, currentEpoch);
 
         incrementCouponAuctionBids();
-        emit CouponBidPlaced(msg.sender, epochExpiry, dollarAmount, maxCouponAmount);
+        emit CouponBidPlaced(msg.sender);
         return true;
     }
 
