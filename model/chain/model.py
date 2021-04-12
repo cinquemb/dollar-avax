@@ -124,6 +124,7 @@ xSDS['addr'] = get_addr_from_contract(TokenContract)
 avax_cchain_nonces = None
 mm = None
 def get_nonce(agent):
+    global mm
     # DECODE START
     if not mm:
         mm = mmap.mmap(avax_cchain_nonces.fileno(), 0)
@@ -132,6 +133,21 @@ def get_nonce(agent):
     raw_data_cov = mm.read().decode('utf8')
     nonce_data = json.loads(raw_data_cov)
     current_block = int(w3.eth.get_block('latest')["number"])
+
+    while nonce_data['locked'] == '1':
+        raw_data_cov = mm.read().decode('utf8')
+        nonce_data = json.loads(raw_data_cov)
+        mm.seek(0)
+        continue
+
+    # locked == '1', unlocked == '0'
+
+    # LOCK FILE START
+    nonce_data['locked'] = '1'
+    out_data = bytes(json.dumps(nonce_data), 'utf8')
+    mm[:] = out_data
+    mm.seek(0)
+    # LOCK FILE END
     
     nonce_data[agent.address]["seen_block"] = decode_single('uint256', base64.b64decode(nonce_data[agent.address]["seen_block"]))
     nonce_data[agent.address]["next_tx_count"] = decode_single('uint256', base64.b64decode(nonce_data[agent.address]["next_tx_count"]))
@@ -151,7 +167,7 @@ def get_nonce(agent):
     # ENCODE START
     nonce_data[agent.address]["seen_block"] = base64.b64encode(encode_single('uint256', nonce_data[agent.address]["seen_block"])).decode('ascii')
     nonce_data[agent.address]["next_tx_count"] = base64.b64encode(encode_single('uint256', nonce_data[agent.address]["next_tx_count"])).decode('ascii')
-
+    nonce_data['locked'] = '0'
     out_data = bytes(json.dumps(nonce_data), 'utf8')
     mm[:] = out_data
     # ENCODE END
@@ -1499,6 +1515,7 @@ def main():
     '''
 
     #'''
+    AGENT_NONCES['locked'] = '0'
     for acc in w3.eth.accounts[:max_accounts]:
 
         AGENT_NONCES[acc] = {
