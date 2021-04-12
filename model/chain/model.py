@@ -12,7 +12,9 @@ import logging
 import time
 import sys
 import os
-from eth_abi import decoding
+import base64
+import mmap
+from eth_abi import encode_single, decode_single
 from web3 import Web3
 
 IS_DEBUG = False
@@ -24,6 +26,7 @@ tx_pool_latency = 0.01
 DEADLINE_FROM_NOW = 60 * 60 * 24 * 7 * 52
 UINT256_MAX = 2**256 - 1
 ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+MMAP_FILE = '/tmp/avax-cchain-nonces'
 
 deploy_data = None
 with open("deploy_output.txt", 'r+') as f:
@@ -98,6 +101,8 @@ xSDS = {
   "symbol": 'xSDS',
 }
 
+AGENT_NONCES = {}
+
 DaoContract = json.loads(open('./build/contracts/Implementation.json', 'r+').read())
 USDTContract = json.loads(open('./build/contracts/TestnetUSDT.json', 'r+').read())
 # Use the full Dollar ABI so we can interrogate the token for metadata
@@ -115,16 +120,41 @@ def get_addr_from_contract(contract):
 xSD['addr'] = get_addr_from_contract(DaoContract)
 xSDS['addr'] = get_addr_from_contract(TokenContract)
 
+
+avax_cchain_nonces = None
+mm = None
 def get_nonce(agent):
+    # DECODE START
+    if not mm:
+        mm = mmap.mmap(avax_cchain_nonces.fileno(), 0)
+
+    mm.seek(0)
+    raw_data_cov = mm.read().decode('utf8')
+    nonce_data = json.loads(raw_data_cov)
     current_block = int(w3.eth.get_block('latest')["number"])
-    if current_block not in agent.seen_block:
-        if (agent.current_block == 0):
-            agent.current_block += 1
+    
+    nonce_data[agent.address]["seen_block"] = decode_single('uint256', base64.b64decode(nonce_data[agent.address]["seen_block"]))
+    nonce_data[agent.address]["next_tx_count"] = decode_single('uint256', base64.b64decode(nonce_data[agent.address]["next_tx_count"]))
+    # DECODE END
+    
+    if current_block != nonce_data[agent.address]["seen_block"]:
+        if (nonce_data[agent.address]["seen_block"] == 0):
+            nonce_data[agent.address]["seen_block"] = current_block
+            nonce_data[agent.address]["next_tx_count"] = agent.next_tx_count
         else:
-            agent.next_tx_count += 1
+            nonce_data[agent.address]["next_tx_count"] += 1
+            agent.next_tx_count = nonce_data[agent.address]["next_tx_count"]
     else:
-        agent.next_tx_count += 1
-        agent.seen_block[current_block] = True
+        nonce_data[agent.address]["next_tx_count"] += 1
+        agent.next_tx_count = nonce_data[agent.address]["next_tx_count"]
+
+    # ENCODE START
+    nonce_data[agent.address]["seen_block"] = base64.b64encode(encode_single('uint256', nonce_data[agent.address]["seen_block"])).decode('ascii')
+    nonce_data[agent.address]["next_tx_count"] = base64.b64encode(encode_single('uint256', nonce_data[agent.address]["next_tx_count"])).decode('ascii')
+
+    out_data = bytes(json.dumps(nonce_data), 'utf8')
+    mm[:] = out_data
+    # ENCODE END
     return agent.next_tx_count
 
 def reg_int(value, scale):
@@ -1448,6 +1478,7 @@ def main():
     """
     Main function: run the simulation.
     """
+    global avax_cchain_nonces
     
     logging.basicConfig(level=logging.INFO)
 
@@ -1469,6 +1500,12 @@ def main():
 
     #'''
     for acc in w3.eth.accounts[:max_accounts]:
+
+        AGENT_NONCES[acc] = {
+            "next_tx_count": base64.b64encode(encode_single('uint256', 0)).decode('ascii'),
+            "seen_block": base64.b64encode(encode_single('uint256', 0)).decode('ascii')
+        }
+
         max_index = dao.caller({'from' : acc, 'gas': 100000}).getCouponsCurrentAssignedIndex(acc)
         logger.info("how many times assigned coupons for {}: {}".format(acc, max_index))
         '''
@@ -1476,6 +1513,15 @@ def main():
             t_epoch = dao.caller({'from' : acc, 'gas': 100000}).getCouponsAssignedAtEpoch(acc, i)
             logger.info("\tepochs: {}".format(t_epoch))
         '''
+
+    '''
+        LOAD NONCES INTO MMAP
+    '''
+    mmap_data = json.dumps(AGENT_NONCES)
+    with open(MMAP_FILE, "wb") as f:
+        f.write(bytes(mmap_data, 'utf8'))
+
+    avax_cchain_nonces = open(MMAP_FILE, "r+b")
 
     '''
     avg_auction_yields = []
