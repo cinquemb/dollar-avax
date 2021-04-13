@@ -156,7 +156,7 @@ contract Market is Comptroller {
 
         if (epochTime() > epoch()) {
             // if currently below reference price, make bidder advance epoch
-            Decimal.D256 memory price = oracle().livePrice();
+            Decimal.D256 memory price = oracle().latestPrice();
             if (price.lessThan(Decimal.one())) {
                 Implementation(oracle().dao()).advanceNonIncentivized();
             }

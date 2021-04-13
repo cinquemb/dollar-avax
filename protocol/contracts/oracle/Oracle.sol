@@ -127,16 +127,6 @@ contract Oracle is IOracle {
         return price.mul(1e12);
     }
 
-    function livePrice() external view returns (Decimal.D256 memory) {
-        (uint256 price0Cumulative, uint256 price1Cumulative, uint32 blockTimestamp) =
-        PangolinOracleLibrary.currentCumulativePrices(address(_pair));
-        uint32 timeElapsed = blockTimestamp - _timestamp; // overflow is desired
-        uint256 priceCumulative = _index == 0 ? price0Cumulative : price1Cumulative;
-        Decimal.D256 memory price = Decimal.ratio((priceCumulative - _cumulative) / timeElapsed, 2**112);
-
-        return price.mul(1e12);
-    }
-
     function updateReserve() private returns (uint256) {
         uint256 lastReserve = _reserve;
         (uint112 reserve0, uint112 reserve1,) = _pair.getReserves();

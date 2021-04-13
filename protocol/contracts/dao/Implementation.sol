@@ -37,7 +37,7 @@ contract Implementation is State, Bonding, Market, Regulator, Govern {
         uint256 latestReserve = oracle().liveReserve();
         if ((prev_epoch > 0) && (latestReserve > Constants.getOracleReserveMinimum())) {
             //can only incentivize advance above or at ref price
-            Decimal.D256 memory price = oracle().livePrice();
+            Decimal.D256 memory price = oracle().latestPrice();
             require(
                 price.greaterThanOrEqualTo(Decimal.one()),
                 "DAO: Must coupon bid"
