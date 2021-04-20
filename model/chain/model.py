@@ -135,6 +135,7 @@ def get_nonce(agent):
     current_block = int(w3.eth.get_block('latest')["number"])
 
     while nonce_data['locked'] == '1':
+        mm.seek(0)
         raw_data_cov = mm.read().decode('utf8')
         nonce_data = json.loads(raw_data_cov)
         mm.seek(0)
@@ -152,12 +153,13 @@ def get_nonce(agent):
     nonce_data[agent.address]["seen_block"] = decode_single('uint256', base64.b64decode(nonce_data[agent.address]["seen_block"]))
     nonce_data[agent.address]["next_tx_count"] = decode_single('uint256', base64.b64decode(nonce_data[agent.address]["next_tx_count"]))
     # DECODE END
-    
+
     if current_block != nonce_data[agent.address]["seen_block"]:
         if (nonce_data[agent.address]["seen_block"] == 0):
             nonce_data[agent.address]["seen_block"] = current_block
             nonce_data[agent.address]["next_tx_count"] = agent.next_tx_count
         else:
+            nonce_data[agent.address]["next_tx_count"] = agent.next_tx_count
             nonce_data[agent.address]["next_tx_count"] += 1
             agent.next_tx_count = nonce_data[agent.address]["next_tx_count"]
     else:
