@@ -123,6 +123,21 @@ xSDS['addr'] = get_addr_from_contract(TokenContract)
 
 avax_cchain_nonces = None
 mm = None
+
+def lock_nonce(agent):
+    global mm
+    # DECODE START
+    if not mm:
+        mm = mmap.mmap(avax_cchain_nonces.fileno(), 0)
+
+    mm.seek(0)
+    raw_data_cov = mm.read().decode('utf8')
+    nonce_data = json.loads(raw_data_cov)
+
+    nonce_data['locked'] = '1'
+    out_data = bytes(json.dumps(nonce_data), 'utf8')
+    mm[:] = out_data
+
 def get_nonce(agent):
     global mm
     # DECODE START
@@ -142,13 +157,6 @@ def get_nonce(agent):
         continue
 
     # locked == '1', unlocked == '0'
-
-    # LOCK FILE START
-    nonce_data['locked'] = '1'
-    out_data = bytes(json.dumps(nonce_data), 'utf8')
-    mm[:] = out_data
-    mm.seek(0)
-    # LOCK FILE END
     
     nonce_data[agent.address]["seen_block"] = decode_single('uint256', base64.b64decode(nonce_data[agent.address]["seen_block"]))
     nonce_data[agent.address]["next_tx_count"] = decode_single('uint256', base64.b64decode(nonce_data[agent.address]["next_tx_count"]))
@@ -159,21 +167,58 @@ def get_nonce(agent):
             nonce_data[agent.address]["seen_block"] = current_block
             nonce_data[agent.address]["next_tx_count"] = agent.next_tx_count
         else:
+            nonce_data[agent.address]["seen_block"] = current_block
             nonce_data[agent.address]["next_tx_count"] = agent.next_tx_count
             nonce_data[agent.address]["next_tx_count"] += 1
             agent.next_tx_count = nonce_data[agent.address]["next_tx_count"]
     else:
+        nonce_data[agent.address]["next_tx_count"] = agent.next_tx_count
         nonce_data[agent.address]["next_tx_count"] += 1
         agent.next_tx_count = nonce_data[agent.address]["next_tx_count"]
 
     # ENCODE START
     nonce_data[agent.address]["seen_block"] = base64.b64encode(encode_single('uint256', nonce_data[agent.address]["seen_block"])).decode('ascii')
     nonce_data[agent.address]["next_tx_count"] = base64.b64encode(encode_single('uint256', nonce_data[agent.address]["next_tx_count"])).decode('ascii')
+    
+    # ENCODE END
+    return agent.next_tx_count
+
+def unlock_nonce(agent):
+    global mm
+    # DECODE START
+    if not mm:
+        mm = mmap.mmap(avax_cchain_nonces.fileno(), 0)
+
+    mm.seek(0)
+    raw_data_cov = mm.read().decode('utf8')
+    nonce_data = json.loads(raw_data_cov)
+
     nonce_data['locked'] = '0'
     out_data = bytes(json.dumps(nonce_data), 'utf8')
     mm[:] = out_data
-    # ENCODE END
-    return agent.next_tx_count
+
+def transaction_helper(agent, prepped_function_call, gas):
+    tx_hash = None
+    nonce = get_nonce(agent)
+    while tx_hash is None:
+        try:
+            agent.next_tx_count = nonce
+            lock_nonce(agent)
+            tx_hash = prepped_function_call.transact({
+                'nonce': nonce,
+                'from' : getattr(agent, 'address', agent),
+                'gas': gas,
+                'gasPrice': Web3.toWei(225, 'gwei'),
+            })
+            unlock_nonce(agent)
+        except Exception as inst:
+            if 'nonce too low' in str(inst):
+                # increment tx_hash
+                unlock_nonce(agent)
+                nonce +=1
+            else:
+                print(inst)
+    return tx_hash
 
 def reg_int(value, scale):
     """
@@ -523,12 +568,12 @@ class TokenProxy:
         if (getattr(owner, 'address', owner) not in self.__approved) or (spender not in self.__approved[getattr(owner, 'address', owner)]):
             # Issue an approval
             #logger.info('WAITING FOR APPROVAL {} for {}'.format(getattr(owner, 'address', owner), spender))
-            tx_hash = self.__contract.functions.approve(spender, UINT256_MAX).transact({
-                'nonce': get_nonce(owner),
-                'from' : getattr(owner, 'address', owner),
-                'gas': 500000,
-                'gasPrice': Web3.toWei(225, 'gwei'),
-            })
+            tx_hash = transaction_helper(
+                owner,
+                self.__contract.functions.approve(spender, UINT256_MAX), 
+                500000
+            )
+            providerAvax.make_request("avax.issueBlock", {})
             receipt = w3.eth.waitForTransactionReceipt(tx_hash, poll_latency=tx_pool_latency)
             #logger.info('APPROVED')
             if getattr(owner, 'address', owner) not in self.__approved:
@@ -606,15 +651,16 @@ class Agent:
         if kwargs.get("is_mint", False):
             # need to mint USDT to the wallets for each agent
             start_usdt_formatted = kwargs.get("starting_usdt", Balance(0, USDT["decimals"]))
-            tx_hash = self.usdt_token.contract.functions.mint(
-                self.address, start_usdt_formatted.to_wei()
-            ).transact({
-                'nonce': get_nonce(self),
-                'from' : self.address,
-                'gas': 500000,
-                'gasPrice': Web3.toWei(225, 'gwei'),
-            })
+            providerAvax.make_request("avax.issueBlock", {})
+            tx_hash = transaction_helper(
+                self,
+                self.usdt_token.contract.functions.mint(
+                    self.address, start_usdt_formatted.to_wei()
+                ), 
+                500000
+            )
             time.sleep(1.1)
+            providerAvax.make_request("avax.issueBlock", {})
             w3.eth.waitForTransactionReceipt(tx_hash, poll_latency=tx_pool_latency)
         
     @property
@@ -814,21 +860,20 @@ class PangolinPool:
             assert xsd_wei >= xsd.to_wei()
             assert usdt_wei >= usdt.to_wei()
 
-        tx_hash = self.pangolin_router.functions.addLiquidity(
-            self.xsd_token.address,
-            self.usdt_token.address,
-            xsd.to_wei(),
-            usdt.to_wei(),
-            min_xsd_amount.to_wei(),
-            min_usdt_amount.to_wei(),
-            agent.address,
-            (int(current_timestamp) + DEADLINE_FROM_NOW)
-        ).transact({
-            'nonce': get_nonce(agent),
-            'from' : agent.address,
-            'gas': 500000,
-            'gasPrice': Web3.toWei(225, 'gwei'),
-        })
+        tx_hash = transaction_helper(
+            agent,
+            self.pangolin_router.functions.addLiquidity(
+                self.xsd_token.address,
+                self.usdt_token.address,
+                xsd.to_wei(),
+                usdt.to_wei(),
+                min_xsd_amount.to_wei(),
+                min_usdt_amount.to_wei(),
+                agent.address,
+                (int(current_timestamp) + DEADLINE_FROM_NOW)
+            ), 
+            500000
+        )
 
         return tx_hash
         
@@ -843,20 +888,19 @@ class PangolinPool:
         min_xsd_amount = (min_xsd_amount * (1 - slippage))
         min_usdt_amount = (min_usdt_amount * (1 - slippage))
 
-        tx_hash = self.pangolin_router.functions.removeLiquidity(
-            self.xsd_token.address,
-            self.usdt_token.address,
-            shares.to_wei(),
-            min_xsd_amount.to_wei(),
-            min_usdt_amount.to_wei(),
-            agent.address,
-            int(current_timestamp + DEADLINE_FROM_NOW)   
-        ).transact({
-            'nonce': get_nonce(agent),
-            'from' : agent.address,
-            'gas': 500000,
-            'gasPrice': Web3.toWei(225, 'gwei'),
-        })
+        tx_hash = transaction_helper(
+            agent,
+            self.pangolin_router.functions.removeLiquidity(
+                self.xsd_token.address,
+                self.usdt_token.address,
+                shares.to_wei(),
+                min_xsd_amount.to_wei(),
+                min_usdt_amount.to_wei(),
+                agent.address,
+                int(current_timestamp + DEADLINE_FROM_NOW)   
+            ), 
+            500000
+        )
 
         return tx_hash
         
@@ -873,18 +917,17 @@ class PangolinPool:
         slippage = 0.01
         max_usdt_amount = (max_usdt_amount * (1 + slippage))
 
-        tx_hash = self.pangolin_router.functions.swapExactTokensForTokens(
-            usdt.to_wei(),
-            max_usdt_amount.to_wei(),
-            [self.usdt_token.address, self.xsd_token.address],
-            agent.address,
-            int(current_timestamp + DEADLINE_FROM_NOW)
-        ).transact({
-            'nonce': get_nonce(agent),
-            'from' : agent.address,
-            'gas': 500000,
-            'gasPrice': Web3.toWei(225, 'gwei'),
-        })
+        tx_hash = transaction_helper(
+            agent,
+            self.pangolin_router.functions.swapExactTokensForTokens(
+                usdt.to_wei(),
+                max_usdt_amount.to_wei(),
+                [self.usdt_token.address, self.xsd_token.address],
+                agent.address,
+                int(current_timestamp + DEADLINE_FROM_NOW)
+            ), 
+            500000
+        )
         return tx_hash
         
     def sell(self, agent, xsd, min_usdt_amount, advancer, pangolin_usdt_supply, current_timestamp):
@@ -899,19 +942,17 @@ class PangolinPool:
         slippage = 0.99 if (advancer.address == agent.address) or ((agent.redeem_count > 0) and agent.xsd > pangolin_usdt_supply) else 0.01
         min_usdt_amount = (min_usdt_amount * (1 - slippage))
 
-        tx_hash = self.pangolin_router.functions.swapExactTokensForTokens(
-            xsd.to_wei(),
-            min_usdt_amount.to_wei(),
-            [self.xsd_token.address, self.usdt_token.address],
-            agent.address,
-            int(current_timestamp + DEADLINE_FROM_NOW)
-        ).transact({
-            'nonce': get_nonce(agent),
-            'from' : agent.address,
-            'gas': 500000,
-            'gasPrice': Web3.toWei(225, 'gwei'),
-        })
-
+        tx_hash = transaction_helper(
+            agent,
+            self.pangolin_router.functions.swapExactTokensForTokens(
+                xsd.to_wei(),
+                min_usdt_amount.to_wei(),
+                [self.xsd_token.address, self.usdt_token.address],
+                agent.address,
+                int(current_timestamp + DEADLINE_FROM_NOW)
+            ), 
+            500000
+        )
         return tx_hash
 
     def update(self, is_init_agents=[]):
@@ -1006,16 +1047,15 @@ class DAO:
         """
         
         self.xsd_token.ensure_approved(agent, self.contract)
-        tx_hash = self.contract.functions.placeCouponAuctionBid(
-            coupon_expiry,
-            xsd_amount.to_wei(),
-            max_coupon_amount.to_wei()
-        ).transact({
-            'nonce': get_nonce(agent),
-            'from' : agent.address,
-            'gas': 4000000,
-            'gasPrice': Web3.toWei(225, 'gwei'),
-        })
+        tx_hash = transaction_helper(
+            agent,
+            self.contract.functions.placeCouponAuctionBid(
+                coupon_expiry,
+                xsd_amount.to_wei(),
+                max_coupon_amount.to_wei()
+            ), 
+            4000000
+        )
         return tx_hash
         
     def redeem(self, agent, epoch_expired):
@@ -1031,16 +1071,14 @@ class DAO:
         if total_coupons == 0:
             return
 
-        tx_hash = self.contract.functions.redeemCoupons(
-            epoch_expired,
-            total_coupons
-        ).transact({
-            'nonce': get_nonce(agent),
-            'from' : agent.address,
-            'gas': 8000000,
-            'gasPrice': Web3.toWei(225, 'gwei'),
-        })
-
+        tx_hash = transaction_helper(
+            agent,
+            self.contract.functions.redeemCoupons(
+                epoch_expired,
+                total_coupons
+            ), 
+            8000000
+        )
         return tx_hash
 
 
@@ -1050,14 +1088,13 @@ class DAO:
         
         Note that if advance() does any kind of auction settlement or other
         operations, the reported reward may be affected by those transfers.
-        """        
-        tx_hash = self.contract.functions.advance().transact({
-            'nonce': get_nonce(agent),
-            'from' : agent.address,
-            'gas': 8000000,
-            'gasPrice': Web3.toWei(225, 'gwei'),
-        })
-        providerAvax.make_request("avax.issueBlock", {})    
+        """
+        tx_hash = transaction_helper(
+            agent,
+            self.contract.functions.advance(), 
+            8000000
+        )
+        providerAvax.make_request("avax.issueBlock", {})
         return tx_hash
                         
 class Model:
@@ -1497,8 +1534,8 @@ def main():
     Main function: run the simulation.
     """
     global avax_cchain_nonces
-    
     logging.basicConfig(level=logging.INFO)
+
 
     if w3.eth.get_block('latest')["number"] == block_offset:
         logger.info("Start Clock: {}".format(w3.eth.get_block('latest')['timestamp']))

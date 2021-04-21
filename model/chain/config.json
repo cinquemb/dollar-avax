@@ -9,7 +9,9 @@
         "personal-api-enabled": true,
         "tx-pool-api-enabled": true,
         "debug-api-enabled": true,
-        "web3-api-enabled": true
+        "web3-api-enabled": true,
+        "api-max-duration": 0,
+        "local-txs-enabled": true
     },
     "network-id": "local",
     "staking-enabled": false,

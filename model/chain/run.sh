@@ -13,7 +13,7 @@ echo "Cleaning Old Database..."
 mkdir -p ./empty_db
 #: '
 time rsync -a --delete ./empty_db/ ./db/
-rm -Rf db go-ethereum-keystore* plugin*
+rm -Rf db coreth-keystore* plugin*
 #'
 
 # Have a function to kill off Ganache and clean up the database when we quit.
@@ -29,7 +29,7 @@ function cleanup {
         echo "Just Kidding... Leaving Database Alone"
     else
         time rsync -a --delete ./empty_db/ ./db/
-        rm -Rf db go-ethereum-keystore* plugin*
+        rm -Rf db coreth-keystore* plugin*
         rm *-approvals.json
     fi
 }
@@ -54,7 +54,7 @@ while ! grep -i "listening on" ganache_output.txt 2>/dev/null ; do
 done
 
 echo "Advancing the clock..."
-curl -X POST --data '{ "jsonrpc":"2.0", "id" :1, "method" :"debug_increaseTime", "params" : [3114112]}' -H 'content-type:application/json;' http://127.0.0.1:9545/ext/bc/C/rpc
+curl -X POST --data '{ "jsonrpc":"2.0", "id" :1, "method" :"debug_increaseTime", "params" : [975816]}' -H 'content-type:application/json;' http://127.0.0.1:9545/ext/bc/C/rpc
 
 #: '
 # Creating accounts
