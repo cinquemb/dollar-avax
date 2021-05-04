@@ -11,7 +11,8 @@
         "debug-api-enabled": true,
         "web3-api-enabled": true,
         "api-max-duration": 0,
-        "local-txs-enabled": true
+        "local-txs-enabled": true,
+        "allow-unfinalized-queries": true
     },
     "network-id": "local",
     "staking-enabled": false,
