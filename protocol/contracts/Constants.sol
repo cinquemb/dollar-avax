@@ -44,7 +44,7 @@ library Constants {
     uint256 private constant GOVERNANCE_PROPOSAL_THRESHOLD = 5e15; // 0.5%
     uint256 private constant GOVERNANCE_SUPER_MAJORITY = 66e16; // 66%
     uint256 private constant GOVERNANCE_EMERGENCY_DELAY = 6; // 6 epochs
-    uint256 private constant INIT_GOVERNANCE_DELAY = 1080; // 1080 epochs before anyone can propose
+    uint256 private constant INIT_GOVERNANCE_DELAY = 131040; // 131040 epochs before anyone can propose (30 years with 2 hour epochs)
 
     /* DAO */
     uint256 private constant ADVANCE_INCENTIVE = 150e18; // 150 xSD

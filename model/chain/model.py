@@ -205,6 +205,7 @@ def transaction_helper(agent, prepped_function_call, gas):
             agent.next_tx_count = nonce
             lock_nonce(agent)
             tx_hash = prepped_function_call.transact({
+                'chainId': 43112,
                 'nonce': nonce,
                 'from' : getattr(agent, 'address', agent),
                 'gas': gas,
@@ -212,7 +213,12 @@ def transaction_helper(agent, prepped_function_call, gas):
             })
             unlock_nonce(agent)
         except Exception as inst:
-            if 'nonce too low' in str(inst):
+            err_str = str(inst)
+            if 'nonce too low' in err_str:
+                # increment tx_hash
+                unlock_nonce(agent)
+                nonce +=1
+            elif 'replacement transaction underpriced' in err_str:
                 # increment tx_hash
                 unlock_nonce(agent)
                 nonce +=1
@@ -648,7 +654,7 @@ class Agent:
         self.next_tx_count = w3.eth.getTransactionCount(self.address, block_identifier=int(w3.eth.get_block('latest')["number"]))
         self.current_block = 0
 
-        if kwargs.get("is_mint", False):
+        if True:#kwargs.get("is_mint", False):
             # need to mint USDT to the wallets for each agent
             start_usdt_formatted = kwargs.get("starting_usdt", Balance(0, USDT["decimals"]))
             providerAvax.make_request("avax.issueBlock", {})
@@ -1114,7 +1120,7 @@ class Model:
         self.pangolin_router = pangolin_router
         self.xsd_token = xsd
         self.max_avax = Balance.from_tokens(1000000, 18)
-        self.max_usdt = self.usdt_token.from_tokens(100000)
+        self.max_usdt = self.usdt_token.from_tokens(100000000)
         self.bootstrap_epoch = 2
         self.max_coupon_exp = 131400
         self.max_coupon_premium = 10.0
@@ -1150,7 +1156,7 @@ class Model:
                 self.dao.get_coupon_expirirations(self.agents[i])
             logger.info(self.agents[i])
 
-        #sys.exit()
+        sys.exit()
         
     def log(self, stream, seleted_advancer, current_timestamp, header=False):
         """

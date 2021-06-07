@@ -19,6 +19,7 @@
     "snow-sample-size": 1,
     "snow-quorum-size": 1,
     "db-dir": "./db/",
+    "public-ip": "127.0.0.1",
     "http-port": 9545,
     "log-level": "verbo",
     "log-dir": "./log/",
