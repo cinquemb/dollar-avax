@@ -37,6 +37,7 @@ library Constants {
     uint256 private constant EPOCH_OFFSET = 0;
     uint256 private constant EPOCH_START = 1619900000;//1606348800;
     uint256 private constant EPOCH_PERIOD = 7200;
+    uint256 private constant EPOCH_PERIOD_FACTOR = 2;
 
     /* Governance */
     uint256 private constant GOVERNANCE_PERIOD = 84;//12 epochs per day * 7 days
@@ -44,7 +45,7 @@ library Constants {
     uint256 private constant GOVERNANCE_PROPOSAL_THRESHOLD = 5e15; // 0.5%
     uint256 private constant GOVERNANCE_SUPER_MAJORITY = 66e16; // 66%
     uint256 private constant GOVERNANCE_EMERGENCY_DELAY = 6; // 6 epochs
-    uint256 private constant INIT_GOVERNANCE_DELAY = 131040; // 131040 epochs before anyone can propose (30 years with 2 hour epochs)
+    uint256 private constant INIT_GOVERNANCE_DELAY = 131040; // 131040 epochs before anyone can propose (30 years with 2 hour epochs, at min)
 
     /* DAO */
     uint256 private constant ADVANCE_INCENTIVE = 150e18; // 150 xSD
@@ -76,11 +77,12 @@ library Constants {
         return ORACLE_RESERVE_MINIMUM;
     }
 
+    //may need to remove this from constants and put in getters
     function getEpochStrategy() internal pure returns (EpochStrategy memory) {
         return EpochStrategy({
-            offset: EPOCH_OFFSET,
-            start: EPOCH_START,
-            period: EPOCH_PERIOD
+            offset: EPOCH_OFFSET, //fixed now, could pull in from state?, current - 1?
+            start: EPOCH_START, //fixed now, could set to prev time epoch as incremented?
+            period: EPOCH_PERIOD //fixed now, could pull in from state, default to min epoch?
         });
     }
 
