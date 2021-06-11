@@ -44,10 +44,11 @@ contract Account {
 
 contract Epoch {
     struct Global {
-        uint256 start;
-        uint256 period;
         uint256 current;
         uint256 earliestActiveAuction;
+        mapping(uint256 => uint256) start;
+        mapping(uint256 => uint256) period;
+
     }
 
     struct Coupons {

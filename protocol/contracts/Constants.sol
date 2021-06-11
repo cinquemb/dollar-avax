@@ -36,7 +36,7 @@ library Constants {
 
     uint256 private constant EPOCH_OFFSET = 0;
     uint256 private constant EPOCH_START = 1619900000;//1606348800;
-    uint256 private constant EPOCH_PERIOD = 7200;
+    uint256 private constant EPOCH_DEFAULT_PERIOD = 7200;
     uint256 private constant EPOCH_PERIOD_FACTOR = 2;
 
     /* Governance */
@@ -81,8 +81,8 @@ library Constants {
     function getEpochStrategy() internal pure returns (EpochStrategy memory) {
         return EpochStrategy({
             offset: EPOCH_OFFSET, //fixed now, could pull in from state?, current - 1?
-            start: EPOCH_START, //fixed now, could set to prev time epoch as incremented?
-            period: EPOCH_PERIOD //fixed now, could pull in from state, default to min epoch?
+            start: EPOCH_START, //fixed now, could set to prev time epoch as incremented? (state mapping that tracks prev epoch starts)
+            period: EPOCH_DEFAULT_PERIOD //fixed now, could pull in from past states and compute, default to min epoch?
         });
     }
 
