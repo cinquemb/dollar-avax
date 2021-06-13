@@ -38,6 +38,7 @@ library Constants {
     uint256 private constant EPOCH_START = 1619900000;//1606348800;
     uint256 private constant EPOCH_DEFAULT_PERIOD = 7200;
     uint256 private constant EPOCH_PERIOD_FACTOR = 2;
+    uint256 private constant EPOCH_PERIOD_LOOKBACK = 24;
 
     /* Governance */
     uint256 private constant GOVERNANCE_PERIOD = 84;//12 epochs per day * 7 days
@@ -78,12 +79,17 @@ library Constants {
     }
 
     //may need to remove this from constants and put in getters
-    function getEpochStrategy() internal pure returns (EpochStrategy memory) {
+    function getDefaultEpochStrategy() internal pure returns (EpochStrategy memory) {
         return EpochStrategy({
             offset: EPOCH_OFFSET, //fixed now, could pull in from state?, current - 1?
             start: EPOCH_START, //fixed now, could set to prev time epoch as incremented? (state mapping that tracks prev epoch starts)
             period: EPOCH_DEFAULT_PERIOD //fixed now, could pull in from past states and compute, default to min epoch?
         });
+    }
+
+    function getEpochPeriodLockBack() internal pure returns (uint256) pure returns (uint256) {
+        return EPOCH_PERIOD_LOOKBACK;
+
     }
 
     function getGovernanceDelay() public view returns (uint256) {

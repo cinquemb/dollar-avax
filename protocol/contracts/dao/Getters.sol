@@ -158,6 +158,28 @@ contract Getters is State {
         return _state.epoch.current;
     }
 
+    function epochPeriod() public view returns (uint256) {
+        // get average of previous periods during epochs
+        uint256 maxLookBack = epoch() < Constants.getEpochPeriodLockBack() ? epoch() : Constants.getEpochPeriodLockBack();
+        uint256 periodSum = 0;
+        for (uint256 i = 0; i <= maxLookBack; i++) {
+            periodSum += _state.epoch.period[epoch().sub(1).sub(i)];
+        }
+
+        return periodSum.div(maxLookBack);
+    }
+
+    function getEpochStrategy() internal pure returns (Constants.EpochStrategy memory) {
+        Constants.EpochStrategy memory defualt = Constants.getDefaultEpochStrategy();
+
+        uint256 period = epoch() == 0 ? defualt.period : epochPeriod();
+        return Constants.EpochStrategy({
+            offset: EPOCH_OFFSET, //fixed now, could pull in from state?, current - 1?
+            start: EPOCH_START, //fixed now, could set to prev time epoch as incremented? (state mapping that tracks prev epoch starts)
+            period: period
+        });
+    }
+
     function epochTime() public view returns (uint256) {
         Constants.EpochStrategy memory current = Constants.getEpochStrategy();
 
