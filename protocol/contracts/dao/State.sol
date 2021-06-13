@@ -46,9 +46,6 @@ contract Epoch {
     struct Global {
         uint256 current;
         uint256 earliestActiveAuction;
-        mapping(uint256 => uint256) start;
-        mapping(uint256 => uint256) period;
-
     }
 
     struct Coupons {
@@ -97,9 +94,12 @@ contract Epoch {
     }
 
     struct State {
+        uint256 start;
+        uint256 period;
         uint256 bonded;
+        uint256 actionCount;
         Coupons coupons;
-        AuctionState auction;
+        AuctionState auction; 
     }    
 }
 

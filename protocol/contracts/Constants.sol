@@ -87,6 +87,14 @@ library Constants {
         });
     }
 
+    function getEpochStrategy() internal pure returns (EpochStrategy memory) {
+        return EpochStrategy({
+            offset: EPOCH_OFFSET, //fixed now, could pull in from state?, current - 1?
+            start: EPOCH_START, //fixed now, could set to prev time epoch as incremented? (state mapping that tracks prev epoch starts)
+            period: EPOCH_DEFAULT_PERIOD //fixed now, could pull in from past states and compute, default to min epoch?
+        });
+    }
+
     function getEpochPeriodLockBack() internal pure returns (uint256) pure returns (uint256) {
         return EPOCH_PERIOD_LOOKBACK;
 

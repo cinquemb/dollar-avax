@@ -138,8 +138,8 @@ contract Setters is State, Getters {
 
     function incrementEpoch() internal {
         _state.epoch.current = _state.epoch.current.add(1);
-        _state.epoch.start[_state.epoch.current] = Constants.blockTimestamp();
-        _state.epoch.period[_state.epoch.current] = 7200; //starte at default, then compute moving averaged
+        _state.epochs[_state.epoch.current].start = Constants.blockTimestamp();
+        _state.epochs[_state.epoch.current].period = epochPeriod();
     }
 
     function snapshotTotalBonded() internal {
@@ -206,6 +206,7 @@ contract Setters is State, Getters {
 
     function incrementCouponAuctionBids() internal {
         _state.epochs[epoch()].auction._totalBids++;
+        _state.epochs[epoch()].actionCount++;
     }
 
     function setCouponAuctionRelYield(uint256 yield) internal {
