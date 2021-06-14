@@ -120,13 +120,11 @@ contract MockRegulator is MockComptroller, Regulator {
             FILE,
             "Must be under maxYield"
         );
-
+        uint256 currentEpoch = epoch();
+        uint256 totalBids = getCouponAuctionBids(currentEpoch);
         uint256 epochExpiry = epoch().add(couponEpochExpiry);
-        setCouponAuctionRelYield(maxCouponAmount.div(dollarAmount));
-        setCouponAuctionRelDollarAmount(dollarAmount);
-        setCouponAuctionRelExpiry(epochExpiry);
-        setCouponBidderState(uint256(epoch()), msg.sender, couponEpochExpiry, dollarAmount, maxCouponAmount);
-        setCouponBidderStateIndex(uint256(epoch()), getCouponAuctionBids(uint256(epoch())), msg.sender);
+        setCouponAuctionRel(maxCouponAmount.div(dollarAmount), epochExpiry, dollarAmount);
+        setCouponBidderState(currentEpoch, totalBids, msg.sender, epochExpiry, dollarAmount, maxCouponAmount);
         incrementCouponAuctionBids();
         return true;
     }

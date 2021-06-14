@@ -42,7 +42,7 @@ contract Regulator is Comptroller {
 
         uint256 prev_epoch = epoch();
         if (prev_epoch > 0) {
-            prev_epoch = epoch() - 1;
+            prev_epoch = epoch().sub(1);
         }
         
         Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(prev_epoch);
@@ -114,16 +114,8 @@ contract Regulator is Comptroller {
                     auctionInternals[0]
                 ).mul(100);
 
-                setMinExpiryFilled(settlementEpoch, auctionInternals[6]);
-                setMaxExpiryFilled(settlementEpoch, auctionInternals[4]);
-                setAvgExpiryFilled(settlementEpoch, avgExpiryFilled);
-                setMinYieldFilled(settlementEpoch, auctionYieldInternals[2]);
-                setMaxYieldFilled(settlementEpoch, auctionYieldInternals[0]);
-                setAvgYieldFilled(settlementEpoch, avgYieldFilled);
-                setBidToCover(settlementEpoch, bidToCover);
-                setTotalFilled(settlementEpoch, auctionInternals[0]);
-                setTotalAuctioned(settlementEpoch, auctionInternals[3]);
-                setTotalBurned(settlementEpoch, auctionInternals[1]);
+                setAuctionStatsFilled(settlementEpoch, auctionInternals[6], auctionInternals[4], avgExpiryFilled, auctionYieldInternals[2], auctionYieldInternals[0], avgYieldFilled);                
+                setAuctionInternals(settlementEpoch, bidToCover, auctionInternals[0], auctionInternals[3], auctionInternals[1]);
             }
 
             // reset contract vars

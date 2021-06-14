@@ -138,7 +138,7 @@ contract Setters is State, Getters {
 
     function incrementEpoch() internal {
         _state.epoch.current = _state.epoch.current.add(1);
-        _state.epochs[_state.epoch.current].start = Constants.blockTimestamp();
+        _state.epochs[_state.epoch.current].start = blockTimestamp();
         _state.epochs[_state.epoch.current].period = epochPeriod();
     }
 
@@ -178,13 +178,15 @@ contract Setters is State, Getters {
          _state.epochs[epoch].auction.finished = true;
     }
 
-    function setCouponBidderState(uint256 epoch, address bidder, uint256 couponEpochExpiry, uint256 dollarAmount, uint256 maxCouponAmount) internal {
+    function setCouponBidderState(uint256 epoch, uint256 index, address bidder, uint256 couponEpochExpiry, uint256 dollarAmount, uint256 maxCouponAmount) internal {
         Epoch.CouponBidderState storage bidderState = _state.epochs[epoch].auction.couponBidderState[bidder];
 
         bidderState.couponExpiryEpoch = couponEpochExpiry;
         bidderState.dollarAmount = dollarAmount;
         bidderState.couponAmount = maxCouponAmount;
         bidderState.bidder = bidder;
+
+        _state.epochs[epoch].auction.couponBidder[index] = bidder;
     }
 
     function setCouponBidderStateDistance(uint256 epoch, address bidder, Decimal.D256 memory distance) internal {
@@ -200,16 +202,13 @@ contract Setters is State, Getters {
         _state.epochs[epoch].auction.couponBidderState[bidder].redeemed = true;
     }
 
-    function setCouponBidderStateIndex(uint256 epoch, uint256 index, address bidder) internal {
-        _state.epochs[epoch].auction.couponBidder[index] = bidder;
-    }
-
     function incrementCouponAuctionBids() internal {
         _state.epochs[epoch()].auction._totalBids++;
         _state.epochs[epoch()].actionCount++;
     }
+    
+    function setCouponAuctionRel(uint256 yield, uint256 couponEpochExpiry, uint256 couponDollarAmount) internal {
 
-    function setCouponAuctionRelYield(uint256 yield) internal {
         if (yield > _state.epochs[epoch()].auction.maxYield) {
             _state.epochs[epoch()].auction.maxYield = yield;
         }
@@ -217,9 +216,7 @@ contract Setters is State, Getters {
         if (_state.epochs[epoch()].auction.minYield > yield) {
             _state.epochs[epoch()].auction.minYield = yield;
         }
-    }
-    
-    function setCouponAuctionRelExpiry(uint256 couponEpochExpiry) internal {
+
         if (couponEpochExpiry > _state.epochs[epoch()].auction.maxExpiry) {
             _state.epochs[epoch()].auction.maxExpiry = couponEpochExpiry;
         } 
@@ -227,9 +224,7 @@ contract Setters is State, Getters {
         if (couponEpochExpiry < _state.epochs[epoch()].auction.minExpiry) {
             _state.epochs[epoch()].auction.minExpiry = couponEpochExpiry;
         }
-    }
 
-    function setCouponAuctionRelDollarAmount(uint256 couponDollarAmount) internal {
         if (couponDollarAmount > _state.epochs[epoch()].auction.maxDollarAmount) {
             _state.epochs[epoch()].auction.maxDollarAmount = couponDollarAmount;
         }
@@ -239,43 +234,19 @@ contract Setters is State, Getters {
         }
     }
 
-    function setMinExpiryFilled(uint256 epoch, uint256 minExpiryFilled) internal {
+    function setAuctionStatsFilled(uint256 epoch, uint256 minExpiryFilled, uint256 maxExpiryFilled, Decimal.D256 memory avgExpiryFilled, Decimal.D256 memory minYieldFilled, Decimal.D256 memory maxYieldFilled, Decimal.D256 memory avgYieldFilled) internal {
         _state.epochs[epoch].auction.minExpiryFilled = minExpiryFilled;
-    }
-    
-    function setMaxExpiryFilled(uint256 epoch, uint256 maxExpiryFilled) internal {
         _state.epochs[epoch].auction.maxExpiryFilled = maxExpiryFilled;
-    }
-    
-    function setAvgExpiryFilled(uint256 epoch, Decimal.D256 memory avgExpiryFilled) internal {
         _state.epochs[epoch].auction.avgExpiryFilled = avgExpiryFilled;
-    }
-    
-    function setMinYieldFilled(uint256 epoch, Decimal.D256 memory minYieldFilled) internal {
         _state.epochs[epoch].auction.minYieldFilled = minYieldFilled;
-    }
-    
-    function setMaxYieldFilled(uint256 epoch, Decimal.D256 memory maxYieldFilled) internal {
         _state.epochs[epoch].auction.maxYieldFilled = maxYieldFilled;
-    }
-    
-    function setAvgYieldFilled(uint256 epoch, Decimal.D256 memory avgYieldFilled) internal {
         _state.epochs[epoch].auction.avgYieldFilled = avgYieldFilled;
     }
-    
-    function setBidToCover(uint256 epoch, Decimal.D256 memory bidToCover) internal {
+
+    function setAuctionInternals(uint256 epoch, Decimal.D256 memory bidToCover, uint256 totalFilled, uint256 totalAuctioned, uint256 totalBurned) internal {
         _state.epochs[epoch].auction.bidToCover = bidToCover;
-    }
-    
-    function setTotalFilled(uint256 epoch, uint256 totalFilled) internal {
         _state.epochs[epoch].auction.totalFilled = totalFilled;
-    }
-
-    function setTotalAuctioned(uint256 epoch, uint256 totalAuctioned) internal {
         _state.epochs[epoch].auction.totalAuctioned = totalAuctioned;
-    }
-
-    function setTotalBurned(uint256 epoch, uint256 totalBurned) internal {
         _state.epochs[epoch].auction.totalBurned = totalBurned;
     }
 

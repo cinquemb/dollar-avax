@@ -44,6 +44,8 @@ contract Account {
 
 contract Epoch {
     struct Global {
+        uint256 start; // used only in mocks
+        uint256 period; // used only in mocks
         uint256 current;
         uint256 earliestActiveAuction;
     }

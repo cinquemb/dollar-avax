@@ -140,7 +140,7 @@ contract Market is Comptroller {
 
         uint256 yield = maxCouponAmount.div(dollarAmount);
         uint256 maxYield = Constants.getCouponMaxYieldToBurn();
-        uint256 maxExpiry = Constants.getCouponMaxExpiryTime().div(Constants.getEpochStrategy().period);
+        uint256 maxExpiry = Constants.getCouponMaxExpiryTime().div(getEpochStrategy().period);
 
         Require.that(
             maxYield >= yield,
@@ -173,11 +173,8 @@ contract Market is Comptroller {
         uint256 totalBids = getCouponAuctionBids(currentEpoch);
         // this is the only time this addition operation should happen when adding current epoch to bid epoch
         uint256 epochExpiry = currentEpoch.add(couponEpochExpiry);
-        setCouponAuctionRelYield(maxCouponAmount.div(dollarAmount));
-        setCouponAuctionRelDollarAmount(dollarAmount);
-        setCouponAuctionRelExpiry(epochExpiry);
-        setCouponBidderState(currentEpoch, msg.sender, epochExpiry, dollarAmount, maxCouponAmount);
-        setCouponBidderStateIndex(currentEpoch, totalBids, msg.sender);
+        setCouponAuctionRel(maxCouponAmount.div(dollarAmount), epochExpiry, dollarAmount);
+        setCouponBidderState(currentEpoch, totalBids, msg.sender, epochExpiry, dollarAmount, maxCouponAmount);
 
         // todo sort bid on chain via BST
         sortBidBST(msg.sender, totalBids, currentEpoch);
