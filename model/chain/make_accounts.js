@@ -4,6 +4,7 @@ const w3 = new Web3(provider);
 const avalanche = require("avalanche");
 const process = require("process");
 
+
 //cchain.callMethod('avax.incrementTimeTx', {"time": 10000}).then((res) => console.log(res.data))
 //cchain.callMethod('avax.issueBlock').then((res) => console.log(res.data))
 
@@ -13,7 +14,7 @@ let cchain = ava.CChain();
 let pchain = ava.PChain();
 let xKeychain = xchain.keyChain();
 let cKeychain = cchain.keyChain();
-let pk = "PrivateKey-ewoqjP7PxY4yr3iLTpLisriqt94hdyDFNgchSxGGztUrTXtNN";
+let pk = avalanche.utils.PrivateKeyPrefix + avalanche.utils.DefaultLocalGenesisPrivateKey;
 xKeychain.importKey(pk);
 cKeychain.importKey(pk);
 let xAddresses = xchain.keyChain().getAddresses();
@@ -22,6 +23,9 @@ let xAddressStrings = xchain.keyChain().getAddressStrings();
 let cAddressStrings = cchain.keyChain().getAddressStrings();
 let bintools = avalanche.BinTools.getInstance();
 
+console.log(avalanche.utils.PrivateKeyPrefix);
+console.log(avalanche.utils.DefaultLocalGenesisPrivateKey);
+
 const ONEAVAX = new avalanche.BN(1000000000);
 let amount = ONEAVAX.mul(new avalanche.BN(1000000)); //seed all wallets with 1000k avax
 let locktime = new avalanche.BN(0);
@@ -29,7 +33,7 @@ let threshold = 1;
 
 let memo = bintools.stringToBuffer("AVM utility method buildExportTx to export ANT to the C-Chain from the X-Chain");
 
-let cChainBlockchainIdStr = "2XFHbWN57HrjHW1JqhP9wzj92eYHpiH7EGLnY9mNfWn9w9CvWR";//cchain.getBlockchainID();
+let cChainBlockchainIdStr = cchain.getBlockchainID();
 let cChainBlockchainIdBuf = bintools.cb58Decode(cChainBlockchainIdStr);
 let xChainBlockchainIdStr = xchain.getBlockchainID();
 let xChainBlockchainIdBuf = bintools.cb58Decode(xChainBlockchainIdStr);
@@ -49,18 +53,19 @@ async function exportTxXtoC() {
 }
 
 async function importTxXtoC(evmAddr) {
-	let u = await cchain.getUTXOs(cAddressStrings[0], "X");
+	let u = await cchain.getUTXOs(cAddressStrings, "X");
 	let intxoSet = u.utxos;
 	let intxo = intxoSet.getAllUTXOs();
-	let importedIns = [];
-	let evmOutputs = [];
-	
 	cHexAddress = evmAddr;
-	intxo.forEach((utxo) => { assetID = utxo.getAssetID(); txid = utxo.getTxID(); outputidx = utxo.getOutputIdx(); output = utxo.getOutput(); amt = output.getAmount().clone(); input = new avalanche.evm.SECPTransferInput(amt); input.addSignatureIdx(0, cAddresses[0]); xferin = new avalanche.evm.TransferableInput(txid, outputidx, assetID, input); importedIns.push(xferin); evmOutput = new avalanche.evm.EVMOutput(cHexAddress, amt, assetID); evmOutputs.push(evmOutput);});
-
-	let importTx = new avalanche.evm.ImportTx(12345, cChainBlockchainIdBuf, xChainBlockchainIdBuf, importedIns, evmOutputs);
-	let unsignedImportTx = new avalanche.evm.UnsignedTx(importTx);
-	let intx = unsignedImportTx.sign(cKeychain);
+	let evmFee = 0;
+	let importTx = await cchain.buildImportTx(
+		intxoSet,
+		cHexAddress,
+		cAddressStrings,
+		xChainBlockchainIdStr,
+		cAddressStrings
+	)
+	let intx = importTx.sign(cKeychain);
 	let ctx_id = await cchain.issueTx(intx);
 	let avaxAssetID = await xchain.getAVAXAssetID();
 }
@@ -84,7 +89,7 @@ async function seedTestAccounts(evmAddr) {
 	}
 }
 
-module.exports = async (callback) => {
+async function makeAccounts() {
   let maxAccounts = 1;
   for (var i=0; i<process.argv.length;i++) { 
     if (process.argv[i] == '--max-accounts')
@@ -108,3 +113,5 @@ module.exports = async (callback) => {
   console.log('check balance of accounts');
   for (var i=0; i<accounts.length;i++) {console.log(await w3.eth.getBalance(accounts[i]));}
 }
+
+makeAccounts();

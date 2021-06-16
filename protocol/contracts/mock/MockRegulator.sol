@@ -51,31 +51,31 @@ contract MockRegulator is MockComptroller, Regulator {
         super.initCouponAuction(price);
     }
 
-    function getCouponAuctionBidsE(uint256 epoch) external returns (uint256) {
+    function getCouponAuctionBidsE(uint256 epoch) external view returns (uint256) {
         return super.getCouponAuctionBids(epoch);
     }
 
-    function getCouponAuctionMinExpiryE(uint256 epoch) external returns (uint256) {
+    function getCouponAuctionMinExpiryE(uint256 epoch) external view returns (uint256) {
         return super.getCouponAuctionMinExpiry(epoch);
     }
 
-    function getCouponAuctionMaxExpiryE(uint256 epoch) external returns (uint256) {
+    function getCouponAuctionMaxExpiryE(uint256 epoch) external view returns (uint256) {
         return super.getCouponAuctionMaxExpiry(epoch);
     }
 
-    function getCouponAuctionMinYieldE(uint256 epoch) external returns (uint256) {
+    function getCouponAuctionMinYieldE(uint256 epoch) external view returns (uint256) {
         return super.getCouponAuctionMinYield(epoch);
     }
 
-    function getCouponAuctionMaxYieldE(uint256 epoch) external returns (uint256) {
+    function getCouponAuctionMaxYieldE(uint256 epoch) external view returns (uint256) {
         return super.getCouponAuctionMaxYield(epoch);
     }
 
-    function getCouponAuctionMinDollarAmountE(uint256 epoch) external returns (uint256) {
+    function getCouponAuctionMinDollarAmountE(uint256 epoch) external view returns (uint256) {
         return super.getCouponAuctionMinDollarAmount(epoch);
     }
 
-    function getCouponAuctionMaxDollarAmountE(uint256 epoch) external returns (uint256) {
+    function getCouponAuctionMaxDollarAmountE(uint256 epoch) external view returns (uint256) {
         return super.getCouponAuctionMaxDollarAmount(epoch);
     }
 

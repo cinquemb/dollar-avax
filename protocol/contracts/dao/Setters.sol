@@ -160,17 +160,18 @@ contract Setters is State, Getters {
      */
 
     function initCouponAuction(Decimal.D256 memory initPrice) internal  {
-        if (_state.epochs[epoch()].auction.isInit == false) {
-            _state.epochs[epoch()].auction._totalBids = 0;
-            _state.epochs[epoch()].auction.initPrice = initPrice;
-            _state.epochs[epoch()].auction.minExpiry = 2**256 -1;
-            _state.epochs[epoch()].auction.maxExpiry = 0;
-            _state.epochs[epoch()].auction.minYield = 2**256 -1;
-            _state.epochs[epoch()].auction.maxYield = 0;
-            _state.epochs[epoch()].auction.minDollarAmount = 2**256 -1;
-            _state.epochs[epoch()].auction.maxDollarAmount = 0;
-            _state.epochs[epoch()].auction.isInit = true;
-            _state.epochs[epoch()].auction.latestRedeemedSelectedBidderIndex = 0;
+        uint256 epochCurrent = epoch();
+        if (_state.epochs[epochCurrent].auction.isInit == false) {
+            _state.epochs[epochCurrent].auction._totalBids = 0;
+            _state.epochs[epochCurrent].auction.initPrice = initPrice;
+            _state.epochs[epochCurrent].auction.minExpiry = 2**256 -1;
+            _state.epochs[epochCurrent].auction.maxExpiry = 0;
+            _state.epochs[epochCurrent].auction.minYield = 2**256 -1;
+            _state.epochs[epochCurrent].auction.maxYield = 0;
+            _state.epochs[epochCurrent].auction.minDollarAmount = 2**256 -1;
+            _state.epochs[epochCurrent].auction.maxDollarAmount = 0;
+            _state.epochs[epochCurrent].auction.isInit = true;
+            _state.epochs[epochCurrent].auction.latestRedeemedSelectedBidderIndex = 0;
         }
     }
 
@@ -203,34 +204,35 @@ contract Setters is State, Getters {
     }
 
     function incrementCouponAuctionBids() internal {
-        _state.epochs[epoch()].auction._totalBids++;
-        _state.epochs[epoch()].actionCount++;
+        uint256 epochCurrent = epoch();
+        _state.epochs[epochCurrent].auction._totalBids++;
+        _state.epochs[epochCurrent].actionCount++;
     }
     
     function setCouponAuctionRel(uint256 yield, uint256 couponEpochExpiry, uint256 couponDollarAmount) internal {
-
-        if (yield > _state.epochs[epoch()].auction.maxYield) {
-            _state.epochs[epoch()].auction.maxYield = yield;
+        uint256 epochCurrent = epoch();
+        if (yield > _state.epochs[epochCurrent].auction.maxYield) {
+            _state.epochs[epochCurrent].auction.maxYield = yield;
         }
 
-        if (_state.epochs[epoch()].auction.minYield > yield) {
-            _state.epochs[epoch()].auction.minYield = yield;
+        if (_state.epochs[epochCurrent].auction.minYield > yield) {
+            _state.epochs[epochCurrent].auction.minYield = yield;
         }
 
-        if (couponEpochExpiry > _state.epochs[epoch()].auction.maxExpiry) {
-            _state.epochs[epoch()].auction.maxExpiry = couponEpochExpiry;
+        if (couponEpochExpiry > _state.epochs[epochCurrent].auction.maxExpiry) {
+            _state.epochs[epochCurrent].auction.maxExpiry = couponEpochExpiry;
         } 
 
-        if (couponEpochExpiry < _state.epochs[epoch()].auction.minExpiry) {
-            _state.epochs[epoch()].auction.minExpiry = couponEpochExpiry;
+        if (couponEpochExpiry < _state.epochs[epochCurrent].auction.minExpiry) {
+            _state.epochs[epochCurrent].auction.minExpiry = couponEpochExpiry;
         }
 
-        if (couponDollarAmount > _state.epochs[epoch()].auction.maxDollarAmount) {
-            _state.epochs[epoch()].auction.maxDollarAmount = couponDollarAmount;
+        if (couponDollarAmount > _state.epochs[epochCurrent].auction.maxDollarAmount) {
+            _state.epochs[epochCurrent].auction.maxDollarAmount = couponDollarAmount;
         }
 
-        if (couponDollarAmount < _state.epochs[epoch()].auction.minDollarAmount) {
-            _state.epochs[epoch()].auction.minDollarAmount = couponDollarAmount;
+        if (couponDollarAmount < _state.epochs[epochCurrent].auction.minDollarAmount) {
+            _state.epochs[epochCurrent].auction.minDollarAmount = couponDollarAmount;
         }
     }
 

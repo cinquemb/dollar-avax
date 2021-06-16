@@ -127,11 +127,12 @@ contract Getters is State {
     }
 
     function statusOf(address account) public view returns (Account.Status) {
-        if (_state.accounts[account].lockedUntil > epoch()) {
+        uint256 epochCurrent = epoch();
+        if (_state.accounts[account].lockedUntil > epochCurrent) {
             return Account.Status.Locked;
         }
 
-        return epoch() >= _state.accounts[account].fluidUntil ? Account.Status.Frozen : Account.Status.Fluid;
+        return epochCurrent >= _state.accounts[account].fluidUntil ? Account.Status.Frozen : Account.Status.Fluid;
     }
 
     function fluidUntil(address account) public view returns (uint256) {
@@ -165,16 +166,17 @@ contract Getters is State {
     function epochPeriod() public view returns (uint256) {
         // get average of previous periods during epochs
         uint256 dPeriod = Constants.getDefaultEpochPeriod();
-        if (epoch() == 0) {
+        uint256 epochCurrent = epoch();
+        if (epochCurrent == 0) {
             return dPeriod;
         }
-        uint256 maxLookBack = epoch() < Constants.getEpochPeriodLockBack() ? epoch() : Constants.getEpochPeriodLockBack();
+        uint256 maxLookBack = epochCurrent < Constants.getEpochPeriodLockBack() ? epochCurrent : Constants.getEpochPeriodLockBack();
         uint256 periodActionCountSum = 0;
         for (uint256 i = 0; i <= maxLookBack; i++) {
-            periodActionCountSum += _state.epochs[epoch().sub(1).sub(i)].actionCount;
+            periodActionCountSum += _state.epochs[epochCurrent.sub(1).sub(i)].actionCount;
         }
 
-        uint256 period = _state.epochs[epoch().sub(1)].period;
+        uint256 period = _state.epochs[epochCurrent.sub(1)].period;
         if (Decimal.ratio(periodActionCountSum, maxLookBack).greaterThan(Decimal.one())) {
             // if greater than 1, shrink epoch time by 2
             return period.div(2) < dPeriod ? period.div(2) : dPeriod;
@@ -186,11 +188,11 @@ contract Getters is State {
 
     function getEpochStrategy() internal view returns (Constants.EpochStrategy memory) {
         Constants.EpochStrategy memory defualt = Constants.getDefaultEpochStrategy();
-
-        uint256 period = epoch() == 0 ? defualt.period : epochPeriod();
-        uint256 start = epoch() == 0 ? defualt.start : _state.epochs[epoch()].start;
+        uint256 epochCurrent = epoch();
+        uint256 period = epochCurrent == 0 ? defualt.period : epochPeriod();
+        uint256 start = epochCurrent == 0 ? defualt.start : _state.epochs[epochCurrent].start;
         return Constants.EpochStrategy({
-            offset: _state.epoch.current,
+            offset: epochCurrent,
             start: start,
             period: period
         });
@@ -349,9 +351,10 @@ contract Getters is State {
         */
         uint256 sumCoupons = 0;
         uint256 earlist_epoch = getEarliestActiveAuctionEpoch();
-        uint256 current_epoch = (epoch().sub(earlist_epoch) > Constants.getCouponAuctionMaxEpochsBestBidderSelection()) ? earlist_epoch.add(Constants.getCouponAuctionMaxEpochsBestBidderSelection()) : epoch();
-        //uint256 current_epoch = epoch();
-        for (uint256 d_idx = earlist_epoch; d_idx < current_epoch; d_idx++) {
+        uint256 epochCurrent = epoch();
+        uint256 temp_epoch = (epochCurrent.sub(earlist_epoch) > Constants.getCouponAuctionMaxEpochsBestBidderSelection()) ? earlist_epoch.add(Constants.getCouponAuctionMaxEpochsBestBidderSelection()) : epochCurrent;
+
+        for (uint256 d_idx = earlist_epoch; d_idx < temp_epoch; d_idx++) {
             uint256 temp_coupon_auction_epoch = d_idx;
             Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(temp_coupon_auction_epoch);
             
@@ -381,9 +384,9 @@ contract Getters is State {
         // loop over past epochs from the latest `dead` epoch to the current
         uint256 earliest_non_dead_auction_epoch = 1;
         uint256 earlist_epoch = getEarliestActiveAuctionEpoch();
-        uint256 current_epoch = (epoch().sub(earlist_epoch) > Constants.getCouponAuctionMaxEpochsBestBidderSelection()) ? earlist_epoch.add(Constants.getCouponAuctionMaxEpochsBestBidderSelection()) : epoch();
-        //uint256 current_epoch = epoch();
-        for (uint256 d_idx = earlist_epoch; d_idx < current_epoch; d_idx++) {
+        uint256 epochCurrent = epoch();
+        uint256 temp_epoch = (epochCurrent.sub(earlist_epoch) > Constants.getCouponAuctionMaxEpochsBestBidderSelection()) ? earlist_epoch.add(Constants.getCouponAuctionMaxEpochsBestBidderSelection()) : epochCurrent;
+        for (uint256 d_idx = earlist_epoch; d_idx < temp_epoch; d_idx++) {
             uint256 temp_coupon_auction_epoch = d_idx;
             Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(temp_coupon_auction_epoch);
             earliest_non_dead_auction_epoch = d_idx;
@@ -421,13 +424,14 @@ contract Getters is State {
         // loop over past epochs from the latest `dead` epoch to the current
         uint256 earliest_non_dead_auction_epoch = 1;
         uint256 earlist_epoch = getEarliestActiveAuctionEpoch();
-        uint256 current_epoch = (epoch().sub(earlist_epoch) > Constants.getCouponAuctionMaxEpochsBestBidderSelection()) ? earlist_epoch.add(Constants.getCouponAuctionMaxEpochsBestBidderSelection()) : epoch();
+        uint256 epochCurrent = epoch();
+        uint256 temp_epoch = (epochCurrent.sub(earlist_epoch) > Constants.getCouponAuctionMaxEpochsBestBidderSelection()) ? earlist_epoch.add(Constants.getCouponAuctionMaxEpochsBestBidderSelection()) : epochCurrent;
 
         uint256 bb_idx_start = 0;
         uint256 sumCoupons = 0;
 
         while(sumCoupons == 0){
-            for (uint256 d_idx = earlist_epoch; d_idx < current_epoch; d_idx++) {
+            for (uint256 d_idx = earlist_epoch; d_idx < temp_epoch; d_idx++) {
                 uint256 temp_coupon_auction_epoch = d_idx;
                 Epoch.AuctionState storage auction = getCouponAuctionAtEpoch(temp_coupon_auction_epoch);
                 earliest_non_dead_auction_epoch = d_idx;
@@ -450,10 +454,6 @@ contract Getters is State {
                     } else {
                         sumCoupons += currBalanceOfCoupons;
                         break;
-                    }
-
-                    if (sumCoupons > 0) {
-                        return earliest_non_dead_auction_epoch; 
                     }
                 }
             }

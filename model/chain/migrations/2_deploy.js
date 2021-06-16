@@ -6,6 +6,7 @@ const Pool = artifacts.require("Pool");
 const Implementation = artifacts.require("Implementation");
 const Root = artifacts.require("Root");
 const TestnetUSDT = artifacts.require("TestnetUSDT");
+const Constants = artifacts.require("Constants");
 
 const PangolinFactoryBytecode = require('@pangolindex/exchange-contracts/artifacts/contracts/pangolin-core/PangolinFactory.sol/PangolinFactory.json').bytecode
 const PangolinRouter02Bytecode = require('@pangolindex/exchange-contracts/artifacts/contracts/pangolin-periphery/PangolinRouter.sol/PangolinRouter.json').bytecode;
@@ -83,6 +84,8 @@ async function deployTestnet(deployer, network, accounts) {
   const pool = await Pool.at(await rootAsD3.pool.call());
   console.log('Pool is at: ' + pool.address);
 
+  //await deployer.deploy(Constants);
+  //await deployer.link(Constants, Implementation);
   console.log('Deploy current Implementation');
   const implementation = await deployer.deploy(Implementation);
   console.log('Implement current Implementation');
