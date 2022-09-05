@@ -55,6 +55,7 @@ done
 
 echo "Advancing the clock..."
 curl -X POST --data '{ "jsonrpc":"2.0", "id" :1, "method" :"debug_increaseTime", "params" : [308501]}' -H 'content-type:application/json;' http://127.0.0.1:9545/ext/bc/C/rpc
+#curl -X POST --data '{ "jsonrpc":"2.0", "id" :1, "method" :"debug_getBlockRlp", "params" : [15]}' -H 'content-type:application/json;' http://127.0.0.1:9545/ext/bc/C/rpc
 
 #: '
 # Creating accounts
@@ -66,7 +67,7 @@ echo "Deploying contracts..."
 time truffle migrate --reset --skip-dry-run --network=development | tee deploy_output.txt
 echo "Creating sim test accounts..."
 #time truffle exec make_accounts.js --network development --max-accounts 40 >> make_accounts_output.txt
-time node ./make_accounts.js --network development --max-accounts 40 >> make_accounts_output.txt
+#time node ./make_accounts.js --network development --max-accounts 40 >> make_accounts_output.txt
 #time truffle exec make_accounts.js --network development --max-accounts 10 >> make_accounts_output.txt
 
 
